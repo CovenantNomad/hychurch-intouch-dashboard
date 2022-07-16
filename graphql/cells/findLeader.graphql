@@ -1,0 +1,10 @@
+query findLeader($name: String) {
+  findUsers(name: $name) {
+    totalCount
+    nodes {
+      id
+      name
+      phone
+    }
+  }
+}

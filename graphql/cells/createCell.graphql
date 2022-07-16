@@ -1,0 +1,8 @@
+mutation createCell($input: CreateCellInput!) {
+  createCell(input: $input) {
+    cell {
+      id
+      name
+    }
+  }
+}

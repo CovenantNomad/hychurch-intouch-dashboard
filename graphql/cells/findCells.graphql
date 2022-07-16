@@ -1,0 +1,9 @@
+query findCells($limit: Int) {
+  findCells(limit: $limit) {
+    totalCount
+    nodes {
+      id
+      name
+    }
+  }
+}
