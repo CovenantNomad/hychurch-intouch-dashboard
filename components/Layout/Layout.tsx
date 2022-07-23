@@ -26,7 +26,7 @@ export default function Layout ({ children }: LayoutProps) {
           </div>
         </div>
       </header>
-      <main className='bg-gray-100 md:ml-24 px-8 py-12'>
+      <main className='bg-gray-50 md:ml-24 px-8 py-12'>
         {children}
       </main>
     </div>

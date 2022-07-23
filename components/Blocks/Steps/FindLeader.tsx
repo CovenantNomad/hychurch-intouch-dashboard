@@ -116,24 +116,30 @@ const FindLeader = ({ leader, setLeader, viceLeader, setViceLeader, setCellName 
             <th className="py-1">부리더</th>
           </thead>
           <tbody>
-            {data?.findUsers.nodes.map(leader => (
-              <tr key={leader.id} className="grid grid-cols-4">
-                <td className="py-2 text-center text-sm">{leader.name}</td>
-                <td className="py-2 text-center text-sm">{leader.phone}</td>
-                <td 
-                  className="py-2 text-center text-sm text-teal-500 font-bold cursor-pointer hover:text-teal-600" 
-                  onClick={() => onSetLeaderHandler({id: leader.id, name: leader.name})}
-                >
-                  선택
-                </td>
-                <td 
-                  className="py-2 text-center text-sm text-gray-500 font-bold cursor-pointer hover:text-gray-600" 
-                  onClick={() => onSetViceLeaderHandler({id: leader.id, name: leader.name})}
-                >
-                  선택
-                </td>
+            {data?.findUsers ? (
+              data?.findUsers.nodes.map(leader => (
+                <tr key={leader.id} className="grid grid-cols-4">
+                  <td className="py-2 text-center text-sm">{leader.name}</td>
+                  <td className="py-2 text-center text-sm">{leader.phone}</td>
+                  <td 
+                    className="py-2 text-center text-sm text-teal-500 font-bold cursor-pointer hover:text-teal-600" 
+                    onClick={() => onSetLeaderHandler({id: leader.id, name: leader.name})}
+                  >
+                    선택
+                  </td>
+                  <td 
+                    className="py-2 text-center text-sm text-gray-500 font-bold cursor-pointer hover:text-gray-600" 
+                    onClick={() => onSetViceLeaderHandler({id: leader.id, name: leader.name})}
+                  >
+                    선택
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr className="grid grid-cols-4">
+                {Array.from({ length: 4 }).map((_, index) => <td className="min-h-[28px] text-center text-sm" key={index}></td>)}
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
