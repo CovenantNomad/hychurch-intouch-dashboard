@@ -1,5 +1,5 @@
-query findLeader($name: String) {
-  findUsers(name: $name) {
+query findLeader($name: String, $limit: Int, $offset: Int) {
+  findUsers(name: $name, limit: $limit, offset: $offset) {
     totalCount
     nodes {
       id

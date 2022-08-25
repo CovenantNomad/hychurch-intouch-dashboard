@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useRecoilValue } from "recoil"
 import graphlqlRequestClient from "../../../client/graphqlRequestClient"
 import { FindLeaderQuery, FindLeaderQueryVariables, useFindLeaderQuery } from "../../../graphql/generated"
 import { FindLeaderForm, Leader } from "../../../interface/cell"
-import { findLeaderMock } from "../../../mocks/cellMock"
+import { authState } from "../../../stores/authState"
 
 interface FindLeaderProps {
   leader: Leader
@@ -16,6 +17,9 @@ interface FindLeaderProps {
 const FindLeader = ({ leader, setLeader, viceLeader, setViceLeader, setCellName }: FindLeaderProps) => {
   const [ search, setSearch ] = useState<string>("")
   const { handleSubmit, register, getValues } = useForm<FindLeaderForm>()
+
+  const { accessToken } = useRecoilValue(authState)
+  graphlqlRequestClient.setHeader("authorization", accessToken)
 
   const { isLoading, data } = useFindLeaderQuery<FindLeaderQuery, FindLeaderQueryVariables>(
     graphlqlRequestClient, 
@@ -67,7 +71,7 @@ const FindLeader = ({ leader, setLeader, viceLeader, setViceLeader, setCellName 
         <div className="grid grid-cols-3 px-4 py-2 items-center">
           <span className="col-span-1 text-gray-500">리더 </span>
           <div className="col-span-2 flex justify-between">
-            <p className={`${leader.name ? "text-black" : "text-gray-400"} text-sm pointer-events-none`}>{leader.name || "검색창에서 리더를 검색해주세요"}</p>
+            <p className={`${leader.name ? "text-black" : "text-gray-400"} text-sm pointer-events-none`}>{leader.name || "아래 검색창에 리더를 검색해주세요"}</p>
             {leader.name && (
               <button onClick={onResetLeader}>
                 <svg className="h-5 w-5" viewBox="0 0 20 20">

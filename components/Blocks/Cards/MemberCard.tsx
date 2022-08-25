@@ -1,18 +1,30 @@
 import Link from "next/link"
+import { FindUsersPayload, Gender, RoleType, User } from "../../../graphql/generated"
 
 interface MemberCardProps {
-  id: Number
+  id: String
   name: String
-  sex: Boolean
   phone: String
-  birthday: String
   isActive: Boolean
-  roles: String
-  cell: String
-  address: String
+  roles: RoleType[]
+  gender?: Gender
+  birthday?: String
+  cellName: String | undefined
+  address?: String | null | undefined
 }
 
-const MemberCard = ({ id, name, sex, phone, birthday, isActive, roles, cell, address }: MemberCardProps) => {
+const MemberCard = ({ id, name, gender, phone, birthday, isActive, roles, cellName, address }: MemberCardProps) => {
+
+  const getRole = (roles: RoleType[]) => {
+    if (roles.includes(RoleType.CellLeader)) {
+      return "셀리더"
+    } else if (roles.includes(RoleType.ViceLeader)) {
+      return "부리더"
+    } else {
+      return "청년"
+    }
+  }
+
   return (
     <Link href={`/members/${id}`}>
       <a className='bg-white rounded-lg shadow-lg px-4 pt-6 pb-3'>
@@ -22,21 +34,21 @@ const MemberCard = ({ id, name, sex, phone, birthday, isActive, roles, cell, add
           </div>
         </div>
         <div className="flex flex-col items-center justify-center mb-4">
-          <div className="w-24 h-24 bg-gray-500 rounded-full mb-2"></div>
+          {/* <div className="w-24 h-24 bg-gray-500 rounded-full mb-2"></div> */}
           <div className="text-center">
-            <h6 className="text-xl font-bold">{name} <span className="text-base">{`(${sex ? "형제": "자매"})`}</span></h6>
-            <span className="text-sm text-gray-500">{roles}</span>
+            <h6 className="text-xl font-bold">{name} <span className="text-base">{`(${gender === 'MAN' ? "형제": "자매"})`}</span></h6>
+            <span className="text-sm text-gray-500">{getRole(roles)}</span>
           </div>
         </div>
         <div className="border border-gray-300 bg-gray-100 px-2 py-3 space-y-4">
           <div className="flex justify-between">
             <div>
               <p className="text-sm text-gray-600 font-semibold">셀</p>
-              <span className="tracking-wide">{cell}</span>
+              <span className="tracking-wide">{cellName || "미편성"}</span>
             </div>
             <div>
               <p className="text-sm text-gray-600 font-semibold">생일</p>
-              <span>{birthday}</span>
+              <span>{birthday || "0000-00-00"}</span>
             </div>
           </div>
           <div className="flex items-center">
@@ -49,7 +61,7 @@ const MemberCard = ({ id, name, sex, phone, birthday, isActive, roles, cell, add
             <svg className="w-5 h-5 mr-2" viewBox="0 0 20 20">
               <path d="M10,1.375c-3.17,0-5.75,2.548-5.75,5.682c0,6.685,5.259,11.276,5.483,11.469c0.152,0.132,0.382,0.132,0.534,0c0.224-0.193,5.481-4.784,5.483-11.469C15.75,3.923,13.171,1.375,10,1.375 M10,17.653c-1.064-1.024-4.929-5.127-4.929-10.596c0-2.68,2.212-4.861,4.929-4.861s4.929,2.181,4.929,4.861C14.927,12.518,11.063,16.627,10,17.653 M10,3.839c-1.815,0-3.286,1.47-3.286,3.286s1.47,3.286,3.286,3.286s3.286-1.47,3.286-3.286S11.815,3.839,10,3.839 M10,9.589c-1.359,0-2.464-1.105-2.464-2.464S8.641,4.661,10,4.661s2.464,1.105,2.464,2.464S11.359,9.589,10,9.589"></path>
             </svg>
-            <span>{address}</span>
+            <span>{address || "미입력"}</span>
           </div>
         </div>
       </a>
