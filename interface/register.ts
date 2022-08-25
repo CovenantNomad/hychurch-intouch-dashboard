@@ -1,6 +1,8 @@
+import { Gender } from "../graphql/generated"
+
 export interface RegisterForm {
   name: string
-  sex: boolean
+  gender: Gender
   year?: string
   month?: string
   day?: string
