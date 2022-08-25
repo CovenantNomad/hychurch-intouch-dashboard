@@ -4,7 +4,6 @@ import { useRecoilValue } from "recoil"
 import graphlqlRequestClient from "../../../client/graphqlRequestClient"
 import { FindLeaderQuery, FindLeaderQueryVariables, useFindLeaderQuery } from "../../../graphql/generated"
 import { FindLeaderForm, Leader } from "../../../interface/cell"
-import { authState } from "../../../stores/authState"
 
 interface FindLeaderProps {
   leader: Leader
@@ -17,9 +16,6 @@ interface FindLeaderProps {
 const FindLeader = ({ leader, setLeader, viceLeader, setViceLeader, setCellName }: FindLeaderProps) => {
   const [ search, setSearch ] = useState<string>("")
   const { handleSubmit, register, getValues } = useForm<FindLeaderForm>()
-
-  const { accessToken } = useRecoilValue(authState)
-  graphlqlRequestClient.setHeader("authorization", accessToken)
 
   const { isLoading, data } = useFindLeaderQuery<FindLeaderQuery, FindLeaderQueryVariables>(
     graphlqlRequestClient, 
