@@ -12,6 +12,7 @@ query findUsers($name: String, $limit: Int, $offset: Int) {
       description
       roles
       cell {
+        id
         name
       }
     }

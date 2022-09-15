@@ -1,0 +1,8 @@
+mutation deleteCell($input: DeleteCellInput!) {
+  deleteCell(input: $input) {
+    cell {
+      id
+      name
+    }
+  }
+}

@@ -8,8 +8,6 @@ import { userState } from '../../stores/authState'
 const Home: NextPage = () => {
   const user = useRecoilValue(userState)
 
-  console.log("Home, userInfo: ", user)
-
   return (
     <Layout>
       <Head>

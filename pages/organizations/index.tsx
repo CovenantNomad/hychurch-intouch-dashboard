@@ -39,7 +39,7 @@ const Cell: NextPage = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setModalOpen(!modalOpen)}
-            className='px-4 py-2 bg-teal-600 text-white rounded-md'
+            className='px-4 py-2 bg-navy-blue text-white rounded-md'
           >
             Add Cell
           </motion.button>
@@ -57,7 +57,16 @@ const Cell: NextPage = () => {
                 if (a.name > b.name) return 1;
                 else if (b.name > a.name) return -1;
                 else return 0;
-              }).map(cell => <CellCard key={cell.id} id={cell.id} name={cell.name} />)}
+              }).map(cell => (
+                <CellCard 
+                  key={cell.id} 
+                  id={cell.id} 
+                  name={cell.name} 
+                  leader={cell.leaders.at(0)?.name!}
+                  totalCountOfMembers={cell.statistics.totalCountOfMembers}
+                  countOfActiveMembers={cell.statistics.countOfActiveMembers}
+                />
+              ))}
             </div>
             <AnimatePresence
               initial={false}

@@ -1,4 +1,4 @@
-schema: http://hychurch.duckdns.org:3000/graphql
+schema: https://hychurch.duckdns.org:3000/graphql
 documents: "./graphql/**/*.graphql"
 generates:
   ./graphql/generated.ts:
