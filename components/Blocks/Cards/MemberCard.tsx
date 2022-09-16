@@ -1,19 +1,10 @@
 import Link from "next/link"
-import { FindUsersPayload, Gender, RoleType, User } from "../../../graphql/generated"
+import { RoleType } from "../../../graphql/generated"
+import { MemberProps } from "../../../interface/user"
 
-interface MemberCardProps {
-  id: String
-  name: String
-  phone: String
-  isActive: Boolean
-  roles: RoleType[]
-  gender?: Gender
-  birthday?: String
-  cellName: String | undefined
-  address?: String | null | undefined
-}
 
-const MemberCard = ({ id, name, gender, phone, birthday, isActive, roles, cellName, address }: MemberCardProps) => {
+const MemberCard = ({ member }: MemberProps) => {
+  const { id, name, phone, isActive, roles, gender, birthday, cell, address} = member
 
   const getRole = (roles: RoleType[]) => {
     if (roles.includes(RoleType.CellLeader)) {
@@ -26,7 +17,13 @@ const MemberCard = ({ id, name, gender, phone, birthday, isActive, roles, cellNa
   }
 
   return (
-    <Link href={`/members/${id}`}>
+    <Link
+      href={{
+        pathname: `/members/${id}`,
+        query: {userInfo: JSON.stringify(member)}
+      }}
+      as={`/members/${id}`}
+    >
       <a className='bg-white rounded-lg shadow-lg px-4 pt-6 pb-3'>
         <div className="flex justify-end mb-4">
           <div className={`${isActive ? "border-green-600 bg-green-100" : "border-red-600 bg-red-100"} border px-2 rounded-md flex items-center`}>
@@ -44,7 +41,7 @@ const MemberCard = ({ id, name, gender, phone, birthday, isActive, roles, cellNa
           <div className="flex justify-between">
             <div>
               <p className="text-sm text-gray-600 font-semibold">셀</p>
-              <span className="tracking-wide">{cellName || "미편성"}</span>
+              <span className="tracking-wide">{cell?.name || "미편성"}</span>
             </div>
             <div>
               <p className="text-sm text-gray-600 font-semibold">생일</p>

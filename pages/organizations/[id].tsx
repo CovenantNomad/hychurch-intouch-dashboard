@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { NextPage } from "next";
 import Layout from '../../components/Layout/Layout';
 import Head from 'next/head';
-import { FindMyCellMembersQuery, FindMyCellMembersQueryVariables, useFindMyCellMembersQuery } from '../../graphql/generated';
+import { Cell, FindCellQuery, FindCellQueryVariables, Gender, RoleType, useFindCellQuery } from '../../graphql/generated';
 import graphlqlRequestClient from '../../client/graphqlRequestClient';
-import { useRecoilValue } from 'recoil';
-import { userState } from '../../stores/authState';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface TabProps {
   name: string;
@@ -13,8 +13,23 @@ interface TabProps {
   current: boolean;
 }
 
+export type SimpleUser = {
+  id: string
+  name: string
+  phone: string
+  isActive: boolean
+  birthday?: string | null | undefined
+  gender?: Gender | null | undefined
+  address?: string | null | undefined
+  cell?: {
+    id: string
+    name: string
+  } | null | undefined
+  roles: RoleType[]
+};
+
 const Detail: NextPage = () => {
-  const { username } = useRecoilValue(userState)
+  const { query } = useRouter()
   const [ tabs, setTabs ] = useState<TabProps[]>(
     [
       { name: 'All', count: 0, current: true },
@@ -22,28 +37,46 @@ const Detail: NextPage = () => {
       { name: 'Inactive', count: 0, current: false },
     ]
   )
+  const [ filterMembers, setFilterMembers ] = useState<SimpleUser[]>([])
 
-  const { isLoading, data } = useFindMyCellMembersQuery<FindMyCellMembersQuery, FindMyCellMembersQueryVariables>(
+  const { isLoading, data } = useFindCellQuery<FindCellQuery, FindCellQueryVariables>(
     graphlqlRequestClient,
+    {
+      id: Number(query.id)
+    },
+    {
+      enabled: Boolean(query.id),
+      onSuccess(data) {
+        setFilterMembers(data.findCell.members)
+      },
+    }
   )
 
   const onClickHandler = (name: string) =>{
     setTabs(tabs.map(tab => tab.name === name ? {...tab, current: true} : {...tab, current: false}))
+    switch (name) {
+      case "Active":
+        return setFilterMembers(data!.findCell.members.filter(member => member.isActive))
+      case "Inactive":
+        return setFilterMembers(data!.findCell.members.filter(member => !member.isActive))
+      default:
+        return setFilterMembers(data!.findCell.members)
+    }
   }
 
   useEffect(() => {
-    const allCount = data?.myCellMembers?.length || 0
-    const activeCount = data?.myCellMembers?.filter(member => member.isActive).length || 0
-    const inactiveCount = data?.myCellMembers?.filter(member => !member.isActive).length || 0
+    const totalCount = data?.findCell.members?.length || 0
+    const countOfactiveUser = data?.findCell.members?.filter(member => member.isActive).length || 0
+    const countOfinactiveUser = data?.findCell.members?.filter(member => !member.isActive).length || 0
 
     setTabs(
       [
-        { name: 'All', count: allCount, current: true },
-        { name: 'Active', count: activeCount, current: false },
-        { name: 'Inactive', count: inactiveCount, current: false },
+        { name: 'All', count: totalCount, current: true },
+        { name: 'Active', count: countOfactiveUser, current: false },
+        { name: 'Inactive', count: countOfinactiveUser, current: false },
       ]
     )
-  }, [data?.myCellMembers])
+  }, [data?.findCell.members])
 
   return (
     <Layout>
@@ -54,11 +87,11 @@ const Detail: NextPage = () => {
       </Head>
       
       <section>
-        <div className='py-8 border-b'>
-          <h1 className="text-2xl font-bold text-gray-900 font-notosans mb-1">{username}셀</h1>
-          <p className="text-sm font-medium text-gray-500">
+        <div className='py-4 border-b'>
+          <h1 className="text-2xl font-bold text-gray-900 font-notosans mb-1">{data?.findCell.name}</h1>
+          {/* <p className="text-sm font-medium text-gray-500">
             00 공동체
-          </p>
+          </p> */}
         </div>
 
         <div className="pt-16 pb-16">
@@ -87,6 +120,7 @@ const Detail: NextPage = () => {
                   <button
                     key={tab.name}
                     onClick={() => onClickHandler(tab.name)}
+                    disabled={isLoading || data === undefined}
                     className={`${tab.current ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                   >
                     {tab.name}
@@ -128,10 +162,10 @@ const Detail: NextPage = () => {
                         </th>
                       </tr>
                     </thead>
-                    {data?.myCellMembers ? (
+                    {!isLoading && filterMembers !== undefined ? (
                       <tbody className="bg-white">
-                        {data.myCellMembers.map((person, personIdx) => (
-                          <tr key={person.id} className={personIdx % 2 === 0 ? undefined : 'bg-gray-50'}>
+                        {filterMembers.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0).map((person, personIdx) => (
+                          <tr key={personIdx} className={personIdx % 2 === 0 ? undefined : 'bg-gray-50'}>
                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                               {person.name}
                             </td>
@@ -139,9 +173,17 @@ const Detail: NextPage = () => {
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.phone}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.birthday}</td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                              <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                                Edit<span className="sr-only">, {person.name}</span>
-                              </a>
+                              <Link 
+                                href={{
+                                  pathname: `/members/${person.id}`,
+                                  query: {userInfo: JSON.stringify(person)}
+                                }}
+                                as={`/members/${person.id}`}
+                              >
+                                <a  className="text-indigo-600 hover:text-indigo-900">
+                                  Edit<span className="sr-only">, {person.name}</span>
+                                </a>
+                              </Link>
                             </td>
                           </tr>
                         ))}

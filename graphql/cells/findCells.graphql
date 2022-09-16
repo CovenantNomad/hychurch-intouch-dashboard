@@ -4,6 +4,15 @@ query findCells($limit: Int) {
     nodes {
       id
       name
+      leaders {
+        id
+        name
+        roles
+      }
+      statistics {
+        totalCountOfMembers
+        countOfActiveMembers
+      }
     }
   }
 }

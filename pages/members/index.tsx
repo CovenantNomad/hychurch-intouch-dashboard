@@ -35,7 +35,7 @@ const Members: NextPage = () => {
 
       <section>
         <header className='flex flex-col lg:flex-row justify-between mb-6 lg:mb-8'>
-          <h4 className='text-2xl font-bold tracking-wide'>인터치 청년현황</h4>
+          <h4 className='text-2xl font-bold tracking-wide'>인터치 청년현황 ({data?.findUsers.totalCount}명)</h4>
           <div className='flex items-center space-x-5 mt-6 lg:mt-0'>
             <SearchBar setName={setName} />
           </div>
@@ -52,15 +52,7 @@ const Members: NextPage = () => {
               {data?.findUsers.nodes.map(member => (
                 <MemberCard 
                   key={member.id} 
-                  id={member.id}
-                  name={member.name}
-                  gender={member.gender!} 
-                  phone={member.phone}
-                  birthday={member.birthday!}
-                  address={member.address}
-                  isActive={member.isActive}
-                  roles={member.roles}
-                  cellName={member.cell?.name}
+                  member={member}
                 />
               ))}
             </div>

@@ -1,9 +1,10 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import Layout from '../../components/Layout/Layout'
 
+
 const Setting: NextPage = () => {
+
   return (
     <Layout>
       <Head>
@@ -13,7 +14,6 @@ const Setting: NextPage = () => {
       </Head>
 
       <div>
-        <h1>설정페이지</h1>
       </div>
     </Layout>
   )
