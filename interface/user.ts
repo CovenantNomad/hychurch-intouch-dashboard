@@ -18,23 +18,40 @@ export interface MemberProps {
   }
 }
 
-export interface UserInfomationProps {
-  gender: Gender
-  isActive: boolean
-  birthday: string
+
+export interface Member {
+  id: string
+  name: string
   phone: string
-  address: string
+  isActive: boolean
+  birthday?: string | null | undefined
+  gender?: Gender | null | undefined
+  address?: string | null | undefined
+  cell?: {
+    id: string
+    name: string
+  } | null | undefined
+  roles: RoleType[]
+  description: string
+}
+
+export interface UserInfomationProps {
+  gender: Gender | null | undefined
+  isActive: boolean
+  birthday: string | null | undefined
+  phone: string
+  address: string | null | undefined
   description: string
 }
 
 export interface UpdateUserInfomationProps {
   id: string
   name: string
-  gender: Gender
   isActive: boolean
-  birthday: string
+  birthday?: string | null | undefined
+  gender?: Gender | null | undefined
+  address?: string | null | undefined
   phone: string
-  address: string
   description: string
-  setUser: Dispatch<SetStateAction<MemberProps>>
+  setUser: Dispatch<SetStateAction<Member>>
 }

@@ -6,11 +6,15 @@ import Link from "next/link"
 import EditUserInfomation from "../../components/Blocks/Infomation/EditUserInfomation"
 import UserInfomation from "../../components/Blocks/Infomation/UserInfomation"
 import Layout from "../../components/Layout/Layout"
+import { Member } from "../../interface/user"
 
+interface MemberDetailPage {
+  userInfo : Member
+}
 
-const MemberDetailPage:NextPage = (props) => {
+const MemberDetailPage:NextPage<MemberDetailPage> = (props) => {
   const userInfo = props.userInfo
-  const [ user, setUser ] = useState(userInfo)
+  const [ user, setUser ] = useState<Member>(userInfo)
   const [ editMode, setEditMode ] = useState(false)
 
 
@@ -25,9 +29,9 @@ const MemberDetailPage:NextPage = (props) => {
       <section className="md:flex md:items-center md:justify-between md:space-x-5">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-1">{user.name}</h1>
-          <Link href={`/organizations/${user.cell.id}`}>
+          <Link href={`/organizations/${user.cell!.id}`}>
             <a className="text-sm font-medium text-gray-500">
-              Cell: {user.cell.name}
+              Cell: {user.cell!.name}
             </a>
           </Link>
         </div>
