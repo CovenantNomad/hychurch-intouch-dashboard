@@ -210,7 +210,7 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
               <input
                 id='address'
                 type="text"
-                defaultValue={address || ""}
+                defaultValue={address!}
                 placeholder="주소"
                 {...register("address")}
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
@@ -226,7 +226,7 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
                   rows={3}
                   className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
                   placeholder="인도자, 방문계기 등 추가적으로 입력할 사항을 기입해주세요"
-                  defaultValue={description}
+                  defaultValue={description!}
                   {...register("description")}
                 />
               </div>

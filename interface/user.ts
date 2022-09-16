@@ -32,7 +32,7 @@ export interface Member {
     name: string
   } | null | undefined
   roles: RoleType[]
-  description: string
+  description?: string | null | undefined
 }
 
 export interface UserInfomationProps {
@@ -41,7 +41,7 @@ export interface UserInfomationProps {
   birthday: string | null | undefined
   phone: string
   address: string | null | undefined
-  description: string
+  description: string | null | undefined
 }
 
 export interface UpdateUserInfomationProps {
@@ -52,6 +52,6 @@ export interface UpdateUserInfomationProps {
   gender?: Gender | null | undefined
   address?: string | null | undefined
   phone: string
-  description: string
+  description: string | null | undefined
   setUser: Dispatch<SetStateAction<Member>>
 }
