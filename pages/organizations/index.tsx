@@ -45,14 +45,14 @@ const Cell: NextPage = () => {
           </motion.button>
         </header>
         {isLoading ? (
-          <div className='grid grid-cols-2 gap-4 mb-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+          <div className='grid grid-cols-2 gap-4 mb-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6'>
             {Array.from({ length: 6 }, (_, index) => index).map(item => (
               <div key={item} className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"></div>
             ))}
           </div>
         ) : (
           <>
-            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6'>
+            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6 2xl:grid-cols-6'>
               {data?.findCells.nodes.sort((a, b) => {
                 if (a.name > b.name) return 1;
                 else if (b.name > a.name) return -1;
