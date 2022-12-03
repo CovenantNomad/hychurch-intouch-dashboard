@@ -6,8 +6,12 @@ import { Cell, FindCellQuery, FindCellQueryVariables, Gender, RoleType, useFindC
 import graphlqlRequestClient from '../../client/graphqlRequestClient';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale, Title } from 'chart.js';
+import CellInfomation from '../../components/Blocks/Cells/CellInfomation';
+import CellTransferScreen from '../../components/Blocks/Cells/CellTransferScreen';
 
-interface TabProps {
+export interface TabProps {
   name: string;
   count: number;
   current: boolean;
@@ -28,8 +32,12 @@ export type SimpleUser = {
   roles: RoleType[]
 };
 
+ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+
 const Detail: NextPage = () => {
   const { query } = useRouter()
+  const [ categoryId, setCategoryId ] = useState<number>(0)
   const [ tabs, setTabs ] = useState<TabProps[]>(
     [
       { name: 'All', count: 0, current: true },
@@ -78,6 +86,39 @@ const Detail: NextPage = () => {
     )
   }, [data?.findCell.members])
 
+  const donutData = {
+    labels: [
+      '형제',
+      '자매',
+    ],
+    datasets: [{
+      label: 'M/W Ratio',
+      data: [data?.findCell.members?.filter(member => member.gender === 'MAN').length || 0, data?.findCell.members?.filter(member => member.gender === 'WOMAN').length || 0],
+      backgroundColor: [
+        'rgb(54, 162, 235)',
+        'rgb(255, 99, 132)',
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+  const categories = [
+    { id: 0, 
+      name: "Infomations", 
+      component: <CellInfomation donutData={donutData} tabs={tabs} onClickHandler={onClickHandler} isLoading={isLoading} data={data} filterMembers={filterMembers} />
+    },
+    { 
+      id: 1, 
+      name: "Transfers", 
+      component: <CellTransferScreen />
+    },
+    { 
+      id: 2, 
+      name: "Reports", 
+      component: <CellTransferScreen />
+    },
+  ]
+
   return (
     <Layout>
       <Head>
@@ -87,117 +128,29 @@ const Detail: NextPage = () => {
       </Head>
       
       <section>
-        <div className='py-4 border-b'>
+        <div className='py-2 border-b'>
           <h1 className="text-2xl font-bold text-gray-900 font-notosans mb-1">{data?.findCell.name}</h1>
-          {/* <p className="text-sm font-medium text-gray-500">
-            00 공동체
-          </p> */}
+        </div>
+
+        <div className=''>
+          <nav className='flex divide-x divide-gray-200 rounded-lg shadow'>
+            {categories.map((category) => (
+              <div 
+                key={category.id}
+                onClick={() => setCategoryId(category.id)} 
+                className='group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10'
+              >
+                <span className='text-lg uppercase'>{category.name}</span>
+                <span className={`${category.id === categoryId ? 'bg-blue-600': 'bg-transparent'} absolute inset-x-0 bottom-0 h-0.5`}/>
+              </div>
+            ))}
+          </nav>
         </div>
 
         <div className="pt-16 pb-16">
-          <h2 className="text-lg font-medium text-gray-900">Cell Members</h2>
-          {/* mobile */}
-          <div className="sm:hidden">
-            <label htmlFor="tabs" className="sr-only">
-              Select a tab
-            </label>
-            <select
-              id="tabs"
-              name="tabs"
-              className="mt-4 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md"
-              defaultValue={'All'}
-            >
-              {tabs.map((tab) => (
-                <option key={tab.name}>{tab.name}</option>
-              ))}
-            </select>
-          </div>
-          {/* desktop */}
-          <div className="hidden sm:block">
-            <div className="border-b border-gray-200">
-              <nav className="mt-2 -mb-px flex space-x-8" aria-label="Tabs">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.name}
-                    onClick={() => onClickHandler(tab.name)}
-                    disabled={isLoading || data === undefined}
-                    className={`${tab.current ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-                  >
-                    {tab.name}
-                    <span
-                      className={`${tab.current ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-900'}
-                        hidden ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium md:inline-block
-                      `}
-                    >
-                      {tab.count}
-                    </span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="mt-8 flex flex-col">
-            <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                          Name
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                          Gender
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                          PhoneNumber
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                          Birthday
-                        </th>
-                        <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                          <span className="sr-only">Edit</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    {!isLoading && filterMembers !== undefined ? (
-                      <tbody className="bg-white">
-                        {filterMembers.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0).map((person, personIdx) => (
-                          <tr key={personIdx} className={personIdx % 2 === 0 ? undefined : 'bg-gray-50'}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                              {person.name}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.gender === 'MAN' ? "형제" : "자매"}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.phone}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.birthday}</td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                              <Link 
-                                href={{
-                                  pathname: `/members/${person.id}`,
-                                  query: {userInfo: JSON.stringify(person)}
-                                }}
-                                as={`/members/${person.id}`}
-                              >
-                                <a  className="text-indigo-600 hover:text-indigo-900">
-                                  Edit<span className="sr-only">, {person.name}</span>
-                                </a>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    ) : (
-                      <div> 로딩중...</div>
-                    )
-                  }
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
+          {categories[categoryId].component}
         </div>
+        
       </section>
     </Layout>
   )

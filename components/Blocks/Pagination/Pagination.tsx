@@ -49,10 +49,10 @@ const Pagination = ({ pageSize, setPageSize, currentPage, setCurrentPage, totalC
             value={pageSize}
             className="mt-1 block py-1 px-3 mx-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
           >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={30}>30</option>
-            <option value={40}>40</option>
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={36}>36</option>
+            <option value={48}>48</option>
           </select>
           <span>person per page</span>
         </div>
