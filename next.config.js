@@ -5,7 +5,7 @@ const nextConfig = {
     return [
       {
         source: '/api',
-        destination: `https://hychurch.duckdns.org:3000/graphql`,
+        destination: `https://hychurch-server.duckdns.org:3000/graphql`,
       },
     ];
   },

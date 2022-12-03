@@ -22,13 +22,13 @@ const CellCard = ({ id, name, leader, totalCountOfMembers, countOfActiveMembers 
       </div>
       <div>
         <span className='text-gray-500'>셀원현황</span>
-        <div className='border border-gray-300 bg-gray-50 flex justify-around py-2 mt-2'>
+        <div className='border border-gray-300 bg-gray-50 flex justify-around py-2 mt-1'>
           <div className='border-l-2 border-l-gray-500 pl-2'>
-            <span className='block text-sm text-gray-500 font-semibold'>TOTAL</span>
+            <span className='block text-sm text-gray-500 font-semibold'>전체인원</span>
             <span className='block text-lg font-bold'>{totalCountOfMembers}</span>
           </div>
           <div className='border-l-2 border-l-navy-blue pl-2'>
-            <span className='block text-sm text-gray-500 font-semibold'>ACTIVE</span>
+            <span className='block text-sm text-gray-500 font-semibold'>활동인원</span>
             <span className='block text-lg font-bold'>{countOfActiveMembers}</span>
           </div>
         </div>

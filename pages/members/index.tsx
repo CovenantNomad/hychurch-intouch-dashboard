@@ -41,14 +41,14 @@ const Members: NextPage = () => {
           </div>
         </header>
         {isLoading ? (
-          <div className='grid grid-cols-2 gap-4 mb-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6'>
+          <div className='grid grid-cols-2 gap-4 mb-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6'>
             {Array.from({ length: 6 }, (_, index) => index).map(item => (
               <div key={item} className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"></div>
             ))}
           </div>
         ) : (
           <>
-            <div className='grid grid-cols-2 gap-4 mb-16 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6'>
+            <div className='grid grid-cols-2 gap-4 mb-16 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6'>
               {data?.findUsers.nodes.map(member => (
                 <MemberCard 
                   key={member.id} 
