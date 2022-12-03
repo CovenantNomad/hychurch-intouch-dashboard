@@ -15,7 +15,8 @@ const Register: NextPage = () => {
       reset()
     },
     onError: (error) => {
-      error?.graphQLErrors?.[0]?.extensions?.code || ErrorCode.UNKNOWN_ERROR;
+      // error?.graphQLErrors?.[0]?.extensions?.code || ErrorCode.UNKNOWN_ERROR;
+      console.log(error)
     }
   })
 
