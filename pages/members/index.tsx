@@ -22,6 +22,10 @@ const Members: NextPage = () => {
       name,
       limit: pageSize,
       offset: Math.max(currentPage - 1, 0) * pageSize,
+    },
+    {
+      staleTime: 60 * 60 * 1000,
+      cacheTime: 60 * 60 * 1000 * 24
     }
   )
 

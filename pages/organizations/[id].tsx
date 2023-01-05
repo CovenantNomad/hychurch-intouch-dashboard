@@ -1,52 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { NextPage } from "next";
-import Layout from '../../components/Layout/Layout';
 import Head from 'next/head';
-import { Cell, FindCellQuery, FindCellQueryVariables, Gender, RoleType, useFindCellQuery } from '../../graphql/generated';
-import graphlqlRequestClient from '../../client/graphqlRequestClient';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale, Title } from 'chart.js';
-import CellInfomation from '../../components/Blocks/Cells/CellInfomation';
-import CellTransferScreen from '../../components/Blocks/Cells/CellTransferScreen';
+import Layout from '../../components/Layout/Layout';
+import CellInfomationScreen from '../../components/Screens/Cells/CellInfomationScreen';
+import CellTransferScreen from '../../components/Screens/Cells/CellTransferScreen';
+import CellReportScreen from '../../components/Screens/Cells/CellReportScreen';
+import FullWidthTabs from '../../components/Atoms/Tabs/FullWidthTabs';
+import graphlqlRequestClient from '../../client/graphqlRequestClient';
+import { FindCellQuery, FindCellQueryVariables, useFindCellQuery } from '../../graphql/generated';
+import { useRecoilState } from 'recoil';
+import { selectedState } from '../../stores/selectedState';
 
-export interface TabProps {
-  name: string;
-  count: number;
-  current: boolean;
-}
-
-export type SimpleUser = {
-  id: string
-  name: string
-  phone: string
-  isActive: boolean
-  birthday?: string | null | undefined
-  gender?: Gender | null | undefined
-  address?: string | null | undefined
-  cell?: {
-    id: string
-    name: string
-  } | null | undefined
-  roles: RoleType[]
-};
-
-ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-
-const Detail: NextPage = () => {
+const CellDetail = () => {
   const { query } = useRouter()
   const [ categoryId, setCategoryId ] = useState<number>(0)
-  const [ tabs, setTabs ] = useState<TabProps[]>(
-    [
-      { name: 'All', count: 0, current: true },
-      { name: 'Active', count: 0, current: false },
-      { name: 'Inactive', count: 0, current: false },
-    ]
-  )
-  const [ filterMembers, setFilterMembers ] = useState<SimpleUser[]>([])
-
+  const [ selectedStatus, setSelectedStatus ] = useRecoilState(selectedState)
   const { isLoading, data } = useFindCellQuery<FindCellQuery, FindCellQueryVariables>(
     graphlqlRequestClient,
     {
@@ -54,100 +22,61 @@ const Detail: NextPage = () => {
     },
     {
       enabled: Boolean(query.id),
-      onSuccess(data) {
-        setFilterMembers(data.findCell.members)
-      },
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000
     }
   )
 
-  const onClickHandler = (name: string) =>{
-    setTabs(tabs.map(tab => tab.name === name ? {...tab, current: true} : {...tab, current: false}))
-    switch (name) {
-      case "Active":
-        return setFilterMembers(data!.findCell.members.filter(member => member.isActive))
-      case "Inactive":
-        return setFilterMembers(data!.findCell.members.filter(member => !member.isActive))
-      default:
-        return setFilterMembers(data!.findCell.members)
-    }
-  }
-
-  useEffect(() => {
-    const totalCount = data?.findCell.members?.length || 0
-    const countOfactiveUser = data?.findCell.members?.filter(member => member.isActive).length || 0
-    const countOfinactiveUser = data?.findCell.members?.filter(member => !member.isActive).length || 0
-
-    setTabs(
-      [
-        { name: 'All', count: totalCount, current: true },
-        { name: 'Active', count: countOfactiveUser, current: false },
-        { name: 'Inactive', count: countOfinactiveUser, current: false },
-      ]
-    )
-  }, [data?.findCell.members])
-
-  const donutData = {
-    labels: [
-      '형제',
-      '자매',
-    ],
-    datasets: [{
-      label: 'M/W Ratio',
-      data: [data?.findCell.members?.filter(member => member.gender === 'MAN').length || 0, data?.findCell.members?.filter(member => member.gender === 'WOMAN').length || 0],
-      backgroundColor: [
-        'rgb(54, 162, 235)',
-        'rgb(255, 99, 132)',
-      ],
-      hoverOffset: 4
-    }]
-  };
-
   const categories = [
     { id: 0, 
-      name: "Infomations", 
-      component: <CellInfomation donutData={donutData} tabs={tabs} onClickHandler={onClickHandler} isLoading={isLoading} data={data} filterMembers={filterMembers} />
+      name: "셀 정보", 
+      component: <CellInfomationScreen />
     },
     { 
       id: 1, 
-      name: "Transfers", 
-      component: <CellTransferScreen />
+      name: "셀 보고서", 
+      component: <CellReportScreen />
     },
     { 
       id: 2, 
-      name: "Reports", 
+      name: "셀 편성", 
       component: <CellTransferScreen />
     },
   ]
 
+  useEffect(() => {
+    if (data) {
+      setSelectedStatus({
+        ...selectedStatus,
+        selectedCell: {
+          cellId: data.findCell.id,
+          cellName: data.findCell.name
+        }
+      })
+    }
+  }, [data])
+
   return (
     <Layout>
       <Head>
-        <title>마이 셀 정보 | INTOUCH CHURCH</title>
+        <title>{query.cellName || data?.findCell.name} | INTOUCH CHURCH</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
       <section>
-        <div className='py-2 border-b'>
-          <h1 className="text-2xl font-bold text-gray-900 font-notosans mb-1">{data?.findCell.name}</h1>
+        <div className='py-2 '>
+          <h1 className="text-2xl font-bold text-gray-900 font-notosans mb-1">{query.cellName || data?.findCell.name}</h1>
         </div>
 
-        <div className=''>
-          <nav className='flex divide-x divide-gray-200 rounded-lg shadow'>
-            {categories.map((category) => (
-              <div 
-                key={category.id}
-                onClick={() => setCategoryId(category.id)} 
-                className='group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10'
-              >
-                <span className='text-lg uppercase'>{category.name}</span>
-                <span className={`${category.id === categoryId ? 'bg-blue-600': 'bg-transparent'} absolute inset-x-0 bottom-0 h-0.5`}/>
-              </div>
-            ))}
-          </nav>
+        <div className='mt-4'>
+          <FullWidthTabs 
+            tabs={categories} 
+            currentTab={categoryId} 
+            setCurrentTab={setCategoryId} />
         </div>
 
-        <div className="pt-16 pb-16">
+        <div className="pt-8 pb-8 md:pt-12 md:pb-12 lg:pt-16 lg:pb-16">
           {categories[categoryId].component}
         </div>
         
@@ -156,4 +85,4 @@ const Detail: NextPage = () => {
   )
 }
 
-export default Detail
+export default CellDetail

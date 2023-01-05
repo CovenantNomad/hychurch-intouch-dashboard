@@ -1,3 +1,4 @@
+import { GraphQLError } from 'graphql-request/dist/types'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -6,9 +7,10 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useSetRecoilState } from 'recoil'
 import graphlqlRequestClient from '../client/graphqlRequestClient'
 import { INTOUCH_DASHBOARD_USER } from '../constants/constant'
-import { useLoginMutation } from '../graphql/generated'
+import { LoginMutation, useLoginMutation } from '../graphql/generated'
 import { LoginForm } from '../interface/login'
 import { userState } from '../stores/authState'
+import { makeErrorMessage } from '../utils/utils'
 
 
 const Login: NextPage = () => {
@@ -18,23 +20,25 @@ const Login: NextPage = () => {
     onSuccess: (data) => {
       const userInfo = JSON.stringify({
         isLoggedIn: true,
-        accessToken: data.login.accessToken,
-        username: data.login.user.name
+        username: data.login.user.name,
+        userId: data.login.user.id,
+        accessToken: data.login.accessToken
       })
       localStorage.setItem(INTOUCH_DASHBOARD_USER, userInfo)
       graphlqlRequestClient.setHeader("authorization", data.login.accessToken)
       setUser({
         isLoggedIn: true,
-        accessToken: data.login.accessToken,
-        username: data.login.user.name
+        username: data.login.user.name,
+        userId: data.login.user.id,
+        accessToken: data.login.accessToken
       })
       router.push("/home")
     },
-    onError(error) {
+    onError(errors) {
       if (error instanceof Error) {
-        toast.error(`로그인에 실패했습니다.\n${error.message.split(":")[0]}`)
+        toast.error(`로그인에 실패했습니다.\n${makeErrorMessage(error.message)}`)
       }
-    }
+    },
   })
 
   const { handleSubmit, register, formState: {errors}} = useForm<LoginForm>()
@@ -46,6 +50,12 @@ const Login: NextPage = () => {
         password
       }
     })
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    console.log('Production')
+  } else {
+    console.log('Dev')
   }
 
 

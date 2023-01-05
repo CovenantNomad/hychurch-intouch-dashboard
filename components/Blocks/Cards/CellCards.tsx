@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
+import { selectedState } from '../../../stores/selectedState';
 
 interface CellCardProps {
   id: string
@@ -11,6 +13,7 @@ interface CellCardProps {
 }
 
 const CellCard = ({ id, name, leader, totalCountOfMembers, countOfActiveMembers }: CellCardProps) => {
+  const [ selectedStatus, setSelectedStatus ] = useRecoilState(selectedState)
   return (
     <motion.div 
       whileHover={{ borderTopColor: '#005BD7' }}
@@ -34,8 +37,22 @@ const CellCard = ({ id, name, leader, totalCountOfMembers, countOfActiveMembers 
         </div>
       </div>
       <div className='flex justify-end mt-6 pt-3 border-t border-t-gray-300'>
-        <Link href={`/organizations/${id}`}>
-          <a>
+        <Link 
+          href={{
+            pathname: `/organizations/${id}`,
+            query: { cellName: name }
+          }} 
+          as={`/organizations/${id}`}
+        >
+          <a 
+            onClick={() => setSelectedStatus({
+              ...selectedStatus,
+              selectedCell: {
+                cellId: id,
+                cellName: name
+              }
+            })}
+          >
             <span className='font-bold text-sm text-gray-500 hover:text-navy-blue'>자세히보기</span>
           </a>
         </Link>

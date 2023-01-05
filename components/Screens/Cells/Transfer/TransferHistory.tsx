@@ -1,8 +1,12 @@
 import React from 'react';
+import { FindCellWithTranferDataQuery } from '../../../../graphql/generated';
 
-interface TransferHistoryProps {}
+interface TransferHistoryProps {
+  data: FindCellWithTranferDataQuery | undefined
+  isLoading: boolean
+}
 
-const TransferHistory = ({}: TransferHistoryProps) => {
+const TransferHistory = ({ data, isLoading }: TransferHistoryProps) => {
   return (
     <div className='px-6 pt-8 py-32 bg-white'>
       <div className=''>

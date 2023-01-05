@@ -54,4 +54,8 @@ export interface UpdateUserInfomationProps {
   phone: string
   description: string | null | undefined
   setUser: Dispatch<SetStateAction<Member>>
+  cell: {
+    id: string;
+    name: string;
+  } | null | undefined
 }

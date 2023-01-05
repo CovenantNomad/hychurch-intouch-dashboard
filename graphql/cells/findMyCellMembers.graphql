@@ -9,5 +9,9 @@ query findMyCellMembers {
     address
     description
     roles
+    cell {
+      id
+      name
+    }
   }
 }

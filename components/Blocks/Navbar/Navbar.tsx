@@ -39,7 +39,7 @@ const Navbar = () => {
         <h1>계정</h1>
       </div>
       <motion.div 
-        className={`h-screen w-full absolute top-16 left-0 bg-black flex md:hidden`}
+        className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex md:hidden`}
         variants={variants}
         animate={isOpen ? "open" : "closed"}
       >

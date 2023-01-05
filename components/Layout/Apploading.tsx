@@ -22,9 +22,10 @@ const Apploading = ({ children }: ApploadingProps) => {
         const userInfo = JSON.parse(jsonValue)
         graphlqlRequestClient.setHeader("authorization", userInfo.accessToken)
         setUser({
+          isLoggedIn: true,
           username: userInfo.username,
+          userId: userInfo.userId,
           accessToken: userInfo.accessToken,
-          isLoggedIn: true
         })
         setIsLoadingCompleted(true)
       } else {

@@ -9,6 +9,7 @@ import Stepper from '../Steps/Stepper'
 import FindLeader from '../Steps/FindLeader'
 import Check from '../Steps/Check'
 import Final from '../Steps/Final'
+import { dropIn } from '../../../styles/animation'
 
 interface AddCellModalProps {
   modalOpen: Boolean
@@ -84,26 +85,7 @@ const AddCellModal = ({ modalOpen, handleClose }: AddCellModalProps) => {
     }
   }
 
-  const dropIn = {
-    hidden: {
-      y: "-100vh",
-      opacity: 0,
-    },
-    visible: {
-      y: "0",
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        type: "spring",
-        damping: 25,
-        stiffness: 500,
-      },
-    },
-    exit: {
-      y: "100vh",
-      opacity: 0,
-    },
-  };
+  
 
 
   return (
@@ -127,7 +109,7 @@ const AddCellModal = ({ modalOpen, handleClose }: AddCellModalProps) => {
           </div>
 
           {currentStage !== TOTAL_STAGE && (
-            <StepControl onNextHandler={onNextHandler} onBackHandler={onBackHandler} currentStage={currentStage} leader={leader} />
+            <StepControl onNextHandler={onNextHandler} onBackHandler={onBackHandler} currentStage={currentStage} user={leader} lastStage={TOTAL_STAGE} />
           )}
         </div>
       </motion.div>

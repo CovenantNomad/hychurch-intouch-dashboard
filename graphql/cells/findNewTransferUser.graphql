@@ -1,0 +1,41 @@
+query findNewTransferUser(
+  $id: Float!
+  $transferOutStatus: [UserCellTransferStatus!]
+  $transferOutDateFilter: DateFilter
+) {
+  findCell(id: $id) {
+    id
+    name
+    members {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    transfersOut(
+      status: $transferOutStatus
+      orderDate: $transferOutDateFilter
+    ) {
+      id
+      status
+      orderDate
+      completeDate
+      user {
+        id
+        name
+        gender
+      }
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+    }
+  }
+}

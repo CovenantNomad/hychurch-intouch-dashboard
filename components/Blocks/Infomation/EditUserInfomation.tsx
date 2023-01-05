@@ -1,18 +1,26 @@
 import { useForm } from "react-hook-form"
 import toast, { Toaster } from "react-hot-toast"
+import { useQueryClient } from "react-query"
 import graphlqlRequestClient from "../../../client/graphqlRequestClient"
-import { useUpdateUserMutation } from "../../../graphql/generated"
+import { useFindUsersQuery, useUpdateUserMutation } from "../../../graphql/generated"
 import { EditForm } from "../../../interface/register"
 import { UpdateUserInfomationProps } from "../../../interface/user"
 
 
 
-const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, address, description, setUser }: UpdateUserInfomationProps) => {
+const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, address, description, cell, setUser }: UpdateUserInfomationProps) => {
+  const queryClient = useQueryClient()
   const { handleSubmit, register, formState: { errors }, reset } = useForm<EditForm>()
-  const {mutateAsync, isLoading, isError, isSuccess} = useUpdateUserMutation(graphlqlRequestClient, {
+  const { mutateAsync, isLoading, isError, isSuccess } = useUpdateUserMutation(graphlqlRequestClient, {
     onSuccess: (data) => {
       toast.success("정보가 수정되었습니다")
       setUser(data.updateUser.user)
+      queryClient.invalidateQueries({
+        queryKey: ['findUsers']
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['findCell', {id: Number(cell?.id)}]
+      })
     },
     onError: (error) => {
       console.log(error)

@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { RecoilRoot } from 'recoil'
 import { QueryClient, QueryClientProvider } from 'react-query'
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Apploading from '../components/Layout/Apploading'
 
 
@@ -19,8 +20,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <Apploading>
-          <Component {...pageProps} />
+          <Component {...pageProps}/>
         </Apploading>
+        {/* <ReactQueryDevtools initialIsOpen={false} position='bottom-right' /> */}
       </QueryClientProvider>
     </RecoilRoot>
   )

@@ -69,6 +69,7 @@ const MemberDetailPage:NextPage<MemberDetailPage> = (props) => {
                   address={user.address}
                   description={user.description}
                   setUser={setUser}
+                  cell={user.cell}
                 />
               :
                 <UserInfomation 

@@ -14,13 +14,16 @@ import Layout from '../../components/Layout/Layout'
 const Cell: NextPage = () => {
   const [ modalOpen, setModalOpen ] = useState<boolean>(false)
 
-  const handleOpen = () => setModalOpen(true)
   const handleClose = () => setModalOpen(false)
 
   const { isLoading, data } = useFindCellsQuery<FindCellsQuery, FindCellsQueryVariables>(
     graphlqlRequestClient,
     {
       limit: 40
+    },
+    {
+      staleTime: 60 * 60 * 1000,
+      cacheTime: 60 * 60 * 1000 * 24,
     }
   )
 
