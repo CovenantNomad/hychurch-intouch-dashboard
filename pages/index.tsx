@@ -20,16 +20,16 @@ const Login: NextPage = () => {
     onSuccess: (data) => {
       const userInfo = JSON.stringify({
         isLoggedIn: true,
-        username: data.login.user.name,
-        userId: data.login.user.id,
+        username: "",
+        userId: "",
         accessToken: data.login.accessToken
       })
       localStorage.setItem(INTOUCH_DASHBOARD_USER, userInfo)
       graphlqlRequestClient.setHeader("authorization", data.login.accessToken)
       setUser({
         isLoggedIn: true,
-        username: data.login.user.name,
-        userId: data.login.user.id,
+        username: "",
+        userId: "",
         accessToken: data.login.accessToken
       })
       router.push("/home")

@@ -153,7 +153,6 @@ export type LoginPayload = {
   __typename?: 'LoginPayload';
   /** 토큰 */
   accessToken: Scalars['String'];
-  user: User;
 };
 
 export type Mutation = {
@@ -233,6 +232,8 @@ export type Query = {
   findChurchServices: Array<ChurchService>;
   /** 전체 사용자 조회 */
   findUsers: FindUsersPayload;
+  /** 로그인한 사용자의 정보를 조회합니다. */
+  me: User;
   /** 셀원 조회. 셀장만 셀원 조회가 가능합니다. */
   myCellMembers?: Maybe<Array<User>>;
 };
@@ -336,6 +337,7 @@ export type SubmitCellMemberChurchServiceAttendanceHistoriesPayload = {
 
 export type UpdateUserCellTransferInput = {
   id: Scalars['ID'];
+  /** ORDERED 상태로의 업데이트는 지원하지 않습니다. 오직 CANCELED 또는 CONFIRMED 상태로의 업데이트만 가능합니다. */
   status: UserCellTransferStatus;
 };
 
@@ -458,7 +460,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', accessToken: string, user: { __typename?: 'User', id: string, name: string, phone: string, roles: Array<RoleType> } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', accessToken: string } };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
@@ -564,12 +566,6 @@ export const LoginDocument = `
     mutation login($input: LoginInput!) {
   login(input: $input) {
     accessToken
-    user {
-      id
-      name
-      phone
-      roles
-    }
   }
 }
     `;
