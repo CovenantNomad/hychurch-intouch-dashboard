@@ -9,23 +9,15 @@ import graphlqlRequestClient from '../../../client/graphqlRequestClient';
 import { INTOUCH_DASHBOARD_USER } from '../../../constants/constant';
 // menu
 import { menu } from '../../../constants/menu';
-
-
-
+import { useMeQuery } from '../../../graphql/generated';
 
 const Sidebar = () => {
   const router = useRouter()
-  const [ { username }, setUser ] = useRecoilState(userState)
+  const { data } = useMeQuery(graphlqlRequestClient, {}, { staleTime: 5 * 60 * 1000, cacheTime: 10 * 60 * 1000 })
 
   const onLogOutHandler = () => {
     localStorage.removeItem(INTOUCH_DASHBOARD_USER)
     graphlqlRequestClient.setHeader("authorization", "")
-    setUser({
-      username: "",
-      userId: "",
-      accessToken: "",
-      isLoggedIn: false
-    })
     router.push("/")
   }
 
@@ -61,7 +53,7 @@ const Sidebar = () => {
         <div className='h-[1px] bg-slate-600 w-full my-4'></div>
         <div className='pb-12 px-3'>
           <span className='text-sm text-white tracking-wider block mb-1'>Logged-in User</span>
-          <span className='text-white tracking-wider'>{username}</span>
+          <span className='text-white tracking-wider'>{data?.me.name}</span>
         </div>
       </div>
     </div>

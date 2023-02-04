@@ -1,8 +1,10 @@
 import React from 'react';
 
-interface EmptyStateSimpleProps {}
+interface EmptyStateSimpleProps {
+  warning?: boolean
+}
 
-const EmptyStateSimple = ({}: EmptyStateSimpleProps) => {
+const EmptyStateSimple = ({ warning }: EmptyStateSimpleProps) => {
   return (
     <div className="text-center bg-white py-4">
       <svg
@@ -21,7 +23,7 @@ const EmptyStateSimple = ({}: EmptyStateSimpleProps) => {
         />
       </svg>
       <h3 className="mt-2 text-base font-medium text-gray-900">데이터가 없습니다</h3>
-      <p className="mt-1 text-sm text-gray-500">관리자에게 연락해주세요</p>
+      {warning &&  <p className="mt-1 text-sm text-gray-500">관리자에게 연락해주세요</p>}
     </div>
   );
 };

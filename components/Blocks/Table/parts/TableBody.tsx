@@ -1,27 +1,38 @@
-import React, { Fragment } from 'react';
-import { Member } from '../../../../interface/user';
-import { RoleType } from '../../../../graphql/generated';
-import TableRow from './TableRow';
-import TableGroupHeading from './TableGroupHeading';
+import React, { Fragment } from "react";
+import { Member } from "../../../../interface/user";
+import { RoleType } from "../../../../graphql/generated";
+import TableRow from "./TableRow";
+import TableGroupHeading from "./TableGroupHeading";
 
 interface TableBodyProps {
-  members: Member[]
+  members: Member[];
 }
 
 const TableBody = ({ members }: TableBodyProps) => {
-  const leader = members.filter(member => member.roles.includes(RoleType.CellLeader))
-  const activceMembers = members.filter(member => member.isActive && !member.roles.includes(RoleType.CellLeader)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
-  const unActiveMembers = members.filter(member => !member.isActive && !member.roles.includes(RoleType.CellLeader)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
+  const leader = members.filter((member) =>
+    member.roles.includes(RoleType.CellLeader)
+  );
+  const activceMembers = members
+    .filter(
+      (member) => member.isActive && !member.roles.includes(RoleType.CellLeader)
+    )
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  const unActiveMembers = members
+    .filter(
+      (member) =>
+        !member.isActive && !member.roles.includes(RoleType.CellLeader)
+    )
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 
   const groups = [
-    {name: "셀리더", members: leader},
-    {name: "활동청년", members: activceMembers},
-    {name: "비활동청년", members: unActiveMembers},
-  ]
+    { name: "셀리더", members: leader },
+    { name: "활동청년", members: activceMembers },
+    { name: "비활동청년", members: unActiveMembers },
+  ];
 
   return (
     <tbody className="bg-white">
-      {groups.map(group => (
+      {groups.map((group) => (
         <Fragment key={group.name}>
           <TableGroupHeading name={group.name} />
           {group.members ? (

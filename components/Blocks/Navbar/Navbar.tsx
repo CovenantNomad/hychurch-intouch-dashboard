@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 
 
 const Navbar = () => {
@@ -38,13 +38,17 @@ const Navbar = () => {
         <h1>INTOUCH</h1>
         <h1>계정</h1>
       </div>
-      <motion.div 
-        className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex md:hidden`}
-        variants={variants}
-        animate={isOpen ? "open" : "closed"}
-      >
-        <h1>화면</h1>
-      </motion.div>
+      {isOpen && (
+        <AnimatePresence>
+          <motion.div 
+            className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex md:hidden`}
+            variants={variants}
+            animate={isOpen ? "open" : "closed"}
+          >
+            <h1 className="text-white">화면</h1>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </>
   )
 }

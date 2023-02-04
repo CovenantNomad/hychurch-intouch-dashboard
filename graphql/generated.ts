@@ -462,6 +462,11 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', accessToken: string } };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
+
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
 }>;
@@ -531,6 +536,13 @@ export type FindNewTransferUserQueryVariables = Exact<{
 
 export type FindNewTransferUserQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
+export type UpdateUserCellTransferMutationVariables = Exact<{
+  input: UpdateUserCellTransferInput;
+}>;
+
+
+export type UpdateUserCellTransferMutation = { __typename?: 'Mutation', updateUserCellTransfer: { __typename?: 'UpdateUserCellTransferPayload', userCellTransfer: { __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } } } };
+
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -546,6 +558,15 @@ export type RegisterNewUserMutationVariables = Exact<{
 
 
 export type RegisterNewUserMutation = { __typename?: 'Mutation', registerNewUser: { __typename?: 'RegisterNewUserPayload', user: { __typename?: 'User', id: string, name: string } } };
+
+export type SearchUsersQueryVariables = Exact<{
+  name?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUserInput;
@@ -583,6 +604,37 @@ export const useLoginMutation = <
       options
     );
 useLoginMutation.getKey = () => ['login'];
+
+export const MeDocument = `
+    query me {
+  me {
+    id
+    name
+    roles
+    cell {
+      id
+      name
+    }
+  }
+}
+    `;
+export const useMeQuery = <
+      TData = MeQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: MeQueryVariables,
+      options?: UseQueryOptions<MeQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<MeQuery, TError, TData>(
+      variables === undefined ? ['me'] : ['me', variables],
+      fetcher<MeQuery, MeQueryVariables>(client, MeDocument, variables, headers),
+      options
+    );
+
+useMeQuery.getKey = (variables?: MeQueryVariables) => variables === undefined ? ['me'] : ['me', variables];
+;
 
 export const SignUpDocument = `
     mutation signUp($input: SignUpInput!) {
@@ -940,6 +992,45 @@ export const useFindNewTransferUserQuery = <
 useFindNewTransferUserQuery.getKey = (variables: FindNewTransferUserQueryVariables) => ['findNewTransferUser', variables];
 ;
 
+export const UpdateUserCellTransferDocument = `
+    mutation updateUserCellTransfer($input: UpdateUserCellTransferInput!) {
+  updateUserCellTransfer(input: $input) {
+    userCellTransfer {
+      id
+      user {
+        id
+        name
+      }
+      status
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+      orderDate
+      completeDate
+    }
+  }
+}
+    `;
+export const useUpdateUserCellTransferMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<UpdateUserCellTransferMutation, TError, UpdateUserCellTransferMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<UpdateUserCellTransferMutation, TError, UpdateUserCellTransferMutationVariables, TContext>(
+      ['updateUserCellTransfer'],
+      (variables?: UpdateUserCellTransferMutationVariables) => fetcher<UpdateUserCellTransferMutation, UpdateUserCellTransferMutationVariables>(client, UpdateUserCellTransferDocument, variables, headers)(),
+      options
+    );
+useUpdateUserCellTransferMutation.getKey = () => ['updateUserCellTransfer'];
+
 export const FindUsersDocument = `
     query findUsers($name: String, $limit: Int, $offset: Int) {
   findUsers(name: $name, limit: $limit, offset: $offset) {
@@ -1004,6 +1095,46 @@ export const useRegisterNewUserMutation = <
       options
     );
 useRegisterNewUserMutation.getKey = () => ['registerNewUser'];
+
+export const SearchUsersDocument = `
+    query searchUsers($name: String, $limit: Int, $offset: Int) {
+  findUsers(name: $name, limit: $limit, offset: $offset) {
+    totalCount
+    nodes {
+      id
+      name
+      phone
+      isActive
+      birthday
+      gender
+      address
+      description
+      roles
+      cell {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const useSearchUsersQuery = <
+      TData = SearchUsersQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: SearchUsersQueryVariables,
+      options?: UseQueryOptions<SearchUsersQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<SearchUsersQuery, TError, TData>(
+      variables === undefined ? ['searchUsers'] : ['searchUsers', variables],
+      fetcher<SearchUsersQuery, SearchUsersQueryVariables>(client, SearchUsersDocument, variables, headers),
+      options
+    );
+
+useSearchUsersQuery.getKey = (variables?: SearchUsersQueryVariables) => variables === undefined ? ['searchUsers'] : ['searchUsers', variables];
+;
 
 export const UpdateUserDocument = `
     mutation updateUser($input: UpdateUserInput!) {

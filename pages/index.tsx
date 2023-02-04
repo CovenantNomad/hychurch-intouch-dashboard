@@ -1,43 +1,29 @@
-import { GraphQLError } from 'graphql-request/dist/types'
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-import toast, { Toaster } from 'react-hot-toast'
-import { useSetRecoilState } from 'recoil'
+import toast from 'react-hot-toast'
 import graphlqlRequestClient from '../client/graphqlRequestClient'
 import { INTOUCH_DASHBOARD_USER } from '../constants/constant'
-import { LoginMutation, useLoginMutation } from '../graphql/generated'
+import { useLoginMutation } from '../graphql/generated'
 import { LoginForm } from '../interface/login'
-import { userState } from '../stores/authState'
 import { makeErrorMessage } from '../utils/utils'
+import { GraphQLError } from 'graphql'
+import { useQueryClient } from 'react-query'
 
 
-const Login: NextPage = () => {
+const Login = () => {
   const router = useRouter()
-  const setUser = useSetRecoilState(userState)
+  const queryClient = useQueryClient() 
   const { mutate, isLoading, isError, isSuccess, data, error } = useLoginMutation(graphlqlRequestClient, {
     onSuccess: (data) => {
-      const userInfo = JSON.stringify({
-        isLoggedIn: true,
-        username: "",
-        userId: "",
-        accessToken: data.login.accessToken
-      })
+      const userInfo = JSON.stringify({accessToken: data.login.accessToken})
       localStorage.setItem(INTOUCH_DASHBOARD_USER, userInfo)
       graphlqlRequestClient.setHeader("authorization", data.login.accessToken)
-      setUser({
-        isLoggedIn: true,
-        username: "",
-        userId: "",
-        accessToken: data.login.accessToken
-      })
+      queryClient.invalidateQueries('login')
       router.push("/home")
     },
-    onError(errors) {
-      if (error instanceof Error) {
-        toast.error(`로그인에 실패했습니다.\n${makeErrorMessage(error.message)}`)
-      }
+    onError(errors: GraphQLError) {
+      toast.error(`로그인에 실패했습니다.\n${makeErrorMessage(errors.message)}`)
     },
   })
 
@@ -51,13 +37,6 @@ const Login: NextPage = () => {
       }
     })
   }
-
-  if (process.env.NODE_ENV === "production") {
-    console.log('Production')
-  } else {
-    console.log('Dev')
-  }
-
 
   return (
     <div>
@@ -122,22 +101,6 @@ const Login: NextPage = () => {
           </div>
         </form>
       </div>
-      <Toaster 
-        toastOptions={{
-          success: {
-            style: {
-              background: '#fff',
-              color: '#222',
-            },
-          },
-          error: {
-            style: {
-              background: '#fff',
-              color: '#222'
-            },
-          },
-        }}
-      />
     </div>
   )
 }

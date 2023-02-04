@@ -1,84 +1,127 @@
-import { useForm } from "react-hook-form"
-import toast, { Toaster } from "react-hot-toast"
-import { useQueryClient } from "react-query"
-import graphlqlRequestClient from "../../../client/graphqlRequestClient"
-import { useFindUsersQuery, useUpdateUserMutation } from "../../../graphql/generated"
-import { EditForm } from "../../../interface/register"
-import { UpdateUserInfomationProps } from "../../../interface/user"
+import { GraphQLError } from "graphql";
+import { useForm } from "react-hook-form";
+import toast, { Toaster } from "react-hot-toast";
+import { useQueryClient } from "react-query";
+import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import { useUpdateUserMutation } from "../../../graphql/generated";
+import { EditForm } from "../../../interface/register";
+import { UpdateUserInfomationProps } from "../../../interface/user";
+import { makeErrorMessage } from "../../../utils/utils";
 
-
-
-const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, address, description, cell, setUser }: UpdateUserInfomationProps) => {
-  const queryClient = useQueryClient()
-  const { handleSubmit, register, formState: { errors }, reset } = useForm<EditForm>()
-  const { mutateAsync, isLoading, isError, isSuccess } = useUpdateUserMutation(graphlqlRequestClient, {
-    onSuccess: (data) => {
-      toast.success("정보가 수정되었습니다")
-      setUser(data.updateUser.user)
-      queryClient.invalidateQueries({
-        queryKey: ['findUsers']
-      })
-      queryClient.invalidateQueries({
-        queryKey: ['findCell', {id: Number(cell?.id)}]
-      })
-    },
-    onError: (error) => {
-      console.log(error)
+const EditUserInfomation = ({
+  id,
+  name,
+  gender,
+  isActive,
+  birthday,
+  phone,
+  address,
+  description,
+  cell,
+}: UpdateUserInfomationProps) => {
+  const queryClient = useQueryClient();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm<EditForm>();
+  const { mutate, isLoading, isError, isSuccess } = useUpdateUserMutation(
+    graphlqlRequestClient,
+    {
+      onSuccess: (data) => {
+        toast.success("정보가 수정되었습니다");
+        queryClient.invalidateQueries({
+          queryKey: [["searchUsers"]],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["findCell", { id: Number(cell?.id) }],
+        });
+      },
+      onError: (errors: GraphQLError) => {
+        toast.success(
+          `해당 청년 정보를 수정 중 오류가 발생하였습니다.\n${makeErrorMessage(
+            errors.message
+          )}`
+        );
+      },
     }
-  })
+  );
 
-  const onSubmitHandler = ({name, gender, year, month, day, phone, address, description, isActive}: EditForm) => {
-    const birthday = `${year}-${month}-${day}`
-    const isActiveStatus = isActive === "활동" ? true : false
-    mutateAsync({
+  const onSubmitHandler = ({
+    name,
+    gender,
+    year,
+    month,
+    day,
+    phone,
+    address,
+    description,
+    isActive,
+  }: EditForm) => {
+    const birthday = `${year}-${month}-${day}`;
+    const isActiveStatus = isActive === "활동" ? true : false;
+    mutate({
       input: {
         id,
         name,
         gender,
-        isActive: isActiveStatus, 
+        isActive: isActiveStatus,
         phone,
-        birthday, 
+        birthday,
         address,
         description,
-      }
-    })
-  }
+      },
+    });
+  };
 
   return (
-    <div>
+    <div className="mt-8 px-4 md:px-6 lg:px-8 bg-white">
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">
             <div className="col-span-6">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 이름
               </label>
               <input
                 type="text"
                 defaultValue={name}
-                placeholder='이름을 입력해주세요'
+                placeholder="이름을 입력해주세요"
                 {...register("name", {
                   minLength: {
                     value: 2,
-                    message: "이름을 제대로 입력하였는지 확인해 주세요 (최소길이오류)"
+                    message:
+                      "이름을 제대로 입력하였는지 확인해 주세요 (최소길이오류)",
                   },
                   maxLength: {
                     value: 5,
-                    message: "이름을 제대로 입력하였는지 확인해 주세요 (최대길이오류)"
+                    message:
+                      "이름을 제대로 입력하였는지 확인해 주세요 (최대길이오류)",
                   },
                   pattern: {
                     value: /^[가-힣a-zA-Z]+$/g,
-                    message: "글자만 입력해주세요"
+                    message: "글자만 입력해주세요",
                   },
-                  setValueAs: v => v.replace(/\s/g, ""),
+                  setValueAs: (v) => v.replace(/\s/g, ""),
                 })}
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
               />
-              {errors.name && <p className="mt-1 px-3 text-sm text-red-600">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-6 sm:col-span-3">
-              <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="gender"
+                className="block text-sm font-medium text-gray-700"
+              >
                 성별
               </label>
               <select
@@ -90,11 +133,18 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
                 <option value={"MAN"}>남자</option>
                 <option value={"WOMAN"}>여자</option>
               </select>
-              {errors.gender && <p className="mt-1 px-3 text-sm text-red-600">{errors.gender.message}</p>}
+              {errors.gender && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.gender.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-6 sm:col-span-3">
-              <label htmlFor="isActive" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="isActive"
+                className="block text-sm font-medium text-gray-700"
+              >
                 활동여부
               </label>
               <select
@@ -106,16 +156,24 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
                 <option value={"활동"}>활동</option>
                 <option value={"미활동"}>미활동</option>
               </select>
-              {errors.gender && <p className="mt-1 px-3 text-sm text-red-600">{errors.gender.message}</p>}
+              {errors.gender && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.gender.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-6 -mb-6">
-              <span className='block text-sm font-medium text-gray-700'>생년월일</span>
+              <span className="block text-sm font-medium text-gray-700">
+                생년월일
+              </span>
             </div>
 
             <div className="col-span-2">
-              <div className='relative flex items-center w-full'>
-                <label htmlFor="year" className="sr-only">년</label>
+              <div className="relative flex items-center w-full">
+                <label htmlFor="year" className="sr-only">
+                  년
+                </label>
                 <input
                   id="year"
                   type="text"
@@ -123,100 +181,132 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
                   {...register("year", {
                     minLength: {
                       value: 4,
-                      message: "4자리로 입력해주세요 (YYYY)"
+                      message: "4자리로 입력해주세요 (YYYY)",
                     },
                     maxLength: {
                       value: 4,
-                      message: "4자리로 입력해주세요 (YYYY)"
+                      message: "4자리로 입력해주세요 (YYYY)",
                     },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
                 />
-                <span className='absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm'>년</span>
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  년
+                </span>
               </div>
-              {errors.year && <p className="mt-1 px-3 text-sm text-red-600">{errors.year.message}</p>}
+              {errors.year && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.year.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-2">
-              <div className='relative flex items-center w-full'>
-                <label htmlFor="month" className="sr-only">월</label>
+              <div className="relative flex items-center w-full">
+                <label htmlFor="month" className="sr-only">
+                  월
+                </label>
                 <input
                   id="month"
                   type="text"
-                  defaultValue={birthday ? birthday.split("-")[1] : '01'}
+                  defaultValue={birthday ? birthday.split("-")[1] : "01"}
                   {...register("month", {
-                    setValueAs: (v:string) => v.padStart(2, '0'),
+                    setValueAs: (v: string) => v.padStart(2, "0"),
                     minLength: {
                       value: 2,
-                      message: "2자리로 입력해주세요 (MM)"
+                      message: "2자리로 입력해주세요 (MM)",
                     },
                     maxLength: {
                       value: 2,
-                      message: "4자리로 입력해주세요 (MM)"
+                      message: "4자리로 입력해주세요 (MM)",
                     },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
                 />
-                <span className='absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm'>월</span>
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  월
+                </span>
               </div>
-              {errors.month && <p className="mt-1 px-3 text-sm text-red-600">{errors.month.message}</p>}
+              {errors.month && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.month.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-2">
-              <div className='relative flex items-center w-full'>
-                <label htmlFor="day" className="sr-only">일</label>
+              <div className="relative flex items-center w-full">
+                <label htmlFor="day" className="sr-only">
+                  일
+                </label>
                 <input
                   id="day"
                   type="text"
                   defaultValue={birthday ? birthday.split("-")[2] : "01"}
                   {...register("day", {
-                    setValueAs: (v:string) => v.padStart(2, '0'),
+                    setValueAs: (v: string) => v.padStart(2, "0"),
                     minLength: {
                       value: 2,
-                      message: "2자리로 입력해주세요 (MM)"
+                      message: "2자리로 입력해주세요 (MM)",
                     },
                     maxLength: {
                       value: 2,
-                      message: "4자리로 입력해주세요 (MM)"
+                      message: "4자리로 입력해주세요 (MM)",
                     },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
                 />
-                <span className='absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm'>일</span>
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  일
+                </span>
               </div>
-              {errors.day && <p className="mt-1 px-3 text-sm text-red-600">{errors.day.message}</p>}
+              {errors.day && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.day.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-6 sm:col-span-3">
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 전화번호
               </label>
               <input
-                id='phone'
+                id="phone"
                 type="text"
                 defaultValue={phone}
                 {...register("phone", {
-                  setValueAs: v => v.replace(/[-.,_+]|\s/g, ""),
+                  setValueAs: (v) => v.replace(/[-.,_+]|\s/g, ""),
                   minLength: {
                     value: 9,
-                    message: "최소 9자리 이상 입력해주세요"
+                    message: "최소 9자리 이상 입력해주세요",
                   },
                   maxLength: {
                     value: 11,
-                    message: "핸드폰번호는 최대 11자리입니다"
+                    message: "핸드폰번호는 최대 11자리입니다",
                   },
                 })}
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
               />
-              {errors.phone && <p className="mt-1 px-3 text-sm text-red-600">{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.phone.message}
+                </p>
+              )}
             </div>
 
             <div className="col-span-6">
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700"
+              >
                 주소
               </label>
               <input
-                id='address'
+                id="address"
                 type="text"
                 defaultValue={address!}
                 placeholder="주소"
@@ -225,7 +315,10 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
               />
             </div>
             <div className="col-span-6">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
                 비고
               </label>
               <div className="mt-1">
@@ -250,24 +343,24 @@ const EditUserInfomation = ({ id, name, gender, isActive, birthday, phone, addre
           </button>
         </div>
       </form>
-      <Toaster 
+      <Toaster
         toastOptions={{
           success: {
             style: {
-              background: 'green',
-              color: '#fff',
+              background: "green",
+              color: "#fff",
             },
           },
           error: {
             style: {
-              background: 'red',
-              color: '#222'
+              background: "red",
+              color: "#222",
             },
           },
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default EditUserInfomation
+export default EditUserInfomation;
