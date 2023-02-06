@@ -4,13 +4,13 @@ const useModal = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const onModalOpenHandler = () => setModalOpen(true);
-  const onModalClosehandleer = () => setModalOpen(false);
+  const onModalClosehandler = () => setModalOpen(false);
 
   return {
     modalOpen,
     setModalOpen,
     onModalOpenHandler,
-    onModalClosehandleer,
+    onModalClosehandler,
   };
 };
 

@@ -1,20 +1,17 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
-import Backdrop from "../../Atoms/Backdrop/Backdrop";
-import { dropIn } from "../../../styles/animation";
-import {
-  cellInfoTypes,
-  Selected,
-  Step,
-  TransferInfo,
-} from "../../../interface/cell";
-import Stepper from "../Steps/Stepper";
-import SelectMember from "../../Templates/Cells/Transfer/ModalSteps/SelectMember";
-import SelectTransferCell from "../../Templates/Cells/Transfer/ModalSteps/SelectTransferCell";
-import ConfirmStage from "../../Templates/Cells/Transfer/ModalSteps/ConfirmStage";
-import StepControl from "../Steps/StepControl";
+import Backdrop from "../../../../Atoms/Backdrop/Backdrop";
+import { dropIn } from "../../../../../styles/animation";
+import Stepper from "../../../../Blocks/Steps/Stepper";
+import StepControl from "../../../../Blocks/Steps/StepControl";
 import { useRecoilState } from "recoil";
-import { userTransferInfoState } from "../../../stores/userTransferState";
+import { userTransferInfoState } from "../../../../../stores/userTransferState";
+import { Step } from "../../../../../interface/cell";
+import SelectMember from "./ModalSteps/SelectMember";
+import SelectTransferCell from "./ModalSteps/SelectTransferCell";
+import ConfirmStage from "./ModalSteps/ConfirmStage";
+import useStepsModal from "../../../../../hooks/useStepsModal";
+import { CELL_TRANSFER_STEPS } from "../../../../../constants/steps";
 
 interface AddTransferModalProps {
   modalOpen: Boolean;
@@ -22,57 +19,25 @@ interface AddTransferModalProps {
 }
 
 const AddTransferModal = ({ setModalOpen }: AddTransferModalProps) => {
-  const TOTAL_STAGE = 3;
-  const [currentStage, setCurrentStage] = useState<number>(1);
-  const [steps, setSteps] = useState<Step[]>([
-    {
-      id: 1,
-      name: "셀원 선택",
-      isCompleted: false,
-      isCurrent: false,
-    },
-    {
-      id: 2,
-      name: "보낼셀 선택",
-      isCompleted: false,
-      isCurrent: false,
-    },
-    {
-      id: 3,
-      name: "확인",
-      isCompleted: false,
-      isCurrent: false,
-    },
-  ]);
   const [transferInfo, setTransferInfo] = useRecoilState(userTransferInfoState);
+  const TOTAL_STAGE = 3;
+  const {
+    currentStage,
+    steps,
+    setSteps,
+    onNextHandler,
+    onBackHandler,
+    onMoveFirstStepHandler,
+  } = useStepsModal({
+    defaultSteps: CELL_TRANSFER_STEPS,
+    totalStage: TOTAL_STAGE,
+  });
 
   const stages = [
     { id: 1, component: <SelectMember /> },
     { id: 2, component: <SelectTransferCell /> },
-    { id: 3, component: <ConfirmStage setModalOpen={setModalOpen} /> },
+    { id: 3, component: <ConfirmStage /> },
   ];
-
-  const onNextHandler = () => {
-    if (currentStage <= TOTAL_STAGE) {
-      setCurrentStage(currentStage + 1);
-      setSteps(
-        steps.map((step) =>
-          step.id <= currentStage + 1 ? { ...step, isCompleted: true } : step
-        )
-      );
-    }
-  };
-
-  const onBackHandler = () => {
-    if (currentStage > 1) {
-      setCurrentStage(currentStage - 1);
-      setSteps(
-        steps.map((step) =>
-          step.id >= currentStage - 1 ? { ...step, isCompleted: false } : step
-        )
-      );
-    }
-  };
 
   const onCloseHandler = () => {
     setModalOpen(false);
@@ -111,14 +76,15 @@ const AddTransferModal = ({ setModalOpen }: AddTransferModalProps) => {
           </div>
 
           <StepControl
-            onNextHandler={onNextHandler}
-            onBackHandler={onBackHandler}
             currentStage={currentStage}
             user={{
               id: transferInfo?.user.userId || "",
               name: transferInfo?.user.name || "",
             }}
             lastStage={TOTAL_STAGE}
+            onNextHandler={onNextHandler}
+            onBackHandler={onBackHandler}
+            onMoveFirstStepHandler={onMoveFirstStepHandler}
           />
         </div>
       </motion.div>

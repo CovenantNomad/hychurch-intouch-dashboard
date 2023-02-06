@@ -4,17 +4,15 @@ import { toast } from "react-hot-toast";
 import { useQueryClient } from "react-query";
 // states
 import { useRecoilState } from "recoil";
-import graphlqlRequestClient from "../../../../../client/graphqlRequestClient";
+import graphlqlRequestClient from "../../../../../../client/graphqlRequestClient";
 import {
-  CreateUserCellTransferBulkMutationVariables,
-  useCreateUserCellTransferBulkMutation,
-} from "../../../../../graphql/generated";
-import {
-  userTransferInfoState,
-  userTransferListState,
-} from "../../../../../stores/userTransferState";
-import { getTodayString } from "../../../../../utils/dateUtils";
-import { makeErrorMessage } from "../../../../../utils/utils";
+  CreateUserCellTransferMutation,
+  CreateUserCellTransferMutationVariables,
+  useCreateUserCellTransferMutation,
+} from "../../../../../../graphql/generated";
+import { userTransferInfoState } from "../../../../../../stores/userTransferState";
+import { getTodayString } from "../../../../../../utils/dateUtils";
+import { makeErrorMessage } from "../../../../../../utils/utils";
 
 interface ConfirmStageProps {}
 
@@ -23,49 +21,36 @@ const ConfirmStage = ({}: ConfirmStageProps) => {
   const [transferInfo, setTransferInfo] = useRecoilState(userTransferInfoState);
   const now = dayjs();
 
-  const { mutate } =
-    useCreateUserCellTransferBulkMutation<CreateUserCellTransferBulkMutationVariables>(
-      graphlqlRequestClient,
-      {
-        onSuccess(data, variables, context) {
-          toast.success("셀원이동 신청이 접수되었습니다.");
-          setTransferInfo(null);
-          queryClient.invalidateQueries("findCellWithTranferData");
-        },
-        onError(error) {
-          if (error instanceof Error) {
-            toast.error(
-              `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(
-                error.message
-              )}`
-            );
-          }
-        },
+  const { mutate } = useCreateUserCellTransferMutation<
+    CreateUserCellTransferMutation,
+    CreateUserCellTransferMutationVariables
+  >(graphlqlRequestClient, {
+    onSuccess(data, variables, context) {
+      toast.success("셀원이동 신청이 접수되었습니다.");
+      setTransferInfo(null);
+      queryClient.invalidateQueries("findCellWithTranferData");
+    },
+    onError(error) {
+      if (error instanceof Error) {
+        toast.error(
+          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`
+        );
       }
-    );
+    },
+  });
 
   const onSubmitHandler = () => {
     try {
       if (transferInfo !== null) {
-        const submitList = [
-          {
-            userId: transferInfo.user.userId,
-            fromCellId: transferInfo.from.cellId,
-            toCellId: transferInfo.to.cellId,
-          },
-        ];
-
         const submitData = {
-          CreateUserCellTransferInputs: submitList,
+          userId: transferInfo.user.userId,
+          fromCellId: transferInfo.from.cellId,
+          toCellId: transferInfo.to.cellId,
           orderDate: getTodayString(dayjs()),
         };
 
         mutate({
-          input: {
-            createUserCellTransferInputs:
-              submitData.CreateUserCellTransferInputs,
-            orderDate: submitData.orderDate,
-          },
+          input: submitData,
         });
       }
     } catch {

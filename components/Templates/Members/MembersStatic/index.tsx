@@ -36,7 +36,7 @@ const MembersStatic = ({}: MembersStaticProps) => {
   const stats = [
     {
       id: 1,
-      name: "지난주 등록청년",
+      name: "이번주 등록청년",
       stat: 12,
       icon: UsersIcon,
       change: 6,

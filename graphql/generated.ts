@@ -88,24 +88,20 @@ export type CreateCellPayload = {
   cell: Cell;
 };
 
-export type CreateUserCellTransferBulkInput = {
-  createUserCellTransferInputs: Array<CreateUserCellTransferInput>;
-  /** 셀원 이동 신청일자 (yyyy-MM-dd) */
-  orderDate: Scalars['String'];
-};
-
-export type CreateUserCellTransferBulkPayload = {
-  __typename?: 'CreateUserCellTransferBulkPayload';
-  success: Scalars['Boolean'];
-};
-
 export type CreateUserCellTransferInput = {
   /** from 셀 id */
   fromCellId: Scalars['ID'];
+  /** 셀원 이동 신청일자 (yyyy-MM-dd) */
+  orderDate: Scalars['String'];
   /** to 셀 id */
   toCellId: Scalars['ID'];
   /** 이동할 셀원 id */
   userId: Scalars['ID'];
+};
+
+export type CreateUserCellTransferPayload = {
+  __typename?: 'CreateUserCellTransferPayload';
+  success: Scalars['Boolean'];
 };
 
 export type DateFilter = {
@@ -158,8 +154,8 @@ export type LoginPayload = {
 export type Mutation = {
   __typename?: 'Mutation';
   createCell: CreateCellPayload;
-  /** 셀원을 다른 셀로 이동시키는 셀 이동 신청을 생성합니다. */
-  createUserCellTransferBulk: CreateUserCellTransferBulkPayload;
+  /** 셀원 이동 신청 (단건) */
+  createUserCellTransfer: CreateUserCellTransferPayload;
   deleteCell: DeleteCellPayload;
   login: LoginPayload;
   /** 새가족 등록을 처리합니다. */
@@ -179,8 +175,8 @@ export type MutationCreateCellArgs = {
 };
 
 
-export type MutationCreateUserCellTransferBulkArgs = {
-  input: CreateUserCellTransferBulkInput;
+export type MutationCreateUserCellTransferArgs = {
+  input: CreateUserCellTransferInput;
 };
 
 
@@ -543,6 +539,13 @@ export type UpdateUserCellTransferMutationVariables = Exact<{
 
 export type UpdateUserCellTransferMutation = { __typename?: 'Mutation', updateUserCellTransfer: { __typename?: 'UpdateUserCellTransferPayload', userCellTransfer: { __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } } } };
 
+export type CreateUserCellTransferMutationVariables = Exact<{
+  input: CreateUserCellTransferInput;
+}>;
+
+
+export type CreateUserCellTransferMutation = { __typename?: 'Mutation', createUserCellTransfer: { __typename?: 'CreateUserCellTransferPayload', success: boolean } };
+
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -574,13 +577,6 @@ export type UpdateUserMutationVariables = Exact<{
 
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
-
-export type CreateUserCellTransferBulkMutationVariables = Exact<{
-  input: CreateUserCellTransferBulkInput;
-}>;
-
-
-export type CreateUserCellTransferBulkMutation = { __typename?: 'Mutation', createUserCellTransferBulk: { __typename?: 'CreateUserCellTransferBulkPayload', success: boolean } };
 
 
 export const LoginDocument = `
@@ -1031,6 +1027,28 @@ export const useUpdateUserCellTransferMutation = <
     );
 useUpdateUserCellTransferMutation.getKey = () => ['updateUserCellTransfer'];
 
+export const CreateUserCellTransferDocument = `
+    mutation createUserCellTransfer($input: CreateUserCellTransferInput!) {
+  createUserCellTransfer(input: $input) {
+    success
+  }
+}
+    `;
+export const useCreateUserCellTransferMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<CreateUserCellTransferMutation, TError, CreateUserCellTransferMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<CreateUserCellTransferMutation, TError, CreateUserCellTransferMutationVariables, TContext>(
+      ['createUserCellTransfer'],
+      (variables?: CreateUserCellTransferMutationVariables) => fetcher<CreateUserCellTransferMutation, CreateUserCellTransferMutationVariables>(client, CreateUserCellTransferDocument, variables, headers)(),
+      options
+    );
+useCreateUserCellTransferMutation.getKey = () => ['createUserCellTransfer'];
+
 export const FindUsersDocument = `
     query findUsers($name: String, $limit: Int, $offset: Int) {
   findUsers(name: $name, limit: $limit, offset: $offset) {
@@ -1171,25 +1189,3 @@ export const useUpdateUserMutation = <
       options
     );
 useUpdateUserMutation.getKey = () => ['updateUser'];
-
-export const CreateUserCellTransferBulkDocument = `
-    mutation createUserCellTransferBulk($input: CreateUserCellTransferBulkInput!) {
-  createUserCellTransferBulk(input: $input) {
-    success
-  }
-}
-    `;
-export const useCreateUserCellTransferBulkMutation = <
-      TError = unknown,
-      TContext = unknown
-    >(
-      client: GraphQLClient,
-      options?: UseMutationOptions<CreateUserCellTransferBulkMutation, TError, CreateUserCellTransferBulkMutationVariables, TContext>,
-      headers?: RequestInit['headers']
-    ) =>
-    useMutation<CreateUserCellTransferBulkMutation, TError, CreateUserCellTransferBulkMutationVariables, TContext>(
-      ['createUserCellTransferBulk'],
-      (variables?: CreateUserCellTransferBulkMutationVariables) => fetcher<CreateUserCellTransferBulkMutation, CreateUserCellTransferBulkMutationVariables>(client, CreateUserCellTransferBulkDocument, variables, headers)(),
-      options
-    );
-useCreateUserCellTransferBulkMutation.getKey = () => ['createUserCellTransferBulk'];

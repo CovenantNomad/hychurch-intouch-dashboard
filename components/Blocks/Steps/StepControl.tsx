@@ -1,18 +1,30 @@
-import { Leader, Selected } from "../../../interface/cell"
+import { Leader, Selected } from "../../../interface/cell";
 
 interface StepControlProps {
-  onBackHandler: () => void
-  onNextHandler: () => void
-  user: Selected
-  currentStage: number
-  lastStage: number
+  user: Selected;
+  currentStage: number;
+  lastStage: number;
+  onBackHandler: () => void;
+  onNextHandler: () => void;
+  onMoveFirstStepHandler: () => void;
 }
 
-const StepControl = ({onBackHandler, onNextHandler, currentStage, user, lastStage}: StepControlProps) => {
+const StepControl = ({
+  currentStage,
+  user,
+  lastStage,
+  onBackHandler,
+  onNextHandler,
+  onMoveFirstStepHandler,
+}: StepControlProps) => {
   return (
-    <div className={`w-[80%] flex ${currentStage === 1 ? 'justify-end' : currentStage === lastStage ? 'justify-start': 'justify-between'}`}>
+    <div
+      className={`w-[80%] flex ${
+        currentStage === 1 ? "justify-end" : "justify-between"
+      }`}
+    >
       {currentStage !== 1 && (
-        <button 
+        <button
           onClick={onBackHandler}
           disabled={currentStage === 1}
           className="px-4 py-2 text-sm font-semibold text-teal-600 border border-teal-600 rounded-md uppercase"
@@ -20,17 +32,27 @@ const StepControl = ({onBackHandler, onNextHandler, currentStage, user, lastStag
           Back
         </button>
       )}
-      {currentStage !== lastStage && (
-        <button 
+      {currentStage !== lastStage ? (
+        <button
           onClick={onNextHandler}
-          disabled={(currentStage === 1 && user.name === "") || currentStage === lastStage}
+          disabled={
+            (currentStage === 1 && user.name === "") ||
+            currentStage === lastStage
+          }
           className="px-4 py-2 text-sm font-semibold text-white border bg-teal-600 rounded-md uppercase"
         >
           Next
         </button>
+      ) : (
+        <button
+          onClick={onMoveFirstStepHandler}
+          className="px-4 py-2 text-sm font-semibold text-white border bg-teal-600 rounded-md uppercase"
+        >
+          처음으로
+        </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default StepControl
+export default StepControl;

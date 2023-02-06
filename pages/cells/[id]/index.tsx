@@ -16,6 +16,7 @@ import { selectedState } from "../../../stores/selectedState";
 import Container from "../../../components/Atoms/Container/Container";
 import Header from "../../../components/Atoms/Header";
 import Layout from "../../../components/Layout/Layout";
+import Link from "next/link";
 
 const CellDetail = () => {
   const { query } = useRouter();
@@ -74,7 +75,19 @@ const CellDetail = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header title={`${query.cellName || data?.findCell.name}`} />
+      <Header title={`${query.cellName || data?.findCell.name}`}>
+        <Link
+          href={{
+            pathname: `/cells/${query.id}/delete`,
+            query: { cellName: query.cellName || data?.findCell.name },
+          }}
+          as={`/cells/${query.id}/delete`}
+        >
+          <button className="px-4 py-2 bg-dark-pink text-white rounded-md">
+            셀 삭제하기
+          </button>
+        </Link>
+      </Header>
       <Container>
         <div className="mt-4">
           <FullWidthTabs

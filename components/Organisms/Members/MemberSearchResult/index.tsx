@@ -2,7 +2,7 @@ import React from "react";
 import { SearchUsersQuery } from "../../../../graphql/generated";
 import Slogan from "../../../Atoms/Slogan/Slogan";
 import Spinner from "../../../Atoms/Spinner";
-import UserListItem from "../../../Blocks/ListItems/UserListItem";
+import MemberListItem from "../MemberListItem";
 
 interface SearchResultProps {
   isLoading: boolean;
@@ -26,7 +26,7 @@ const MemberSearchResult = ({
           ) : (
             <div className="pt-8">
               {searchResults?.findUsers.nodes.map((user) => (
-                <UserListItem key={user.id} user={user} />
+                <MemberListItem key={user.id} member={user} />
               ))}
             </div>
           )}

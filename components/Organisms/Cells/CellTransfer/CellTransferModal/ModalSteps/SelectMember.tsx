@@ -1,27 +1,22 @@
 import React, { useState } from "react";
 // states
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  userTransferInfoState,
-  userTransferListState,
-} from "../../../../../stores/userTransferState";
+import { userTransferInfoState } from "../../../../../../stores/userTransferState";
 // fetch
-import graphlqlRequestClient from "../../../../../client/graphqlRequestClient";
+import graphlqlRequestClient from "../../../../../../client/graphqlRequestClient";
 import {
-  FindMyCellMembersQuery,
   FindNewTransferUserQuery,
   FindNewTransferUserQueryVariables,
   RoleType,
-  useFindMyCellMembersQuery,
   useFindNewTransferUserQuery,
   UserCellTransferStatus,
-} from "../../../../../graphql/generated";
+} from "../../../../../../graphql/generated";
 // types
-import { SelectedWithCell } from "../../../../../interface/cell";
+import { SelectedWithCell } from "../../../../../../interface/cell";
 // components
-import SkeletonTranfer from "../../../../Atoms/Skeleton/SkeletonTranfer";
-import { selectedState } from "../../../../../stores/selectedState";
-import { getTodayString } from "../../../../../utils/dateUtils";
+import SkeletonTranfer from "../../../../../Atoms/Skeleton/SkeletonTranfer";
+import { selectedState } from "../../../../../../stores/selectedState";
+import { getTodayString } from "../../../../../../utils/dateUtils";
 import dayjs from "dayjs";
 // utils
 
@@ -29,7 +24,6 @@ interface SelectMemberProps {}
 
 const SelectMember = ({}: SelectMemberProps) => {
   const now = dayjs();
-  const transferList = useRecoilValue(userTransferListState);
   const [transferInfo, setTransferInfo] = useRecoilState(userTransferInfoState);
   const { selectedCell } = useRecoilValue(selectedState);
   const [datefilter, setDatefilter] = useState({
@@ -60,7 +54,6 @@ const SelectMember = ({}: SelectMemberProps) => {
 
   const handleSelect = ({ name, id, cellId, cellName }: SelectedWithCell) => {
     setTransferInfo({
-      id: transferList.length === 0 ? 0 : transferList.length + 1,
       user: {
         name,
         userId: id,
@@ -105,9 +98,6 @@ const SelectMember = ({}: SelectMemberProps) => {
             .filter(
               (member) =>
                 !member.roles.includes(RoleType.CellLeader) &&
-                !transferList
-                  .map((item) => item.user.userId)
-                  .includes(member.id) &&
                 !data.findCell.transfersOut
                   .map((transferedUser) => transferedUser.user.id)
                   .includes(member.id)

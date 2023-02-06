@@ -22,6 +22,7 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
     onSuccess: (data) => {
       console.log(data);
       queryClient.invalidateQueries("findCell");
+      queryClient.invalidateQueries("findCellWithTranferData");
       toast.success(
         `이동요청이 ${getTransferStatus(
           data.updateUserCellTransfer.userCellTransfer.status

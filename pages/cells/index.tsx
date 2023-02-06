@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-// components
 import { AnimatePresence, motion } from "framer-motion";
-
-import AddCellModal from "../../components/Blocks/Modals/AddCellModal";
+// hooks
+import useModal from "../../hooks/useModal";
 // graphql
 import graphlqlRequestClient from "../../client/graphqlRequestClient";
 import {
@@ -12,16 +11,20 @@ import {
   FindCellsQueryVariables,
   useFindCellsQuery,
 } from "../../graphql/generated";
+// components
 import Layout from "../../components/Layout/Layout";
-import useModal from "../../hooks/useModal";
 import CellCard from "../../components/Organisms/Cells/CellCard/CellCard";
 import Container from "../../components/Atoms/Container/Container";
 import Header from "../../components/Atoms/Header";
 import SimpleStat from "../../components/Atoms/Stats/SimpleStat";
-import Spacer from "../../components/Atoms/Spacer/Spacer";
+import Spacer from "../../components/Atoms/Spacer";
+import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
+import { useSetRecoilState } from "recoil";
+import { createCellState } from "../../stores/createCellState";
 
 const Cell: NextPage = () => {
-  const { modalOpen, onModalOpenHandler, onModalClosehandleer } = useModal();
+  const setCreateCellInfo = useSetRecoilState(createCellState);
+  const { modalOpen, onModalOpenHandler, onModalClosehandler } = useModal();
   const { isLoading, data } = useFindCellsQuery<
     FindCellsQuery,
     FindCellsQueryVariables
@@ -42,6 +45,18 @@ const Cell: NextPage = () => {
     { name: "능력공동체", number: 9 },
   ];
 
+  const onCloseHandler = () => {
+    onModalClosehandler();
+    setCreateCellInfo({
+      cellName: "",
+      leader: {
+        id: "",
+        name: "",
+      },
+      viceLeader: undefined,
+    });
+  };
+
   return (
     <Layout>
       <Head>
@@ -50,7 +65,9 @@ const Cell: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header title={`인터치 셀현황 (${data?.findCells.totalCount || 0}셀)`}>
+      <Header
+        title={`인터치 셀현황 (${data ? data.findCells.totalCount - 1 : 0}셀)`}
+      >
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -100,9 +117,9 @@ const Cell: NextPage = () => {
               onExitComplete={() => null}
             >
               {modalOpen && (
-                <AddCellModal
+                <CreateCellModal
                   modalOpen={modalOpen}
-                  handleClose={onModalClosehandleer}
+                  handleClose={onCloseHandler}
                 />
               )}
             </AnimatePresence>
