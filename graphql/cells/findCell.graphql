@@ -6,6 +6,10 @@ query findCell($id: Float!) {
       id
       name
       roles
+      cell {
+        id
+        name
+      }
     }
     members {
       id

@@ -16,10 +16,10 @@ import {
 import Layout from "../../../components/Layout/Layout";
 import Header from "../../../components/Atoms/Header";
 import Container from "../../../components/Atoms/Container/Container";
-import TransferProcess from "../../../components/Organisms/Cells/CellTransfer/TransferProcess";
 import Spacer from "../../../components/Atoms/Spacer";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
 import { useQueryClient } from "react-query";
+import DeleteCellTransferProecess from "../../../components/Organisms/Cells/DeleteCell/DeleteCellTransferProecess";
 
 interface DeletePageProps {}
 
@@ -91,7 +91,7 @@ const DeletePage = ({}: DeletePageProps) => {
       <Container>
         {data ? (
           <>
-            <TransferProcess />
+            <DeleteCellTransferProecess />
             <Spacer />
             <div className="bg-white">
               <div className="py-24 px-6 sm:px-6 sm:py-32 lg:px-8">

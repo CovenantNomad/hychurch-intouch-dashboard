@@ -12,7 +12,8 @@ const MembersMain = ({}: MembersMainProps) => {
   const selectedUserInfo = useRecoilValue(selectedUser);
 
   return (
-    <div>{selectedUserInfo === null ? <MembersStatic /> : <MemberInfo />}</div>
+    //   <div>{selectedUserInfo === null ? <MembersStatic /> : <MemberInfo />}</div>
+    <div>{selectedUserInfo !== null ? <MemberInfo /> : null}</div>
   );
 };
 
