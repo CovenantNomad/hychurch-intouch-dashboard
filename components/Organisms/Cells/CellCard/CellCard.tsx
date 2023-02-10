@@ -44,7 +44,12 @@ const CellCard = ({
         }
       >
         <div className="px-4 py-6 bg-white rounded-lg shadow-lg">
-          <Avatar size={AvatarSize.lg} name="인내" rounded center />
+          <Avatar
+            size={AvatarSize.lg}
+            name={leader.substr(-2)}
+            rounded
+            center
+          />
           <div className="mt-4 mb-8 text-center">
             <TitleText>{name}</TitleText>
             <SubTitleText>리더 : {leader}</SubTitleText>

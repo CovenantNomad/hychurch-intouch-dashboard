@@ -39,11 +39,11 @@ const Cell: NextPage = () => {
     }
   );
 
-  const stats = [
-    { name: "연단공동체", number: 15 },
-    { name: "인내공동체", number: 12 },
-    { name: "능력공동체", number: 9 },
-  ];
+  // const stats = [
+  //   { name: "연단공동체", number: 15 },
+  //   { name: "인내공동체", number: 12 },
+  //   { name: "능력공동체", number: 9 },
+  // ];
 
   const onCloseHandler = () => {
     onModalClosehandler();
@@ -89,9 +89,9 @@ const Cell: NextPage = () => {
           </div>
         ) : (
           <>
-            <div className="mb-8">
+            {/* <div className="mb-8">
               <SimpleStat stats={stats} row />
-            </div>
+            </div> */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4 3xl:grid-cols-6">
               {data?.findCells.nodes
                 .filter((item) => item.id !== "39")
