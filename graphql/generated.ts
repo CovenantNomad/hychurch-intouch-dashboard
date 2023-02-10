@@ -19,6 +19,11 @@ export type Scalars = {
   Float: number;
 };
 
+export type BetweenFilter = {
+  max: Scalars['String'];
+  min: Scalars['String'];
+};
+
 /** 셀 */
 export type Cell = {
   __typename?: 'Cell';
@@ -34,6 +39,24 @@ export type Cell = {
   name: Scalars['String'];
   /** Cell 관련 통계값 */
   statistics: StatisticsOfCell;
+  /** 해당 셀로의 셀원 이동 신청 내역 */
+  transfersIn: Array<UserCellTransfer>;
+  /** 해당 셀로의 셀원 이동 신청 내역 */
+  transfersOut: Array<UserCellTransfer>;
+};
+
+
+/** 셀 */
+export type CellTransfersInArgs = {
+  orderDate?: InputMaybe<DateFilter>;
+  status?: InputMaybe<Array<UserCellTransferStatus>>;
+};
+
+
+/** 셀 */
+export type CellTransfersOutArgs = {
+  orderDate?: InputMaybe<DateFilter>;
+  status?: InputMaybe<Array<UserCellTransferStatus>>;
 };
 
 /** 예배 */
@@ -63,6 +86,26 @@ export type CreateCellInput = {
 export type CreateCellPayload = {
   __typename?: 'CreateCellPayload';
   cell: Cell;
+};
+
+export type CreateUserCellTransferInput = {
+  /** from 셀 id */
+  fromCellId: Scalars['ID'];
+  /** 셀원 이동 신청일자 (yyyy-MM-dd) */
+  orderDate: Scalars['String'];
+  /** to 셀 id */
+  toCellId: Scalars['ID'];
+  /** 이동할 셀원 id */
+  userId: Scalars['ID'];
+};
+
+export type CreateUserCellTransferPayload = {
+  __typename?: 'CreateUserCellTransferPayload';
+  success: Scalars['Boolean'];
+};
+
+export type DateFilter = {
+  between: BetweenFilter;
 };
 
 export type DeleteCellInput = {
@@ -106,12 +149,13 @@ export type LoginPayload = {
   __typename?: 'LoginPayload';
   /** 토큰 */
   accessToken: Scalars['String'];
-  user: User;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   createCell: CreateCellPayload;
+  /** 셀원 이동 신청 (단건) */
+  createUserCellTransfer: CreateUserCellTransferPayload;
   deleteCell: DeleteCellPayload;
   login: LoginPayload;
   /** 새가족 등록을 처리합니다. */
@@ -122,11 +166,17 @@ export type Mutation = {
   submitCellMemberChurchServiceAttendanceHistories: SubmitCellMemberChurchServiceAttendanceHistoriesPayload;
   /** 사용자 정보를 업데이트 합니다. */
   updateUser: UpdateUserPayload;
+  updateUserCellTransfer: UpdateUserCellTransferPayload;
 };
 
 
 export type MutationCreateCellArgs = {
   input: CreateCellInput;
+};
+
+
+export type MutationCreateUserCellTransferArgs = {
+  input: CreateUserCellTransferInput;
 };
 
 
@@ -164,6 +214,11 @@ export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
 
+
+export type MutationUpdateUserCellTransferArgs = {
+  input: UpdateUserCellTransferInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   /** 셀 단건 조회 */
@@ -173,6 +228,8 @@ export type Query = {
   findChurchServices: Array<ChurchService>;
   /** 전체 사용자 조회 */
   findUsers: FindUsersPayload;
+  /** 로그인한 사용자의 정보를 조회합니다. */
+  me: User;
   /** 셀원 조회. 셀장만 셀원 조회가 가능합니다. */
   myCellMembers?: Maybe<Array<User>>;
 };
@@ -274,6 +331,17 @@ export type SubmitCellMemberChurchServiceAttendanceHistoriesPayload = {
   requestedAttendanceHistoryCount: Scalars['Int'];
 };
 
+export type UpdateUserCellTransferInput = {
+  id: Scalars['ID'];
+  /** ORDERED 상태로의 업데이트는 지원하지 않습니다. 오직 CANCELED 또는 CONFIRMED 상태로의 업데이트만 가능합니다. */
+  status: UserCellTransferStatus;
+};
+
+export type UpdateUserCellTransferPayload = {
+  __typename?: 'UpdateUserCellTransferPayload';
+  userCellTransfer: UserCellTransfer;
+};
+
 export type UpdateUserInput = {
   /** 주소 */
   address?: InputMaybe<Scalars['String']>;
@@ -330,6 +398,31 @@ export type UserUserChurchServiceHistoriesArgs = {
   baseDate: Scalars['String'];
 };
 
+/** 셀원의 셀 이동 신청 내역 */
+export type UserCellTransfer = {
+  __typename?: 'UserCellTransfer';
+  /** 신청처리 완료일자 */
+  completeDate?: Maybe<Scalars['String']>;
+  fromCell: Cell;
+  id: Scalars['ID'];
+  /** 신청일자 */
+  orderDate: Scalars['String'];
+  status: UserCellTransferStatus;
+  toCell: Cell;
+  /** 셀원 */
+  user: User;
+};
+
+/** 셀원 이동 신청 상태 */
+export enum UserCellTransferStatus {
+  /** 거절됨 */
+  Canceled = 'CANCELED',
+  /** 승인됨 */
+  Confirmed = 'CONFIRMED',
+  /** 신청됨 */
+  Ordered = 'ORDERED'
+}
+
 /** 셀원 예배 출석 이력 */
 export type UserChurchServiceHistory = {
   __typename?: 'UserChurchServiceHistory';
@@ -363,7 +456,12 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', accessToken: string, user: { __typename?: 'User', id: string, name: string, phone: string, roles: Array<RoleType> } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', accessToken: string } };
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
@@ -391,7 +489,18 @@ export type FindCellQueryVariables = Exact<{
 }>;
 
 
-export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+
+export type FindCellWithTranferDataQueryVariables = Exact<{
+  id: Scalars['Float'];
+  transferInStatus?: InputMaybe<Array<UserCellTransferStatus> | UserCellTransferStatus>;
+  transferOutStatus?: InputMaybe<Array<UserCellTransferStatus> | UserCellTransferStatus>;
+  transferInDateFilter?: InputMaybe<DateFilter>;
+  transferOutDateFilter?: InputMaybe<DateFilter>;
+}>;
+
+
+export type FindCellWithTranferDataQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersIn: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type FindCellsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -412,7 +521,30 @@ export type FindLeaderQuery = { __typename?: 'Query', findUsers: { __typename?: 
 export type FindMyCellMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindMyCellMembersQuery = { __typename?: 'Query', myCellMembers?: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType> }> | null };
+export type FindMyCellMembersQuery = { __typename?: 'Query', myCellMembers?: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> | null };
+
+export type FindNewTransferUserQueryVariables = Exact<{
+  id: Scalars['Float'];
+  transferOutStatus?: InputMaybe<Array<UserCellTransferStatus> | UserCellTransferStatus>;
+  transferOutDateFilter?: InputMaybe<DateFilter>;
+}>;
+
+
+export type FindNewTransferUserQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+
+export type UpdateUserCellTransferMutationVariables = Exact<{
+  input: UpdateUserCellTransferInput;
+}>;
+
+
+export type UpdateUserCellTransferMutation = { __typename?: 'Mutation', updateUserCellTransfer: { __typename?: 'UpdateUserCellTransferPayload', userCellTransfer: { __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } } } };
+
+export type CreateUserCellTransferMutationVariables = Exact<{
+  input: CreateUserCellTransferInput;
+}>;
+
+
+export type CreateUserCellTransferMutation = { __typename?: 'Mutation', createUserCellTransfer: { __typename?: 'CreateUserCellTransferPayload', success: boolean } };
 
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -430,6 +562,15 @@ export type RegisterNewUserMutationVariables = Exact<{
 
 export type RegisterNewUserMutation = { __typename?: 'Mutation', registerNewUser: { __typename?: 'RegisterNewUserPayload', user: { __typename?: 'User', id: string, name: string } } };
 
+export type SearchUsersQueryVariables = Exact<{
+  name?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
+
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUserInput;
 }>;
@@ -442,12 +583,6 @@ export const LoginDocument = `
     mutation login($input: LoginInput!) {
   login(input: $input) {
     accessToken
-    user {
-      id
-      name
-      phone
-      roles
-    }
   }
 }
     `;
@@ -464,6 +599,39 @@ export const useLoginMutation = <
       (variables?: LoginMutationVariables) => fetcher<LoginMutation, LoginMutationVariables>(client, LoginDocument, variables, headers)(),
       options
     );
+useLoginMutation.getKey = () => ['login'];
+
+export const MeDocument = `
+    query me {
+  me {
+    id
+    name
+    roles
+    cell {
+      id
+      name
+    }
+  }
+}
+    `;
+export const useMeQuery = <
+      TData = MeQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: MeQueryVariables,
+      options?: UseQueryOptions<MeQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<MeQuery, TError, TData>(
+      variables === undefined ? ['me'] : ['me', variables],
+      fetcher<MeQuery, MeQueryVariables>(client, MeDocument, variables, headers),
+      options
+    );
+
+useMeQuery.getKey = (variables?: MeQueryVariables) => variables === undefined ? ['me'] : ['me', variables];
+;
+
 export const SignUpDocument = `
     mutation signUp($input: SignUpInput!) {
   signUp(input: $input) {
@@ -487,6 +655,8 @@ export const useSignUpMutation = <
       (variables?: SignUpMutationVariables) => fetcher<SignUpMutation, SignUpMutationVariables>(client, SignUpDocument, variables, headers)(),
       options
     );
+useSignUpMutation.getKey = () => ['signUp'];
+
 export const CreateCellDocument = `
     mutation createCell($input: CreateCellInput!) {
   createCell(input: $input) {
@@ -510,6 +680,8 @@ export const useCreateCellMutation = <
       (variables?: CreateCellMutationVariables) => fetcher<CreateCellMutation, CreateCellMutationVariables>(client, CreateCellDocument, variables, headers)(),
       options
     );
+useCreateCellMutation.getKey = () => ['createCell'];
+
 export const DeleteCellDocument = `
     mutation deleteCell($input: DeleteCellInput!) {
   deleteCell(input: $input) {
@@ -533,6 +705,8 @@ export const useDeleteCellMutation = <
       (variables?: DeleteCellMutationVariables) => fetcher<DeleteCellMutation, DeleteCellMutationVariables>(client, DeleteCellDocument, variables, headers)(),
       options
     );
+useDeleteCellMutation.getKey = () => ['deleteCell'];
+
 export const FindCellDocument = `
     query findCell($id: Float!) {
   findCell(id: $id) {
@@ -542,6 +716,10 @@ export const FindCellDocument = `
       id
       name
       roles
+      cell {
+        id
+        name
+      }
     }
     members {
       id
@@ -578,6 +756,92 @@ export const useFindCellQuery = <
       fetcher<FindCellQuery, FindCellQueryVariables>(client, FindCellDocument, variables, headers),
       options
     );
+
+useFindCellQuery.getKey = (variables: FindCellQueryVariables) => ['findCell', variables];
+;
+
+export const FindCellWithTranferDataDocument = `
+    query findCellWithTranferData($id: Float!, $transferInStatus: [UserCellTransferStatus!], $transferOutStatus: [UserCellTransferStatus!], $transferInDateFilter: DateFilter, $transferOutDateFilter: DateFilter) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    members {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    transfersIn(status: $transferInStatus, orderDate: $transferInDateFilter) {
+      id
+      status
+      orderDate
+      completeDate
+      user {
+        id
+        name
+        gender
+      }
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+    }
+    transfersOut(status: $transferOutStatus, orderDate: $transferOutDateFilter) {
+      id
+      status
+      orderDate
+      completeDate
+      user {
+        id
+        name
+        gender
+      }
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const useFindCellWithTranferDataQuery = <
+      TData = FindCellWithTranferDataQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindCellWithTranferDataQueryVariables,
+      options?: UseQueryOptions<FindCellWithTranferDataQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindCellWithTranferDataQuery, TError, TData>(
+      ['findCellWithTranferData', variables],
+      fetcher<FindCellWithTranferDataQuery, FindCellWithTranferDataQueryVariables>(client, FindCellWithTranferDataDocument, variables, headers),
+      options
+    );
+
+useFindCellWithTranferDataQuery.getKey = (variables: FindCellWithTranferDataQueryVariables) => ['findCellWithTranferData', variables];
+;
+
 export const FindCellsDocument = `
     query findCells($limit: Int) {
   findCells(limit: $limit) {
@@ -612,6 +876,10 @@ export const useFindCellsQuery = <
       fetcher<FindCellsQuery, FindCellsQueryVariables>(client, FindCellsDocument, variables, headers),
       options
     );
+
+useFindCellsQuery.getKey = (variables?: FindCellsQueryVariables) => variables === undefined ? ['findCells'] : ['findCells', variables];
+;
+
 export const FindLeaderDocument = `
     query findLeader($name: String, $limit: Int, $offset: Int) {
   findUsers(name: $name, limit: $limit, offset: $offset) {
@@ -638,6 +906,10 @@ export const useFindLeaderQuery = <
       fetcher<FindLeaderQuery, FindLeaderQueryVariables>(client, FindLeaderDocument, variables, headers),
       options
     );
+
+useFindLeaderQuery.getKey = (variables?: FindLeaderQueryVariables) => variables === undefined ? ['findLeader'] : ['findLeader', variables];
+;
+
 export const FindMyCellMembersDocument = `
     query findMyCellMembers {
   myCellMembers {
@@ -650,6 +922,10 @@ export const FindMyCellMembersDocument = `
     address
     description
     roles
+    cell {
+      id
+      name
+    }
   }
 }
     `;
@@ -667,6 +943,134 @@ export const useFindMyCellMembersQuery = <
       fetcher<FindMyCellMembersQuery, FindMyCellMembersQueryVariables>(client, FindMyCellMembersDocument, variables, headers),
       options
     );
+
+useFindMyCellMembersQuery.getKey = (variables?: FindMyCellMembersQueryVariables) => variables === undefined ? ['findMyCellMembers'] : ['findMyCellMembers', variables];
+;
+
+export const FindNewTransferUserDocument = `
+    query findNewTransferUser($id: Float!, $transferOutStatus: [UserCellTransferStatus!], $transferOutDateFilter: DateFilter) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    members {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    transfersOut(status: $transferOutStatus, orderDate: $transferOutDateFilter) {
+      id
+      status
+      orderDate
+      completeDate
+      user {
+        id
+        name
+        gender
+      }
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const useFindNewTransferUserQuery = <
+      TData = FindNewTransferUserQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindNewTransferUserQueryVariables,
+      options?: UseQueryOptions<FindNewTransferUserQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindNewTransferUserQuery, TError, TData>(
+      ['findNewTransferUser', variables],
+      fetcher<FindNewTransferUserQuery, FindNewTransferUserQueryVariables>(client, FindNewTransferUserDocument, variables, headers),
+      options
+    );
+
+useFindNewTransferUserQuery.getKey = (variables: FindNewTransferUserQueryVariables) => ['findNewTransferUser', variables];
+;
+
+export const UpdateUserCellTransferDocument = `
+    mutation updateUserCellTransfer($input: UpdateUserCellTransferInput!) {
+  updateUserCellTransfer(input: $input) {
+    userCellTransfer {
+      id
+      user {
+        id
+        name
+      }
+      status
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
+      orderDate
+      completeDate
+    }
+  }
+}
+    `;
+export const useUpdateUserCellTransferMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<UpdateUserCellTransferMutation, TError, UpdateUserCellTransferMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<UpdateUserCellTransferMutation, TError, UpdateUserCellTransferMutationVariables, TContext>(
+      ['updateUserCellTransfer'],
+      (variables?: UpdateUserCellTransferMutationVariables) => fetcher<UpdateUserCellTransferMutation, UpdateUserCellTransferMutationVariables>(client, UpdateUserCellTransferDocument, variables, headers)(),
+      options
+    );
+useUpdateUserCellTransferMutation.getKey = () => ['updateUserCellTransfer'];
+
+export const CreateUserCellTransferDocument = `
+    mutation createUserCellTransfer($input: CreateUserCellTransferInput!) {
+  createUserCellTransfer(input: $input) {
+    success
+  }
+}
+    `;
+export const useCreateUserCellTransferMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<CreateUserCellTransferMutation, TError, CreateUserCellTransferMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<CreateUserCellTransferMutation, TError, CreateUserCellTransferMutationVariables, TContext>(
+      ['createUserCellTransfer'],
+      (variables?: CreateUserCellTransferMutationVariables) => fetcher<CreateUserCellTransferMutation, CreateUserCellTransferMutationVariables>(client, CreateUserCellTransferDocument, variables, headers)(),
+      options
+    );
+useCreateUserCellTransferMutation.getKey = () => ['createUserCellTransfer'];
+
 export const FindUsersDocument = `
     query findUsers($name: String, $limit: Int, $offset: Int) {
   findUsers(name: $name, limit: $limit, offset: $offset) {
@@ -703,6 +1107,10 @@ export const useFindUsersQuery = <
       fetcher<FindUsersQuery, FindUsersQueryVariables>(client, FindUsersDocument, variables, headers),
       options
     );
+
+useFindUsersQuery.getKey = (variables?: FindUsersQueryVariables) => variables === undefined ? ['findUsers'] : ['findUsers', variables];
+;
+
 export const RegisterNewUserDocument = `
     mutation registerNewUser($input: RegisterNewUserInput!) {
   registerNewUser(input: $input) {
@@ -726,6 +1134,48 @@ export const useRegisterNewUserMutation = <
       (variables?: RegisterNewUserMutationVariables) => fetcher<RegisterNewUserMutation, RegisterNewUserMutationVariables>(client, RegisterNewUserDocument, variables, headers)(),
       options
     );
+useRegisterNewUserMutation.getKey = () => ['registerNewUser'];
+
+export const SearchUsersDocument = `
+    query searchUsers($name: String, $limit: Int, $offset: Int) {
+  findUsers(name: $name, limit: $limit, offset: $offset) {
+    totalCount
+    nodes {
+      id
+      name
+      phone
+      isActive
+      birthday
+      gender
+      address
+      description
+      roles
+      cell {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const useSearchUsersQuery = <
+      TData = SearchUsersQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: SearchUsersQueryVariables,
+      options?: UseQueryOptions<SearchUsersQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<SearchUsersQuery, TError, TData>(
+      variables === undefined ? ['searchUsers'] : ['searchUsers', variables],
+      fetcher<SearchUsersQuery, SearchUsersQueryVariables>(client, SearchUsersDocument, variables, headers),
+      options
+    );
+
+useSearchUsersQuery.getKey = (variables?: SearchUsersQueryVariables) => variables === undefined ? ['searchUsers'] : ['searchUsers', variables];
+;
+
 export const UpdateUserDocument = `
     mutation updateUser($input: UpdateUserInput!) {
   updateUser(input: $input) {
@@ -760,3 +1210,4 @@ export const useUpdateUserMutation = <
       (variables?: UpdateUserMutationVariables) => fetcher<UpdateUserMutation, UpdateUserMutationVariables>(client, UpdateUserDocument, variables, headers)(),
       options
     );
+useUpdateUserMutation.getKey = () => ['updateUser'];

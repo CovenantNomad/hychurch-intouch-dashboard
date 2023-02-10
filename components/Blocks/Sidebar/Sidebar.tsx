@@ -9,27 +9,20 @@ import graphlqlRequestClient from '../../../client/graphqlRequestClient';
 import { INTOUCH_DASHBOARD_USER } from '../../../constants/constant';
 // menu
 import { menu } from '../../../constants/menu';
-
-
-
+import { useMeQuery } from '../../../graphql/generated';
 
 const Sidebar = () => {
   const router = useRouter()
-  const [ { username }, setUser ] = useRecoilState(userState)
+  const { data } = useMeQuery(graphlqlRequestClient, {}, { staleTime: 5 * 60 * 1000, cacheTime: 10 * 60 * 1000 })
 
   const onLogOutHandler = () => {
     localStorage.removeItem(INTOUCH_DASHBOARD_USER)
     graphlqlRequestClient.setHeader("authorization", "")
-    setUser({
-      username: "",
-      accessToken: "",
-      isLoggedIn: false
-    })
     router.push("/")
   }
 
   return (
-    <div className={`fixed left-0 top-0 bottom-0 flex-col flex-nowrap overflow-hidden shadow-xl w-60 z-[2000] px-6 transition-all duration-300 bg-black justify-between hidden md:flex`}>
+    <div className={`hidden fixed left-0 top-0 bottom-0 flex-col flex-nowrap overflow-hidden z-[2000] px-6 transition-all duration-300 bg-black md:flex md:shadow-xl md:w-60 md:justify-between `}>
       <div>
         <div className='py-12'>
           <h1 className='text-xl font-bold text-white'>INTOUCH CHURCH</h1>
@@ -60,7 +53,7 @@ const Sidebar = () => {
         <div className='h-[1px] bg-slate-600 w-full my-4'></div>
         <div className='pb-12 px-3'>
           <span className='text-sm text-white tracking-wider block mb-1'>Logged-in User</span>
-          <span className='text-white tracking-wider'>{username}</span>
+          <span className='text-white tracking-wider'>{data?.me.name}</span>
         </div>
       </div>
     </div>

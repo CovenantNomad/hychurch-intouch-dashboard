@@ -68,7 +68,7 @@ const Pagination = ({ pageSize, setPageSize, currentPage, setCurrentPage, totalC
           <ul className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
             {paginationRange?.map((pageNumber) => {
               if (pageNumber === "DOTS") {
-                return <li className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">&#8230;</li>;
+                return <li key={pageNumber} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">&#8230;</li>;
               }
               if (typeof pageNumber === "number") {
                 return (

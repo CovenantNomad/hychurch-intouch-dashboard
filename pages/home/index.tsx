@@ -1,12 +1,8 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import { useRecoilValue } from 'recoil'
 import Layout from '../../components/Layout/Layout'
-import { userState } from '../../stores/authState'
 
-const Home: NextPage = () => {
-  const user = useRecoilValue(userState)
+
+const Home = () => {
 
   return (
     <Layout>
@@ -21,14 +17,6 @@ const Home: NextPage = () => {
       </div>
     </Layout>
   )
-}
-
-export async function getStaticProps() {
-  return {
-    props: {
-      protected: true,
-    },
-  }
 }
 
 export default Home

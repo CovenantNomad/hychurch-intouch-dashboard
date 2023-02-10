@@ -1,28 +1,16 @@
 import Link from "next/link"
-import { RoleType } from "../../../graphql/generated"
 import { MemberProps } from "../../../interface/user"
+import { getRole } from "../../../utils/utils"
 
 
 const MemberCard = ({ member }: MemberProps) => {
   const { id, name, phone, isActive, roles, gender, birthday, cell, address} = member
 
-  const getRole = (roles: RoleType[]) => {
-    if (roles.includes(RoleType.CellLeader)) {
-      return "셀리더"
-    } else if (roles.includes(RoleType.ViceLeader)) {
-      return "부리더"
-    } else {
-      return "청년"
-    }
-  }
-
   return (
     <Link
       href={{
-        pathname: `/members/${id}`,
-        query: {userInfo: JSON.stringify(member)}
+        pathname: `/members/${name}`,
       }}
-      as={`/members/${id}`}
     >
       <a className='bg-white rounded-lg shadow-lg px-4 pt-6 pb-3'>
         <div className="flex justify-end mb-4">

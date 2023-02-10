@@ -1,14 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}"
-  ],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      screens: {
+        "3xl": "1920px",
+      },
       fontFamily: {
         notosans: ["Noto Sans KR", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
+        nanumBrush: ["Nanum Brush Script", "cursive"],
       },
       colors: {
         "iris-blue": "#14AAD5",
@@ -26,13 +27,14 @@ module.exports = {
         "crusoe-green": "#154E3F",
         "white-smoke": "#F5F5F5",
         "white-soapstone": "#EDE5DC",
-        "ivory": "#FFEDC8"
-      }
+        ivory: "#FFEDC8",
+        purple: "#7661E1",
+      },
     },
   },
   plugins: [
-    require('@tailwindcss/forms')({
-      strategy: 'class'
+    require("@tailwindcss/forms")({
+      strategy: "class",
     }),
   ],
-}
+};

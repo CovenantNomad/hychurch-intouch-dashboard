@@ -1,30 +1,11 @@
-import { useState } from 'react'
-import type { NextPage } from 'next'
-import Head from 'next/head'
-// fetch
-import { FindUsersQuery, FindUsersQueryVariables, useFindUsersQuery } from '../../graphql/generated'
-import graphlqlRequestClient from '../../client/graphqlRequestClient'
+import type { NextPage } from "next";
+import Head from "next/head";
 // components
-import MemberCard from '../../components/Blocks/Cards/MemberCard'
-import SearchBar from '../../components/Atoms/SearchBar/SearchBar'
-import Layout from '../../components/Layout/Layout'
-import Pagination from '../../components/Blocks/Pagination/Pagination'
-
+import Layout from "../../components/Layout/Layout";
+import MemberSearch from "../../components/Templates/Members/MemberSearch";
+import MembersMain from "../../components/Templates/Members/MembersMain";
 
 const Members: NextPage = () => {
-  const [ name, setName ] = useState("")
-  const [ pageSize, setPageSize ] = useState(12)
-  const [ currentPage, setCurrentPage] = useState(1)
-
-  const { isLoading, data } = useFindUsersQuery<FindUsersQuery, FindUsersQueryVariables>(
-    graphlqlRequestClient,
-    {
-      name,
-      limit: pageSize,
-      offset: Math.max(currentPage - 1, 0) * pageSize,
-    }
-  )
-
   return (
     <Layout>
       <Head>
@@ -33,35 +14,16 @@ const Members: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <section>
-        <header className='flex flex-col lg:flex-row justify-between mb-6 lg:mb-8'>
-          <h4 className='text-2xl font-bold tracking-wide'>인터치 청년현황 ({data?.findUsers.totalCount}명)</h4>
-          <div className='flex items-center space-x-5 mt-6 lg:mt-0'>
-            <SearchBar setName={setName} />
-          </div>
-        </header>
-        {isLoading ? (
-          <div className='grid grid-cols-2 gap-4 mb-8 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6'>
-            {Array.from({ length: 6 }, (_, index) => index).map(item => (
-              <div key={item} className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"></div>
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className='grid grid-cols-2 gap-4 mb-16 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6'>
-              {data?.findUsers.nodes.map(member => (
-                <MemberCard 
-                  key={member.id} 
-                  member={member}
-                />
-              ))}
-            </div>
-            <Pagination pageSize={pageSize} setPageSize={setPageSize} currentPage={currentPage} setCurrentPage={setCurrentPage} totalCount={data?.findUsers.totalCount || 0}/>
-          </>
-        )}
-      </section>
+      <div className="grid grid-cols-1 gap-y-3 xl:grid-cols-3 xl:gap-x-4 xl:h-screen">
+        <div className="bg-white xl:col-span-1">
+          <MemberSearch />
+        </div>
+        <div className="h-full xl:col-span-2">
+          <MembersMain />
+        </div>
+      </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Members
+export default Members;
