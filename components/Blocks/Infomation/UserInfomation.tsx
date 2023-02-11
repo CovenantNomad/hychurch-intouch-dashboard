@@ -55,7 +55,9 @@ const UserInfomation = ({
         </div>
         <div className="sm:col-span-2">
           <dt className="text-sm font-medium text-gray-500">비고</dt>
-          <dd className="mt-1 text-sm text-gray-900">{description}</dd>
+          <dd className="mt-1 text-sm text-gray-900 whitespace-pre-line">
+            {description}
+          </dd>
         </div>
       </dl>
     </div>

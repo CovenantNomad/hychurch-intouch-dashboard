@@ -46,15 +46,8 @@ const Cell: NextPage = () => {
   // ];
 
   const onCloseHandler = () => {
+    setCreateCellInfo(null);
     onModalClosehandler();
-    setCreateCellInfo({
-      cellName: "",
-      leader: {
-        id: "",
-        name: "",
-      },
-      viceLeader: undefined,
-    });
   };
 
   return (

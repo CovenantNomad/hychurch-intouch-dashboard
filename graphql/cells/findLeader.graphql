@@ -5,6 +5,12 @@ query findLeader($name: String, $limit: Int, $offset: Int) {
       id
       name
       phone
+      birthday
+      roles
+      cell {
+        id
+        name
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import Layout from '../../components/Layout/Layout'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import Layout from "../../components/Layout/Layout";
 
 const Training: NextPage = () => {
   return (
@@ -12,11 +12,15 @@ const Training: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <h1>셀보고서</h1>
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-4xl font-bold">
+          현재 페이지는
+          <br />
+          개발 중입니다
+        </h1>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Training
+export default Training;

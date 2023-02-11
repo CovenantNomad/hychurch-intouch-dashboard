@@ -1,10 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Layout from '../../components/Layout/Layout'
-
+import type { NextPage } from "next";
+import Head from "next/head";
+import Layout from "../../components/Layout/Layout";
 
 const Setting: NextPage = () => {
-
   return (
     <Layout>
       <Head>
@@ -13,10 +11,15 @@ const Setting: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-4xl font-bold">
+          현재 페이지는
+          <br />
+          개발 중입니다
+        </h1>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Setting
+export default Setting;

@@ -42,7 +42,7 @@ const FullWidthTabs = ({
             <div
               key={tab.id}
               onClick={() => setCurrentTab(tab.id)}
-              className="group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-white-soapstone focus:z-10"
+              className="group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-white-smoke focus:z-10"
             >
               <span className="text-lg uppercase">{tab.name}</span>
               <span

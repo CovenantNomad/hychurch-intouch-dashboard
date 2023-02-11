@@ -1,14 +1,23 @@
 import {
   Gender,
   Maybe,
+  RoleType,
   Scalars,
   UserCellTransferStatus,
 } from "../graphql/generated";
 
 export interface CreateCellType {
   cellName: string;
-  leader: Leader;
-  viceLeader?: Leader | undefined;
+  leader: {
+    id: string;
+    name: string;
+  };
+  viceLeader?:
+    | {
+        id: string;
+        name: string;
+      }
+    | undefined;
 }
 
 export interface FindLeaderForm {
@@ -29,6 +38,16 @@ export interface Step {
 export interface Leader {
   id: string;
   name: string;
+  phone: string;
+  birthday?: string | null | undefined;
+  cell?:
+    | {
+        id: string;
+        name: string;
+      }
+    | null
+    | undefined;
+  roles: RoleType[];
 }
 
 export interface Selected {

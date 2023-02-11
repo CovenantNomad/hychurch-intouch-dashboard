@@ -47,7 +47,7 @@ const CreateCellModal = ({ modalOpen, handleClose }: AddCellModalProps) => {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="min-w-[1/3] w-[450px] max-w-[90%] min-h-[50%] max-h-[90%] margin:auto bg-white border border-gray-300 shadow-lg p-4 overflow-y-auto"
+        className="min-w-[1/3] w-[450px] max-w-[95%] min-h-[50%] max-h-[90%] margin:auto bg-white border border-gray-300 shadow-lg p-4 overflow-y-auto"
       >
         <button
           onClick={handleClose}
@@ -56,7 +56,7 @@ const CreateCellModal = ({ modalOpen, handleClose }: AddCellModalProps) => {
           Close
         </button>
 
-        <div className="container mt-5 flex flex-col items-center">
+        <div className="mt-5 flex flex-col items-center">
           <h5 className="text-2xl font-bold mb-1">새로운 셀 생성하기</h5>
           <span className="text-sm text-gray-600">
             셀리더와 셀이름을 작성하여 새로운 셀을 생성해주세요
