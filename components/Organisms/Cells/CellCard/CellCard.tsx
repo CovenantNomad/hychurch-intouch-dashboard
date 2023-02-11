@@ -64,7 +64,7 @@ const CellCard = ({
                   {totalCountOfMembers}
                 </span>
                 <span className="block text-sm text-gray-500 font-semibold">
-                  전체인원
+                  전체<span className="hidden md:inline">인원</span>
                 </span>
               </div>
             </div>
@@ -77,7 +77,7 @@ const CellCard = ({
                   {countOfActiveMembers}
                 </span>
                 <span className="block text-sm text-gray-500 font-semibold">
-                  활동인원
+                  활동<span className="hidden md:inline">인원</span>
                 </span>
               </div>
             </div>

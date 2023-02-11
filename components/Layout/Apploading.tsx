@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import graphlqlRequestClient from "../../client/graphqlRequestClient";
 import { INTOUCH_DASHBOARD_USER } from "../../constants/constant";
 import { useMeQuery } from "../../graphql/generated";
-import { userState } from "../../stores/authState";
+import { userState } from "../../stores/userState";
 
 interface ApploadingProps {
   children: React.ReactNode;

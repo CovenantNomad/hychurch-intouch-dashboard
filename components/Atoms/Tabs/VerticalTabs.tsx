@@ -15,7 +15,7 @@ const VerticalTabs = ({ tabs, setCurrentTab }: VerticalTabsProps) => {
       {tabs.map((tab) => (
         <div
           key={tab.id}
-          className="shadow-sm border border-[#e5e5e5] py-3 px-6 xl:mt-4 bg-white cursor-pointer hover:bg-white-soapstone"
+          className="shadow-sm border border-[#e5e5e5] py-3 px-6 xl:mt-4 bg-white cursor-pointer hover:bg-white-smoke"
           onClick={() => setCurrentTab(tab.id)}
         >
           <span className="inline-block text-sm xl:text-lg">{tab.name}</span>

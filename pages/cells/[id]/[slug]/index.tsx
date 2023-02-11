@@ -63,7 +63,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
 
               {!editMode ? (
                 <Container>
-                  <section className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-12">
+                  <section className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-12 pb-12">
                     <div className="md:col-span-2">
                       <UserInfomation
                         name={data.findUsers.nodes[0].name}
@@ -77,16 +77,14 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                     </div>
                     <div className="md:col-span-4">
                       <div className="flex gap-4 mb-4">
-                        <div className="flex-1 h-[120px] bg-red-100">
+                        <div className="flex-1 h-[120px] border">
                           올해 예배 출석
                         </div>
-                        <div className="flex-1 h-[120px] bg-teal-100">
+                        <div className="flex-1 h-[120px] border">
                           올해 셀모임 출석
                         </div>
                       </div>
-                      <div className="h-[240px] bg-yellow-100">
-                        예배출석 그래프
-                      </div>
+                      <div className="h-[240px] border">예배출석 그래프</div>
                     </div>
                   </section>
                 </Container>

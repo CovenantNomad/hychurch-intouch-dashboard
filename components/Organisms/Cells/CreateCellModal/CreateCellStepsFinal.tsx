@@ -25,14 +25,7 @@ const CreateCellStepsFinal = ({}: CreateCellStepsFinalProps) => {
   >(graphlqlRequestClient, {
     onSuccess(data, variables, context) {
       toast.success(`${data.createCell.cell.name}이 생성되었습니다.`);
-      setCreateCellInfo({
-        cellName: "",
-        leader: {
-          id: "",
-          name: "",
-        },
-        viceLeader: undefined,
-      });
+      setCreateCellInfo(null);
       queryClient.invalidateQueries("findCells");
     },
     onError(error) {
@@ -58,11 +51,14 @@ const CreateCellStepsFinal = ({}: CreateCellStepsFinalProps) => {
 
   const checkDuplicated = cells?.findCells.nodes.find(
     (cell) =>
-      cell.name === createCellInfo.cellName &&
+      cell.name === createCellInfo?.cellName &&
       cell.leaders.find((leader) => leader.id === createCellInfo.leader.id)
   );
 
   const onCreateHandler = () => {
+    if (createCellInfo === null) {
+      return;
+    }
     mutateAsync({
       input: {
         name: createCellInfo.cellName,

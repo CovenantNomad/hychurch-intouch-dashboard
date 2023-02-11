@@ -11,29 +11,36 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const { handleSubmit, register, getValues } = useForm<EditCellNameForm>({
     defaultValues: {
-      name: createCellInfo.cellName,
+      name: createCellInfo?.cellName,
     },
   });
 
   const onSubmitHandler = ({ name }: EditCellNameForm) => {
-    const newCellInfo = {
-      ...createCellInfo,
-      cellName: name,
-    };
-    setCreateCellInfo(newCellInfo);
-    setEditMode(false);
+    try {
+      if (createCellInfo) {
+        const newCellInfo = {
+          ...createCellInfo,
+          cellName: name,
+        };
+        setCreateCellInfo(newCellInfo);
+      }
+    } finally {
+      setEditMode(false);
+    }
   };
 
   const onClickHandler = () => {
     if (!editMode) {
       setEditMode(true);
     } else {
-      const newCellInfo = {
-        ...createCellInfo,
-        cellName: getValues("name"),
-      };
-      setCreateCellInfo(newCellInfo);
-      setEditMode(false);
+      if (createCellInfo) {
+        const newCellInfo = {
+          ...createCellInfo,
+          cellName: getValues("name"),
+        };
+        setCreateCellInfo(newCellInfo);
+        setEditMode(false);
+      }
     }
   };
 
@@ -51,20 +58,20 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
                 <input
                   id="cellName"
                   {...register("name")}
-                  placeholder={createCellInfo.cellName}
+                  placeholder={createCellInfo?.cellName}
                   className="border-none outline-none w-[90%]"
                 />
               </form>
             ) : (
               <p
                 className={`${
-                  createCellInfo.leader.name ? "text-black" : "text-gray-400"
+                  createCellInfo?.leader.name ? "text-black" : "text-gray-400"
                 }`}
               >
-                {createCellInfo.cellName}
+                {createCellInfo?.cellName}
               </p>
             )}
-            {createCellInfo.cellName && (
+            {createCellInfo?.cellName && (
               <button onClick={onClickHandler} className="h-6 w-10">
                 <span className="text-sm text-gray-500 font-bold">
                   {editMode ? "완료" : "수정"}
@@ -76,10 +83,10 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
         <div className="grid grid-cols-3 px-4 py-2">
           <span className="col-span-1 text-gray-500">셀리더 </span>
           <p className={`col-span-2 text-black`}>
-            {createCellInfo.leader.name}
+            {createCellInfo?.leader.name}
           </p>
         </div>
-        {createCellInfo.viceLeader?.id && (
+        {createCellInfo?.viceLeader?.id && (
           <div className="grid grid-cols-3 px-4 py-2">
             <span className="col-span-1 text-gray-500">부리더</span>
             <p className={`col-span-2 text-black`}>

@@ -1,9 +1,8 @@
-import Head from 'next/head'
-import Layout from '../../components/Layout/Layout'
-
+import Head from "next/head";
+import Image from "next/image";
+import Layout from "../../components/Layout/Layout";
 
 const Home = () => {
-
   return (
     <Layout>
       <Head>
@@ -12,11 +11,15 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <h1>메인 데시보드</h1>
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-4xl font-bold">
+          현재 페이지는
+          <br />
+          개발 중입니다
+        </h1>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

@@ -516,7 +516,7 @@ export type FindLeaderQueryVariables = Exact<{
 }>;
 
 
-export type FindLeaderQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string }> } };
+export type FindLeaderQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, birthday?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type FindMyCellMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -888,6 +888,12 @@ export const FindLeaderDocument = `
       id
       name
       phone
+      birthday
+      roles
+      cell {
+        id
+        name
+      }
     }
   }
 }

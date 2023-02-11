@@ -1,42 +1,53 @@
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import graphlqlRequestClient from '../client/graphqlRequestClient'
-import { INTOUCH_DASHBOARD_USER } from '../constants/constant'
-import { useLoginMutation } from '../graphql/generated'
-import { LoginForm } from '../interface/login'
-import { makeErrorMessage } from '../utils/utils'
-import { GraphQLError } from 'graphql'
-import { useQueryClient } from 'react-query'
-
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import graphlqlRequestClient from "../client/graphqlRequestClient";
+import { INTOUCH_DASHBOARD_ACCESS_TOKEN } from "../constants/constant";
+import { useLoginMutation } from "../graphql/generated";
+import { LoginForm } from "../interface/login";
+import { makeErrorMessage } from "../utils/utils";
+import { GraphQLError } from "graphql";
+import { useQueryClient } from "react-query";
 
 const Login = () => {
-  const router = useRouter()
-  const queryClient = useQueryClient() 
-  const { mutate, isLoading, isError, isSuccess, data, error } = useLoginMutation(graphlqlRequestClient, {
-    onSuccess: (data) => {
-      const userInfo = JSON.stringify({accessToken: data.login.accessToken})
-      localStorage.setItem(INTOUCH_DASHBOARD_USER, userInfo)
-      graphlqlRequestClient.setHeader("authorization", data.login.accessToken)
-      queryClient.invalidateQueries('login')
-      router.push("/home")
-    },
-    onError(errors: GraphQLError) {
-      toast.error(`로그인에 실패했습니다.\n${makeErrorMessage(errors.message)}`)
-    },
-  })
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { mutate, isLoading, isError, isSuccess, data, error } =
+    useLoginMutation(graphlqlRequestClient, {
+      onSuccess: (data) => {
+        const userInfo = JSON.stringify({
+          accessToken: data.login.accessToken,
+        });
+        localStorage.setItem(INTOUCH_DASHBOARD_ACCESS_TOKEN, userInfo);
+        graphlqlRequestClient.setHeader(
+          "authorization",
+          data.login.accessToken
+        );
+        queryClient.invalidateQueries("login");
+        router.push("/home");
+      },
+      onError(errors: GraphQLError) {
+        toast.error(
+          `로그인에 실패했습니다.\n${makeErrorMessage(errors.message)}`
+        );
+      },
+    });
 
-  const { handleSubmit, register, formState: {errors}} = useForm<LoginForm>()
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<LoginForm>();
 
   const onSubmitHandler = ({ phone, password }: LoginForm) => {
     mutate({
       input: {
         phone,
-        password
-      }
-    })
-  }
+        password,
+      },
+    });
+  };
 
   return (
     <div>
@@ -46,9 +57,9 @@ const Login = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className='w-full h-screen flex flex-col items-center justify-center'>
-        <h3 className='text-4xl font-poppins font-light'>THE ARK</h3>
-        <h6 className='text-sm italic mb-8'>by intouch</h6>
+      <div className="w-full h-screen flex flex-col items-center justify-center">
+        <h3 className="text-4xl font-poppins font-light">THE ARK</h3>
+        <h6 className="text-sm italic mb-8">by intouch</h6>
         <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4">
           <div className="flex flex-col justify-center w-72">
             <label htmlFor="phone" className="sr-only">
@@ -57,22 +68,26 @@ const Login = () => {
             <input
               id="phone"
               type="text"
-              placeholder='Phone Number'
+              placeholder="Phone Number"
               {...register("phone", {
                 required: "휴대폰번호를 입력해주세요",
-                setValueAs: v => v.replace(/[-.,_+]|\s/g, ""),
+                setValueAs: (v) => v.replace(/[-.,_+]|\s/g, ""),
                 minLength: {
                   value: 9,
-                  message: "최소 9자리 이상 입력해주세요"
+                  message: "최소 9자리 이상 입력해주세요",
                 },
                 maxLength: {
                   value: 11,
-                  message: "휴대폰번호는 최대 11자리입니다"
+                  message: "휴대폰번호는 최대 11자리입니다",
                 },
               })}
               className="mt-1 block w-full py-2 px-3 border border-gray-300 outline-none appearance-none focus:border-black sm:text-sm"
             />
-            {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>}
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.phone.message}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col justify-center">
@@ -82,13 +97,17 @@ const Login = () => {
             <input
               id="password"
               type="password"
-              placeholder='Password'
+              placeholder="Password"
               {...register("password", {
                 required: "비밀번호를 입력해주세요",
               })}
               className="mt-1 block w-full py-2 px-3 border border-gray-300 outline-none appearance-none focus:border-black sm:text-sm"
             />
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <div className="pt-4">
@@ -102,7 +121,7 @@ const Login = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
