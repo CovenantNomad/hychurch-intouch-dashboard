@@ -16,19 +16,15 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
   const router = useRouter();
   const setUserInfo = useSetRecoilState(userState);
 
-  const getMe = async () => {
-    const response = await graphlqlRequestClient.request(MeDocument);
-    return response;
-  };
-
   const init = async () => {
     try {
       const token = localStorage.getItem(INTOUCH_DASHBOARD_ACCESS_TOKEN);
+      console.log("초기화 토큰: ", token);
       if (token) {
         console.log("refresh");
         const userInfo = JSON.parse(token);
         graphlqlRequestClient.setHeader("authorization", userInfo.accessToken);
-        const result = await getMe();
+        const result = await graphlqlRequestClient.request(MeDocument);
         if (result !== undefined) {
           setUserInfo({
             id: result.me.id,

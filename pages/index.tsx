@@ -4,18 +4,21 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 import { INTOUCH_DASHBOARD_ACCESS_TOKEN } from "../constants/constant";
-import { useLoginMutation } from "../graphql/generated";
+import { MeDocument, useLoginMutation } from "../graphql/generated";
 import { LoginForm } from "../interface/login";
 import { makeErrorMessage } from "../utils/utils";
 import { GraphQLError } from "graphql";
 import { useQueryClient } from "react-query";
+import { useSetRecoilState } from "recoil";
+import { userState } from "../stores/userState";
 
 const Login = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { mutate, isLoading, isError, isSuccess, data, error } =
+  const setUserInfo = useSetRecoilState(userState);
+  const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     useLoginMutation(graphlqlRequestClient, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
+        console.log("데이터: ", data);
         const userInfo = JSON.stringify({
           accessToken: data.login.accessToken,
         });
@@ -24,7 +27,15 @@ const Login = () => {
           "authorization",
           data.login.accessToken
         );
-        queryClient.invalidateQueries("login");
+        const response = await graphlqlRequestClient.request(MeDocument);
+        if (response !== undefined) {
+          setUserInfo({
+            id: response.me.id,
+            name: response.me.name,
+            cell: response.me.cell,
+            roles: response.me.roles,
+          });
+        }
         router.push("/home");
       },
       onError(errors: GraphQLError) {
@@ -41,7 +52,7 @@ const Login = () => {
   } = useForm<LoginForm>();
 
   const onSubmitHandler = ({ phone, password }: LoginForm) => {
-    mutate({
+    mutateAsync({
       input: {
         phone,
         password,
