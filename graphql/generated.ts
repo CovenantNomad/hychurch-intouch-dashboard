@@ -470,6 +470,20 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpPayload', user: { __typename?: 'User', id: string, name: string } } };
 
+export type FindBlessingCellQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type FindBlessingCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+
+export type FindInactiveCellQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type FindInactiveCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+
 export type CreateCellMutationVariables = Exact<{
   input: CreateCellInput;
 }>;
@@ -656,6 +670,112 @@ export const useSignUpMutation = <
       options
     );
 useSignUpMutation.getKey = () => ['signUp'];
+
+export const FindBlessingCellDocument = `
+    query findBlessingCell($id: Float!) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    members {
+      id
+      name
+      phone
+      isActive
+      birthday
+      gender
+      address
+      cell {
+        id
+        name
+      }
+      roles
+    }
+    statistics {
+      totalCountOfMembers
+      countOfActiveMembers
+    }
+  }
+}
+    `;
+export const useFindBlessingCellQuery = <
+      TData = FindBlessingCellQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindBlessingCellQueryVariables,
+      options?: UseQueryOptions<FindBlessingCellQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindBlessingCellQuery, TError, TData>(
+      ['findBlessingCell', variables],
+      fetcher<FindBlessingCellQuery, FindBlessingCellQueryVariables>(client, FindBlessingCellDocument, variables, headers),
+      options
+    );
+
+useFindBlessingCellQuery.getKey = (variables: FindBlessingCellQueryVariables) => ['findBlessingCell', variables];
+;
+
+export const FindInactiveCellDocument = `
+    query findInactiveCell($id: Float!) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    members {
+      id
+      name
+      phone
+      isActive
+      birthday
+      gender
+      address
+      cell {
+        id
+        name
+      }
+      roles
+    }
+    statistics {
+      totalCountOfMembers
+      countOfActiveMembers
+    }
+  }
+}
+    `;
+export const useFindInactiveCellQuery = <
+      TData = FindInactiveCellQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindInactiveCellQueryVariables,
+      options?: UseQueryOptions<FindInactiveCellQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindInactiveCellQuery, TError, TData>(
+      ['findInactiveCell', variables],
+      fetcher<FindInactiveCellQuery, FindInactiveCellQueryVariables>(client, FindInactiveCellDocument, variables, headers),
+      options
+    );
+
+useFindInactiveCellQuery.getKey = (variables: FindInactiveCellQueryVariables) => ['findInactiveCell', variables];
+;
 
 export const CreateCellDocument = `
     mutation createCell($input: CreateCellInput!) {
