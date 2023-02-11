@@ -1,0 +1,33 @@
+query findBlessingCell($id: Float!) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      roles
+      cell {
+        id
+        name
+      }
+    }
+    members {
+      id
+      name
+      phone
+      isActive
+      birthday
+      gender
+      address
+      cell {
+        id
+        name
+      }
+      roles
+    }
+    statistics {
+      totalCountOfMembers
+      countOfActiveMembers
+    }
+  }
+}

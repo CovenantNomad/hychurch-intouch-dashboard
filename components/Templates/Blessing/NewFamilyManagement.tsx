@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
+import BlessingMemberList from "../../Organisms/Bleesing/BlessingMemberList";
 
 interface NewFamilyManagementProps {}
 
 const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
   return (
     <div>
-      NewFamilyManagement
+      <BlessingMemberList />
     </div>
   );
 };
