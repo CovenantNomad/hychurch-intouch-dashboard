@@ -31,7 +31,7 @@ const Cell: NextPage = () => {
   >(
     graphlqlRequestClient,
     {
-      limit: 40,
+      limit: 50,
     },
     {
       staleTime: 60 * 60 * 1000,
