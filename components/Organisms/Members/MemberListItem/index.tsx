@@ -15,13 +15,22 @@ interface MemberListItemProps {
 
 const MemberListItem = ({ member }: MemberListItemProps) => {
   const setSelectedUser = useSetRecoilState(selectedUser);
+  const nameCheck = /^[a-zA-Z]*$/;
 
   return (
     <div
       className="flex items-center py-4 px-2 bg-white border-b cursor-pointer"
       onClick={() => setSelectedUser(member)}
     >
-      <Avatar size={AvatarSize.md} name={member.name.substr(-2)} rounded />
+      <Avatar
+        size={AvatarSize.md}
+        name={member.name.substring(
+          nameCheck.test(member.name)
+            ? member.name.length - 3
+            : member.name.length - 2
+        )}
+        rounded
+      />
       <div className="ml-4 flex-1">
         <TitleText>
           {member.name} {getGender(member.gender!)}

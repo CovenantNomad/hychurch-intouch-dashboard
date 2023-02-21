@@ -32,7 +32,7 @@ const EditUserInfomation = ({
       onSuccess: (data) => {
         toast.success("정보가 수정되었습니다");
         queryClient.invalidateQueries({
-          queryKey: [["searchUsers"]],
+          queryKey: ["searchUsers"],
         });
         queryClient.invalidateQueries({
           queryKey: ["findCell", { id: Number(cell?.id) }],
