@@ -14,6 +14,7 @@ import { Selected, TransferInfo } from "../../../../../../interface/cell";
 // components
 import SkeletonTranfer from "../../../../../Atoms/Skeleton/SkeletonTranfer";
 import { toast } from "react-hot-toast";
+import { FIND_CELL_LIMIT } from "../../../../../../constants/constant";
 
 interface SelectTransferCellProps {}
 
@@ -25,7 +26,7 @@ const SelectTransferCell = ({}: SelectTransferCellProps) => {
   >(
     graphlqlRequestClient,
     {
-      limit: 50,
+      limit: FIND_CELL_LIMIT,
     },
     {
       staleTime: 60 * 60 * 1000,

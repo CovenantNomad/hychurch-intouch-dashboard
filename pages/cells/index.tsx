@@ -21,6 +21,7 @@ import Spacer from "../../components/Atoms/Spacer";
 import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
 import { useSetRecoilState } from "recoil";
 import { createCellState } from "../../stores/createCellState";
+import { FIND_CELL_LIMIT } from "../../constants/constant";
 
 const Cell: NextPage = () => {
   const setCreateCellInfo = useSetRecoilState(createCellState);
@@ -31,7 +32,7 @@ const Cell: NextPage = () => {
   >(
     graphlqlRequestClient,
     {
-      limit: 50,
+      limit: FIND_CELL_LIMIT,
     },
     {
       staleTime: 60 * 60 * 1000,
