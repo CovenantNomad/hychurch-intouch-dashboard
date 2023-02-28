@@ -19,7 +19,6 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
   const init = async () => {
     try {
       const token = localStorage.getItem(INTOUCH_DASHBOARD_ACCESS_TOKEN);
-      console.log("초기화 토큰: ", token);
       if (token) {
         console.log("refresh");
         const userInfo = JSON.parse(token);

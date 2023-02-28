@@ -19,3 +19,25 @@ export const dropIn = {
     opacity: 0,
   },
 };
+
+export const NavbarVariants = {
+  open: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 20,
+      restDelta: 1,
+    },
+  },
+  closed: {
+    opacity: 0,
+    x: "-100%",
+    transition: {
+      delay: 0.5,
+      type: "spring",
+      stiffness: 400,
+      damping: 40,
+    },
+  },
+};

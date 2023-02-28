@@ -20,7 +20,9 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
     useRegisterNewUserMutation(graphlqlRequestClient, {
       onSuccess: (data) => {
         toast.success("새가족 등록하였습니다");
-        queryClient.invalidateQueries("findBlessingCell");
+        queryClient.invalidateQueries({
+          queryKey: ["findNewFamilyCell", { id: Number("39") }],
+        });
         reset();
       },
       onError: (error) => {
@@ -53,7 +55,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
   };
 
   return (
-    <div>
+    <div className="bg-white rounded-md py-5 px-5">
       <div className="md:grid md:grid-cols-3 md:gap-6">
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0">
@@ -67,7 +69,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
         </div>
         <div className="mt-5 md:mt-0 md:col-span-2">
           <form onSubmit={handleSubmit(onSubmitHandler)}>
-            <div className="shadow overflow-hidden sm:rounded-md">
+            <div className="overflow-hidden sm:rounded-md">
               <div className="px-4 py-5 bg-white sm:p-6">
                 <div className="grid grid-cols-6 gap-6">
                   <div className="col-span-6 sm:col-span-4">
@@ -306,7 +308,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
               <div className="px-4 py-3 bg-white text-right sm:px-6">
                 <button
                   type="submit"
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-navy-blue/90 hover:bg-navy-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
                 >
                   Save
                 </button>

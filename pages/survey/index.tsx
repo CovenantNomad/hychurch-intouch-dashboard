@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Layout from "../../components/Layout/Layout";
 
-const Setting: NextPage = () => {
+const SurveyPage: NextPage = () => {
   return (
     <Layout>
       <Head>
@@ -22,4 +22,4 @@ const Setting: NextPage = () => {
   );
 };
 
-export default Setting;
+export default SurveyPage;

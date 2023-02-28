@@ -13,7 +13,7 @@ const MembersMain = ({}: MembersMainProps) => {
 
   return (
     //   <div>{selectedUserInfo === null ? <MembersStatic /> : <MemberInfo />}</div>
-    <div>{selectedUserInfo !== null ? <MemberInfo /> : null}</div>
+    <div>{selectedUserInfo === null ? null : <MemberInfo />}</div>
   );
 };
 

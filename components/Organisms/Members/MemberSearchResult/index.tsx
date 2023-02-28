@@ -25,8 +25,12 @@ const MemberSearchResult = ({
             </div>
           ) : (
             <div className="pt-8">
-              {searchResults?.findUsers.nodes.map((user) => (
-                <MemberListItem key={user.id} member={user} />
+              {searchResults?.findUsers.nodes.map((user, index) => (
+                <MemberListItem
+                  key={user.id}
+                  member={user}
+                  lastItem={searchResults?.findUsers.totalCount - 1 === index}
+                />
               ))}
             </div>
           )}

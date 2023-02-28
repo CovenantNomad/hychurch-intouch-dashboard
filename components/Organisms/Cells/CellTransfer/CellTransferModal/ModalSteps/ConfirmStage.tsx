@@ -28,7 +28,13 @@ const ConfirmStage = ({}: ConfirmStageProps) => {
     onSuccess(data, variables, context) {
       toast.success("셀원이동 신청이 접수되었습니다.");
       setTransferInfo(null);
-      queryClient.invalidateQueries("findCellWithTranferData");
+      queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
+      queryClient.invalidateQueries({
+        queryKey: ["findCell", { id: Number(transferInfo?.from.cellId) }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["findCell", { id: Number(transferInfo?.to.cellId) }],
+      });
     },
     onError(error) {
       if (error instanceof Error) {

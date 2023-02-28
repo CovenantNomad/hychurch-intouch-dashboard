@@ -16,14 +16,17 @@ import Layout from "../../components/Layout/Layout";
 import CellCard from "../../components/Organisms/Cells/CellCard/CellCard";
 import Container from "../../components/Atoms/Container/Container";
 import Header from "../../components/Atoms/Header";
-import SimpleStat from "../../components/Atoms/Stats/SimpleStat";
 import Spacer from "../../components/Atoms/Spacer";
 import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { createCellState } from "../../stores/createCellState";
 import { FIND_CELL_LIMIT } from "../../constants/constant";
+import Footer from "../../components/Atoms/Footer";
+import { userState } from "../../stores/userState";
+import { SpecialCellIdType } from "../../interface/cell";
 
 const Cell: NextPage = () => {
+  const userInfo = useRecoilValue(userState);
   const setCreateCellInfo = useSetRecoilState(createCellState);
   const { modalOpen, onModalOpenHandler, onModalClosehandler } = useModal();
   const { isLoading, data } = useFindCellsQuery<
@@ -40,12 +43,6 @@ const Cell: NextPage = () => {
     }
   );
 
-  // const stats = [
-  //   { name: "연단공동체", number: 15 },
-  //   { name: "인내공동체", number: 12 },
-  //   { name: "능력공동체", number: 9 },
-  // ];
-
   const onCloseHandler = () => {
     setCreateCellInfo(null);
     onModalClosehandler();
@@ -60,20 +57,21 @@ const Cell: NextPage = () => {
       </Head>
 
       <Header
-        title={`인터치 셀현황 (${data ? data.findCells.totalCount - 1 : 0}셀)`}
+        title={`인터치 셀현황 (${data ? data.findCells.totalCount - 3 : 0}셀)`}
       >
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={onModalOpenHandler}
-          className="px-4 py-2 bg-navy-blue text-white rounded-md"
+          className="px-4 py-2 bg-BLUE text-white rounded-md"
         >
           Add Cell
         </motion.button>
       </Header>
-      <Container>
+      <Spacer size="h-8" background />
+      <Container bgWhite>
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4 3xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {Array.from({ length: 6 }, (_, index) => index).map((item) => (
               <div
                 key={item}
@@ -83,12 +81,14 @@ const Cell: NextPage = () => {
           </div>
         ) : (
           <>
-            {/* <div className="mb-8">
-              <SimpleStat stats={stats} row />
-            </div> */}
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4 3xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
               {data?.findCells.nodes
-                .filter((item) => item.id !== "39")
+                .filter(
+                  (cell) =>
+                    !cell.id.includes(SpecialCellIdType.NewFamily) &&
+                    !cell.id.includes(SpecialCellIdType.Blessing) &&
+                    !cell.id.includes(SpecialCellIdType.Renew)
+                )
                 .sort((a, b) => {
                   if (a.name > b.name) return 1;
                   else if (b.name > a.name) return -1;
@@ -119,8 +119,8 @@ const Cell: NextPage = () => {
             </AnimatePresence>
           </>
         )}
+        <Footer bgWhite />
       </Container>
-      <Spacer />
     </Layout>
   );
 };

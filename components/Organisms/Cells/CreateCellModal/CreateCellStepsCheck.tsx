@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { EditCellNameForm, Leader } from "../../../../interface/cell";
@@ -16,20 +16,19 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
   });
 
   const onSubmitHandler = ({ name }: EditCellNameForm) => {
-    try {
-      if (createCellInfo) {
+    if (createCellInfo && editMode) {
+      if (createCellInfo.cellName !== getValues("name")) {
         const newCellInfo = {
           ...createCellInfo,
-          cellName: name,
+          cellName: getValues("name"),
         };
         setCreateCellInfo(newCellInfo);
+        setEditMode(false);
       }
-    } finally {
-      setEditMode(false);
     }
   };
 
-  const onClickHandler = () => {
+  const onClickHandler = useCallback(() => {
     if (!editMode) {
       setEditMode(true);
     } else {
@@ -42,7 +41,7 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
         setEditMode(false);
       }
     }
-  };
+  }, [createCellInfo, setCreateCellInfo, getValues, editMode]);
 
   return (
     <div className="mt-14 mb-6">
@@ -61,6 +60,9 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
                   placeholder={createCellInfo?.cellName}
                   className="border-none outline-none w-[90%]"
                 />
+                <button className="sr-only hidden" type="button">
+                  제출
+                </button>
               </form>
             ) : (
               <p
@@ -81,19 +83,11 @@ const CreateCellStepsCheck = ({}: CreateCellStepsCheckProps) => {
           </div>
         </div>
         <div className="grid grid-cols-3 px-4 py-2">
-          <span className="col-span-1 text-gray-500">셀리더 </span>
+          <span className="col-span-1 text-gray-500">셀리더</span>
           <p className={`col-span-2 text-black`}>
             {createCellInfo?.leader.name}
           </p>
         </div>
-        {createCellInfo?.viceLeader?.id && (
-          <div className="grid grid-cols-3 px-4 py-2">
-            <span className="col-span-1 text-gray-500">부리더</span>
-            <p className={`col-span-2 text-black`}>
-              {createCellInfo.viceLeader.name}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

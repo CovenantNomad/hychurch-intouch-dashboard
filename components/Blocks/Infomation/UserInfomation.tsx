@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 import { Gender } from "../../../graphql/generated";
 import Avatar, { AvatarSize } from "../../Atoms/Avatar";
 
@@ -9,6 +11,7 @@ export interface UserInfomationProps {
   phone: string;
   address: string | null | undefined;
   description: string | null | undefined;
+  editModeHandler?: () => void;
 }
 
 const UserInfomation = ({
@@ -19,12 +22,17 @@ const UserInfomation = ({
   phone,
   address,
   description,
+  editModeHandler,
 }: UserInfomationProps) => {
   return (
     <div className="border px-4 py-4 rounded-md bg-white">
       <div className="flex gap-x-4 items-center mb-6">
-        <Avatar name={name.substr(-2)} size={AvatarSize.md} inline />
-        <h6 className="text-xl font-medium tracking-wide">{name}</h6>
+        <Avatar name={name} size={AvatarSize.md} inline />
+        <button onClick={editModeHandler}>
+          <h6 className="text-xl font-medium tracking-wide hover:text-LINKTEXT">
+            {name}
+          </h6>
+        </button>
       </div>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
         <div className="sm:col-span-1">

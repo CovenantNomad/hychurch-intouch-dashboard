@@ -20,13 +20,9 @@ const CreateCellStepsFindLeader = ({}: CreateCellStepsFindLeaderProps) => {
   const {
     createCellInfo,
     disableSelectLeader,
-    disableSelectViceLeader,
     onSetLeaderHandler,
-    onSetViceLeaderHandler,
     onResetLeader,
-    onResetViceLeader,
     setDisableSelectLeader,
-    setDisableSelectViceLeader,
   } = useSelectLeader();
 
   const { isLoading, data } = useFindLeaderQuery<
@@ -46,7 +42,6 @@ const CreateCellStepsFindLeader = ({}: CreateCellStepsFindLeaderProps) => {
     queryClient.invalidateQueries("findLeader");
     setSearch(name);
     setDisableSelectLeader(false);
-    setDisableSelectViceLeader(false);
   }, 300);
 
   return (
@@ -61,39 +56,18 @@ const CreateCellStepsFindLeader = ({}: CreateCellStepsFindLeaderProps) => {
         </>
         <div className="border border-gray-300 divide-y-[1px] mb-6 rounded-md">
           <div className="grid grid-cols-3 px-4 py-2 items-center">
-            <span className="col-span-1 text-gray-500">리더 </span>
+            <span className="col-span-1 text-gray-500 text-sm">리더 </span>
             <div className="col-span-2 flex justify-between">
               <p
                 className={`${
                   createCellInfo?.leader?.name ? "text-black" : "text-gray-400"
-                } pointer-events-none`}
+                } pointer-events-none text-sm`}
               >
                 {createCellInfo?.leader?.name ||
                   "아래 검색창에 리더를 검색해주세요"}
               </p>
               {createCellInfo?.leader?.name && (
                 <button onClick={onResetLeader}>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20">
-                    <path d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z"></path>
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-3 px-4 py-2">
-            <span className="col-span-1 text-gray-500">부리더(옵션) </span>
-            <div className="col-span-2 flex justify-between">
-              <p
-                className={`${
-                  createCellInfo?.viceLeader?.name
-                    ? "text-black"
-                    : "text-gray-400"
-                } pointer-events-none`}
-              >
-                {createCellInfo?.viceLeader?.name}
-              </p>
-              {createCellInfo?.viceLeader?.name && (
-                <button onClick={onResetViceLeader}>
                   <svg className="h-5 w-5" viewBox="0 0 20 20">
                     <path d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z"></path>
                   </svg>
@@ -116,23 +90,24 @@ const CreateCellStepsFindLeader = ({}: CreateCellStepsFindLeaderProps) => {
                 required: "검색할 이름을 입력해주세요.",
               })}
               placeholder="searching for member..."
-              className="border-none outline-none w-full"
+              className="border-none outline-none w-full text-sm py-1"
             />
           </div>
         </form>
         <div className="mt-4">
           <table className="w-full border border-gray-300">
-            <thead className="grid grid-cols-5 border-b border-b-gray-300">
-              <th className="py-1">이름</th>
-              <th className="py-1 col-span-2">연락처</th>
-              <th className="py-1">리더</th>
-              <th className="py-1">부리더</th>
+            <thead className="grid grid-cols-4 bg-GRAY002 border-b border-b-gray-300">
+              <th className="py-1 text-sm text-GRAY004 col-span-1">이름</th>
+              <th className="py-1 text-sm text-GRAY004 col-span-2">연락처</th>
+              <th className="py-1 text-sm text-GRAY004 col-span-1">리더</th>
             </thead>
             <tbody>
               {data?.findUsers ? (
                 data?.findUsers.nodes.map((leader) => (
-                  <tr key={leader.id} className="grid grid-cols-5">
-                    <td className="py-2 text-center text-sm">{leader.name}</td>
+                  <tr key={leader.id} className="grid grid-cols-4">
+                    <td className="py-2 text-center text-sm col-span-1">
+                      {leader.name}
+                    </td>
                     <td className="py-2 text-center text-sm col-span-2">
                       {leader.phone}
                     </td>
@@ -151,28 +126,7 @@ const CreateCellStepsFindLeader = ({}: CreateCellStepsFindLeaderProps) => {
                         className={`text-sm ${
                           disableSelectLeader
                             ? "text-gray-600"
-                            : "text-blue-500 hover:text-blue-600"
-                        } font-bold cursor-pointer`}
-                      >
-                        선택
-                      </button>
-                    </td>
-                    <td className="py-2 text-center">
-                      <button
-                        onClick={() =>
-                          onSetViceLeaderHandler({
-                            id: leader.id,
-                            name: leader.name,
-                            roles: leader.roles,
-                            cell: leader.cell,
-                            phone: leader.phone,
-                          })
-                        }
-                        disabled={disableSelectViceLeader}
-                        className={`text-sm ${
-                          disableSelectViceLeader
-                            ? "text-gray-600"
-                            : "text-teal-500 hover:text-teal-600"
+                            : "text-teal-600"
                         } font-bold cursor-pointer`}
                       >
                         선택

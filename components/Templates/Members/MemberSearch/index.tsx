@@ -28,8 +28,8 @@ const MemberSearch = ({}: MemberSearchProps) => {
   return (
     <div
       className={`${
-        data ? "pt-8 pb-16 md:pt-12" : "pt-48 pb-32"
-      } px-4 transition-all xl:pt-12`}
+        data ? "pt-8 md:pt-12" : "pt-48 pb-32"
+      } transition-all pb-6 xl:pt-12`}
     >
       <MemberSearchBar setName={setName} />
       <MemberSearchResult isLoading={isFetching} searchResults={data} />

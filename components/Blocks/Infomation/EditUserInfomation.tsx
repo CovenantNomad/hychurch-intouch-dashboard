@@ -18,6 +18,7 @@ const EditUserInfomation = ({
   address,
   description,
   cell,
+  editModeHandler,
 }: UpdateUserInfomationProps) => {
   const queryClient = useQueryClient();
   const {
@@ -30,13 +31,16 @@ const EditUserInfomation = ({
     graphlqlRequestClient,
     {
       onSuccess: (data) => {
-        toast.success("정보가 수정되었습니다");
+        toast.success("정보가 수정되었습니다\n검색결과를 다시 선택해주세요");
         queryClient.invalidateQueries({
           queryKey: ["searchUsers"],
         });
         queryClient.invalidateQueries({
           queryKey: ["findCell", { id: Number(cell?.id) }],
         });
+        if (editModeHandler) {
+          editModeHandler(false);
+        }
       },
       onError: (errors: GraphQLError) => {
         toast.success(
@@ -76,7 +80,7 @@ const EditUserInfomation = ({
   };
 
   return (
-    <div className="mt-8 px-4 md:px-6 lg:px-8 bg-white">
+    <div className="mt-3 px-4 md:px-6 lg:px-8 bg-white">
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">
@@ -337,7 +341,7 @@ const EditUserInfomation = ({
         <div className="py-3 bg-white text-right">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-navy-blue/90 hover:bg-navy-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
           >
             수정하기
           </button>
