@@ -7,7 +7,7 @@ export function makeErrorMessage(message: string) {
 export const getTransferStatus = (state: UserCellTransferStatus) => {
   switch (state) {
     case UserCellTransferStatus.Ordered:
-      return "승인대기 중";
+      return "승인대기";
 
     case UserCellTransferStatus.Canceled:
       return "거절";
@@ -41,4 +41,11 @@ export const getGender = (gender: Gender) => {
     default:
       break;
   }
+};
+
+export const covertPhoneNumber = (number: String) => {
+  return number.replace(
+    /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,
+    "$1-$2-$3"
+  );
 };

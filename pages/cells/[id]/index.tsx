@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import CellInfomationScreen from "../../../components/Templates/Cells/CellInfomationScreen";
 import CellTransferScreen from "../../../components/Templates/Cells/CellTransferScreen";
 import CellReportScreen from "../../../components/Templates/Cells/CellReportScreen";
-import FullWidthTabs from "../../../components/Atoms/Tabs/FullWidthTabs";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
   FindCellQuery,
@@ -13,14 +12,17 @@ import {
 } from "../../../graphql/generated";
 import { useRecoilState } from "recoil";
 import { selectedState } from "../../../stores/selectedState";
-import Container from "../../../components/Atoms/Container/Container";
-import Header from "../../../components/Atoms/Header";
 import Layout from "../../../components/Layout/Layout";
-import Link from "next/link";
+import Footer from "../../../components/Atoms/Footer";
+import TabsWithHeader from "../../../components/Atoms/Tabs/TabsWithHeader";
+import { stateSetting } from "../../../stores/stateSetting";
 
 const CellDetail = () => {
   const { query } = useRouter();
-  const [categoryId, setCategoryId] = useState<number>(0);
+  const [setting, setSetting] = useRecoilState(stateSetting);
+  const [categoryId, setCategoryId] = useState<number>(
+    setting.cellSelectedCategoryId
+  );
   const [selectedStatus, setSelectedStatus] = useRecoilState(selectedState);
   const { isLoading, data } = useFindCellQuery<
     FindCellQuery,
@@ -55,6 +57,16 @@ const CellDetail = () => {
     },
   ];
 
+  const setSettingHandler = useCallback(
+    (id: number) => {
+      setSetting({
+        ...setting,
+        cellSelectedCategoryId: id,
+      });
+    },
+    [setting, setSetting]
+  );
+
   useEffect(() => {
     if (data) {
       setSelectedStatus({
@@ -75,32 +87,16 @@ const CellDetail = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header title={`${query.cellName || data?.findCell.name}`}>
-        <Link
-          href={{
-            pathname: `/cells/${query.id}/delete`,
-            query: { cellName: query.cellName || data?.findCell.name },
-          }}
-          as={`/cells/${query.id}/delete`}
-        >
-          <button className="px-4 py-2 bg-dark-pink text-white rounded-md">
-            셀 삭제하기
-          </button>
-        </Link>
-      </Header>
-      <Container>
-        <div className="mt-4">
-          <FullWidthTabs
-            tabs={categories}
-            currentTab={categoryId}
-            setCurrentTab={setCategoryId}
-          />
-        </div>
-
-        <div className="pt-8 pb-8 md:pt-12 md:pb-12 lg:pt-16 lg:pb-16">
-          {categories[categoryId].component}
-        </div>
-      </Container>
+      <TabsWithHeader
+        title={data?.findCell.name || "셀"}
+        subtitle={"공동체"}
+        tabs={categories}
+        currentTab={categoryId}
+        setCurrentTab={setCategoryId}
+        setSettingHandler={setSettingHandler}
+      />
+      <div className="px-2 pt-2">{categories[categoryId].component}</div>
+      <Footer />
     </Layout>
   );
 };

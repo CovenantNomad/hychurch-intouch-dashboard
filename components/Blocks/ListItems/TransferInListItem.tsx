@@ -20,9 +20,26 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
 
   const { mutate } = useUpdateUserCellTransferMutation(graphlqlRequestClient, {
     onSuccess: (data) => {
-      console.log(data);
-      queryClient.invalidateQueries("findCell");
-      queryClient.invalidateQueries("findCellWithTranferData");
+      queryClient.invalidateQueries({ queryKey: ["findCells"] });
+      queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "findCell",
+          {
+            id: Number(data.updateUserCellTransfer.userCellTransfer.toCell.id),
+          },
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "findCell",
+          {
+            id: Number(
+              data.updateUserCellTransfer.userCellTransfer.fromCell.id
+            ),
+          },
+        ],
+      });
       toast.success(
         `이동요청이 ${getTransferStatus(
           data.updateUserCellTransfer.userCellTransfer.status
@@ -57,16 +74,11 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
 
   return (
     <div className="bg-white flex justify-between items-center py-6 px-8 rounded-lg shadow-md border">
-      <div className="flex items-center">
-        <FaAngleDoubleRight size={34} className="mr-6" />
-        <div>
-          <h4 className="text-2xl font-bold cursor-pointer">
-            {data.user.name}
-          </h4>
-          <span className="inline-block text-gray-500 text-lg mt-1">
-            {data.user.gender === "MAN" ? "형제" : "자매"}
-          </span>
-        </div>
+      <div>
+        <h4 className="text-2xl font-bold cursor-pointer">{data.user.name}</h4>
+        <span className="inline-block text-gray-500 text-lg mt-1">
+          {data.user.gender === "MAN" ? "형제" : "자매"}
+        </span>
       </div>
       <div className="flex flex-col justify-start">
         <span className="inline-block text-gray-500 text-lg">이동현황</span>

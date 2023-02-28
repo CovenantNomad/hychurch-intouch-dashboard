@@ -70,19 +70,17 @@ const CreateCellModal = ({ modalOpen, handleClose }: AddCellModalProps) => {
             {stages[currentStage - 1].component}
           </div>
 
-          {currentStage !== TOTAL_STAGE && (
-            <StepControl
-              currentStage={currentStage}
-              user={{
-                id: createCellInfo?.leader?.id || "",
-                name: createCellInfo?.leader?.name || "",
-              }}
-              lastStage={TOTAL_STAGE}
-              onNextHandler={onNextHandler}
-              onBackHandler={onBackHandler}
-              onMoveFirstStepHandler={onMoveFirstStepHandler}
-            />
-          )}
+          <StepControl
+            currentStage={currentStage}
+            user={{
+              id: createCellInfo?.leader?.id || "",
+              name: createCellInfo?.leader?.name || "",
+            }}
+            lastStage={TOTAL_STAGE}
+            onNextHandler={onNextHandler}
+            onBackHandler={onBackHandler}
+            onMoveFirstStepHandler={onMoveFirstStepHandler}
+          />
         </div>
       </motion.div>
     </Backdrop>

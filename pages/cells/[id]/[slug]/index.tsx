@@ -17,6 +17,7 @@ import {
   useSearchUsersQuery,
 } from "../../../../graphql/generated";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import Footer from "../../../../components/Atoms/Footer";
 
 interface MemberDetailPage {}
 
@@ -52,7 +53,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
       ) : (
         <>
           {data ? (
-            <>
+            <div>
               <MemberHeader
                 cellId={data.findUsers.nodes[0].cell?.id}
                 cellName={data.findUsers.nodes[0].cell?.name}
@@ -62,8 +63,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
               />
 
               {!editMode ? (
-                <Container>
-                  <section className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-12 pb-12">
+                <div className="px-2 pt-2">
+                  <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-5 px-4 rounded-md bg-white">
                     <div className="md:col-span-2">
                       <UserInfomation
                         name={data.findUsers.nodes[0].name}
@@ -87,26 +88,31 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                       <div className="h-[240px] border">예배출석 그래프</div>
                     </div>
                   </section>
-                </Container>
+                </div>
               ) : (
-                <EditUserInfomation
-                  id={data.findUsers.nodes[0].id}
-                  name={data.findUsers.nodes[0].name}
-                  gender={data.findUsers.nodes[0].gender}
-                  isActive={data.findUsers.nodes[0].isActive}
-                  birthday={data.findUsers.nodes[0].birthday}
-                  phone={data.findUsers.nodes[0].phone}
-                  address={data.findUsers.nodes[0].address}
-                  description={data.findUsers.nodes[0].description}
-                  cell={data.findUsers.nodes[0].cell}
-                />
+                <div className="px-2 pt-2">
+                  <section className="py-5 px-4 rounded-md bg-white">
+                    <EditUserInfomation
+                      id={data.findUsers.nodes[0].id}
+                      name={data.findUsers.nodes[0].name}
+                      gender={data.findUsers.nodes[0].gender}
+                      isActive={data.findUsers.nodes[0].isActive}
+                      birthday={data.findUsers.nodes[0].birthday}
+                      phone={data.findUsers.nodes[0].phone}
+                      address={data.findUsers.nodes[0].address}
+                      description={data.findUsers.nodes[0].description}
+                      cell={data.findUsers.nodes[0].cell}
+                    />
+                  </section>
+                </div>
               )}
-            </>
+            </div>
           ) : (
             <div className="w-full h-screen flex justify-center items-center">
               <EmptyStateSimple warning />
             </div>
           )}
+          <Footer />
         </>
       )}
     </Layout>

@@ -20,16 +20,14 @@ const Sidebar = () => {
     router.push("/");
   };
 
-  console.log(userInfo);
-
   return (
     <div
-      className={`hidden fixed left-0 top-0 bottom-0 flex-col flex-nowrap overflow-hidden z-[2000] px-6 transition-all duration-300 bg-black md:flex md:shadow-xl md:w-60 md:justify-between `}
+      className={`hidden fixed left-0 top-0 bottom-0 flex-col flex-nowrap overflow-hidden z-[2000] px-6 transition-all duration-300 bg-black lg:flex lg:shadow-xl lg:w-60 lg:justify-between `}
     >
       <div>
         <div className="py-12">
           <h1 className="text-xl font-bold text-white">INTOUCH CHURCH</h1>
-          <span className="block text-gray-400 text-sm">
+          <span className="block text-GRAY001 text-sm">
             {new Date().toLocaleDateString("kr-KR", {
               year: "numeric",
               month: "2-digit",
@@ -42,8 +40,8 @@ const Sidebar = () => {
           {menu.map((item) => (
             <Link href={item.route} key={item.id}>
               <a
-                className={`group w-full flex items-center py-2 px-3 hover:bg-navy-blue/40 ${
-                  router.pathname === item.route && "bg-navy-blue"
+                className={`group w-full flex items-center py-2 px-3 hover:bg-BLUE/40 ${
+                  router.pathname.includes(item.route) && "bg-BLUE"
                 }`}
               >
                 <svg

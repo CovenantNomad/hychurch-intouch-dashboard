@@ -43,7 +43,7 @@ const CellCard = ({
           })
         }
       >
-        <div className="px-4 py-6 bg-white rounded-lg shadow-lg">
+        <div className="px-4 py-6 bg-white rounded-lg border border-gray-200 shadow-lg">
           <Avatar
             size={AvatarSize.lg}
             name={leader.substr(-2)}

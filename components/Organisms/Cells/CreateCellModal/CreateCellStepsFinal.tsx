@@ -26,7 +26,7 @@ const CreateCellStepsFinal = ({}: CreateCellStepsFinalProps) => {
     onSuccess(data, variables, context) {
       toast.success(`${data.createCell.cell.name}이 생성되었습니다.`);
       setCreateCellInfo(null);
-      queryClient.invalidateQueries("findCells");
+      queryClient.invalidateQueries({ queryKey: ["findCells"] });
     },
     onError(error) {
       if (error instanceof Error) {

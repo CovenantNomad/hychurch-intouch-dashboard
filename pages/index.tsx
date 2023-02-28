@@ -124,7 +124,7 @@ const Login = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white hover:bg-navy-blue bg-navy-blue/90"
+              className="w-full inline-flex justify-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
             >
               LOGIN
             </button>

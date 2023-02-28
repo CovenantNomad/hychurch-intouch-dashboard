@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { Gender, RoleType } from "../graphql/generated";
 
 export interface MemberProps {
@@ -64,4 +65,5 @@ export interface UpdateUserInfomationProps {
       }
     | null
     | undefined;
+  editModeHandler?: Dispatch<SetStateAction<boolean>>;
 }

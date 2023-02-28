@@ -1,41 +1,52 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { menu } from "../../../constants/menu";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../../stores/userState";
+import { NavbarVariants } from "../../../styles/animation";
+import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import { INTOUCH_DASHBOARD_ACCESS_TOKEN } from "../../../constants/constant";
 
 const Navbar = () => {
   const router = useRouter();
   const userInfo = useRecoilValue(userState);
   const [isOpen, setIsOpen] = useState(false);
 
-  const variants = {
-    open: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 20,
-        restDelta: 1,
-      },
-    },
-    closed: {
-      opacity: 0,
-      x: "-100%",
-      transition: {
-        delay: 0.5,
-        type: "spring",
-        stiffness: 400,
-        damping: 40,
-      },
-    },
-  };
+  const onLogOutHandler = useCallback(() => {
+    localStorage.removeItem(INTOUCH_DASHBOARD_ACCESS_TOKEN);
+    graphlqlRequestClient.setHeader("authorization", "");
+    router.push("/");
+  }, [router]);
 
   return (
     <>
-      <div className="h-20 flex justify-between items-center px-4 md:hidden">
+      <div className="hidden w-full lg:flex lg:items-center lg:px-8 lg:py-5">
+        <h1 className="inline-block w-fit text-lg">INTOUCH CHURCH</h1>
+        <div className="flex flex-1 justify-between pl-4">
+          <div className="flex">
+            {menu.map((item) => (
+              <Link href={item.route} key={item.id}>
+                <a
+                  className={`py-1 px-3 ${
+                    router.pathname === item.route && "bg-blue"
+                  }`}
+                >
+                  <span className="inline-block">{item.pathname}</span>
+                </a>
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center">
+            <button onClick={onLogOutHandler}>
+              <span className="inline-block text-sm mr-8">로그아웃</span>
+            </button>
+            <span className="inline-block text-sm">{userInfo?.name}</span>
+          </div>
+        </div>
+      </div>
+      <div className="h-20 flex justify-between items-center px-4 lg:hidden">
         <div
           className={`${isOpen && "delay-75 rotate-45"}`}
           onClick={() => setIsOpen(!isOpen)}
@@ -63,7 +74,7 @@ const Navbar = () => {
         <AnimatePresence>
           <motion.div
             className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex flex-col md:hidden`}
-            variants={variants}
+            variants={NavbarVariants}
             animate={isOpen ? "open" : "closed"}
           >
             {menu.map((item) => (

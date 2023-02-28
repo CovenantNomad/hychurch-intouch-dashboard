@@ -1,15 +1,20 @@
-query findBlessingCell($id: Float!) {
+query findNewFamilyCell($id: Float!) {
   findCell(id: $id) {
     id
     name
     leaders {
       id
       name
-      roles
+      phone
+      isActive
+      birthday
+      gender
+      address
       cell {
         id
         name
       }
+      roles
     }
     members {
       id
