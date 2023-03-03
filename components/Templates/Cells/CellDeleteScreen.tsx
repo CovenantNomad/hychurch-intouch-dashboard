@@ -22,6 +22,8 @@ import { HiOutlineCheck, HiXMark } from "react-icons/hi2";
 import { useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { stateSetting } from "../../../stores/stateSetting";
 
 interface CellDeleteScreenProps {
   data: FindCellQuery | undefined;
@@ -30,6 +32,7 @@ interface CellDeleteScreenProps {
 const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [setting, setSetting] = useRecoilState(stateSetting);
   const [validation, setValidation] = useState(false);
   const [numberofMember, setNumberofMember] = useState<number | null>(null);
   const [cellList, setCellList] = useState<SelectType[]>([]);
@@ -66,6 +69,10 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
       toast.success(
         `${data.deleteCell.cell.name}이 성공적으로 삭제 되었습니다`
       );
+      setSetting({
+        ...setting,
+        cellSelectedCategoryId: 0,
+      });
       router.push("/cells");
     },
     onError(errors: DeleteCellMutation) {
@@ -148,7 +155,7 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
               <div
                 className={`p-1 rounded-full border ${
                   validation
-                    ? "text-GREEN border-GREEN"
+                    ? "text-teal-600 border-teal-600"
                     : "text-red-500 border-red-500"
                 }`}
               >
@@ -158,14 +165,15 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
             </div>
             {!validation && (
               <p className="mt-1 ml-9 text-sm text-red-600">
-                먼저 셀 편성에서 셀원들을 이동해주세요
+                먼저 셀 편성에서 셀원들을 이동해주시고, 상대 셀에서 승인해야
+                합니다.
               </p>
             )}
             <div className="flex items-center gap-x-3 mt-5">
               <div
                 className={`p-1 rounded-full border ${
                   selectedCell.id !== ""
-                    ? "text-GREEN border-GREEN"
+                    ? "text-teal-600 border-teal-600"
                     : "text-red-500 border-red-500"
                 }`}
               >
