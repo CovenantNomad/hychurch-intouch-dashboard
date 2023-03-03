@@ -12,9 +12,10 @@ import { selectedUser } from "../../../../stores/selectedUser";
 interface MemberListItemProps {
   member: Member;
   lastItem: boolean;
+  onClick?: () => void;
 }
 
-const MemberListItem = ({ member, lastItem }: MemberListItemProps) => {
+const MemberListItem = ({ member, lastItem, onClick }: MemberListItemProps) => {
   const setSelectedUser = useSetRecoilState(selectedUser);
 
   return (
@@ -22,7 +23,7 @@ const MemberListItem = ({ member, lastItem }: MemberListItemProps) => {
       className={`flex items-center py-4 px-2 bg-white ${
         !lastItem && "border-b"
       } cursor-pointer`}
-      onClick={() => setSelectedUser(member)}
+      onClick={onClick ? onClick : () => setSelectedUser(member)}
     >
       <Avatar size={AvatarSize.md} name={member.name} rounded />
       <div className="ml-4 flex-1">

@@ -111,6 +111,8 @@ export type DateFilter = {
 export type DeleteCellInput = {
   /** 셀 아이디 */
   cellId: Scalars['Int'];
+  /** 셀리더를 이동시킬 타겟셀 아이디 */
+  targetCellId: Scalars['Int'];
 };
 
 export type DeleteCellPayload = {

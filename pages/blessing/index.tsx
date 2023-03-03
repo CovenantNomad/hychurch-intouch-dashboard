@@ -1,8 +1,39 @@
 import Head from "next/head";
 import Image from "next/image";
+import { useCallback, useState } from "react";
+import { useRecoilState } from "recoil";
+import Footer from "../../components/Atoms/Footer";
+import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
+import MenteeManagement from "../../components/Templates/Blessing/MenteeManagement";
+import MentorManagement from "../../components/Templates/Blessing/MentorManagement";
+import { stateSetting } from "../../stores/stateSetting";
+
+const categories = [
+  {
+    id: 0,
+    name: "멘티 리스트",
+    component: <MenteeManagement />,
+  },
+  { id: 1, name: "바나바 관리", component: <MentorManagement /> },
+];
 
 const BlessingPage = () => {
+  const [setting, setSetting] = useRecoilState(stateSetting);
+  const [categoryId, setCategoryId] = useState<number>(
+    setting.blessingSelectedCategoryId
+  );
+
+  const setSettingHandler = useCallback(
+    (id: number) => {
+      setSetting({
+        ...setting,
+        blessingSelectedCategoryId: id,
+      });
+    },
+    [setting, setSetting]
+  );
+
   return (
     <Layout>
       <Head>
@@ -11,13 +42,15 @@ const BlessingPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="h-screen flex justify-center items-center">
-        <h1 className="text-4xl font-bold">
-          현재 페이지는
-          <br />
-          개발 중입니다
-        </h1>
-      </div>
+      <TabsWithHeader
+        title={"BLESSING"}
+        tabs={categories}
+        currentTab={categoryId}
+        setCurrentTab={setCategoryId}
+        setSettingHandler={setSettingHandler}
+      />
+      <div className="px-2 pt-2">{categories[categoryId].component}</div>
+      <Footer />
     </Layout>
   );
 };

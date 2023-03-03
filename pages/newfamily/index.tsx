@@ -35,8 +35,6 @@ const Register: NextPage = () => {
     [setting, setSetting]
   );
 
-  console.log(setting);
-
   useLayoutEffect(() => {
     setSelectedCell({
       selectedCell: {

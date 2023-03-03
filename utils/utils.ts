@@ -1,5 +1,9 @@
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
 
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export function makeErrorMessage(message: string) {
   return message.split(":")[0];
 }

@@ -78,8 +78,8 @@ const CellTransferScreen = ({}: CellTransferProps) => {
   ];
 
   return (
-    <div className="">
-      <div className="py-5 px-4 bg-white">
+    <div>
+      <div className="py-5 px-4 rounded-md bg-white">
         <h6 className="text-xl font-bold pb-5">셀 편성하기</h6>
         <HorizontalTabs
           tabs={tabs}
@@ -87,7 +87,7 @@ const CellTransferScreen = ({}: CellTransferProps) => {
           setCurrentTab={setSelectedTab}
         />
       </div>
-      <div className="pb-5 px-5 mt-2 mb-2 rounded-md bg-white">
+      <div className="pb-5 px-4 mt-2 mb-2 rounded-md bg-white">
         {tabs[selectedTab].component}
       </div>
     </div>

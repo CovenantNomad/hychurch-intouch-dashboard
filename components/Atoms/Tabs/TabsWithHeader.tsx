@@ -80,7 +80,7 @@ const TabsWithHeader = ({
                 tab.id === currentTab
                   ? "bg-GRAY005 text-white font-medium"
                   : "bg-GRAY003 text-GRAY005"
-              }  min-w-0 overflow-hidden py-3 px-4 mr-2 focus:z-10`}
+              }  min-w-0 overflow-hidden py-3 px-4 mr-2 cursor-pointer`}
             >
               <span className="text-sm text-center uppercase">{tab.name}</span>
             </div>
