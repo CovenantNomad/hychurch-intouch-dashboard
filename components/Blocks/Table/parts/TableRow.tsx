@@ -18,7 +18,7 @@ const TableRow = ({ personIdx, member }: TableRowProps) => {
       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
         <Link
           href={{
-            pathname: `/cells/${member.cell?.id}/${member.name}`,
+            pathname: `/cells/${member.cell?.id}/members/${member.id}`,
           }}
         >
           <span className="text-LINKTEXT cursor-pointer hover:underline">

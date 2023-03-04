@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,16 +18,18 @@ import Container from "../../components/Atoms/Container/Container";
 import Header from "../../components/Atoms/Header";
 import Spacer from "../../components/Atoms/Spacer";
 import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { createCellState } from "../../stores/createCellState";
 import { FIND_CELL_LIMIT } from "../../constants/constant";
 import Footer from "../../components/Atoms/Footer";
 import { userState } from "../../stores/userState";
 import { SpecialCellIdType } from "../../interface/cell";
+import { stateSetting } from "../../stores/stateSetting";
 
 const Cell: NextPage = () => {
   const userInfo = useRecoilValue(userState);
   const setCreateCellInfo = useSetRecoilState(createCellState);
+  const [setting, setSetting] = useRecoilState(stateSetting);
   const { modalOpen, onModalOpenHandler, onModalClosehandler } = useModal();
   const { isLoading, data } = useFindCellsQuery<
     FindCellsQuery,
@@ -47,6 +49,13 @@ const Cell: NextPage = () => {
     setCreateCellInfo(null);
     onModalClosehandler();
   };
+
+  useEffect(() => {
+    setSetting({
+      ...setting,
+      cellSelectedCategoryId: 0,
+    });
+  }, []);
 
   return (
     <Layout>

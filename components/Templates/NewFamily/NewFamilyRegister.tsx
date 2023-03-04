@@ -285,6 +285,111 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                       className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
                     />
                   </div>
+
+                  {/* <div className="col-span-6 -mb-6">
+                    <span className="block text-sm font-medium text-gray-700">
+                      등록일*
+                    </span>
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="year" className="sr-only">
+                        년
+                      </label>
+                      <input
+                        id="year"
+                        type="text"
+                        placeholder="YYYY"
+                        {...register("year", {
+                          minLength: {
+                            value: 4,
+                            message: "4자리로 입력해주세요 (YYYY)",
+                          },
+                          maxLength: {
+                            value: 4,
+                            message: "4자리로 입력해주세요 (YYYY)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        년
+                      </span>
+                    </div>
+                    {errors.year && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.year.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="month" className="sr-only">
+                        월
+                      </label>
+                      <input
+                        id="month"
+                        type="text"
+                        placeholder="MM"
+                        {...register("month", {
+                          setValueAs: (v: string) => v.padStart(2, "0"),
+                          minLength: {
+                            value: 2,
+                            message: "2자리로 입력해주세요 (MM)",
+                          },
+                          maxLength: {
+                            value: 2,
+                            message: "4자리로 입력해주세요 (MM)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        월
+                      </span>
+                    </div>
+                    {errors.month && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.month.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="day" className="sr-only">
+                        일
+                      </label>
+                      <input
+                        id="day"
+                        type="text"
+                        placeholder="DD"
+                        {...register("day", {
+                          setValueAs: (v: string) => v.padStart(2, "0"),
+                          minLength: {
+                            value: 2,
+                            message: "2자리로 입력해주세요 (MM)",
+                          },
+                          maxLength: {
+                            value: 2,
+                            message: "4자리로 입력해주세요 (MM)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        일
+                      </span>
+                    </div>
+                    {errors.day && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.day.message}
+                      </p>
+                    )}
+                  </div> */}
+
                   <div className="col-span-6">
                     <label
                       htmlFor="description"

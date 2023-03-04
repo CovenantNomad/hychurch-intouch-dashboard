@@ -234,6 +234,8 @@ export type Query = {
   me: User;
   /** 셀원 조회. 셀장만 셀원 조회가 가능합니다. */
   myCellMembers?: Maybe<Array<User>>;
+  /** 사용자 정보를 조회합니다. */
+  user: User;
 };
 
 
@@ -252,6 +254,11 @@ export type QueryFindUsersArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
 };
 
 export type RegisterNewUserInput = {
@@ -561,6 +568,13 @@ export type CreateUserCellTransferMutationVariables = Exact<{
 
 
 export type CreateUserCellTransferMutation = { __typename?: 'Mutation', createUserCellTransfer: { __typename?: 'CreateUserCellTransferPayload', success: boolean } };
+
+export type FindUserQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -1203,6 +1217,43 @@ export const useCreateUserCellTransferMutation = <
       options
     );
 useCreateUserCellTransferMutation.getKey = () => ['createUserCellTransfer'];
+
+export const FindUserDocument = `
+    query findUser($id: ID!) {
+  user(id: $id) {
+    id
+    name
+    phone
+    isActive
+    birthday
+    gender
+    address
+    description
+    roles
+    cell {
+      id
+      name
+    }
+  }
+}
+    `;
+export const useFindUserQuery = <
+      TData = FindUserQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindUserQueryVariables,
+      options?: UseQueryOptions<FindUserQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindUserQuery, TError, TData>(
+      ['findUser', variables],
+      fetcher<FindUserQuery, FindUserQueryVariables>(client, FindUserDocument, variables, headers),
+      options
+    );
+
+useFindUserQuery.getKey = (variables: FindUserQueryVariables) => ['findUser', variables];
+;
 
 export const FindUsersDocument = `
     query findUsers($name: String, $limit: Int, $offset: Int) {
