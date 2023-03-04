@@ -10,7 +10,7 @@ interface NewFamilyListItemProps {
 
 const NewFamilyListItem = ({ member }: NewFamilyListItemProps) => {
   return (
-    <Link href={`/newfamily/${member.name}`}>
+    <Link href={`/newfamily/${member.id}`}>
       <div className="flex flex-col items-center cursor-pointer">
         <Avatar size={AvatarSize.lg} name={member.name} rounded />
         <h3 className="mt-6 text-lg font-semibold leading-7 tracking-tight text-gray-900">

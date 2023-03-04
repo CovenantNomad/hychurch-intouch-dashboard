@@ -140,7 +140,7 @@ const MentorSelection = ({}: MentorSelectionProps) => {
         <div className="mt-4 xl:col-span-1 xl:mt-0">
           <div className="mt-5 md:col-span-2 md:mt-0">
             <div className="overflow-hidden shadow sm:rounded-md">
-              <div className="bg-GRAY003 px-4 py-5 sm:p-6">
+              <div className="bg-gray-50 px-4 py-5 sm:p-6">
                 <div className="">
                   <label
                     htmlFor="cardinalNumber"
@@ -179,12 +179,12 @@ const MentorSelection = ({}: MentorSelectionProps) => {
                   </div>
                 </div>
               </div>
-              <div className="bg-GRAY003 px-4 py-3 text-right sm:px-6">
+              <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                 <button
                   type="button"
                   onClick={onSaveMentor}
                   disabled={mentor === null || cardinalNumber === ""}
-                  className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm bg-GRAY004"
+                  className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm bg-GREEN disabled:bg-GRAY004"
                 >
                   임명
                 </button>

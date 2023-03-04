@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import Button from "../../../components/Atoms/Button/Button";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
@@ -12,8 +12,11 @@ import TabsWithHeader from "../../../components/Atoms/Tabs/TabsWithHeader";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import Layout from "../../../components/Layout/Layout";
 import {
+  FindUserQuery,
+  FindUserQueryVariables,
   SearchUsersQuery,
   SearchUsersQueryVariables,
+  useFindUserQuery,
   useSearchUsersQuery,
 } from "../../../graphql/generated";
 import FullWidthButton from "../../../components/Atoms/Button/FullWidthButton";
@@ -22,18 +25,32 @@ interface NewFamilyMemberProps {}
 
 const NewFamilyMember = ({}: NewFamilyMemberProps) => {
   const router = useRouter();
-  const { isLoading, data } = useSearchUsersQuery<
-    SearchUsersQuery,
-    SearchUsersQueryVariables
+  const [userId, setUserId] = useState<string>("");
+
+  const { isLoading, data } = useFindUserQuery<
+    FindUserQuery,
+    FindUserQueryVariables
   >(
     graphlqlRequestClient,
     {
-      name: typeof router.query.slug === "string" ? router.query.slug : null,
+      id: userId,
     },
     {
+      enabled: userId !== "",
       staleTime: 3 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
     }
   );
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (typeof router.query.id === "string") {
+        setUserId(router.query.id);
+      } else {
+        setUserId("");
+      }
+    }
+  }, [router]);
 
   return (
     <Layout>
@@ -53,13 +70,13 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
             <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 <UserInfomation
-                  name={data.findUsers.nodes[0].name}
-                  gender={data.findUsers.nodes[0].gender}
-                  isActive={data.findUsers.nodes[0].isActive}
-                  birthday={data.findUsers.nodes[0].birthday}
-                  phone={data.findUsers.nodes[0].phone}
-                  address={data.findUsers.nodes[0].address}
-                  description={data.findUsers.nodes[0].description}
+                  name={data.user.name}
+                  gender={data.user.gender}
+                  isActive={data.user.isActive}
+                  birthday={data.user.birthday}
+                  phone={data.user.phone}
+                  address={data.user.address}
+                  description={data.user.description}
                 />
               </div>
               <div className="md:col-span-1">

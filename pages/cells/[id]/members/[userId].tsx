@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import Head from "next/head";
 // components
 import Layout from "../../../../components/Layout/Layout";
-import Container from "../../../../components/Atoms/Container/Container";
 import Spinner from "../../../../components/Atoms/Spinner";
 import MemberHeader from "../../../../components/Blocks/Headers/MemberHeader";
 import UserInfomation from "../../../../components/Blocks/Infomation/UserInfomation";
@@ -12,9 +11,9 @@ import EditUserInfomation from "../../../../components/Blocks/Infomation/EditUse
 import EmptyStateSimple from "../../../../components/Atoms/EmptyStates/EmptyStateSimple";
 // api
 import {
-  SearchUsersQuery,
-  SearchUsersQueryVariables,
-  useSearchUsersQuery,
+  FindUserQuery,
+  FindUserQueryVariables,
+  useFindUserQuery,
 } from "../../../../graphql/generated";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import Footer from "../../../../components/Atoms/Footer";
@@ -23,20 +22,33 @@ interface MemberDetailPage {}
 
 const MemberDetailPage: NextPage<MemberDetailPage> = () => {
   const router = useRouter();
+  const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
 
-  const { isLoading, data } = useSearchUsersQuery<
-    SearchUsersQuery,
-    SearchUsersQueryVariables
+  const { isLoading, data } = useFindUserQuery<
+    FindUserQuery,
+    FindUserQueryVariables
   >(
     graphlqlRequestClient,
     {
-      name: typeof router.query.slug === "string" ? router.query.slug : null,
+      id: userId,
     },
     {
+      enabled: userId !== "",
       staleTime: 3 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
     }
   );
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (typeof router.query.userId === "string") {
+        setUserId(router.query.userId);
+      } else {
+        setUserId("");
+      }
+    }
+  }, [router]);
 
   return (
     <Layout>
@@ -55,9 +67,9 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
           {data ? (
             <div>
               <MemberHeader
-                cellId={data.findUsers.nodes[0].cell?.id}
-                cellName={data.findUsers.nodes[0].cell?.name}
-                userName={data.findUsers.nodes[0].name}
+                cellId={data.user.cell?.id}
+                cellName={data.user.cell?.name}
+                userName={data.user.name}
                 editMode={editMode}
                 setEditMode={setEditMode}
               />
@@ -67,13 +79,13 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                   <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-5 px-4 rounded-md bg-white">
                     <div className="md:col-span-2">
                       <UserInfomation
-                        name={data.findUsers.nodes[0].name}
-                        gender={data.findUsers.nodes[0].gender}
-                        isActive={data.findUsers.nodes[0].isActive}
-                        birthday={data.findUsers.nodes[0].birthday}
-                        phone={data.findUsers.nodes[0].phone}
-                        address={data.findUsers.nodes[0].address}
-                        description={data.findUsers.nodes[0].description}
+                        name={data.user.name}
+                        gender={data.user.gender}
+                        isActive={data.user.isActive}
+                        birthday={data.user.birthday}
+                        phone={data.user.phone}
+                        address={data.user.address}
+                        description={data.user.description}
                       />
                     </div>
                     <div className="md:col-span-4">
@@ -93,15 +105,15 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                 <div className="px-2 pt-2">
                   <section className="py-5 px-4 rounded-md bg-white">
                     <EditUserInfomation
-                      id={data.findUsers.nodes[0].id}
-                      name={data.findUsers.nodes[0].name}
-                      gender={data.findUsers.nodes[0].gender}
-                      isActive={data.findUsers.nodes[0].isActive}
-                      birthday={data.findUsers.nodes[0].birthday}
-                      phone={data.findUsers.nodes[0].phone}
-                      address={data.findUsers.nodes[0].address}
-                      description={data.findUsers.nodes[0].description}
-                      cell={data.findUsers.nodes[0].cell}
+                      id={data.user.id}
+                      name={data.user.name}
+                      gender={data.user.gender}
+                      isActive={data.user.isActive}
+                      birthday={data.user.birthday}
+                      phone={data.user.phone}
+                      address={data.user.address}
+                      description={data.user.description}
+                      cell={data.user.cell}
                     />
                   </section>
                 </div>
