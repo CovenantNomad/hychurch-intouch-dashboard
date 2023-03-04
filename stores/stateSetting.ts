@@ -7,5 +7,6 @@ export const stateSetting = atom({
     theme: Theme.default,
     cellSelectedCategoryId: 0,
     newFamilySelectedCategoryId: 0,
+    blessingSelectedCategoryId: 0,
   },
 });

@@ -21,6 +21,7 @@ module.exports = {
         BLUE: "#188bff",
         LINKTEXT: "#0050b3",
         RED: "#d32620",
+        GREEN: "#B0D1D4",
       },
     },
   },

@@ -4,11 +4,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api',
+        source: "/api",
         destination: `https://hychurch-dev.duckdns.org:3000/graphql`,
       },
     ];
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

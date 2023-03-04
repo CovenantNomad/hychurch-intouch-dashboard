@@ -10,7 +10,11 @@ import {
   useFindCellsQuery,
 } from "../../../../../../graphql/generated";
 // types
-import { Selected, TransferInfo } from "../../../../../../interface/cell";
+import {
+  Selected,
+  SpecialCellIdType,
+  TransferInfo,
+} from "../../../../../../interface/cell";
 // components
 import SkeletonTranfer from "../../../../../Atoms/Skeleton/SkeletonTranfer";
 import { toast } from "react-hot-toast";
@@ -92,7 +96,9 @@ const SelectTransferCell = ({}: SelectTransferCellProps) => {
           {data?.findCells?.nodes
             .filter(
               (cell) =>
-                cell.id !== transferInfo?.from.cellId && cell.id !== "39"
+                cell.id !== transferInfo?.from.cellId &&
+                !cell.id.includes(SpecialCellIdType.NewFamily) &&
+                !cell.id.includes(SpecialCellIdType.Blessing)
             )
             .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
             .map((item) => (
