@@ -1,0 +1,9 @@
+mutation updateCellFields($input: UpdateCellFieldsInput!) {
+  updateCellFields(input: $input) {
+    cell {
+      id
+      name
+      community
+    }
+  }
+}

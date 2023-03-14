@@ -108,6 +108,7 @@ const Cell: NextPage = () => {
                     key={cell.id}
                     id={cell.id}
                     name={cell.name}
+                    community={cell.community}
                     leader={cell.leaders.at(0)?.name!}
                     totalCountOfMembers={cell.statistics.totalCountOfMembers}
                     countOfActiveMembers={cell.statistics.countOfActiveMembers}

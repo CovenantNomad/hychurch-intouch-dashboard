@@ -9,6 +9,7 @@ query findCells($limit: Int) {
         name
         roles
       }
+      community
       statistics {
         totalCountOfMembers
         countOfActiveMembers

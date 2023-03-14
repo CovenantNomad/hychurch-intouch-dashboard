@@ -86,6 +86,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                         phone={data.user.phone}
                         address={data.user.address}
                         description={data.user.description}
+                        editModeHandler={() => setEditMode(true)}
                       />
                     </div>
                     <div className="md:col-span-4">

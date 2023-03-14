@@ -17,6 +17,7 @@ import Footer from "../../../components/Atoms/Footer";
 import TabsWithHeader from "../../../components/Atoms/Tabs/TabsWithHeader";
 import { stateSetting } from "../../../stores/stateSetting";
 import CellDeleteScreen from "../../../components/Templates/Cells/CellDeleteScreen";
+import CellEditScreen from "../../../components/Templates/Cells/CellEditScreen";
 
 const CellDetail = () => {
   const { query } = useRouter();
@@ -58,6 +59,17 @@ const CellDetail = () => {
     },
     {
       id: 3,
+      name: "셀정보 수정",
+      component: (
+        <CellEditScreen
+          id={data?.findCell.id}
+          name={data?.findCell.name}
+          community={data?.findCell.community}
+        />
+      ),
+    },
+    {
+      id: 4,
       name: "셀 삭제",
       component: <CellDeleteScreen data={data} />,
     },
@@ -93,7 +105,7 @@ const CellDetail = () => {
 
       <TabsWithHeader
         title={data?.findCell.name || "셀"}
-        subtitle={"공동체"}
+        subtitle={data?.findCell.community + " 공동체"}
         tabs={categories}
         currentTab={categoryId}
         setCurrentTab={setCategoryId}

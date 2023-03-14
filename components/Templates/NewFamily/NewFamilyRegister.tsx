@@ -1,4 +1,5 @@
-import React from "react";
+import dayjs from "dayjs";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "react-query";
@@ -9,12 +10,14 @@ import { RegisterForm } from "../../../interface/register";
 interface NewFamilyRegisterProps {}
 
 const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
+  const today = dayjs();
   const queryClient = useQueryClient();
   const {
     handleSubmit,
     register,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<RegisterForm>();
   const { mutateAsync, isLoading, isError, isSuccess } =
     useRegisterNewUserMutation(graphlqlRequestClient, {
@@ -34,14 +37,18 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
   const onSubmitHandler = ({
     name,
     gender,
-    year,
-    month,
-    day,
+    birthdayYear,
+    birthdayMonth,
+    birthdayDay,
     phone,
     address,
     description,
+    registrationYear,
+    registrationMonth,
+    registrationDay,
   }: RegisterForm) => {
-    const birthday = `${year}-${month}-${day}`;
+    const birthday = `${birthdayYear}-${birthdayMonth}-${birthdayDay}`;
+    const registrationDate = `${registrationYear}-${registrationMonth}-${registrationDay}`;
     mutateAsync({
       input: {
         name,
@@ -50,9 +57,19 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
         birthday,
         address,
         description,
+        registrationDate,
       },
     });
   };
+
+  useEffect(() => {
+    setValue("registrationYear", today.get("year").toString());
+    setValue(
+      "registrationMonth",
+      (today.get("month") + 1).toString().padStart(2, "0")
+    );
+    setValue("registrationDay", today.get("date").toString().padStart(2, "0"));
+  }, []);
 
   return (
     <div className="bg-white rounded-md py-5 px-5">
@@ -70,7 +87,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
         <div className="mt-5 md:mt-0 md:col-span-2">
           <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="overflow-hidden sm:rounded-md">
-              <div className="px-4 py-5 bg-white sm:p-6">
+              <div className="px-4 py-6 bg-white sm:p-6">
                 <div className="grid grid-cols-6 gap-6">
                   <div className="col-span-6 sm:col-span-4">
                     <label
@@ -149,7 +166,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         id="year"
                         type="text"
                         placeholder="YYYY"
-                        {...register("year", {
+                        {...register("birthdayYear", {
                           minLength: {
                             value: 4,
                             message: "4자리로 입력해주세요 (YYYY)",
@@ -165,9 +182,9 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         년
                       </span>
                     </div>
-                    {errors.year && (
+                    {errors.birthdayYear && (
                       <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.year.message}
+                        {errors.birthdayYear.message}
                       </p>
                     )}
                   </div>
@@ -181,7 +198,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         id="month"
                         type="text"
                         placeholder="MM"
-                        {...register("month", {
+                        {...register("birthdayMonth", {
                           setValueAs: (v: string) => v.padStart(2, "0"),
                           minLength: {
                             value: 2,
@@ -198,9 +215,9 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         월
                       </span>
                     </div>
-                    {errors.month && (
+                    {errors.birthdayMonth && (
                       <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.month.message}
+                        {errors.birthdayMonth.message}
                       </p>
                     )}
                   </div>
@@ -214,7 +231,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         id="day"
                         type="text"
                         placeholder="DD"
-                        {...register("day", {
+                        {...register("birthdayDay", {
                           setValueAs: (v: string) => v.padStart(2, "0"),
                           minLength: {
                             value: 2,
@@ -231,9 +248,9 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         일
                       </span>
                     </div>
-                    {errors.day && (
+                    {errors.birthdayDay && (
                       <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.day.message}
+                        {errors.birthdayDay.message}
                       </p>
                     )}
                   </div>
@@ -286,110 +303,6 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                     />
                   </div>
 
-                  {/* <div className="col-span-6 -mb-6">
-                    <span className="block text-sm font-medium text-gray-700">
-                      등록일*
-                    </span>
-                  </div>
-
-                  <div className="col-span-2">
-                    <div className="relative flex items-center w-full">
-                      <label htmlFor="year" className="sr-only">
-                        년
-                      </label>
-                      <input
-                        id="year"
-                        type="text"
-                        placeholder="YYYY"
-                        {...register("year", {
-                          minLength: {
-                            value: 4,
-                            message: "4자리로 입력해주세요 (YYYY)",
-                          },
-                          maxLength: {
-                            value: 4,
-                            message: "4자리로 입력해주세요 (YYYY)",
-                          },
-                        })}
-                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                      />
-                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                        년
-                      </span>
-                    </div>
-                    {errors.year && (
-                      <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.year.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="col-span-2">
-                    <div className="relative flex items-center w-full">
-                      <label htmlFor="month" className="sr-only">
-                        월
-                      </label>
-                      <input
-                        id="month"
-                        type="text"
-                        placeholder="MM"
-                        {...register("month", {
-                          setValueAs: (v: string) => v.padStart(2, "0"),
-                          minLength: {
-                            value: 2,
-                            message: "2자리로 입력해주세요 (MM)",
-                          },
-                          maxLength: {
-                            value: 2,
-                            message: "4자리로 입력해주세요 (MM)",
-                          },
-                        })}
-                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                      />
-                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                        월
-                      </span>
-                    </div>
-                    {errors.month && (
-                      <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.month.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="col-span-2">
-                    <div className="relative flex items-center w-full">
-                      <label htmlFor="day" className="sr-only">
-                        일
-                      </label>
-                      <input
-                        id="day"
-                        type="text"
-                        placeholder="DD"
-                        {...register("day", {
-                          setValueAs: (v: string) => v.padStart(2, "0"),
-                          minLength: {
-                            value: 2,
-                            message: "2자리로 입력해주세요 (MM)",
-                          },
-                          maxLength: {
-                            value: 2,
-                            message: "4자리로 입력해주세요 (MM)",
-                          },
-                        })}
-                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                      />
-                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                        일
-                      </span>
-                    </div>
-                    {errors.day && (
-                      <p className="mt-1 px-3 text-sm text-red-600">
-                        {errors.day.message}
-                      </p>
-                    )}
-                  </div> */}
-
                   <div className="col-span-6">
                     <label
                       htmlFor="description"
@@ -407,6 +320,110 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                         {...register("description")}
                       />
                     </div>
+                  </div>
+
+                  <div className="col-span-6 -mb-6">
+                    <span className="block text-sm font-medium text-gray-700">
+                      등록일*
+                    </span>
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="year" className="sr-only">
+                        년
+                      </label>
+                      <input
+                        id="year"
+                        type="text"
+                        placeholder="YYYY"
+                        {...register("registrationYear", {
+                          minLength: {
+                            value: 4,
+                            message: "4자리로 입력해주세요 (YYYY)",
+                          },
+                          maxLength: {
+                            value: 4,
+                            message: "4자리로 입력해주세요 (YYYY)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        년
+                      </span>
+                    </div>
+                    {errors.registrationYear && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.registrationYear.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="month" className="sr-only">
+                        월
+                      </label>
+                      <input
+                        id="month"
+                        type="text"
+                        placeholder="MM"
+                        {...register("registrationMonth", {
+                          setValueAs: (v: string) => v.padStart(2, "0"),
+                          minLength: {
+                            value: 2,
+                            message: "2자리로 입력해주세요 (MM)",
+                          },
+                          maxLength: {
+                            value: 2,
+                            message: "4자리로 입력해주세요 (MM)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        월
+                      </span>
+                    </div>
+                    {errors.registrationMonth && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.registrationMonth.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="relative flex items-center w-full">
+                      <label htmlFor="day" className="sr-only">
+                        일
+                      </label>
+                      <input
+                        id="day"
+                        type="text"
+                        placeholder="DD"
+                        {...register("registrationDay", {
+                          setValueAs: (v: string) => v.padStart(2, "0"),
+                          minLength: {
+                            value: 2,
+                            message: "2자리로 입력해주세요 (MM)",
+                          },
+                          maxLength: {
+                            value: 2,
+                            message: "4자리로 입력해주세요 (MM)",
+                          },
+                        })}
+                        className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                      />
+                      <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                        일
+                      </span>
+                    </div>
+                    {errors.registrationDay && (
+                      <p className="mt-1 px-3 text-sm text-red-600">
+                        {errors.registrationDay.message}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

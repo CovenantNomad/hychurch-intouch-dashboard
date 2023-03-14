@@ -25,6 +25,7 @@ query findCell($id: Float!) {
       }
       roles
     }
+    community
     statistics {
       totalCountOfMembers
       countOfActiveMembers

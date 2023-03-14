@@ -27,6 +27,7 @@ export interface Member {
   phone: string;
   isActive: boolean;
   birthday?: string | null | undefined;
+  registrationDate?: string | null | undefined;
   gender?: Gender | null | undefined;
   address?: string | null | undefined;
   cell?:

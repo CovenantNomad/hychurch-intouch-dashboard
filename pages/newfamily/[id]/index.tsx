@@ -74,6 +74,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                   gender={data.user.gender}
                   isActive={data.user.isActive}
                   birthday={data.user.birthday}
+                  registrationDate={data.user.registrationDate}
                   phone={data.user.phone}
                   address={data.user.address}
                   description={data.user.description}

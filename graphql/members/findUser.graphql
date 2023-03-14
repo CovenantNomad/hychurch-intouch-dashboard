@@ -5,6 +5,7 @@ query findUser($id: ID!) {
     phone
     isActive
     birthday
+    registrationDate
     gender
     address
     description

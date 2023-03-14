@@ -8,6 +8,7 @@ export interface UserInfomationProps {
   gender: Gender | null | undefined;
   isActive: boolean;
   birthday: string | null | undefined;
+  registrationDate?: string | null | undefined;
   phone: string;
   address: string | null | undefined;
   description: string | null | undefined;
@@ -22,6 +23,7 @@ const UserInfomation = ({
   phone,
   address,
   description,
+  registrationDate,
   editModeHandler,
 }: UserInfomationProps) => {
   return (
@@ -62,6 +64,12 @@ const UserInfomation = ({
             <dt className="text-sm font-medium text-gray-500">주소</dt>
             <dd className="mt-1 text-sm text-gray-900">{address}</dd>
           </div>
+          {registrationDate && (
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium text-gray-500">등록일</dt>
+              <dd className="mt-1 text-sm text-gray-900">{registrationDate}</dd>
+            </div>
+          )}
         </dl>
       </div>
       <div

@@ -27,6 +27,8 @@ export type BetweenFilter = {
 /** 셀 */
 export type Cell = {
   __typename?: 'Cell';
+  /** 공동체 */
+  community: Scalars['String'];
   /** 비고 */
   description?: Maybe<Scalars['String']>;
   /** 아이디 */
@@ -162,10 +164,12 @@ export type Mutation = {
   login: LoginPayload;
   /** 새가족 등록을 처리합니다. */
   registerNewUser: RegisterNewUserPayload;
+  removeUserFromSeedlingCell: RemoveUserFromSeedlingCellPayload;
   resetUserPassword: ResetUserPasswordPayload;
   signUp: SignUpPayload;
   /** 셀장이 셀원들의 예배 출석 이력 다건을 기록합니다. */
   submitCellMemberChurchServiceAttendanceHistories: SubmitCellMemberChurchServiceAttendanceHistoriesPayload;
+  updateCellFields: UpdateCellFieldsPayload;
   /** 사용자 정보를 업데이트 합니다. */
   updateUser: UpdateUserPayload;
   updateUserCellTransfer: UpdateUserCellTransferPayload;
@@ -197,6 +201,11 @@ export type MutationRegisterNewUserArgs = {
 };
 
 
+export type MutationRemoveUserFromSeedlingCellArgs = {
+  input: RemoveUserFromSeedlingCellInput;
+};
+
+
 export type MutationResetUserPasswordArgs = {
   input: ResetUserPasswordInput;
 };
@@ -209,6 +218,11 @@ export type MutationSignUpArgs = {
 
 export type MutationSubmitCellMemberChurchServiceAttendanceHistoriesArgs = {
   input: SubmitCellMemberChurchServiceAttendanceHistoriesInput;
+};
+
+
+export type MutationUpdateCellFieldsArgs = {
+  input: UpdateCellFieldsInput;
 };
 
 
@@ -274,10 +288,22 @@ export type RegisterNewUserInput = {
   name: Scalars['String'];
   /** 전화번호 */
   phone: Scalars['String'];
+  /** 등록일(yyyy-MM-dd) */
+  registrationDate: Scalars['String'];
 };
 
 export type RegisterNewUserPayload = {
   __typename?: 'RegisterNewUserPayload';
+  user: User;
+};
+
+export type RemoveUserFromSeedlingCellInput = {
+  reason: Scalars['String'];
+  userId: Scalars['ID'];
+};
+
+export type RemoveUserFromSeedlingCellPayload = {
+  __typename?: 'RemoveUserFromSeedlingCellPayload';
   user: User;
 };
 
@@ -340,6 +366,23 @@ export type SubmitCellMemberChurchServiceAttendanceHistoriesPayload = {
   requestedAttendanceHistoryCount: Scalars['Int'];
 };
 
+export type UpdateCellFieldsInput = {
+  /** 공동체 */
+  community?: InputMaybe<Scalars['String']>;
+  /** 비고 */
+  description?: InputMaybe<Scalars['String']>;
+  /** 셀 아이디 */
+  id: Scalars['ID'];
+  /** 셀 이름 */
+  name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCellFieldsPayload = {
+  __typename?: 'UpdateCellFieldsPayload';
+  /** patch된 셀 */
+  cell: Cell;
+};
+
 export type UpdateUserCellTransferInput = {
   id: Scalars['ID'];
   /** ORDERED 상태로의 업데이트는 지원하지 않습니다. 오직 CANCELED 또는 CONFIRMED 상태로의 업데이트만 가능합니다. */
@@ -396,6 +439,8 @@ export type User = {
   name: Scalars['String'];
   /** 전화번호 */
   phone: Scalars['String'];
+  /** 등록일(yyyy-MM-dd) */
+  registrationDate?: Maybe<Scalars['String']>;
   /** Roles */
   roles: Array<RoleType>;
   userChurchServiceHistories: Array<UserChurchServiceHistory>;
@@ -491,7 +536,7 @@ export type FindNewFamilyCellQueryVariables = Exact<{
 }>;
 
 
-export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type CreateCellMutationVariables = Exact<{
   input: CreateCellInput;
@@ -512,7 +557,7 @@ export type FindCellQueryVariables = Exact<{
 }>;
 
 
-export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
 
 export type FindCellWithTranferDataQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -523,14 +568,14 @@ export type FindCellWithTranferDataQueryVariables = Exact<{
 }>;
 
 
-export type FindCellWithTranferDataQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersIn: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+export type FindCellWithTranferDataQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersIn: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type FindCellsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type FindCellsQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', totalCount: number, nodes: Array<{ __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } }> } };
+export type FindCellsQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', totalCount: number, nodes: Array<{ __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } }> } };
 
 export type FindLeaderQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -555,6 +600,13 @@ export type FindNewTransferUserQueryVariables = Exact<{
 
 export type FindNewTransferUserQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
+export type UpdateCellFieldsMutationVariables = Exact<{
+  input: UpdateCellFieldsInput;
+}>;
+
+
+export type UpdateCellFieldsMutation = { __typename?: 'Mutation', updateCellFields: { __typename?: 'UpdateCellFieldsPayload', cell: { __typename?: 'Cell', id: string, name: string, community: string } } };
+
 export type UpdateUserCellTransferMutationVariables = Exact<{
   input: UpdateUserCellTransferInput;
 }>;
@@ -574,7 +626,7 @@ export type FindUserQueryVariables = Exact<{
 }>;
 
 
-export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
+export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -591,6 +643,13 @@ export type RegisterNewUserMutationVariables = Exact<{
 
 
 export type RegisterNewUserMutation = { __typename?: 'Mutation', registerNewUser: { __typename?: 'RegisterNewUserPayload', user: { __typename?: 'User', id: string, name: string } } };
+
+export type ResetUserPasswordMutationVariables = Exact<{
+  input: ResetUserPasswordInput;
+}>;
+
+
+export type ResetUserPasswordMutation = { __typename?: 'Mutation', resetUserPassword: { __typename?: 'ResetUserPasswordPayload', user: { __typename?: 'User', id: string, name: string } } };
 
 export type SearchUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -765,6 +824,7 @@ export const FindNewFamilyCellDocument = `
       phone
       isActive
       birthday
+      registrationDate
       gender
       address
       cell {
@@ -772,10 +832,6 @@ export const FindNewFamilyCellDocument = `
         name
       }
       roles
-    }
-    statistics {
-      totalCountOfMembers
-      countOfActiveMembers
     }
   }
 }
@@ -876,6 +932,7 @@ export const FindCellDocument = `
       }
       roles
     }
+    community
     statistics {
       totalCountOfMembers
       countOfActiveMembers
@@ -924,6 +981,7 @@ export const FindCellWithTranferDataDocument = `
         name
       }
     }
+    community
     transfersIn(status: $transferInStatus, orderDate: $transferInDateFilter) {
       id
       status
@@ -995,6 +1053,7 @@ export const FindCellsDocument = `
         name
         roles
       }
+      community
       statistics {
         totalCountOfMembers
         countOfActiveMembers
@@ -1157,6 +1216,32 @@ export const useFindNewTransferUserQuery = <
 useFindNewTransferUserQuery.getKey = (variables: FindNewTransferUserQueryVariables) => ['findNewTransferUser', variables];
 ;
 
+export const UpdateCellFieldsDocument = `
+    mutation updateCellFields($input: UpdateCellFieldsInput!) {
+  updateCellFields(input: $input) {
+    cell {
+      id
+      name
+      community
+    }
+  }
+}
+    `;
+export const useUpdateCellFieldsMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<UpdateCellFieldsMutation, TError, UpdateCellFieldsMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<UpdateCellFieldsMutation, TError, UpdateCellFieldsMutationVariables, TContext>(
+      ['updateCellFields'],
+      (variables?: UpdateCellFieldsMutationVariables) => fetcher<UpdateCellFieldsMutation, UpdateCellFieldsMutationVariables>(client, UpdateCellFieldsDocument, variables, headers)(),
+      options
+    );
+useUpdateCellFieldsMutation.getKey = () => ['updateCellFields'];
+
 export const UpdateUserCellTransferDocument = `
     mutation updateUserCellTransfer($input: UpdateUserCellTransferInput!) {
   updateUserCellTransfer(input: $input) {
@@ -1226,6 +1311,7 @@ export const FindUserDocument = `
     phone
     isActive
     birthday
+    registrationDate
     gender
     address
     description
@@ -1319,6 +1405,31 @@ export const useRegisterNewUserMutation = <
       options
     );
 useRegisterNewUserMutation.getKey = () => ['registerNewUser'];
+
+export const ResetUserPasswordDocument = `
+    mutation resetUserPassword($input: ResetUserPasswordInput!) {
+  resetUserPassword(input: $input) {
+    user {
+      id
+      name
+    }
+  }
+}
+    `;
+export const useResetUserPasswordMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<ResetUserPasswordMutation, TError, ResetUserPasswordMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<ResetUserPasswordMutation, TError, ResetUserPasswordMutationVariables, TContext>(
+      ['resetUserPassword'],
+      (variables?: ResetUserPasswordMutationVariables) => fetcher<ResetUserPasswordMutation, ResetUserPasswordMutationVariables>(client, ResetUserPasswordDocument, variables, headers)(),
+      options
+    );
+useResetUserPasswordMutation.getKey = () => ['resetUserPassword'];
 
 export const SearchUsersDocument = `
     query searchUsers($name: String, $limit: Int, $offset: Int) {

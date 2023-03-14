@@ -3,7 +3,10 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
-import { useUpdateUserMutation } from "../../../graphql/generated";
+import {
+  useResetUserPasswordMutation,
+  useUpdateUserMutation,
+} from "../../../graphql/generated";
 import { EditForm } from "../../../interface/register";
 import { UpdateUserInfomationProps } from "../../../interface/user";
 import { makeErrorMessage } from "../../../utils/utils";
@@ -43,8 +46,24 @@ const EditUserInfomation = ({
         }
       },
       onError: (errors: GraphQLError) => {
-        toast.success(
-          `해당 청년 정보를 수정 중 오류가 발생하였습니다.\n${makeErrorMessage(
+        toast.error(
+          `해당 청년 정보를 수정 중 오류가 발생하였습니다\n${makeErrorMessage(
+            errors.message
+          )}`
+        );
+      },
+    }
+  );
+
+  const { mutate: resetMutate } = useResetUserPasswordMutation(
+    graphlqlRequestClient,
+    {
+      onSuccess: (data) => {
+        toast.success("비밀번호가 초기화 되었습니다");
+      },
+      onError: (errors: GraphQLError) => {
+        toast.error(
+          `비밀번호 초기화를 할 수 없습니다\n${makeErrorMessage(
             errors.message
           )}`
         );
@@ -79,8 +98,18 @@ const EditUserInfomation = ({
     });
   };
 
+  const resetHandler = () => {
+    if (id) {
+      resetMutate({
+        input: {
+          userId: id,
+        },
+      });
+    }
+  };
+
   return (
-    <div className="mt-3 px-4 md:px-6 lg:px-8 bg-white">
+    <div className="px-4 bg-white">
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">
@@ -338,7 +367,14 @@ const EditUserInfomation = ({
             </div>
           </div>
         </div>
-        <div className="py-3 bg-white text-right">
+        <div className="flex justify-end gap-4 py-3 bg-white">
+          <button
+            type="button"
+            onClick={resetHandler}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
+          >
+            비밀번호 초기화
+          </button>
           <button
             type="submit"
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
