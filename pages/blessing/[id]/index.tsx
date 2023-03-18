@@ -189,7 +189,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
               cellName={user.user.cell?.name}
               userName={user.user.name}
               href={"/blessing"}
-              hasEditMode={false}
+              hasActionButton={false}
             />
             <SectionContainer>
               <BlockContainer firstBlock>

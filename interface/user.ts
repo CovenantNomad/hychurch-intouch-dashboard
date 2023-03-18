@@ -73,5 +73,9 @@ export interface UpdateUserInfomationProps {
       }
     | null
     | undefined;
+  registrationYear?: string;
+  registrationMonth?: string;
+  registrationDay?: string;
+  hasRegisterDate?: boolean;
   editModeHandler?: Dispatch<SetStateAction<boolean>>;
 }

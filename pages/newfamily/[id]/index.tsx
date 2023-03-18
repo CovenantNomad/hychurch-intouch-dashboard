@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
-import Footer from "../../../components/Atoms/Footer";
 import Spinner from "../../../components/Atoms/Spinner";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import Layout from "../../../components/Layout/Layout";
@@ -30,11 +29,10 @@ import { makeErrorMessage } from "../../../utils/utils";
 import { getTodayString } from "../../../utils/dateUtils";
 import dayjs from "dayjs";
 import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
-import Container from "../../../components/Atoms/Container/Container";
-import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
 import PageLayout from "../../../components/Layout/PageLayout";
 import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
+import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
 
 interface NewFamilyMemberProps {}
 
@@ -42,6 +40,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string>("");
+  const [editMode, setEditMode] = useState(false);
   const [cellList, setCellList] = useState<SelectType[]>([]);
   const [selectedCell, setSelectedCell] = useState<SelectType>({
     id: "",
@@ -189,115 +188,139 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
               cellName={user.user.cell?.name}
               userName={user.user.name}
               href={"/newfamily"}
-              hasEditMode={false}
+              hasActionButton={true}
+              editMode={editMode}
+              setEditMode={setEditMode}
             />
             <SectionContainer>
               <BlockContainer firstBlock>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-1">
-                    <UserInfomation
-                      name={user.user.name}
-                      gender={user.user.gender}
-                      isActive={user.user.isActive}
-                      birthday={user.user.birthday}
-                      registrationDate={user.user.registrationDate}
-                      phone={user.user.phone}
-                      address={user.user.address}
-                      description={user.user.description}
-                      hasHeader={false}
-                    />
-                  </div>
-                  <div className="md:col-span-1">
-                    {router.query.transferStatus ===
-                    UserCellTransferStatus.Ordered ? (
-                      <div>
-                        <h6 className="pb-5 text-base">
-                          셀편성 상태 :{" "}
-                          <strong className="bg-teal-600 text-white px-1 ml-1">
-                            승인대기중
-                          </strong>
-                        </h6>
-                        <div className="bg-GRAY003 text-center py-3">
-                          <p className="font-bold">
-                            편성셀 :{" "}
-                            <span className="text-BLUE">
-                              {router.query.toCellName}
-                            </span>
-                            <br />
-                            승인대기중
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="md:col-span-1">
-                            <h6 className="pb-5 text-base">블레싱/새싹 편성</h6>
-                            <div className="flex-1">
-                              <button
-                                onClick={() => {
-                                  setSelectedCell({
-                                    id: SpecialCellIdType.Blessing,
-                                    name: "블레싱",
-                                  });
-                                }}
-                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                              >
-                                블레싱 편성
-                              </button>
-                            </div>
-                            <div className="flex-1 mt-4">
-                              <button
-                                onClick={() => {
-                                  setSelectedCell({
-                                    id: SpecialCellIdType.Renew,
-                                    name: "새싹",
-                                  });
-                                }}
-                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                              >
-                                새싹셀 편성
-                              </button>
-                            </div>
-                          </div>
-                          <div className="md:col-span-1">
-                            <h6 className="pb-4 text-base">기존 셀 편성</h6>
-                            <ComboBoxImage
-                              showLabel={false}
-                              label={"셀선택"}
-                              selected={selectedCell}
-                              setSelected={setSelectedCell}
-                              selectList={cellList}
-                              widthFull
-                            />
+                {!editMode ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-1">
+                      <UserInfomation
+                        name={user.user.name}
+                        gender={user.user.gender}
+                        isActive={user.user.isActive}
+                        birthday={user.user.birthday}
+                        registrationDate={user.user.registrationDate}
+                        phone={user.user.phone}
+                        address={user.user.address}
+                        description={user.user.description}
+                        hasHeader={false}
+                      />
+                    </div>
+                    <div className="md:col-span-1">
+                      {router.query.transferStatus ===
+                      UserCellTransferStatus.Ordered ? (
+                        <div>
+                          <h6 className="pb-5 text-base">
+                            셀편성 상태 :{" "}
+                            <strong className="bg-teal-600 text-white px-1 ml-1">
+                              승인대기중
+                            </strong>
+                          </h6>
+                          <div className="bg-GRAY003 text-center py-3">
+                            <p className="font-bold">
+                              편성셀 :{" "}
+                              <span className="text-BLUE">
+                                {router.query.toCellName}
+                              </span>
+                              <br />
+                              승인대기중
+                            </p>
                           </div>
                         </div>
-                        <div className="mt-8">
-                          <Summary
-                            header="Transfer Summary"
-                            label="Transfer"
-                            disabled={
-                              selectedMember.id === "" ||
-                              selectedCell.id === "" ||
-                              router.query.transferStatus ===
-                                UserCellTransferStatus.Ordered
-                            }
-                            onClick={onTransferHandler}
-                          >
-                            <Summary.Row
-                              title="새가족 이름"
-                              value={selectedMember.name}
-                            />
-                            <Summary.Row
-                              title="편성 셀"
-                              value={selectedCell.name}
-                            />
-                          </Summary>
-                        </div>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-1">
+                              <h6 className="pb-5 text-base">
+                                블레싱/새싹 편성
+                              </h6>
+                              <div className="flex-1">
+                                <button
+                                  onClick={() => {
+                                    setSelectedCell({
+                                      id: SpecialCellIdType.Blessing,
+                                      name: "블레싱",
+                                    });
+                                  }}
+                                  className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                >
+                                  블레싱 편성
+                                </button>
+                              </div>
+                              <div className="flex-1 mt-4">
+                                <button
+                                  onClick={() => {
+                                    setSelectedCell({
+                                      id: SpecialCellIdType.Renew,
+                                      name: "새싹",
+                                    });
+                                  }}
+                                  className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                >
+                                  새싹셀 편성
+                                </button>
+                              </div>
+                            </div>
+                            <div className="md:col-span-1">
+                              <h6 className="pb-4 text-base">기존 셀 편성</h6>
+                              <ComboBoxImage
+                                showLabel={false}
+                                label={"셀선택"}
+                                selected={selectedCell}
+                                setSelected={setSelectedCell}
+                                selectList={cellList}
+                                widthFull
+                              />
+                            </div>
+                          </div>
+                          <div className="mt-8">
+                            <Summary
+                              header="Transfer Summary"
+                              label="Transfer"
+                              disabled={
+                                selectedMember.id === "" ||
+                                selectedCell.id === "" ||
+                                router.query.transferStatus ===
+                                  UserCellTransferStatus.Ordered
+                              }
+                              onClick={onTransferHandler}
+                            >
+                              <Summary.Row
+                                title="새가족 이름"
+                                value={selectedMember.name}
+                              />
+                              <Summary.Row
+                                title="편성 셀"
+                                value={selectedCell.name}
+                              />
+                            </Summary>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <EditUserInfomation
+                    id={user.user.id}
+                    name={user.user.name}
+                    gender={user.user.gender}
+                    isActive={user.user.isActive}
+                    birthday={user.user.birthday}
+                    phone={user.user.phone}
+                    address={user.user.address}
+                    description={user.user.description}
+                    cell={user.user.cell}
+                    hasRegisterDate={true}
+                    registrationYear={user.user.registrationDate?.split("-")[0]}
+                    registrationMonth={
+                      user.user.registrationDate?.split("-")[1]
+                    }
+                    registrationDay={user.user.registrationDate?.split("-")[2]}
+                  />
+                )}
               </BlockContainer>
             </SectionContainer>
           </>

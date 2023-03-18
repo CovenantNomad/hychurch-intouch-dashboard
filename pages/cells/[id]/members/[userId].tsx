@@ -54,6 +54,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     }
   }, [router]);
 
+  console.log(data);
+
   return (
     <Layout>
       <Head>
@@ -121,6 +123,16 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           address={data.user.address}
                           description={data.user.description}
                           cell={data.user.cell}
+                          hasRegisterDate={false}
+                          registrationYear={
+                            data.user.registrationDate?.split("-")[0]
+                          }
+                          registrationMonth={
+                            data.user.registrationDate?.split("-")[1]
+                          }
+                          registrationDay={
+                            data.user.registrationDate?.split("-")[2]
+                          }
                         />
                       </section>
                     )}

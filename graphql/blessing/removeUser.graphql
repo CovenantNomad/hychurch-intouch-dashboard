@@ -1,0 +1,9 @@
+mutation removeUser($input: RemoveUserFromSeedlingCellInput!) {
+  removeUserFromSeedlingCell(input: $input) {
+    user {
+      id
+      name
+      description
+    }
+  }
+}

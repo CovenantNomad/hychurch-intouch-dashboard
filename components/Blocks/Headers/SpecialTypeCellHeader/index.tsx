@@ -7,7 +7,7 @@ interface SpecialTypeCellHeaderProps {
   cellName: string | undefined;
   userName: string;
   href: string;
-  hasEditMode?: boolean;
+  hasActionButton?: boolean;
   editMode?: boolean;
   setEditMode?: Dispatch<SetStateAction<boolean>>;
 }
@@ -17,7 +17,7 @@ const SpecialTypeCellHeader = ({
   cellName,
   userName,
   href,
-  hasEditMode = false,
+  hasActionButton = false,
   editMode,
   setEditMode,
 }: SpecialTypeCellHeaderProps) => {
@@ -39,10 +39,14 @@ const SpecialTypeCellHeader = ({
           </span>
           <h1 className="text-2xl font-bold text-gray-900">{userName}</h1>
         </div>
-        {hasEditMode && setEditMode && (
-          <Button onClick={() => setEditMode(!editMode)} outline={false}>
-            {editMode ? "일반모드" : "편집모드"}
-          </Button>
+        {hasActionButton && (
+          <>
+            {setEditMode && (
+              <Button onClick={() => setEditMode(!editMode)} outline={false}>
+                {editMode ? "일반모드" : "편집모드"}
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>

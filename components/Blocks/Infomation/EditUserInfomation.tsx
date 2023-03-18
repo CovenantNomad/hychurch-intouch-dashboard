@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { GraphQLError } from "graphql";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
@@ -7,6 +8,7 @@ import {
   useResetUserPasswordMutation,
   useUpdateUserMutation,
 } from "../../../graphql/generated";
+import { SpecialCellIdType } from "../../../interface/cell";
 import { EditForm } from "../../../interface/register";
 import { UpdateUserInfomationProps } from "../../../interface/user";
 import { makeErrorMessage } from "../../../utils/utils";
@@ -21,8 +23,13 @@ const EditUserInfomation = ({
   address,
   description,
   cell,
+  registrationYear,
+  registrationMonth,
+  registrationDay,
+  hasRegisterDate = false,
   editModeHandler,
 }: UpdateUserInfomationProps) => {
+  const today = dayjs();
   const queryClient = useQueryClient();
   const {
     handleSubmit,
@@ -38,9 +45,26 @@ const EditUserInfomation = ({
         queryClient.invalidateQueries({
           queryKey: ["searchUsers"],
         });
+        if (cell?.id === SpecialCellIdType.NewFamily) {
+          queryClient.invalidateQueries({
+            queryKey: ["findNewFamilyCell"],
+          });
+        } else if (cell?.id === SpecialCellIdType.Renew) {
+          queryClient.invalidateQueries({
+            queryKey: ["findRenewCell"],
+          });
+        } else {
+          queryClient.invalidateQueries({
+            queryKey: ["findCell", { id: Number(cell?.id) }],
+          });
+        }
         queryClient.invalidateQueries({
-          queryKey: ["findCell", { id: Number(cell?.id) }],
+          queryKey: ["findUser", { id: id }],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["searchUsers"],
+        });
+
         if (editModeHandler) {
           editModeHandler(false);
         }
@@ -81,8 +105,15 @@ const EditUserInfomation = ({
     address,
     description,
     isActive,
+    newRegistrationYear,
+    newRegistrationMonth,
+    newRegistrationDay,
   }: EditForm) => {
     const birthday = `${year}-${month}-${day}`;
+    let registrationDate = `${registrationYear}-${registrationMonth}-${registrationDay}`;
+    if (newRegistrationYear && newRegistrationMonth && newRegistrationDay) {
+      registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
+    }
     const isActiveStatus = isActive === "활동" ? true : false;
     mutate({
       input: {
@@ -94,6 +125,7 @@ const EditUserInfomation = ({
         birthday,
         address,
         description,
+        registrationDate,
       },
     });
   };
@@ -220,6 +252,10 @@ const EditUserInfomation = ({
                       value: 4,
                       message: "4자리로 입력해주세요 (YYYY)",
                     },
+                    max: {
+                      value: today.get("year"),
+                      message: `${today.get("year")}년을 넘을 수 없습니다`,
+                    },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
                 />
@@ -253,6 +289,14 @@ const EditUserInfomation = ({
                       value: 2,
                       message: "4자리로 입력해주세요 (MM)",
                     },
+                    min: {
+                      value: 1,
+                      message: "1월보다 작을 수 없습니다",
+                    },
+                    max: {
+                      value: 12,
+                      message: "12월을 넘을 수 없습니다",
+                    },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
                 />
@@ -285,6 +329,14 @@ const EditUserInfomation = ({
                     maxLength: {
                       value: 2,
                       message: "4자리로 입력해주세요 (MM)",
+                    },
+                    min: {
+                      value: 1,
+                      message: "1일보다 작을 수 없습니다",
+                    },
+                    max: {
+                      value: 31,
+                      message: "31일을 넘을 수 없습니다",
                     },
                   })}
                   className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
@@ -365,6 +417,137 @@ const EditUserInfomation = ({
                 />
               </div>
             </div>
+
+            {hasRegisterDate && (
+              <>
+                <div className="col-span-6 -mb-6">
+                  <span className="block text-sm font-medium text-gray-700">
+                    등록일*
+                  </span>
+                </div>
+
+                <div className="col-span-2">
+                  <div className="relative flex items-center w-full">
+                    <label htmlFor="year" className="sr-only">
+                      년
+                    </label>
+                    <input
+                      id="year"
+                      type="text"
+                      placeholder="YYYY"
+                      defaultValue={registrationYear}
+                      {...register("newRegistrationYear", {
+                        minLength: {
+                          value: 4,
+                          message: "4자리로 입력해주세요 (YYYY)",
+                        },
+                        maxLength: {
+                          value: 4,
+                          message: "4자리로 입력해주세요 (YYYY)",
+                        },
+                        max: {
+                          value: today.get("year"),
+                          message: `${today.get("year")}년을 넘을 수 없습니다`,
+                        },
+                      })}
+                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                    />
+                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                      년
+                    </span>
+                  </div>
+                  {errors.newRegistrationYear && (
+                    <p className="mt-1 px-3 text-sm text-red-600">
+                      {errors.newRegistrationYear.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-2">
+                  <div className="relative flex items-center w-full">
+                    <label htmlFor="month" className="sr-only">
+                      월
+                    </label>
+                    <input
+                      id="month"
+                      type="text"
+                      placeholder="MM"
+                      defaultValue={registrationMonth}
+                      {...register("newRegistrationMonth", {
+                        setValueAs: (v: string) => v.padStart(2, "0"),
+                        minLength: {
+                          value: 2,
+                          message: "2자리로 입력해주세요 (MM)",
+                        },
+                        maxLength: {
+                          value: 2,
+                          message: "4자리로 입력해주세요 (MM)",
+                        },
+                        min: {
+                          value: 1,
+                          message: "1월보다 작을 수 없습니다",
+                        },
+                        max: {
+                          value: 12,
+                          message: "12월을 넘을 수 없습니다",
+                        },
+                      })}
+                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                    />
+                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                      월
+                    </span>
+                  </div>
+                  {errors.newRegistrationMonth && (
+                    <p className="mt-1 px-3 text-sm text-red-600">
+                      {errors.newRegistrationMonth.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-2">
+                  <div className="relative flex items-center w-full">
+                    <label htmlFor="day" className="sr-only">
+                      일
+                    </label>
+                    <input
+                      id="day"
+                      type="text"
+                      placeholder="DD"
+                      defaultValue={registrationDay}
+                      {...register("newRegistrationDay", {
+                        setValueAs: (v: string) => v.padStart(2, "0"),
+                        minLength: {
+                          value: 2,
+                          message: "2자리로 입력해주세요 (MM)",
+                        },
+                        maxLength: {
+                          value: 2,
+                          message: "4자리로 입력해주세요 (MM)",
+                        },
+                        min: {
+                          value: 1,
+                          message: "1일보다 작을 수 없습니다",
+                        },
+                        max: {
+                          value: 31,
+                          message: "31일을 넘을 수 없습니다",
+                        },
+                      })}
+                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                    />
+                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                      일
+                    </span>
+                  </div>
+                  {errors.newRegistrationDay && (
+                    <p className="mt-1 px-3 text-sm text-red-600">
+                      {errors.newRegistrationDay.message}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="flex justify-end gap-4 py-3 bg-white">

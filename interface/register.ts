@@ -24,4 +24,7 @@ export interface EditForm {
   phone: string;
   address?: string;
   description?: string;
+  newRegistrationYear?: string;
+  newRegistrationMonth?: string;
+  newRegistrationDay?: string;
 }

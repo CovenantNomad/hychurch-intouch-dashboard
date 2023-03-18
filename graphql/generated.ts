@@ -411,6 +411,8 @@ export type UpdateUserInput = {
   name: Scalars['String'];
   /** 전화번호 */
   phone: Scalars['String'];
+  /** 등록일(yyyy-MM-dd) */
+  registrationDate?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateUserPayload = {
@@ -551,6 +553,13 @@ export type FindRenewCellQueryVariables = Exact<{
 
 export type FindRenewCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
+export type RemoveUserMutationVariables = Exact<{
+  input: RemoveUserFromSeedlingCellInput;
+}>;
+
+
+export type RemoveUserMutation = { __typename?: 'Mutation', removeUserFromSeedlingCell: { __typename?: 'RemoveUserFromSeedlingCellPayload', user: { __typename?: 'User', id: string, name: string, description?: string | null } } };
+
 export type CreateCellMutationVariables = Exact<{
   input: CreateCellInput;
 }>;
@@ -678,7 +687,7 @@ export type SearchUsersQueryVariables = Exact<{
 }>;
 
 
-export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
+export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, registrationDate?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUserInput;
@@ -987,6 +996,32 @@ export const useFindRenewCellQuery = <
 
 useFindRenewCellQuery.getKey = (variables: FindRenewCellQueryVariables) => ['findRenewCell', variables];
 ;
+
+export const RemoveUserDocument = `
+    mutation removeUser($input: RemoveUserFromSeedlingCellInput!) {
+  removeUserFromSeedlingCell(input: $input) {
+    user {
+      id
+      name
+      description
+    }
+  }
+}
+    `;
+export const useRemoveUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<RemoveUserMutation, TError, RemoveUserMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<RemoveUserMutation, TError, RemoveUserMutationVariables, TContext>(
+      ['removeUser'],
+      (variables?: RemoveUserMutationVariables) => fetcher<RemoveUserMutation, RemoveUserMutationVariables>(client, RemoveUserDocument, variables, headers)(),
+      options
+    );
+useRemoveUserMutation.getKey = () => ['removeUser'];
 
 export const CreateCellDocument = `
     mutation createCell($input: CreateCellInput!) {
@@ -1612,6 +1647,7 @@ export const SearchUsersDocument = `
       gender
       address
       description
+      registrationDate
       roles
       cell {
         id

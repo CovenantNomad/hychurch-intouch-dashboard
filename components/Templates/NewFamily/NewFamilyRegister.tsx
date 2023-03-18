@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import { useRegisterNewUserMutation } from "../../../graphql/generated";
+import { SpecialCellIdType } from "../../../interface/cell";
 import { RegisterForm } from "../../../interface/register";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
 
@@ -25,7 +26,10 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
       onSuccess: (data) => {
         toast.success("새가족 등록하였습니다");
         queryClient.invalidateQueries({
-          queryKey: ["findNewFamilyCell", { id: Number("39") }],
+          queryKey: [
+            "findNewFamilyCell",
+            { id: Number(SpecialCellIdType.NewFamily) },
+          ],
         });
         reset();
       },
