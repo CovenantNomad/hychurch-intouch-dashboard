@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
@@ -5,23 +6,42 @@ import {
   FindNewFamilyCellQueryVariables,
   RoleType,
   useFindNewFamilyCellQuery,
+  UserCellTransferStatus,
 } from "../../../graphql/generated";
-import { Member } from "../../../interface/user";
+import { SpecialCellIdType } from "../../../interface/cell";
+import { Member, MemberWithTransferOut } from "../../../interface/user";
+import { getTodayString } from "../../../utils/dateUtils";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
+import Spinner from "../../Atoms/Spinner";
 import NewFamilyMemberSection from "../../Organisms/NewFamily/NewFamilyMemberSection";
 import NewFamilyTeamSection from "../../Organisms/NewFamily/NewFamilyTeamSection";
 
 interface NewFamilyManagementProps {}
 
 const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
+  const now = dayjs();
   const [teamList, setTeamList] = useState<Member[]>([]);
-  const [newFamilyList, setNewFamilyList] = useState<Member[]>([]);
+  const [newFamilyList, setNewFamilyList] = useState<MemberWithTransferOut[]>(
+    []
+  );
+  const [datafilter, setDatafilter] = useState({
+    min: getTodayString(dayjs(now.set("year", -1))),
+    max: getTodayString(now),
+  });
   const { isLoading, data } = useFindNewFamilyCellQuery<
     FindNewFamilyCellQuery,
     FindNewFamilyCellQueryVariables
   >(
     graphlqlRequestClient,
     {
-      id: 39,
+      id: Number(SpecialCellIdType.NewFamily),
+      transferOutStatus: [UserCellTransferStatus.Ordered],
+      transferOutDateFilter: {
+        between: {
+          min: datafilter.min,
+          max: datafilter.max,
+        },
+      },
     },
     {
       staleTime: 10 * 60 * 1000,
@@ -38,18 +58,42 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
       const newFamilyTemp = data.findCell.members.filter(
         (item) => item.roles.length === 0
       );
-      setNewFamilyList(newFamilyTemp);
+      const newFamilyWithTransfer = newFamilyTemp.map((member) => {
+        let findInfo = data.findCell.transfersOut.find(
+          (item) => item.user.id === member.id
+        );
+        return data.findCell.transfersOut.find(
+          (item) => item.user.id === member.id
+        )
+          ? {
+              ...member,
+              transferStatus: findInfo?.status,
+              toCellId: findInfo?.toCell.id,
+              toCellName: findInfo?.toCell.name,
+              orderDate: findInfo?.orderDate,
+            }
+          : member;
+      });
+      setNewFamilyList(newFamilyWithTransfer);
     }
   }, [data]);
 
   return (
     <>
-      <div className="bg-white rounded-md py-5 px-5">
-        <NewFamilyTeamSection teamList={teamList} />
-      </div>
-      <div className="bg-white rounded-md py-5 px-5 mt-2">
-        <NewFamilyMemberSection memberList={newFamilyList} />
-      </div>
+      {isLoading ? (
+        <div className="w-full h-screen flex justify-center">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          <BlockContainer firstBlock>
+            <NewFamilyTeamSection teamList={teamList} />
+          </BlockContainer>
+          <BlockContainer>
+            <NewFamilyMemberSection memberList={newFamilyList} />
+          </BlockContainer>
+        </>
+      )}
     </>
   );
 };

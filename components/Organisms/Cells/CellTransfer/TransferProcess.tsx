@@ -34,8 +34,8 @@ const TransferProcess = ({}: TransferProcessProps) => {
   ];
 
   return (
-    <div className="px-6 pt-6 pb-32 bg-white">
-      <div className="container mt-5 flex flex-col items-center">
+    <div className="bg-white">
+      <div className="flex flex-col items-center">
         <h5 className="text-2xl font-bold mb-1">셀원 이동하기</h5>
         <span className="text-sm text-gray-600">
           이동할 셀원과 이동할 셀을 선택해주세요

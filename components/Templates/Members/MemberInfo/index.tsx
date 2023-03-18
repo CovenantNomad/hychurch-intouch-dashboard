@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { selectedUser } from "../../../../stores/selectedUser";
 import UserInfomation from "../../../Blocks/Infomation/UserInfomation";
 import CloseIcon from "../../../Atoms/Icons/CloseIcon";
-import Button from "../../../Atoms/Button/Button";
+import BackIcon from "../../../Atoms/Icons/BackIcon";
 import EditUserInfomation from "../../../Blocks/Infomation/EditUserInfomation";
 
 interface MemberInfoProps {}
@@ -23,7 +23,20 @@ const MemberInfo = ({}: MemberInfoProps) => {
 
   return (
     <>
-      <div className="flex justify-end mb-3">
+      <div
+        className={`flex ${
+          isEditMode ? "justify-between" : "justify-end"
+        } mb-4`}
+      >
+        {isEditMode && (
+          <button
+            className="flex items-center"
+            onClick={() => setIsEditMode(false)}
+          >
+            <BackIcon />
+            <span>뒤로</span>
+          </button>
+        )}
         <button className="flex items-center gap-x-2" onClick={onCloseHandle}>
           <span>닫기</span>
           <CloseIcon />

@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Avatar, { AvatarSize } from "../Avatar";
 
 interface HorizontalTabsProps {
   tabs: {
@@ -17,8 +16,8 @@ const HorizontalTabs = ({
   setCurrentTab,
 }: HorizontalTabsProps) => {
   return (
-    <div className="py-2 px-4 rounded-md bg-GRAY003">
-      <nav className="flex justify-center items-center">
+    <div className="py-3 px-4 rounded-md bg-GRAY003">
+      <nav className="flex justify-center items-center gap-x-4">
         {tabs.map((tab) => (
           <div
             key={tab.id}
@@ -27,7 +26,7 @@ const HorizontalTabs = ({
               tab.id === currentTab
                 ? "bg-GRAY005 text-white font-medium"
                 : "bg-GRAY002 text-GRAY005"
-            }  min-w-0 overflow-hidden py-1 px-2 mr-2 focus:z-10`}
+            }  min-w-0 overflow-hidden py-2 px-3 cursor-pointer focus:z-10`}
           >
             <span className="text-sm text-center uppercase">{tab.name}</span>
           </div>

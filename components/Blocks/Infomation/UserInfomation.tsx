@@ -8,9 +8,11 @@ export interface UserInfomationProps {
   gender: Gender | null | undefined;
   isActive: boolean;
   birthday: string | null | undefined;
+  registrationDate?: string | null | undefined;
   phone: string;
   address: string | null | undefined;
   description: string | null | undefined;
+  hasHeader?: boolean;
   editModeHandler?: () => void;
 }
 
@@ -22,19 +24,23 @@ const UserInfomation = ({
   phone,
   address,
   description,
+  registrationDate,
+  hasHeader = true,
   editModeHandler,
 }: UserInfomationProps) => {
   return (
     <>
       <div className="border px-4 py-4 rounded-md bg-white">
-        <div className="flex gap-x-4 items-center mb-6">
-          <Avatar name={name} size={AvatarSize.md} inline />
-          <button onClick={editModeHandler}>
-            <h6 className="text-xl font-medium tracking-wide hover:text-LINKTEXT">
-              {name}
-            </h6>
-          </button>
-        </div>
+        {hasHeader && (
+          <div className="flex gap-x-4 items-center mb-6">
+            <Avatar name={name} size={AvatarSize.md} inline />
+            <button onClick={editModeHandler}>
+              <h6 className="text-xl font-medium tracking-wide hover:text-LINKTEXT">
+                {name}
+              </h6>
+            </button>
+          </div>
+        )}
         <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
           <div className="sm:col-span-1">
             <dt className="text-sm font-medium text-gray-500">성별</dt>
@@ -62,6 +68,12 @@ const UserInfomation = ({
             <dt className="text-sm font-medium text-gray-500">주소</dt>
             <dd className="mt-1 text-sm text-gray-900">{address}</dd>
           </div>
+          {registrationDate && (
+            <div className="sm:col-span-2">
+              <dt className="text-sm font-medium text-gray-500">등록일</dt>
+              <dd className="mt-1 text-sm text-gray-900">{registrationDate}</dd>
+            </div>
+          )}
         </dl>
       </div>
       <div

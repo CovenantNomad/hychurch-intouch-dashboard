@@ -1,5 +1,6 @@
 import React from "react";
-import SectionContainer from "../../../Atoms/SectionContainer";
+import BlockContainer from "../../../Atoms/Container/BlockContainer";
+import SectionContainer from "../../../Atoms/Container/BlockContainer";
 import MentorListSection from "../../../Organisms/Blessing/MentorListSection/MentorListSection";
 import MentorSelection from "../../../Organisms/Blessing/MentorSelection/MentorSelection";
 
@@ -7,14 +8,14 @@ interface MentorManagementProps {}
 
 const MentorManagement = ({}: MentorManagementProps) => {
   return (
-    <div>
-      <div>
+    <>
+      <BlockContainer firstBlock>
         <MentorSelection />
-      </div>
-      <div className="mt-2">
+      </BlockContainer>
+      <BlockContainer>
         <MentorListSection />
-      </div>
-    </div>
+      </BlockContainer>
+    </>
   );
 };
 

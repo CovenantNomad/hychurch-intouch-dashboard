@@ -17,6 +17,10 @@ import {
 } from "../../../../graphql/generated";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import Footer from "../../../../components/Atoms/Footer";
+import Container from "../../../../components/Atoms/Container/Container";
+import SectionBackground from "../../../../components/Atoms/Container/SectionBackground";
+import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
+import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
 
 interface MemberDetailPage {}
 
@@ -58,75 +62,80 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {isLoading ? (
-        <div className="w-full h-screen flex justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          {data ? (
-            <div>
-              <MemberHeader
-                cellId={data.user.cell?.id}
-                cellName={data.user.cell?.name}
-                userName={data.user.name}
-                editMode={editMode}
-                setEditMode={setEditMode}
-              />
-
-              {!editMode ? (
-                <div className="px-2 pt-2">
-                  <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-5 px-4 rounded-md bg-white">
-                    <div className="md:col-span-2">
-                      <UserInfomation
-                        name={data.user.name}
-                        gender={data.user.gender}
-                        isActive={data.user.isActive}
-                        birthday={data.user.birthday}
-                        phone={data.user.phone}
-                        address={data.user.address}
-                        description={data.user.description}
-                      />
-                    </div>
-                    <div className="md:col-span-4">
-                      <div className="flex gap-4 mb-4">
-                        <div className="flex-1 h-[120px] border">
-                          올해 예배 출석
-                        </div>
-                        <div className="flex-1 h-[120px] border">
-                          올해 셀모임 출석
-                        </div>
-                      </div>
-                      <div className="h-[240px] border">예배출석 그래프</div>
-                    </div>
-                  </section>
-                </div>
-              ) : (
-                <div className="px-2 pt-2">
-                  <section className="py-5 px-4 rounded-md bg-white">
-                    <EditUserInfomation
-                      id={data.user.id}
-                      name={data.user.name}
-                      gender={data.user.gender}
-                      isActive={data.user.isActive}
-                      birthday={data.user.birthday}
-                      phone={data.user.phone}
-                      address={data.user.address}
-                      description={data.user.description}
-                      cell={data.user.cell}
-                    />
-                  </section>
-                </div>
-              )}
+      <Container>
+        <SectionBackground>
+          {isLoading ? (
+            <div className="w-full h-screen flex justify-center">
+              <Spinner />
             </div>
           ) : (
-            <div className="w-full h-screen flex justify-center items-center">
-              <EmptyStateSimple warning />
-            </div>
+            <SectionContainer>
+              {data ? (
+                <div>
+                  <MemberHeader
+                    cellId={data.user.cell?.id}
+                    cellName={data.user.cell?.name}
+                    userName={data.user.name}
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                  />
+                  <BlockContainer>
+                    {!editMode ? (
+                      <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-5 px-4 rounded-md bg-white">
+                        <div className="md:col-span-2">
+                          <UserInfomation
+                            name={data.user.name}
+                            gender={data.user.gender}
+                            isActive={data.user.isActive}
+                            birthday={data.user.birthday}
+                            phone={data.user.phone}
+                            address={data.user.address}
+                            description={data.user.description}
+                            editModeHandler={() => setEditMode(true)}
+                            hasHeader={false}
+                          />
+                        </div>
+                        <div className="md:col-span-4">
+                          <div className="flex gap-4 mb-4">
+                            <div className="flex-1 h-[120px] border">
+                              올해 예배 출석
+                            </div>
+                            <div className="flex-1 h-[120px] border">
+                              올해 셀모임 출석
+                            </div>
+                          </div>
+                          <div className="h-[240px] border">
+                            예배출석 그래프
+                          </div>
+                        </div>
+                      </section>
+                    ) : (
+                      <section className="py-5 px-4 rounded-md bg-white">
+                        <EditUserInfomation
+                          id={data.user.id}
+                          name={data.user.name}
+                          gender={data.user.gender}
+                          isActive={data.user.isActive}
+                          birthday={data.user.birthday}
+                          phone={data.user.phone}
+                          address={data.user.address}
+                          description={data.user.description}
+                          cell={data.user.cell}
+                        />
+                      </section>
+                    )}
+                  </BlockContainer>
+                </div>
+              ) : (
+                <div className="w-full h-screen flex justify-center items-center">
+                  <EmptyStateSimple warning />
+                </div>
+              )}
+            </SectionContainer>
           )}
-          <Footer />
-        </>
-      )}
+        </SectionBackground>
+        <Footer />
+      </Container>
     </Layout>
   );
 };

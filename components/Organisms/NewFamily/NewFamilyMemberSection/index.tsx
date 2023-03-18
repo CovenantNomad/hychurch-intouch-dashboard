@@ -1,9 +1,9 @@
 import React from "react";
-import { Member } from "../../../../interface/user";
+import { MemberWithTransferOut } from "../../../../interface/user";
 import NewFamilyListItem from "../NewFamilyListItem";
 
 interface NewFamilyMemberSectionProps {
-  memberList: Member[];
+  memberList: MemberWithTransferOut[];
 }
 
 const NewFamilyMemberSection = ({

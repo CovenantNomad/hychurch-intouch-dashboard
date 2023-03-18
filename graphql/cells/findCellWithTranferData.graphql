@@ -26,6 +26,7 @@ query findCellWithTranferData(
         name
       }
     }
+    community
     transfersIn(status: $transferInStatus, orderDate: $transferInDateFilter) {
       id
       status

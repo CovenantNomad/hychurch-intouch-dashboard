@@ -1,0 +1,14 @@
+query findCellLists($limit: Int) {
+  findCells(limit: $limit) {
+    nodes {
+      id
+      name
+      community
+      leaders {
+        id
+        name
+        roles
+      }
+    }
+  }
+}

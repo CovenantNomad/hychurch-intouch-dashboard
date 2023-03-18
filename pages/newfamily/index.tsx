@@ -1,14 +1,19 @@
+import { useCallback, useState } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useCallback, useLayoutEffect, useState } from "react";
+// stats
+import { useRecoilState } from "recoil";
+import { stateSetting } from "../../stores/stateSetting";
+// components
 import Layout from "../../components/Layout/Layout";
 import NewFamilyRegister from "../../components/Templates/NewFamily/NewFamilyRegister";
 import NewFamilyManagement from "../../components/Templates/NewFamily/NewFamilyManagement";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { selectedState } from "../../stores/selectedState";
-import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Footer from "../../components/Atoms/Footer";
-import { stateSetting } from "../../stores/stateSetting";
+import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
+import Container from "../../components/Atoms/Container/Container";
+import SectionBackground from "../../components/Atoms/Container/SectionBackground";
+import SectionContainer from "../../components/Atoms/Container/SectionContainer";
+import PageLayout from "../../components/Layout/PageLayout";
 
 const categories = [
   { id: 0, name: "새가족 등록카드", component: <NewFamilyRegister /> },
@@ -24,7 +29,6 @@ const Register: NextPage = () => {
   const [categoryId, setCategoryId] = useState<number>(
     setting.newFamilySelectedCategoryId
   );
-  const setSelectedCell = useSetRecoilState(selectedState);
   const setSettingHandler = useCallback(
     (id: number) => {
       setSetting({
@@ -35,19 +39,6 @@ const Register: NextPage = () => {
     [setting, setSetting]
   );
 
-  useLayoutEffect(() => {
-    setSelectedCell({
-      selectedCell: {
-        cellId: "39",
-        cellName: "새가족셀",
-      },
-      selectedMember: {
-        memeberId: "",
-        memberName: "",
-      },
-    });
-  }, []);
-
   return (
     <Layout>
       <Head>
@@ -56,16 +47,17 @@ const Register: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <TabsWithHeader
-        title={"새가족부"}
-        tabs={categories}
-        currentTab={categoryId}
-        setCurrentTab={setCategoryId}
-        setSettingHandler={setSettingHandler}
-      />
+      <PageLayout>
+        <TabsWithHeader
+          title={"새가족부"}
+          tabs={categories}
+          currentTab={categoryId}
+          setCurrentTab={setCategoryId}
+          setSettingHandler={setSettingHandler}
+        />
 
-      <div className="px-2 pt-2">{categories[categoryId].component}</div>
-      <Footer />
+        <SectionContainer>{categories[categoryId].component}</SectionContainer>
+      </PageLayout>
     </Layout>
   );
 };

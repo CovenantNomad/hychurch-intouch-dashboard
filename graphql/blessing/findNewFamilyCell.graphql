@@ -1,4 +1,8 @@
-query findNewFamilyCell($id: Float!) {
+query findNewFamilyCell(
+  $id: Float!
+  $transferOutStatus: [UserCellTransferStatus!]
+  $transferOutDateFilter: DateFilter
+) {
   findCell(id: $id) {
     id
     name
@@ -22,6 +26,7 @@ query findNewFamilyCell($id: Float!) {
       phone
       isActive
       birthday
+      registrationDate
       gender
       address
       cell {
@@ -30,9 +35,27 @@ query findNewFamilyCell($id: Float!) {
       }
       roles
     }
-    statistics {
-      totalCountOfMembers
-      countOfActiveMembers
+    transfersOut(
+      status: $transferOutStatus
+      orderDate: $transferOutDateFilter
+    ) {
+      id
+      status
+      orderDate
+      completeDate
+      user {
+        id
+        name
+        gender
+      }
+      fromCell {
+        id
+        name
+      }
+      toCell {
+        id
+        name
+      }
     }
   }
 }
