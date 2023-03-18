@@ -65,71 +65,77 @@ const Cell: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header
-        title={`인터치 셀현황 (${data ? data.findCells.totalCount - 3 : 0}셀)`}
-      >
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onModalOpenHandler}
-          className="px-4 py-2 bg-BLUE text-white rounded-md"
+      <Container>
+        <Header
+          title={`인터치 셀현황 (${
+            data ? data.findCells.totalCount - 3 : 0
+          }셀)`}
         >
-          Add Cell
-        </motion.button>
-      </Header>
-      <Spacer size="h-8" background />
-      <Container bgWhite>
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-            {Array.from({ length: 6 }, (_, index) => index).map((item) => (
-              <div
-                key={item}
-                className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"
-              ></div>
-            ))}
-          </div>
-        ) : (
-          <>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onModalOpenHandler}
+            className="px-4 py-2 bg-BLUE text-white rounded-md"
+          >
+            Add Cell
+          </motion.button>
+        </Header>
+        <Spacer size="h-8" background />
+        <div>
+          {isLoading ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-              {data?.findCells.nodes
-                .filter(
-                  (cell) =>
-                    !cell.id.includes(SpecialCellIdType.NewFamily) &&
-                    !cell.id.includes(SpecialCellIdType.Blessing) &&
-                    !cell.id.includes(SpecialCellIdType.Renew)
-                )
-                .sort((a, b) => {
-                  if (a.name > b.name) return 1;
-                  else if (b.name > a.name) return -1;
-                  else return 0;
-                })
-                .map((cell) => (
-                  <CellCard
-                    key={cell.id}
-                    id={cell.id}
-                    name={cell.name}
-                    community={cell.community}
-                    leader={cell.leaders.at(0)?.name!}
-                    totalCountOfMembers={cell.statistics.totalCountOfMembers}
-                    countOfActiveMembers={cell.statistics.countOfActiveMembers}
-                  />
-                ))}
+              {Array.from({ length: 6 }, (_, index) => index).map((item) => (
+                <div
+                  key={item}
+                  className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"
+                ></div>
+              ))}
             </div>
-            <AnimatePresence
-              initial={false}
-              exitBeforeEnter={true}
-              onExitComplete={() => null}
-            >
-              {modalOpen && (
-                <CreateCellModal
-                  modalOpen={modalOpen}
-                  handleClose={onCloseHandler}
-                />
-              )}
-            </AnimatePresence>
-          </>
-        )}
-        <Footer bgWhite />
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+                {data?.findCells.nodes
+                  .filter(
+                    (cell) =>
+                      !cell.id.includes(SpecialCellIdType.NewFamily) &&
+                      !cell.id.includes(SpecialCellIdType.Blessing) &&
+                      !cell.id.includes(SpecialCellIdType.Renew)
+                  )
+                  .sort((a, b) => {
+                    if (a.name > b.name) return 1;
+                    else if (b.name > a.name) return -1;
+                    else return 0;
+                  })
+                  .map((cell) => (
+                    <CellCard
+                      key={cell.id}
+                      id={cell.id}
+                      name={cell.name}
+                      community={cell.community}
+                      leader={cell.leaders.at(0)?.name!}
+                      totalCountOfMembers={cell.statistics.totalCountOfMembers}
+                      countOfActiveMembers={
+                        cell.statistics.countOfActiveMembers
+                      }
+                    />
+                  ))}
+              </div>
+              <AnimatePresence
+                initial={false}
+                exitBeforeEnter={true}
+                onExitComplete={() => null}
+              >
+                {modalOpen && (
+                  <CreateCellModal
+                    modalOpen={modalOpen}
+                    handleClose={onCloseHandler}
+                  />
+                )}
+              </AnimatePresence>
+            </>
+          )}
+        </div>
+        <Footer />
       </Container>
     </Layout>
   );

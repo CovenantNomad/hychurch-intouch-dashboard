@@ -8,5 +8,6 @@ export const stateSetting = atom({
     cellSelectedCategoryId: 0,
     newFamilySelectedCategoryId: 0,
     blessingSelectedCategoryId: 0,
+    renewSelectedCategoryId: 0,
   },
 });

@@ -14,9 +14,10 @@ import { Member } from "../../../../interface/user";
 import EmptyStateSimple from "../../../Atoms/EmptyStates/EmptyStateSimple";
 import CloseIcon from "../../../Atoms/Icons/CloseIcon";
 import SearchIcon from "../../../Atoms/Icons/SearchIcon";
-import SectionContainer from "../../../Atoms/SectionContainer";
+import SectionContainer from "../../../Atoms/Container/BlockContainer";
 import Spinner from "../../../Atoms/Spinner";
 import MemberListItem from "../../Members/MemberListItem";
+import SectionTitle from "../../../Atoms/Typography/SectionTitle";
 
 interface SearchBarForm {
   name: string;
@@ -91,8 +92,8 @@ const MentorSelection = ({}: MentorSelectionProps) => {
   }, [cardinalNumber, mentor, mutateAsync]);
 
   return (
-    <SectionContainer>
-      <h6 className="text-lg pb-5">바나바 임명</h6>
+    <>
+      <SectionTitle>바나바 임명</SectionTitle>
       <div className="grid xl:grid-cols-2 gap-x-4">
         <div className="xl:col-span-1">
           <div className="w-full py-3 px-2 border border-GRAY004 rounded-3xl bg-white md:rounded-md">
@@ -193,7 +194,7 @@ const MentorSelection = ({}: MentorSelectionProps) => {
           </div>
         </div>
       </div>
-    </SectionContainer>
+    </>
   );
 };
 

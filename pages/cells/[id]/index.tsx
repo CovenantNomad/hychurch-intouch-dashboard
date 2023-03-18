@@ -18,6 +18,9 @@ import TabsWithHeader from "../../../components/Atoms/Tabs/TabsWithHeader";
 import { stateSetting } from "../../../stores/stateSetting";
 import CellDeleteScreen from "../../../components/Templates/Cells/CellDeleteScreen";
 import CellEditScreen from "../../../components/Templates/Cells/CellEditScreen";
+import Container from "../../../components/Atoms/Container/Container";
+import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
+import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 
 const CellDetail = () => {
   const { query } = useRouter();
@@ -103,16 +106,20 @@ const CellDetail = () => {
         <title>{query.cellName || data?.findCell.name} | INTOUCH CHURCH</title>
       </Head>
 
-      <TabsWithHeader
-        title={data?.findCell.name || "셀"}
-        subtitle={data?.findCell.community + " 공동체"}
-        tabs={categories}
-        currentTab={categoryId}
-        setCurrentTab={setCategoryId}
-        setSettingHandler={setSettingHandler}
-      />
-      <div className="px-2 pt-2">{categories[categoryId].component}</div>
-      <Footer />
+      <Container>
+        <SectionBackground>
+          <TabsWithHeader
+            title={data?.findCell.name || "셀"}
+            subtitle={data?.findCell.community + " 공동체"}
+            tabs={categories}
+            currentTab={categoryId}
+            setCurrentTab={setCategoryId}
+            setSettingHandler={setSettingHandler}
+          />
+          <div>{categories[categoryId].component}</div>
+        </SectionBackground>
+        <Footer />
+      </Container>
     </Layout>
   );
 };

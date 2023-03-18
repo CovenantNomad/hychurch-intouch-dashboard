@@ -1,32 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
-import { FIND_CELL_LIMIT } from "../../../constants/constant";
 import {
-  FindCellQuery,
-  FindCellsQuery,
-  FindCellsQueryVariables,
-  RoleType,
-  useDeleteCellMutation,
-  useFindCellsQuery,
-  DeleteCellMutation,
-  DeleteCellMutationVariables,
   useUpdateCellFieldsMutation,
   UpdateCellFieldsMutation,
   UpdateCellFieldsMutationVariables,
 } from "../../../graphql/generated";
-import { SpecialCellIdType, updateCellForm } from "../../../interface/cell";
-import { SelectType } from "../../../interface/common";
-import InfoCell from "../../Atoms/InfoCell/InfoCell";
-import SectionContainer from "../../Atoms/SectionContainer";
+import { updateCellForm } from "../../../interface/cell";
+import SectionContainer from "../../Atoms/Container/SectionContainer";
 import SectionTitle from "../../Atoms/Typography/SectionTitle";
-import ComboBoxImage from "../../Blocks/Combobox/ComboBoxImage";
-import Summary from "../../Blocks/Summary/Summary";
 import { useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
-import { stateSetting } from "../../../stores/stateSetting";
 import { useForm } from "react-hook-form";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
 
 interface CellEditScreenProps {
   id: string | undefined;
@@ -52,7 +37,9 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
       toast.error(`셀정보를 업데이트 하는데 실패했습니다.`);
     },
     onSuccess(data) {
-      queryClient.invalidateQueries("findCell");
+      queryClient.invalidateQueries({
+        queryKey: ["findCell", { id: Number(id) }],
+      });
       queryClient.invalidateQueries({ queryKey: ["findCells"] });
       toast.success(
         `${data?.updateCellFields.cell.name}이 성공적으로 업데이트 되었습니다`
@@ -77,8 +64,8 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
   };
 
   return (
-    <div>
-      <SectionContainer>
+    <SectionContainer>
+      <BlockContainer firstBlock>
         <SectionTitle>셀정보 수정</SectionTitle>
 
         <form onSubmit={handleSubmit(onSubmitHandler)}>
@@ -148,8 +135,8 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
             </button>
           </div>
         </form>
-      </SectionContainer>
-    </div>
+      </BlockContainer>
+    </SectionContainer>
   );
 };
 

@@ -9,9 +9,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div>
       <Navbar />
-      <main
-        className={"w-full max-w-[1440px] mx-auto bg-[#eeeeee] overflow-hidden"}
-      >
+      <main className={"w-full max-w-[1504px] mx-auto overflow-hidden"}>
         {children}
       </main>
     </div>

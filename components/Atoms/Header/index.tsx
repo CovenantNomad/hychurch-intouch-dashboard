@@ -13,7 +13,7 @@ const HeaderTitle = ({ title }: HeaderProps) => {
 const Header = ({ title, children, transparent }: HeaderProps) => {
   return (
     <header
-      className={`flex justify-between items-center py-4 px-4 md:py-7 md:px-6 lg:px-8 xl:px-0 ${
+      className={`flex justify-between items-center py-4 md:py-6 ${
         transparent ? "bg-inherit" : "bg-white"
       }`}
     >

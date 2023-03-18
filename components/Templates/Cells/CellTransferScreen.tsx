@@ -10,8 +10,11 @@ import {
 } from "../../../graphql/generated";
 import { selectedState } from "../../../stores/selectedState";
 import { getTodayString } from "../../../utils/dateUtils";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
+import SectionContainer from "../../Atoms/Container/SectionContainer";
 import HorizontalTabs from "../../Atoms/Tabs/HorizontalTabs";
 import VerticalTabs from "../../Atoms/Tabs/VerticalTabs";
+import SectionTitle from "../../Atoms/Typography/SectionTitle";
 import TransferConfirm from "../../Organisms/Cells/CellTransfer/TransferConfirm";
 import TransferHistory from "../../Organisms/Cells/CellTransfer/TransferHistory";
 import TransferProcess from "../../Organisms/Cells/CellTransfer/TransferProcess";
@@ -78,19 +81,17 @@ const CellTransferScreen = ({}: CellTransferProps) => {
   ];
 
   return (
-    <div>
-      <div className="py-5 px-4 rounded-md bg-white">
-        <h6 className="text-xl font-bold pb-5">셀 편성하기</h6>
+    <SectionContainer>
+      <BlockContainer firstBlock>
+        <SectionTitle>셀 편성하기</SectionTitle>
         <HorizontalTabs
           tabs={tabs}
           currentTab={selectedTab}
           setCurrentTab={setSelectedTab}
         />
-      </div>
-      <div className="pb-5 px-4 mt-2 mb-2 rounded-md bg-white">
-        {tabs[selectedTab].component}
-      </div>
-    </div>
+      </BlockContainer>
+      <BlockContainer>{tabs[selectedTab].component}</BlockContainer>
+    </SectionContainer>
   );
 };
 

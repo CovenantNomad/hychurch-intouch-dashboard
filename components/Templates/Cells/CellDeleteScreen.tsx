@@ -3,18 +3,18 @@ import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import { FIND_CELL_LIMIT } from "../../../constants/constant";
 import {
   FindCellQuery,
-  FindCellsQuery,
-  FindCellsQueryVariables,
   RoleType,
   useDeleteCellMutation,
-  useFindCellsQuery,
   DeleteCellMutation,
   DeleteCellMutationVariables,
+  useFindCellListsQuery,
+  FindCellListsQuery,
+  FindCellListsQueryVariables,
 } from "../../../graphql/generated";
 import { SpecialCellIdType } from "../../../interface/cell";
 import { SelectType } from "../../../interface/common";
 import InfoCell from "../../Atoms/InfoCell/InfoCell";
-import SectionContainer from "../../Atoms/SectionContainer";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
 import SectionTitle from "../../Atoms/Typography/SectionTitle";
 import ComboBoxImage from "../../Blocks/Combobox/ComboBoxImage";
 import Summary from "../../Blocks/Summary/Summary";
@@ -24,6 +24,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { stateSetting } from "../../../stores/stateSetting";
+import SectionContainer from "../../Atoms/Container/SectionContainer";
 
 interface CellDeleteScreenProps {
   data: FindCellQuery | undefined;
@@ -45,9 +46,9 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
     name: "",
   });
 
-  const { isLoading, data: findCells } = useFindCellsQuery<
-    FindCellsQuery,
-    FindCellsQueryVariables
+  const { isLoading, data: findCells } = useFindCellListsQuery<
+    FindCellListsQuery,
+    FindCellListsQueryVariables
   >(
     graphlqlRequestClient,
     {
@@ -145,8 +146,8 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
   }, [data]);
 
   return (
-    <div>
-      <SectionContainer>
+    <SectionContainer>
+      <BlockContainer firstBlock>
         <SectionTitle>셀 삭제</SectionTitle>
         <p className="whitespace-pre-line bg-GRAY003 text-center py-1">{`<셀 삭제 조건>\n1. 소속된 셀원이 없어야 합니다.\n2. 셀리더를 다른셀로 배정해야 합니다`}</p>
         <div className="grid xl:grid-cols-2 gap-5 mt-5">
@@ -200,8 +201,8 @@ const CellDeleteScreen = ({ data }: CellDeleteScreenProps) => {
             </Summary>
           </div>
         </div>
-      </SectionContainer>
-    </div>
+      </BlockContainer>
+    </SectionContainer>
   );
 };
 

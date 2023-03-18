@@ -22,6 +22,7 @@ module.exports = {
         LINKTEXT: "#0050b3",
         RED: "#d32620",
         GREEN: "#B0D1D4",
+        BACKGROUND: "#EEEEEE",
       },
     },
   },

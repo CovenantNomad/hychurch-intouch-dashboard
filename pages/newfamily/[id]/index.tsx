@@ -2,32 +2,57 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
-import Button from "../../../components/Atoms/Button/Button";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
-import EmptyStateStarting from "../../../components/Atoms/EmptyStates/EmptyStateStarting";
 import Footer from "../../../components/Atoms/Footer";
-import SectionHeader from "../../../components/Atoms/SectionHeader";
 import Spinner from "../../../components/Atoms/Spinner";
-import TabsWithHeader from "../../../components/Atoms/Tabs/TabsWithHeader";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import Layout from "../../../components/Layout/Layout";
 import {
+  CreateUserCellTransferMutation,
+  CreateUserCellTransferMutationVariables,
+  FindCellListsQuery,
+  FindCellListsQueryVariables,
   FindUserQuery,
   FindUserQueryVariables,
-  SearchUsersQuery,
-  SearchUsersQueryVariables,
+  useCreateUserCellTransferMutation,
+  useFindCellListsQuery,
   useFindUserQuery,
-  useSearchUsersQuery,
+  UserCellTransferStatus,
 } from "../../../graphql/generated";
-import FullWidthButton from "../../../components/Atoms/Button/FullWidthButton";
+import ComboBoxImage from "../../../components/Blocks/Combobox/ComboBoxImage";
+import { FIND_CELL_LIMIT } from "../../../constants/constant";
+import { SelectType } from "../../../interface/common";
+import { SpecialCellIdType } from "../../../interface/cell";
+import Summary from "../../../components/Blocks/Summary/Summary";
+import { toast } from "react-hot-toast";
+import { useQueryClient } from "react-query";
+import { makeErrorMessage } from "../../../utils/utils";
+import { getTodayString } from "../../../utils/dateUtils";
+import dayjs from "dayjs";
+import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
+import Container from "../../../components/Atoms/Container/Container";
+import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
+import PageLayout from "../../../components/Layout/PageLayout";
+import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
+import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 
 interface NewFamilyMemberProps {}
 
 const NewFamilyMember = ({}: NewFamilyMemberProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string>("");
+  const [cellList, setCellList] = useState<SelectType[]>([]);
+  const [selectedCell, setSelectedCell] = useState<SelectType>({
+    id: "",
+    name: "",
+  });
+  const [selectedMember, setSelectedMember] = useState<SelectType>({
+    id: "",
+    name: "",
+  });
 
-  const { isLoading, data } = useFindUserQuery<
+  const { isLoading, data: user } = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -42,6 +67,63 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     }
   );
 
+  const { data } = useFindCellListsQuery<
+    FindCellListsQuery,
+    FindCellListsQueryVariables
+  >(
+    graphlqlRequestClient,
+    {
+      limit: FIND_CELL_LIMIT,
+    },
+    {
+      staleTime: 60 * 60 * 1000,
+      cacheTime: 60 * 60 * 1000 * 24,
+    }
+  );
+
+  const { mutate } = useCreateUserCellTransferMutation<
+    CreateUserCellTransferMutation,
+    CreateUserCellTransferMutationVariables
+  >(graphlqlRequestClient, {
+    onSuccess() {
+      toast.success("셀에 편성되었습니다.");
+      queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
+      queryClient.invalidateQueries({
+        queryKey: ["findCell", { id: Number(SpecialCellIdType.NewFamily) }],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["findCell", { id: Number(selectedCell.id) }],
+      });
+      setSelectedCell({
+        id: "",
+        name: "",
+      });
+      router.back();
+    },
+    onError(error) {
+      if (error instanceof Error) {
+        toast.error(
+          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`
+        );
+      }
+    },
+  });
+
+  const onTransferHandler = () => {
+    if (selectedMember.id && selectedCell.id) {
+      mutate({
+        input: {
+          userId: selectedMember.id,
+          fromCellId: "39",
+          toCellId: selectedCell.id,
+          orderDate: getTodayString(dayjs()),
+        },
+      });
+    } else {
+      toast.error("Error! 잘못된 접근입니다.");
+    }
+  };
+
   useEffect(() => {
     if (router.isReady) {
       if (typeof router.query.id === "string") {
@@ -52,6 +134,39 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (data) {
+      const cellList = data.findCells.nodes
+        .filter(
+          (cell) =>
+            !cell.id.includes(SpecialCellIdType.NewFamily) &&
+            !cell.id.includes(SpecialCellIdType.Blessing) &&
+            !cell.id.includes(SpecialCellIdType.Renew)
+        )
+        .map((cell) => {
+          return {
+            id: cell.id,
+            name: cell.name,
+          };
+        })
+        .sort((a, b) => {
+          if (a.name > b.name) return 1;
+          else if (b.name > a.name) return -1;
+          else return 0;
+        });
+      setCellList(cellList);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (user) {
+      setSelectedMember({
+        id: user.user.id,
+        name: user.user.name,
+      });
+    }
+  }, [user]);
+
   return (
     <Layout>
       <Head>
@@ -59,56 +174,137 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {router.query.slug !== undefined && (
-        <SectionHeader title={router.query.slug} subtitle={"새가족셀"} goBack />
-      )}
-      <div className="px-2 pt-2">
-        <div className="bg-white rounded-md py-5 px-4">
-          {isLoading ? (
-            <Spinner />
-          ) : data ? (
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <UserInfomation
-                  name={data.user.name}
-                  gender={data.user.gender}
-                  isActive={data.user.isActive}
-                  birthday={data.user.birthday}
-                  registrationDate={data.user.registrationDate}
-                  phone={data.user.phone}
-                  address={data.user.address}
-                  description={data.user.description}
-                />
-              </div>
-              <div className="md:col-span-1">
-                <h6 className="pb-5 text-lg">블레싱/새싹 편성</h6>
-                <div className="flex-1">
-                  <FullWidthButton
-                    disabled={false}
-                    onClickHandler={() => {
-                      console.log("블레싱");
-                    }}
-                    text={"블레싱 편성"}
-                  />
+
+      <PageLayout>
+        {isLoading ? (
+          <SectionContainer>
+            <BlockContainer firstBlock>
+              <Spinner />
+            </BlockContainer>
+          </SectionContainer>
+        ) : user ? (
+          <>
+            <SpecialTypeCellHeader
+              cellId={user.user.cell?.id}
+              cellName={user.user.cell?.name}
+              userName={user.user.name}
+              href={"/newfamily"}
+              hasEditMode={false}
+            />
+            <SectionContainer>
+              <BlockContainer firstBlock>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-1">
+                    <UserInfomation
+                      name={user.user.name}
+                      gender={user.user.gender}
+                      isActive={user.user.isActive}
+                      birthday={user.user.birthday}
+                      registrationDate={user.user.registrationDate}
+                      phone={user.user.phone}
+                      address={user.user.address}
+                      description={user.user.description}
+                      hasHeader={false}
+                    />
+                  </div>
+                  <div className="md:col-span-1">
+                    {router.query.transferStatus ===
+                    UserCellTransferStatus.Ordered ? (
+                      <div>
+                        <h6 className="pb-5 text-base">
+                          셀편성 상태 :{" "}
+                          <strong className="bg-teal-600 text-white px-1 ml-1">
+                            승인대기중
+                          </strong>
+                        </h6>
+                        <div className="bg-GRAY003 text-center py-3">
+                          <p className="font-bold">
+                            편성셀 :{" "}
+                            <span className="text-BLUE">
+                              {router.query.toCellName}
+                            </span>
+                            <br />
+                            승인대기중
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="md:col-span-1">
+                            <h6 className="pb-5 text-base">블레싱/새싹 편성</h6>
+                            <div className="flex-1">
+                              <button
+                                onClick={() => {
+                                  setSelectedCell({
+                                    id: SpecialCellIdType.Blessing,
+                                    name: "블레싱",
+                                  });
+                                }}
+                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                              >
+                                블레싱 편성
+                              </button>
+                            </div>
+                            <div className="flex-1 mt-4">
+                              <button
+                                onClick={() => {
+                                  setSelectedCell({
+                                    id: SpecialCellIdType.Renew,
+                                    name: "새싹",
+                                  });
+                                }}
+                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                              >
+                                새싹셀 편성
+                              </button>
+                            </div>
+                          </div>
+                          <div className="md:col-span-1">
+                            <h6 className="pb-4 text-base">기존 셀 편성</h6>
+                            <ComboBoxImage
+                              showLabel={false}
+                              label={"셀선택"}
+                              selected={selectedCell}
+                              setSelected={setSelectedCell}
+                              selectList={cellList}
+                              widthFull
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-8">
+                          <Summary
+                            header="Transfer Summary"
+                            label="Transfer"
+                            disabled={
+                              selectedMember.id === "" ||
+                              selectedCell.id === "" ||
+                              router.query.transferStatus ===
+                                UserCellTransferStatus.Ordered
+                            }
+                            onClick={onTransferHandler}
+                          >
+                            <Summary.Row
+                              title="새가족 이름"
+                              value={selectedMember.name}
+                            />
+                            <Summary.Row
+                              title="편성 셀"
+                              value={selectedCell.name}
+                            />
+                          </Summary>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 mt-4">
-                  <FullWidthButton
-                    disabled={false}
-                    bgColor={"bg-GRAY004"}
-                    onClickHandler={() => {
-                      console.log("새싹");
-                    }}
-                    text={"새싹 편성"}
-                  />
-                </div>
-              </div>
-            </section>
-          ) : (
-            <EmptyStateSimple />
-          )}
-        </div>
-      </div>
-      <Footer />
+              </BlockContainer>
+            </SectionContainer>
+          </>
+        ) : (
+          <EmptyStateSimple />
+        )}
+      </PageLayout>
     </Layout>
   );
 };

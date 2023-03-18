@@ -14,14 +14,17 @@ interface TransferHistoryProps {
 
 const TransferHistory = ({ data, isLoading }: TransferHistoryProps) => {
   return (
-    <div className="px-6 pt-8 py-32 bg-white">
+    <div className="pb-24 bg-white">
       <div className="">
-        <h3 className="text-[32px] font-poppins pb-6">Transfer In</h3>
+        <h3 className="text-3xl font-poppins pb-4">Transfer In</h3>
         <div className="w-full h-[1px] bg-gray-600"></div>
         <div className="mt-8 flex flex-col gap-6">
           {isLoading ? (
             <SkeletonListItem />
-          ) : data && data.findCell.transfersIn.length !== 0 ? (
+          ) : data &&
+            data.findCell.transfersIn.filter(
+              (item) => item.status !== "ORDERED"
+            ).length !== 0 ? (
             data.findCell.transfersIn
               .filter((item) => item.status !== "ORDERED")
               .map((item) => <TransferOutListItem key={item.id} data={item} />)
@@ -31,7 +34,7 @@ const TransferHistory = ({ data, isLoading }: TransferHistoryProps) => {
         </div>
       </div>
       <div className="mt-32">
-        <h3 className="text-[32px] font-poppins pb-6">Transfer Out</h3>
+        <h3 className="text-3xl font-poppins pb-4">Transfer Out</h3>
         <div className="w-full h-[1px] bg-gray-600"></div>
         <div className="mt-8 flex flex-col gap-6">
           {isLoading ? (

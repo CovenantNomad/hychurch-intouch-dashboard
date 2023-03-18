@@ -9,6 +9,8 @@ import groupBy from "../../../lib/groupBy";
 import Table from "../../Blocks/Table/Table";
 import SkeletonTable from "../../Atoms/Skeleton/SkeletonTable";
 import ActiveStatic from "../../Organisms/Cells/CellInfomation/ActiveStatic";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
+import SectionContainer from "../../Atoms/Container/SectionContainer";
 
 interface CellInfomationScreenProps {
   isLoading: boolean;
@@ -20,8 +22,8 @@ const CellInfomationScreen = ({
   data,
 }: CellInfomationScreenProps) => {
   return (
-    <div>
-      <div className="grid grid-cols-1 gap-2 mb-2 sm:grid-cols-2 xl:grid-cols-4 ">
+    <SectionContainer>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4 ">
         <div className="col-span-1 px-2 pt-4 pb-2 shadow-sm border border-slate-200 bg-white rounded-md">
           <p className="pb-4 tracking-wide">셀원 통계</p>
           {isLoading ? (
@@ -69,22 +71,22 @@ const CellInfomationScreen = ({
       </div>
 
       <section className="grid grid-cols-1 xl:grid-cols-4 gap-2 mb-2">
-        <div className="shadow-sm xl:col-span-3 py-5 px-5 border border-slate-200 bg-white rounded-md flex flex-col">
-          <h6 className="text-lg font-bold pb-4">전체 출석 동향</h6>
-          <div className="relative bg-white rounded-md h-full">
-            {/* 셀전체 출석 그래프 - Bar+Line */}
-          </div>
+        <div className="flex flex-col xl:col-span-3">
+          <BlockContainer>
+            <h6 className="text-lg font-bold pb-4">전체 출석 동향</h6>
+            <div>{/* 셀전체 출석 그래프 - Bar+Line */}</div>
+          </BlockContainer>
         </div>
-        <div className="shadow-sm xl:col-span-1 py-5 px-5 border border-slate-200 bg-white rounded-md flex flex-col">
-          <h6 className="text-lg font-bold pb-4">셀원별 출석 동향</h6>
-          <div className="relative bg-white rounded-md h-full">
-            {/* 셀원별 출석 그래프 - 잔디형, 4주치 */}
-          </div>
+        <div className="flex flex-col xl:col-span-1">
+          <BlockContainer>
+            <h6 className="text-lg font-bold pb-4">셀원별 출석 동향</h6>
+            <div>{/* 셀원별 출석 그래프 - 잔디형, 4주치 */}</div>
+          </BlockContainer>
         </div>
       </section>
 
-      <section className="bg-white rounded-md pb-5 px-5 mb-2">
-        <h6 className="text-lg font-bold text-gray-900 py-5">셀원 리스트</h6>
+      <BlockContainer>
+        <h6 className="text-lg font-bold text-gray-900 pb-5">셀원 리스트</h6>
         <div>
           {isLoading ? (
             <SkeletonTable />
@@ -92,8 +94,8 @@ const CellInfomationScreen = ({
             <Table members={data?.findCell.members} />
           )}
         </div>
-      </section>
-    </div>
+      </BlockContainer>
+    </SectionContainer>
   );
 };
 

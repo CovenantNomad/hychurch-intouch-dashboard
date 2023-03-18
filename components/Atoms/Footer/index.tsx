@@ -1,16 +1,10 @@
 import React from "react";
 
-interface FooterProps {
-  bgWhite?: boolean;
-}
+interface FooterProps {}
 
-const Footer = ({ bgWhite }: FooterProps) => {
+const Footer = ({}: FooterProps) => {
   return (
-    <div
-      className={`flex justify-center pt-14 pb-20 px-4 mt-2  ${
-        bgWhite ? "bg-white" : "bg-[#eeeeee]"
-      } lg:px-8 xl:bg-white`}
-    >
+    <div className={`flex justify-center pt-14 pb-20 bg-white`}>
       <p className="text-black font-bold text-sm">SHALOM INTOUCH</p>
     </div>
   );

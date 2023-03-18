@@ -5,7 +5,7 @@ interface SectionContainerProps {
 }
 
 const SectionContainer = ({ children }: SectionContainerProps) => {
-  return <div className="bg-white rounded-md py-5 px-5">{children}</div>;
+  return <section className={`px-2 pt-2`}>{children}</section>;
 };
 
 export default SectionContainer;

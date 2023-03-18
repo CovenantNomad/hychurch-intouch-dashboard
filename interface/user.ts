@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Gender, RoleType } from "../graphql/generated";
+import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
 
 export interface MemberProps {
   member: {
@@ -39,6 +39,13 @@ export interface Member {
     | undefined;
   roles: RoleType[];
   description?: string | null | undefined;
+}
+
+export interface MemberWithTransferOut extends Member {
+  transferStatus?: UserCellTransferStatus;
+  toCellId?: string;
+  toCellName?: string;
+  orderDate?: string;
 }
 
 export interface UserInfomationProps {

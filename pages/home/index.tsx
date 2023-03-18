@@ -16,14 +16,14 @@ const HomePage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Container bgWhite>
+      <Container>
         <div className="bg-white">
           <MemberSearch />
         </div>
         <div className="mt-2 py-6 bg-white">
           <MembersMain />
         </div>
-        <Footer bgWhite />
+        <Footer />
       </Container>
     </Layout>
   );
