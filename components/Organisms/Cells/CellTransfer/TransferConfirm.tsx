@@ -12,7 +12,6 @@ interface TransferConfirmProps {
 }
 
 const TransferConfirm = ({ data, isLoading }: TransferConfirmProps) => {
-  console.log(data);
   return (
     <div className="pb-24 bg-white">
       <div className="">

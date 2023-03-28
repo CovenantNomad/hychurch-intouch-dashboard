@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import isoWeek from "dayjs/plugin/isoWeek";
 import { MemberWithTransferOut } from "../../../../interface/user";
 import NewFamilyListItem from "../NewFamilyListItem";
+import { makeObjKeyByWeek, makeWeekAndDate } from "../../../../utils/dateUtils";
+dayjs.extend(weekOfYear);
+dayjs.extend(isoWeek);
 
 interface NewFamilyMemberSectionProps {
   memberList: MemberWithTransferOut[];
@@ -9,13 +15,55 @@ interface NewFamilyMemberSectionProps {
 const NewFamilyMemberSection = ({
   memberList,
 }: NewFamilyMemberSectionProps) => {
+  const [groupList, setGroupList] = useState<
+    {
+      name: string;
+      selection: MemberWithTransferOut[];
+    }[]
+  >([]);
+
+  useEffect(() => {
+    if (memberList) {
+      let init: { [index: string]: Array<MemberWithTransferOut> } = {};
+      const groupValues = memberList.reduce((acc, current) => {
+        acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")] =
+          acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")] || [];
+        acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")].push(
+          current
+        );
+        return acc;
+      }, init);
+
+      const groups = Object.keys(groupValues).map((key) => {
+        return { name: key, selection: groupValues[key] };
+      });
+
+      setGroupList(groups);
+    }
+  }, [memberList]);
+
   return (
     <div>
       <h6 className="text-xl font-bold pb-6">새가족 명단</h6>
-      <div className="w-full mx-auto grid grid-cols-2 gap-y-12 gap-x-6 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none lg:grid-cols-5 xl:grid-cols-6">
-        {memberList.map((member) => (
-          <NewFamilyListItem key={member.id} member={member} />
-        ))}
+      <div className="">
+        {groupList
+          .sort(
+            (a, b) =>
+              Number(a.name.split("-")[0]) - Number(b.name.split("-")[0]) ||
+              Number(a.name.split("-")[1]) - Number(b.name.split("-")[1])
+          )
+          .map((group) => (
+            <div key={group.name} className={`py-4 lg:py-6`}>
+              <h1 className="px-2 py-3 mb-4 text-lg font-bold bg-GRAY002">
+                {makeWeekAndDate(group.name)}
+              </h1>
+              <div className="w-full mx-auto grid grid-cols-2 gap-y-12 gap-x-6 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none lg:grid-cols-5 xl:grid-cols-6">
+                {group.selection.map((member) => (
+                  <NewFamilyListItem key={member.id} member={member} />
+                ))}
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );

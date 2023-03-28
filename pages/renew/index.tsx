@@ -50,7 +50,6 @@ const ReNewPage: NextPage = () => {
     },
     { id: 2, name: "새싹셀 편성", component: <RenewTransfer /> },
     // { id: 3, name: "부재 인원", component: <AbsenceMember /> },
-    // { id: 4, name: "셀편성 제외", component: <AbsenceMember /> },
   ];
 
   const { isLoading, data } = useFindRenewCellQuery<

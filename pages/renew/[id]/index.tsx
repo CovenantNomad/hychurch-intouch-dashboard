@@ -309,7 +309,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                 )}
               </BlockContainer>
               <BlockContainer>
-                <RemoveUserSection />
+                <RemoveUserSection id={user.user.id} name={user.user.name} />
               </BlockContainer>
             </SectionContainer>
           </>

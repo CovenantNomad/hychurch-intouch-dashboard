@@ -109,3 +109,18 @@ export enum SpecialCellIdType {
   /** 새싹셀 (이찬양) */
   Renew = "44",
 }
+
+export interface CellType {
+  id: string;
+  name: string;
+  leaders: {
+    id: string;
+    name: string;
+    roles: RoleType[];
+  }[];
+  community: string;
+  statistics: {
+    totalCountOfMembers: number;
+    countOfActiveMembers: number;
+  };
+}
