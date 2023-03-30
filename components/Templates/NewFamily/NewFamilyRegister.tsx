@@ -81,7 +81,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
       <BlockContainer firstBlock>
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
-            <div className="px-4 sm:px-0">
+            <div className="sm:px-0">
               <h3 className="text-lg font-medium leading-6 text-gray-900">
                 새가족 등록카드
               </h3>
@@ -93,7 +93,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
           <div className="mt-5 md:mt-0 md:col-span-2">
             <form onSubmit={handleSubmit(onSubmitHandler)}>
               <div className="overflow-hidden sm:rounded-md">
-                <div className="px-4 py-6 bg-white sm:p-6">
+                <div className="py-6 bg-white">
                   <div className="grid grid-cols-6 gap-6">
                     <div className="col-span-6 sm:col-span-4">
                       <label
@@ -433,7 +433,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
                     </div>
                   </div>
                 </div>
-                <div className="px-4 py-3 bg-white text-right sm:px-6">
+                <div className="py-3 bg-white text-right">
                   <button
                     type="submit"
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"

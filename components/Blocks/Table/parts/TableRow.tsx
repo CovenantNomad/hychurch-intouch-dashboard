@@ -29,7 +29,7 @@ const TableRow = ({ personIdx, member }: TableRowProps) => {
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         {`${member.gender === "MAN" ? "형제" : "자매"}`}
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+      <td className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 md:block">
         {`${
           member.birthday
             ? new Date().getFullYear() - Number(member.birthday?.split("-")[0])

@@ -106,7 +106,7 @@ const SelectMember = ({}: SelectMemberProps) => {
             .map((item) => (
               <button
                 key={item.id}
-                className="py-2 bg-teal-600 text-white cursor-pointer"
+                className="py-2 text-sm bg-teal-600 text-white cursor-pointer lg:text-base"
                 onClick={() =>
                   handleSelect({
                     id: item.id,

@@ -141,7 +141,7 @@ const EditUserInfomation = ({
   };
 
   return (
-    <div className="px-4 bg-white">
+    <div className="px-2 bg-white lg:px-4">
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">

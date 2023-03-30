@@ -25,8 +25,8 @@ const MemberInfo = ({}: MemberInfoProps) => {
     <>
       <div
         className={`flex ${
-          isEditMode ? "justify-between px-4" : "justify-end"
-        } mb-4`}
+          isEditMode ? "justify-between" : "justify-end"
+        } mb-4 px-2 lg:px-4`}
       >
         {isEditMode && (
           <button

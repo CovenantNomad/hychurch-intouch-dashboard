@@ -73,7 +73,7 @@ const Navbar = () => {
       {isOpen && (
         <AnimatePresence>
           <motion.div
-            className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex flex-col md:hidden`}
+            className={`h-full w-full absolute top-16 left-0 bg-black z-[2000] flex flex-col lg:hidden`}
             variants={NavbarVariants}
             animate={isOpen ? "open" : "closed"}
           >

@@ -16,15 +16,15 @@ const TransferOutListItem = ({ data }: TransferOutListItemProps) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 items-center py-6 px-8 rounded-lg shadow-md border bg-white">
-      <div className="col-span-2 flex items-start">
+      <div className="col-span-2 flex items-center lg:items-end">
         <h4 className="text-2xl font-bold cursor-pointer mr-2">
           {data.user.name}
         </h4>
-        <span className="inline-block text-gray-500 text-lg lg:mt-1">
+        <span className="inline-block text-gray-500 text-lg">
           {data.user.gender === "MAN" ? "형제" : "자매"}
         </span>
       </div>
-      <div className="col-span-4 flex items-center mt-3 lg:flex-col">
+      <div className="col-span-4 flex items-center mt-3 lg:flex-col lg:mt-0">
         <span className="flex-grow-[1] text-gray-500 text-lg mr-4 lg:mr-0">
           이동현황
         </span>

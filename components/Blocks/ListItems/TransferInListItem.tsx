@@ -73,38 +73,46 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
   };
 
   return (
-    <div className="bg-white flex justify-between items-center py-6 px-8 rounded-lg shadow-md border">
-      <div>
-        <h4 className="text-2xl font-bold cursor-pointer">{data.user.name}</h4>
-        <span className="inline-block text-gray-500 text-lg mt-1">
+    <div className="grid grid-cols-1 lg:grid-cols-12 items-center py-6 px-8 rounded-lg shadow-md border bg-white">
+      <div className="col-span-2 flex items-baseline">
+        <h4 className="text-2xl font-bold cursor-pointer mr-2">
+          {data.user.name}
+        </h4>
+        <span className="inline-block text-gray-500 text-lg">
           {data.user.gender === "MAN" ? "형제" : "자매"}
         </span>
       </div>
-      <div className="flex flex-col justify-start">
-        <span className="inline-block text-gray-500 text-lg">이동현황</span>
-        <p className="text-lg mt-2">
+      <div className="col-span-3 flex items-center mt-4 lg:flex-col lg:mt-0">
+        <span className="flex-grow-[1] text-gray-500 text-lg">이동현황</span>
+        <p className="flex-grow-[4] text-lg pl-4 lg:mt-2 lg:pl-0">
           <span>{data.fromCell.name}</span>
           <span className="inline-block px-2">→</span>
           <span>{data.toCell.name}</span>
         </p>
       </div>
-      <div className="flex flex-col justify-start">
-        <span className="inline-block text-gray-500 text-lg">요청일</span>
-        <p className="text-lg mt-2">{data.orderDate}</p>
+      <div className="col-span-3 flex items-center mt-2 lg:flex-col lg:mt-0">
+        <span className="flex-grow-[1] text-gray-500 text-lg">요청일</span>
+        <p className="flex-grow-[4] text-lg pl-4 lg:mt-2 lg:pl-0">
+          {data.orderDate}
+        </p>
       </div>
-      <div className="flex gap-3">
-        <button
-          onClick={() => onCanceledHandler(data.id)}
-          className="border border-blue-600 text-black px-6 py-2 rounded-md hover:bg-blue-700 hover:text-white"
-        >
-          거절
-        </button>
-        <button
-          onClick={() => onConfirmHandler(data.id)}
-          className="border border-blue-600 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-        >
-          승인
-        </button>
+      <div className="col-span-4 mt-6 flex gap-x-4 lg:mt-0">
+        <div className="flex-grow">
+          <button
+            onClick={() => onCanceledHandler(data.id)}
+            className="w-full border border-blue-600 text-black px-6 py-2 rounded-md hover:bg-blue-700 hover:text-white"
+          >
+            거절
+          </button>
+        </div>
+        <div className="flex-grow">
+          <button
+            onClick={() => onConfirmHandler(data.id)}
+            className="w-full border border-blue-600 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          >
+            승인
+          </button>
+        </div>
       </div>
     </div>
   );

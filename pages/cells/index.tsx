@@ -99,7 +99,7 @@ const Cell: NextPage = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onModalOpenHandler}
-            className="px-4 py-2 bg-BLUE text-white rounded-md"
+            className="px-4 py-2 bg-BLUE text-white text-sm rounded-md lg:text-base"
           >
             Add Cell
           </motion.button>

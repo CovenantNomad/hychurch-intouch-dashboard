@@ -18,7 +18,7 @@ const UnderlineTabs = ({
 }: UnderlineTabsProps) => {
   return (
     <div>
-      <div className="border p-2 sm:hidden">
+      <div className="border p-3 sm:hidden">
         <label htmlFor="tabs" className="sr-only">
           Select a tab
         </label>
