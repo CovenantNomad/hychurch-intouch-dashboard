@@ -38,7 +38,7 @@ const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
     onSuccess() {
       toast.success(`${name}청년을 인터치 청년교회에서 제외되었습니다`);
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.Renew) }],
+        queryKey: ["findRenewCell", { id: Number(SpecialCellIdType.Renew) }],
       });
       router.back();
     },

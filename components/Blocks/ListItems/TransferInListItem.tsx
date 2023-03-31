@@ -8,7 +8,7 @@ import {
   UserCellTransferStatus,
   useUpdateUserCellTransferMutation,
 } from "../../../graphql/generated";
-import { transferedUser } from "../../../interface/cell";
+import { SpecialCellIdType, transferedUser } from "../../../interface/cell";
 import { getTransferStatus, makeErrorMessage } from "../../../utils/utils";
 
 interface TransferInListItemProps {
@@ -37,6 +37,14 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
             id: Number(
               data.updateUserCellTransfer.userCellTransfer.fromCell.id
             ),
+          },
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "findRenewCell",
+          {
+            id: Number(SpecialCellIdType.Renew),
           },
         ],
       });
