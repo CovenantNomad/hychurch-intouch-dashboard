@@ -33,12 +33,14 @@ import PageLayout from "../../../components/Layout/PageLayout";
 import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
+import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 
 interface NewFamilyMemberProps {}
 
 const NewFamilyMember = ({}: NewFamilyMemberProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
   const [cellList, setCellList] = useState<SelectType[]>([]);
@@ -88,7 +90,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       toast.success("셀에 편성되었습니다.");
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.NewFamily) }],
+        queryKey: ["findNewFamilyCell"],
       });
       queryClient.invalidateQueries({
         queryKey: ["findCell", { id: Number(selectedCell.id) }],
@@ -113,7 +115,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       mutate({
         input: {
           userId: selectedMember.id,
-          fromCellId: "39",
+          fromCellId: SpecialCellIdType.NewFamily,
           toCellId: selectedCell.id,
           orderDate: getTodayString(dayjs()),
         },
@@ -122,6 +124,8 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       toast.error("Error! 잘못된 접근입니다.");
     }
   };
+
+  const onOpenHandler = () => setOpenModal(true);
 
   useEffect(() => {
     if (router.isReady) {
@@ -184,8 +188,8 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
         ) : user ? (
           <>
             <SpecialTypeCellHeader
-              cellId={user.user.cell?.id}
-              cellName={user.user.cell?.name}
+              cellId={SpecialCellIdType.NewFamily}
+              cellName={"새가족셀"}
               userName={user.user.name}
               href={"/newfamily"}
               hasActionButton={true}
@@ -286,7 +290,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                                 router.query.transferStatus ===
                                   UserCellTransferStatus.Ordered
                               }
-                              onClick={onTransferHandler}
+                              onClick={onOpenHandler}
                             >
                               <Summary.Row
                                 title="새가족 이름"
@@ -327,6 +331,14 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
         ) : (
           <EmptyStateSimple />
         )}
+        <SimpleModal
+          open={openModal}
+          setOpen={setOpenModal}
+          title={"새가족 편성하기"}
+          description={`${selectedMember.name} 청년을 ${selectedCell.name}로 이동하시겠습니까?`}
+          actionLabel="Transfer"
+          actionHandler={onTransferHandler}
+        />
       </PageLayout>
     </Layout>
   );

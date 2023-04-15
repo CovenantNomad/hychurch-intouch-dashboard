@@ -8,10 +8,7 @@ import { stateSetting } from "../../stores/stateSetting";
 import Layout from "../../components/Layout/Layout";
 import NewFamilyRegister from "../../components/Templates/NewFamily/NewFamilyRegister";
 import NewFamilyManagement from "../../components/Templates/NewFamily/NewFamilyManagement";
-import Footer from "../../components/Atoms/Footer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
-import Container from "../../components/Atoms/Container/Container";
-import SectionBackground from "../../components/Atoms/Container/SectionBackground";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
 import PageLayout from "../../components/Layout/PageLayout";
 

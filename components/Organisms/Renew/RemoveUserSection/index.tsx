@@ -100,9 +100,7 @@ const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
           </div>
         </div>
         {errors.reason && (
-          <p className="mt-1 px-3 text-sm text-red-600">
-            {errors.reason.message}
-          </p>
+          <p className="mt-1 text-sm text-red-600">{errors.reason.message}</p>
         )}
       </form>
     </>

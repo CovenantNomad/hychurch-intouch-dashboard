@@ -35,12 +35,14 @@ import SectionBackground from "../../../components/Atoms/Container/SectionBackgr
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import PageLayout from "../../../components/Layout/PageLayout";
+import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 
 interface NewFamilyMemberProps {}
 
 const BlessingMember = ({}: NewFamilyMemberProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
   const [cellList, setCellList] = useState<SelectType[]>([]);
   const [selectedCell, setSelectedCell] = useState<SelectType>({
@@ -89,7 +91,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       toast.success("셀에 편성되었습니다.");
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.Blessing) }],
+        queryKey: ["findBlessingCell"],
       });
       queryClient.invalidateQueries({
         queryKey: ["findCell", { id: Number(selectedCell.id) }],
@@ -98,6 +100,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
         id: "",
         name: "",
       });
+      setOpenModal(false);
       router.back();
     },
     onError(error) {
@@ -114,7 +117,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       mutate({
         input: {
           userId: selectedMember.id,
-          fromCellId: "39",
+          fromCellId: SpecialCellIdType.Blessing,
           toCellId: selectedCell.id,
           orderDate: getTodayString(dayjs()),
         },
@@ -123,6 +126,8 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       toast.error("Error! 잘못된 접근입니다.");
     }
   };
+
+  const onOpenHandler = () => setOpenModal(true);
 
   useEffect(() => {
     if (router.isReady) {
@@ -185,8 +190,8 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
         ) : user ? (
           <>
             <SpecialTypeCellHeader
-              cellId={user.user.cell?.id}
-              cellName={user.user.cell?.name}
+              cellId={SpecialCellIdType.Blessing}
+              cellName={"블레싱셀"}
               userName={user.user.name}
               href={"/blessing"}
               hasActionButton={false}
@@ -269,7 +274,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                               router.query.transferStatus ===
                                 UserCellTransferStatus.Ordered
                             }
-                            onClick={onTransferHandler}
+                            onClick={onOpenHandler}
                           >
                             <Summary.Row
                               title="새가족 이름"
@@ -291,6 +296,14 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
         ) : (
           <EmptyStateSimple />
         )}
+        <SimpleModal
+          open={openModal}
+          setOpen={setOpenModal}
+          title={"블레싱셀원 이동"}
+          description={`${selectedMember.name} 청년을 ${selectedCell.name}로 이동하시겠습니까?`}
+          actionLabel="Transfer"
+          actionHandler={onTransferHandler}
+        />
       </PageLayout>
     </Layout>
   );

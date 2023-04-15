@@ -34,12 +34,14 @@ import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import RemoveUserSection from "../../../components/Organisms/Renew/RemoveUserSection";
 import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
+import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 
 interface RenewMemberProps {}
 
 const RenewMember = ({}: RenewMemberProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
   const [cellList, setCellList] = useState<SelectType[]>([]);
@@ -98,6 +100,7 @@ const RenewMember = ({}: RenewMemberProps) => {
         id: "",
         name: "",
       });
+      setOpenModal(false);
       router.back();
     },
     onError(error) {
@@ -123,6 +126,8 @@ const RenewMember = ({}: RenewMemberProps) => {
       toast.error("Error! 잘못된 접근입니다.");
     }
   };
+
+  const onOpenHandler = () => setOpenModal(true);
 
   useEffect(() => {
     if (router.isReady) {
@@ -185,8 +190,8 @@ const RenewMember = ({}: RenewMemberProps) => {
         ) : user ? (
           <>
             <SpecialTypeCellHeader
-              cellId={user.user.cell?.id}
-              cellName={user.user.cell?.name}
+              cellId={SpecialCellIdType.Renew}
+              cellName={"새싹셀"}
               userName={user.user.name}
               href={"/renew"}
               hasActionButton={true}
@@ -272,7 +277,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                                 router.query.transferStatus ===
                                   UserCellTransferStatus.Ordered
                               }
-                              onClick={onTransferHandler}
+                              onClick={onOpenHandler}
                             >
                               <Summary.Row
                                 title="새가족 이름"
@@ -316,6 +321,14 @@ const RenewMember = ({}: RenewMemberProps) => {
         ) : (
           <EmptyStateSimple />
         )}
+        <SimpleModal
+          open={openModal}
+          setOpen={setOpenModal}
+          title={"새싹셀원 이동"}
+          description={`새싹셀에 있던 ${selectedMember.name} 청년을 ${selectedCell.name}로 이동하시겠습니까?`}
+          actionLabel="Transfer"
+          actionHandler={onTransferHandler}
+        />
       </PageLayout>
     </Layout>
   );

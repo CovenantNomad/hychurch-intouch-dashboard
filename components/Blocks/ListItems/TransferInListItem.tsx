@@ -1,13 +1,12 @@
-import { GraphQLError } from "graphql-request/dist/types";
 import React from "react";
 import { toast } from "react-hot-toast";
-import { FaAngleDoubleRight } from "react-icons/fa";
 import { useQueryClient } from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
   UserCellTransferStatus,
   useUpdateUserCellTransferMutation,
 } from "../../../graphql/generated";
+import { GraphQLError } from "graphql-request/dist/types";
 import { SpecialCellIdType, transferedUser } from "../../../interface/cell";
 import { getTransferStatus, makeErrorMessage } from "../../../utils/utils";
 
@@ -22,32 +21,76 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["findCells"] });
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "findCell",
-          {
-            id: Number(data.updateUserCellTransfer.userCellTransfer.toCell.id),
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "findCell",
-          {
-            id: Number(
-              data.updateUserCellTransfer.userCellTransfer.fromCell.id
-            ),
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          "findRenewCell",
-          {
-            id: Number(SpecialCellIdType.Renew),
-          },
-        ],
-      });
+      if (
+        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
+          SpecialCellIdType.Blessing
+        ) ||
+        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
+          SpecialCellIdType.Renew
+        ) ||
+        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
+          SpecialCellIdType.NewFamily
+        )
+      ) {
+        queryClient.invalidateQueries({
+          queryKey: [
+            "findCell",
+            {
+              id: Number(
+                data.updateUserCellTransfer.userCellTransfer.fromCell.id
+              ),
+            },
+          ],
+        });
+      }
+      if (
+        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
+          SpecialCellIdType.Blessing
+        ) ||
+        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
+          SpecialCellIdType.Renew
+        ) ||
+        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
+          SpecialCellIdType.NewFamily
+        )
+      ) {
+        queryClient.invalidateQueries({
+          queryKey: [
+            "findCell",
+            {
+              id: Number(
+                data.updateUserCellTransfer.userCellTransfer.toCell.id
+              ),
+            },
+          ],
+        });
+      }
+      if (
+        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
+          SpecialCellIdType.Renew ||
+        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
+          SpecialCellIdType.Renew
+      ) {
+        queryClient.invalidateQueries({ queryKey: ["findRenewCell"] });
+      }
+      if (
+        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
+          SpecialCellIdType.NewFamily ||
+        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
+          SpecialCellIdType.NewFamily
+      ) {
+        queryClient.invalidateQueries({ queryKey: ["findNewFamilyCell"] });
+      }
+
+      if (
+        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
+          SpecialCellIdType.Blessing ||
+        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
+          SpecialCellIdType.Blessing
+      ) {
+        queryClient.invalidateQueries({ queryKey: ["findBlessingCell"] });
+      }
+
       toast.success(
         `이동요청이 ${getTransferStatus(
           data.updateUserCellTransfer.userCellTransfer.status
