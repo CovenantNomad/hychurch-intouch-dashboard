@@ -89,7 +89,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       toast.success("셀에 편성되었습니다.");
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.NewFamily) }],
+        queryKey: ["findCell", { id: Number(SpecialCellIdType.Renew) }],
       });
       queryClient.invalidateQueries({
         queryKey: ["findCell", { id: Number(selectedCell.id) }],
@@ -114,7 +114,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       mutate({
         input: {
           userId: selectedMember.id,
-          fromCellId: "39",
+          fromCellId: SpecialCellIdType.Renew,
           toCellId: selectedCell.id,
           orderDate: getTodayString(dayjs()),
         },
