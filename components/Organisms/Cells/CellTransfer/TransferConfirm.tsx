@@ -24,7 +24,10 @@ const TransferConfirm = ({ data, isLoading }: TransferConfirmProps) => {
         <div className="mt-8 flex flex-col gap-6">
           {isLoading ? (
             <SkeletonListItem />
-          ) : data && data.findCell.transfersIn.length !== 0 ? (
+          ) : data &&
+            data.findCell.transfersIn.filter(
+              (item) => item.status === "ORDERED"
+            ).length !== 0 ? (
             data.findCell.transfersIn
               .filter((item) => item.status === "ORDERED")
               .map((item) => <TransferInListItem key={item.id} data={item} />)
@@ -45,7 +48,10 @@ const TransferConfirm = ({ data, isLoading }: TransferConfirmProps) => {
         <div className="mt-8 flex flex-col gap-6">
           {isLoading ? (
             <SkeletonListItem />
-          ) : data && data.findCell.transfersOut.length !== 0 ? (
+          ) : data &&
+            data.findCell.transfersOut.filter(
+              (item) => item.status === "ORDERED"
+            ).length !== 0 ? (
             data.findCell.transfersOut
               .filter((item) => item.status === "ORDERED")
               .map((item) => <TransferOutListItem key={item.id} data={item} />)

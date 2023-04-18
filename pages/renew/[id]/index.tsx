@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
-import Footer from "../../../components/Atoms/Footer";
 import Spinner from "../../../components/Atoms/Spinner";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import Layout from "../../../components/Layout/Layout";
@@ -33,13 +32,18 @@ import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTyp
 import PageLayout from "../../../components/Layout/PageLayout";
 import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
+import RemoveUserSection from "../../../components/Organisms/Renew/RemoveUserSection";
+import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
+import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 
 interface RenewMemberProps {}
 
 const RenewMember = ({}: RenewMemberProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
+  const [editMode, setEditMode] = useState(false);
   const [cellList, setCellList] = useState<SelectType[]>([]);
   const [selectedCell, setSelectedCell] = useState<SelectType>({
     id: "",
@@ -87,7 +91,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       toast.success("셀에 편성되었습니다.");
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.NewFamily) }],
+        queryKey: ["findCell", { id: Number(SpecialCellIdType.Renew) }],
       });
       queryClient.invalidateQueries({
         queryKey: ["findCell", { id: Number(selectedCell.id) }],
@@ -96,6 +100,7 @@ const RenewMember = ({}: RenewMemberProps) => {
         id: "",
         name: "",
       });
+      setOpenModal(false);
       router.back();
     },
     onError(error) {
@@ -112,7 +117,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       mutate({
         input: {
           userId: selectedMember.id,
-          fromCellId: "39",
+          fromCellId: SpecialCellIdType.Renew,
           toCellId: selectedCell.id,
           orderDate: getTodayString(dayjs()),
         },
@@ -121,6 +126,8 @@ const RenewMember = ({}: RenewMemberProps) => {
       toast.error("Error! 잘못된 접근입니다.");
     }
   };
+
+  const onOpenHandler = () => setOpenModal(true);
 
   useEffect(() => {
     if (router.isReady) {
@@ -183,112 +190,145 @@ const RenewMember = ({}: RenewMemberProps) => {
         ) : user ? (
           <>
             <SpecialTypeCellHeader
-              cellId={user.user.cell?.id}
-              cellName={user.user.cell?.name}
+              cellId={SpecialCellIdType.Renew}
+              cellName={"새싹셀"}
               userName={user.user.name}
               href={"/renew"}
-              hasEditMode={false}
+              hasActionButton={true}
+              editMode={editMode}
+              setEditMode={setEditMode}
             />
             <SectionContainer>
               <BlockContainer firstBlock>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-1">
-                    <UserInfomation
-                      name={user.user.name}
-                      gender={user.user.gender}
-                      isActive={user.user.isActive}
-                      birthday={user.user.birthday}
-                      registrationDate={user.user.registrationDate}
-                      phone={user.user.phone}
-                      address={user.user.address}
-                      description={user.user.description}
-                      hasHeader={false}
-                    />
-                  </div>
-                  <div className="md:col-span-1">
-                    {router.query.transferStatus ===
-                    UserCellTransferStatus.Ordered ? (
-                      <div>
-                        <h6 className="pb-5 text-base">
-                          셀편성 상태 :{" "}
-                          <strong className="bg-teal-600 text-white px-1 ml-1">
-                            승인대기중
-                          </strong>
-                        </h6>
-                        <div className="bg-GRAY003 text-center py-3">
-                          <p className="font-bold">
-                            편성셀 :{" "}
-                            <span className="text-BLUE">
-                              {router.query.toCellName}
-                            </span>
-                            <br />
-                            승인대기중
-                          </p>
+                {!editMode ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-1">
+                      <UserInfomation
+                        name={user.user.name}
+                        gender={user.user.gender}
+                        isActive={user.user.isActive}
+                        birthday={user.user.birthday}
+                        registrationDate={user.user.registrationDate}
+                        phone={user.user.phone}
+                        address={user.user.address}
+                        description={user.user.description}
+                        hasHeader={false}
+                      />
+                    </div>
+                    <div className="md:col-span-1">
+                      {router.query.transferStatus ===
+                      UserCellTransferStatus.Ordered ? (
+                        <div>
+                          <h6 className="pb-5 text-base">
+                            셀편성 상태 :{" "}
+                            <strong className="bg-teal-600 text-white px-1 ml-1">
+                              승인대기중
+                            </strong>
+                          </h6>
+                          <div className="bg-GRAY003 text-center py-3">
+                            <p className="font-bold">
+                              편성셀 :{" "}
+                              <span className="text-BLUE">
+                                {router.query.toCellName}
+                              </span>
+                              <br />
+                              승인대기중
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="md:col-span-1">
-                            <h6 className="pb-5 text-base">블레싱 편성</h6>
-                            <div className="flex-1">
-                              <button
-                                onClick={() => {
-                                  setSelectedCell({
-                                    id: SpecialCellIdType.Blessing,
-                                    name: "블레싱",
-                                  });
-                                }}
-                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                              >
-                                블레싱 편성
-                              </button>
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-1">
+                              <h6 className="pb-5 text-base">블레싱 편성</h6>
+                              <div className="flex-1">
+                                <button
+                                  onClick={() => {
+                                    setSelectedCell({
+                                      id: SpecialCellIdType.Blessing,
+                                      name: "블레싱",
+                                    });
+                                  }}
+                                  className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                >
+                                  블레싱 편성
+                                </button>
+                              </div>
+                            </div>
+                            <div className="md:col-span-1">
+                              <h6 className="pb-4 text-base">기존 셀 편성</h6>
+                              <ComboBoxImage
+                                showLabel={false}
+                                label={"셀선택"}
+                                selected={selectedCell}
+                                setSelected={setSelectedCell}
+                                selectList={cellList}
+                                widthFull
+                              />
                             </div>
                           </div>
-                          <div className="md:col-span-1">
-                            <h6 className="pb-4 text-base">기존 셀 편성</h6>
-                            <ComboBoxImage
-                              showLabel={false}
-                              label={"셀선택"}
-                              selected={selectedCell}
-                              setSelected={setSelectedCell}
-                              selectList={cellList}
-                              widthFull
-                            />
+                          <div className="mt-8">
+                            <Summary
+                              header="Transfer Summary"
+                              label="Transfer"
+                              disabled={
+                                selectedMember.id === "" ||
+                                selectedCell.id === "" ||
+                                router.query.transferStatus ===
+                                  UserCellTransferStatus.Ordered
+                              }
+                              onClick={onOpenHandler}
+                            >
+                              <Summary.Row
+                                title="새가족 이름"
+                                value={selectedMember.name}
+                              />
+                              <Summary.Row
+                                title="편성 셀"
+                                value={selectedCell.name}
+                              />
+                            </Summary>
                           </div>
-                        </div>
-                        <div className="mt-8">
-                          <Summary
-                            header="Transfer Summary"
-                            label="Transfer"
-                            disabled={
-                              selectedMember.id === "" ||
-                              selectedCell.id === "" ||
-                              router.query.transferStatus ===
-                                UserCellTransferStatus.Ordered
-                            }
-                            onClick={onTransferHandler}
-                          >
-                            <Summary.Row
-                              title="새가족 이름"
-                              value={selectedMember.name}
-                            />
-                            <Summary.Row
-                              title="편성 셀"
-                              value={selectedCell.name}
-                            />
-                          </Summary>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <EditUserInfomation
+                    id={user.user.id}
+                    name={user.user.name}
+                    gender={user.user.gender}
+                    isActive={user.user.isActive}
+                    birthday={user.user.birthday}
+                    phone={user.user.phone}
+                    address={user.user.address}
+                    description={user.user.description}
+                    cell={user.user.cell}
+                    hasRegisterDate={true}
+                    registrationYear={user.user.registrationDate?.split("-")[0]}
+                    registrationMonth={
+                      user.user.registrationDate?.split("-")[1]
+                    }
+                    registrationDay={user.user.registrationDate?.split("-")[2]}
+                  />
+                )}
+              </BlockContainer>
+              <BlockContainer>
+                <RemoveUserSection id={user.user.id} name={user.user.name} />
               </BlockContainer>
             </SectionContainer>
           </>
         ) : (
           <EmptyStateSimple />
         )}
+        <SimpleModal
+          open={openModal}
+          setOpen={setOpenModal}
+          title={"새싹셀원 이동"}
+          description={`새싹셀에 있던 ${selectedMember.name} 청년을 ${selectedCell.name}로 이동하시겠습니까?`}
+          actionLabel="Transfer"
+          actionHandler={onTransferHandler}
+        />
       </PageLayout>
     </Layout>
   );

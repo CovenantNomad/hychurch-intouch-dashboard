@@ -54,6 +54,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     }
   }, [router]);
 
+  console.log(data);
+
   return (
     <Layout>
       <Head>
@@ -81,7 +83,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                   />
                   <BlockContainer>
                     {!editMode ? (
-                      <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-5 px-4 rounded-md bg-white">
+                      <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-3 rounded-md bg-white lg:px-4 lg:py-5">
                         <div className="md:col-span-2">
                           <UserInfomation
                             name={data.user.name}
@@ -95,7 +97,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                             hasHeader={false}
                           />
                         </div>
-                        <div className="md:col-span-4">
+                        {/* <div className="md:col-span-4">
                           <div className="flex gap-4 mb-4">
                             <div className="flex-1 h-[120px] border">
                               올해 예배 출석
@@ -107,10 +109,10 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           <div className="h-[240px] border">
                             예배출석 그래프
                           </div>
-                        </div>
+                        </div> */}
                       </section>
                     ) : (
-                      <section className="py-5 px-4 rounded-md bg-white">
+                      <section className="rounded-md bg-white lg:px-4 lg:py-5">
                         <EditUserInfomation
                           id={data.user.id}
                           name={data.user.name}
@@ -121,6 +123,16 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           address={data.user.address}
                           description={data.user.description}
                           cell={data.user.cell}
+                          hasRegisterDate={false}
+                          registrationYear={
+                            data.user.registrationDate?.split("-")[0]
+                          }
+                          registrationMonth={
+                            data.user.registrationDate?.split("-")[1]
+                          }
+                          registrationDay={
+                            data.user.registrationDate?.split("-")[2]
+                          }
                         />
                       </section>
                     )}

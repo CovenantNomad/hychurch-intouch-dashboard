@@ -8,7 +8,7 @@ interface NewFamilyTeamSectionProps {
 const NewFamilyTeamSection = ({ teamList }: NewFamilyTeamSectionProps) => {
   return (
     <div>
-      <h6 className="text-xl font-bold">Our team</h6>
+      <h6 className="text-xl font-bold">새가족부 멤버</h6>
     </div>
   );
 };

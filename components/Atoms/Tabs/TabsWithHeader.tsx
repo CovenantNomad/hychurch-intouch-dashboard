@@ -33,22 +33,27 @@ const TabsWithHeader = ({
       {/* Mobile */}
       <div className="py-5 px-4 bg-white sm:hidden">
         <h5 className="text-xl mb-3">{title}</h5>
-        <select
-          id="tabs"
-          name="tabs"
-          className="block w-full rounded-md py-3 px-2 bg-GRAY003 border-slate-300 uppercase"
-          defaultValue={tabs[currentTab].name}
-          onChange={(e) => {
-            setCurrentTab(Number(e.target.value));
-            setSettingHandler(Number(e.target.value));
-          }}
-        >
-          {tabs.map((tab) => (
-            <option key={tab.id} value={tab.id}>
-              {tab.name}
-            </option>
-          ))}
-        </select>
+        <div className="border p-3 sm:hidden">
+          <label htmlFor="tabs" className="sr-only">
+            Select a tab
+          </label>
+          <select
+            id="tabs"
+            name="tabs"
+            className="block w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 uppercase"
+            defaultValue={tabs[currentTab].name}
+            onChange={(e) => {
+              setCurrentTab(Number(e.target.value));
+              setSettingHandler(Number(e.target.value));
+            }}
+          >
+            {tabs.map((tab) => (
+              <option key={tab.id} value={tab.id}>
+                {tab.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       {/* Desktop */}
       <div className="hidden pt-5 px-4 rounded-md bg-white sm:block">

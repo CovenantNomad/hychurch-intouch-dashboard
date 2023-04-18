@@ -26,7 +26,7 @@ const MemberInfo = ({}: MemberInfoProps) => {
       <div
         className={`flex ${
           isEditMode ? "justify-between" : "justify-end"
-        } mb-4`}
+        } mb-4 px-2 lg:px-4`}
       >
         {isEditMode && (
           <button
@@ -65,6 +65,10 @@ const MemberInfo = ({}: MemberInfoProps) => {
             address={selectedUserInfo.address}
             description={selectedUserInfo.description}
             cell={selectedUserInfo.cell}
+            hasRegisterDate={false}
+            registrationYear={selectedUserInfo.registrationDate?.split("-")[0]}
+            registrationMonth={selectedUserInfo.registrationDate?.split("-")[1]}
+            registrationDay={selectedUserInfo.registrationDate?.split("-")[2]}
             editModeHandler={setIsEditMode}
           />
         ))}

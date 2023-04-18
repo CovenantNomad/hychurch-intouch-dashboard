@@ -20,7 +20,7 @@ const TableHeader = ({}: TableHeaderProps) => {
         </th>
         <th
           scope="col"
-          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 md:block"
         >
           나이
         </th>

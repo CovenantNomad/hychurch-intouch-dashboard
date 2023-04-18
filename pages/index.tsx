@@ -18,7 +18,6 @@ const Login = () => {
   const { mutateAsync, isLoading, isError, isSuccess, data, error } =
     useLoginMutation(graphlqlRequestClient, {
       onSuccess: async (data) => {
-        console.log("데이터: ", data);
         const userInfo = JSON.stringify({
           accessToken: data.login.accessToken,
         });

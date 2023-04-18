@@ -10,6 +10,7 @@ query searchUsers($name: String, $limit: Int, $offset: Int) {
       gender
       address
       description
+      registrationDate
       roles
       cell {
         id

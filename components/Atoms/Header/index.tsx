@@ -7,7 +7,9 @@ interface HeaderProps {
 }
 
 const HeaderTitle = ({ title }: HeaderProps) => {
-  return <h4 className="text-2xl font-bold tracking-wide">{title}</h4>;
+  return (
+    <h4 className="text-xl font-bold tracking-wide lg:text-2xl ">{title}</h4>
+  );
 };
 
 const Header = ({ title, children, transparent }: HeaderProps) => {
