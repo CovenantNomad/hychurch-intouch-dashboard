@@ -4,7 +4,11 @@ import weekOfYear from "dayjs/plugin/weekOfYear";
 import isoWeek from "dayjs/plugin/isoWeek";
 import { MemberWithTransferOut } from "../../../../interface/user";
 import NewFamilyListItem from "../NewFamilyListItem";
-import { makeObjKeyByWeek, makeWeekAndDate } from "../../../../utils/dateUtils";
+import {
+  getWeek,
+  makeObjKeyByWeek,
+  makeWeekAndDate,
+} from "../../../../utils/dateUtils";
 dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
 
@@ -26,11 +30,9 @@ const NewFamilyMemberSection = ({
     if (memberList) {
       let init: { [index: string]: Array<MemberWithTransferOut> } = {};
       const groupValues = memberList.reduce((acc, current) => {
-        acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")] =
-          acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")] || [];
-        acc[makeObjKeyByWeek(current.registrationDate || "2022-12-31")].push(
-          current
-        );
+        acc[getWeek(current.registrationDate || "2022-12-31")] =
+          acc[getWeek(current.registrationDate || "2022-12-31")] || [];
+        acc[getWeek(current.registrationDate || "2022-12-31")].push(current);
         return acc;
       }, init);
 
