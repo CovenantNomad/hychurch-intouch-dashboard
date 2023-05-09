@@ -53,3 +53,12 @@ export const covertPhoneNumber = (number: String) => {
     "$1-$2-$3"
   );
 };
+
+export const getFirstName = (cellName: string) => {
+  const name = cellName.slice(0, -1);
+  if (name.length === 4) {
+    return name.slice(2);
+  } else {
+    return name.slice(1);
+  }
+};

@@ -52,7 +52,8 @@ const NewFamilyMemberSection = ({
           .sort(
             (a, b) =>
               Number(a.name.split("-")[0]) - Number(b.name.split("-")[0]) ||
-              Number(a.name.split("-")[1]) - Number(b.name.split("-")[1])
+              Number(a.name.split("-")[1]) - Number(b.name.split("-")[1]) ||
+              Number(a.name.split("-")[2]) - Number(b.name.split("-")[2])
           )
           .map((group) => (
             <div key={group.name} className={`py-4 lg:py-6`}>
@@ -60,9 +61,15 @@ const NewFamilyMemberSection = ({
                 {makeWeekAndDate(group.name)}
               </h1>
               <div className="w-full mx-auto grid grid-cols-2 gap-y-12 gap-x-6 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none lg:grid-cols-5 xl:grid-cols-6">
-                {group.selection.map((member) => (
-                  <NewFamilyListItem key={member.id} member={member} />
-                ))}
+                {group.selection
+                  .sort((a, b) => {
+                    if (a.name > b.name) return 1;
+                    else if (b.name > a.name) return -1;
+                    else return 0;
+                  })
+                  .map((member) => (
+                    <NewFamilyListItem key={member.id} member={member} />
+                  ))}
               </div>
             </div>
           ))}

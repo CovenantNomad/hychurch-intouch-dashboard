@@ -39,6 +39,7 @@
     "react-hot-toast": "^2.3.0",
     "react-icons": "^4.6.0",
     "react-query": "^3.39.1",
+    "react-to-print": "^2.14.12",
     "recoil": "^0.7.5",
     "rxjs": "^7.8.0"
   },
