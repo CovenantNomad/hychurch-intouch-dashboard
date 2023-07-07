@@ -42,7 +42,7 @@ export const mockCellRport: CellReportType = {
     wednesdayWorship: "성전예배",
     fridayWorship: "온라인예배",
   },
-  toPastor: "이번주 셀회식 계획하고 있습니다.",
+  toPastor: `이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.`,
   memberReports: [
     {
       id: 1,
@@ -69,11 +69,6 @@ export const mockCellRport: CellReportType = {
           date: "2023.01.01",
           content:
             "나는 하나님 나라 중에 가장 예배를 잘드리는 자입니다. 나는 예배자입니다.",
-        },
-        {
-          id: 4,
-          date: "2023.01.01",
-          content: "데스티니를 위해 매일 열심히 일하기",
         },
       ],
     },
@@ -103,11 +98,6 @@ export const mockCellRport: CellReportType = {
           content:
             "나는 하나님 나라 중에 가장 예배를 잘드리는 자입니다. 나는 예배자입니다.",
         },
-        {
-          id: 4,
-          date: "2023.01.01",
-          content: "데스티니를 위해 매일 열심히 일하기",
-        },
       ],
     },
     {
@@ -136,11 +126,6 @@ export const mockCellRport: CellReportType = {
           content:
             "나는 하나님 나라 중에 가장 예배를 잘드리는 자입니다. 나는 예배자입니다.",
         },
-        {
-          id: 4,
-          date: "2023.01.01",
-          content: "데스티니를 위해 매일 열심히 일하기",
-        },
       ],
     },
     {
@@ -168,11 +153,6 @@ export const mockCellRport: CellReportType = {
           date: "2023.01.01",
           content:
             "나는 하나님 나라 중에 가장 예배를 잘드리는 자입니다. 나는 예배자입니다.",
-        },
-        {
-          id: 4,
-          date: "2023.01.01",
-          content: "데스티니를 위해 매일 열심히 일하기",
         },
       ],
     },

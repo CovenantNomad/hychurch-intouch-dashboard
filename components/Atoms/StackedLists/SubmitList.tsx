@@ -6,11 +6,7 @@ interface SubmitListProps {
 }
 
 const SubmitList = ({ title }: SubmitListProps) => {
-  return (
-    <div>
-      <LinkAndAvatarMenu title={title} />
-    </div>
-  );
+  return <LinkAndAvatarMenu title={title} />;
 };
 
 export default SubmitList;

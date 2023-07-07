@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Spinner from "../../../Atoms/Spinner";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import SubmitListSection from "../../../Organisms/Reports/SubmitListSection";
+import ManualSubmissionSection from "../../../Organisms/Reports/ManualSubmissionSection";
 
 interface CellReportSubmitScreenProps {}
 
@@ -17,9 +18,16 @@ const CellReportSubmitScreen = ({}: CellReportSubmitScreenProps) => {
         </div>
       ) : (
         <>
-          <BlockContainer firstBlock>
+          {/* <BlockContainer firstBlock>
             <SubmitListSection />
-          </BlockContainer>
+          </BlockContainer> */}
+          <div className="h-screen flex justify-center items-center">
+            <h1 className="text-4xl font-bold">
+              현재 페이지는
+              <br />
+              개발 중입니다
+            </h1>
+          </div>
         </>
       )}
     </>

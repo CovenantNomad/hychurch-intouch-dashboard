@@ -1,6 +1,25 @@
 import Head from "next/head";
 import Image from "next/image";
 import Layout from "../../components/Layout/Layout";
+import PageLayout from "../../components/Layout/PageLayout";
+import SectionContainer from "../../components/Atoms/Container/SectionContainer";
+import BlockContainer from "../../components/Atoms/Container/BlockContainer";
+import { attendanceCellData, attendanceData, cellMemberData, monthlyAverData, monthlyRegisterData, weeklyRegisterData } from "../../constants/mockStatics";
+import { Bar, Chart } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, CategoryScale, Legend, LinearScale, Title, Tooltip, PointElement, LineElement } from 'chart.js';
+import ComboBoxStatus from "../../components/Blocks/Combobox/ComboBoxStatus";
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const AttendancePage = () => {
   return (
@@ -11,13 +30,348 @@ const AttendancePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="h-screen flex justify-center items-center">
-        <h1 className="text-4xl font-bold">
-          현재 페이지는
-          <br />
-          개발 중입니다
-        </h1>
-      </div>
+      <PageLayout>
+        {/* <TabsWithTwoBlock
+          title={"출석체크 및 셀보고서"}
+          tabs={categories}
+          currentTab={categoryId}
+          setCurrentTab={setCategoryId}
+          setSettingHandler={setSettingHandler}
+        /> */}
+        <SectionContainer>
+          <BlockContainer firstBlock>
+            <h2 className="text-xl font-bold">인터치 인원 통계</h2>
+            <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-4 lg:gap-x-4 mt-4">
+              <div className="py-5 px-3 rounded-md shadow-md bg-DARKGREEN text-white">
+                <h3 className="">전체인원</h3>
+                <div className="px-2 mt-2">
+                  <span className="text-3xl font-extralight">562명</span>
+                </div>
+              </div>
+              <div className="py-5 px-3 bg-MUSTAD rounded-md shadow-md text-white">
+                <h3 className="">셀 편성 인원</h3>
+                <div className="px-2 mt-2">
+                  <span className="text-3xl font-extralight">362명</span>
+                </div>
+              </div>
+              <div className="py-5 px-3 bg-DARKGREEN rounded-md shadow-md text-white">
+                <h3 className="">새가족+블레싱</h3>
+                <div className="px-2 mt-2">
+                  <span className="text-3xl font-extralight">62명</span>
+                </div>
+              </div>
+              <div className="py-5 px-3 bg-INDIGO rounded-md shadow-md text-white">
+                <h3 className="">새싹셀</h3>
+                <div className="px-2 mt-2">
+                  <span className="text-3xl font-extralight">162명</span>
+                </div>
+              </div>
+            </div>
+          </BlockContainer>
+          
+          <BlockContainer>
+            <h2 className="text-xl font-bold">새가족 등록 통계</h2>
+            <div className="grid grid-cols-1 gap-y-4 lg:grid-cols-4 lg:gap-x-4 mt-4">
+              <div className="flex flex-col py-5 px-4 bg-gray-50 rounded-md shadow-md">
+                <h3>이번주 등록 청년</h3>
+                <div className="relative flex flex-1 justify-center items-center mt-4">
+                  <span className="absolute top-0 right-0">2023. 07. 02</span>
+                  <div className="rounded-full ring-8 ring-DARKGREEN p-6">
+                    <span className="text-2xl">6명</span>
+                  </div>
+                </div>
+              </div>
+              <div className="py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>주간별 등록 추이</h3>
+                <div className="mt-4">
+                  <Bar 
+                    data={weeklyRegisterData} 
+                    height={150}
+                    options={{ 
+                      maintainAspectRatio: false, 
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      },
+                      scales: {
+                        x: {
+                          grid: {
+                            display: false,
+                          }
+                        },
+                        y: {
+                          grid: {
+                            display: false
+                          },
+                          beginAtZero: true,
+                        },
+                      }
+                    }} 
+                  />
+                </div>
+              </div>
+              <div className="py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>월간 통계</h3>
+                <div className="mt-4">
+                  <Bar 
+                    data={monthlyRegisterData} 
+                    height={150}
+                    options={{ 
+                      maintainAspectRatio: false, 
+                      plugins: {
+                        legend: {
+                          display: false
+                        }
+                      },
+                      scales: {
+                        x: {
+                          grid: {
+                            display: false,
+                          }
+                        },
+                        y: {
+                          grid: {
+                            display: false
+                          }
+                        },
+                      }
+                    }} 
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>올해 등록 청년</h3>
+                <div className="flex flex-col flex-1 items-center justify-center mt-4">
+                  <span className="text-4xl mb-1">165명</span>
+                  <span className="text-sm">(기준일: 23.07.02)</span>
+                </div>
+              </div>
+              <div className="flex flex-col py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>블레싱 전환률</h3>
+                <div className="flex flex-col flex-1 justify-center mt-4">
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">새가족 등록 인원</span>
+                    <span className="text-gray-500">165 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">블레싱 편성 인원</span>
+                    <span className="text-gray-500">132 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">전환비율</span>
+                    <span className="text-gray-500">87%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>셀편성 전환률</h3>
+                <div className="flex flex-col flex-1 justify-center mt-4">
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">새가족 등록 인원</span>
+                    <span className="text-gray-500">165 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">셀 편성 인원</span>
+                    <span className="text-gray-500">112 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">전환비율</span>
+                    <span className="text-gray-500">67%</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                <h3>셀정착률</h3>
+                <div className="flex flex-col flex-1 justify-center mt-4">
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">새가족 등록 인원</span>
+                    <span className="text-gray-500">165 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">셀 활동 인원</span>
+                    <span className="text-gray-500">102 명</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-b-gray-300">
+                    <span className="text-gray-500">전환비율</span>
+                    <span className="text-blue-500">60%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </BlockContainer>
+
+          <BlockContainer>
+            <h2 className="text-xl font-bold">예배 출석 통계</h2>
+            <div className="py-4">
+              <span className="underline underline-offset-2">기준일: 2023. 07. 02</span>
+              <div className="grid grid-cols-1 gap-y-4 mt-2 lg:grid-cols-5 lg:gap-x-4">
+                <div className="col-span-1 flex flex-col gap-y-3">
+                  <div className="flex justify-between py-5 px-3 rounded-md shadow-md bg-MUSTAD text-white">
+                    <span className="">1~4부예배</span>
+                    <span className="">12 명</span>
+                  </div>
+                  <div className="flex justify-between items-center py-5 px-3 rounded-md shadow-md bg-DARKGREEN text-white">
+                    <p>
+                      <span className="block">인터치예배</span>
+                      <span className="block text-sm">(셀원출석-온라인)</span>
+                    </p>
+                    <span className="">42 명</span>
+                  </div>
+                  <div className="flex justify-between items-center py-5 px-3 rounded-md shadow-md bg-DARKGREEN text-white">
+                    <p>
+                      <span className="block">인터치예배</span>
+                      <span className="block text-sm">(셀원출석-성전)</span>
+                    </p>
+                    <span className="">242 명</span>
+                  </div>
+                  <div className="flex justify-between items-center py-5 px-3 rounded-md shadow-md bg-INDIGO text-white">
+                    <p>
+                      <span className="block">인터치예배</span>
+                      <span className="block text-sm">(수기계수-성전총원)</span>
+                    </p>
+                    <span className="">302 명</span>
+                  </div>
+                </div>
+                <div className="col-span-3">
+                  <div className="py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                    <div>
+                      <Chart 
+                        type='bar' 
+                        data={attendanceData} 
+                        height={320}
+                        options={{ 
+                          maintainAspectRatio: false, 
+                          plugins: {
+                            legend: {
+                              display: true
+                            }
+                          },
+                          scales: {
+                            x: {
+                              grid: {
+                                display: false,
+                              }
+                            },
+                            y: {
+                              grid: {
+                                display: false
+                              }
+                            },
+                          }
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-1">
+                  <div className="py-5 px-3 bg-gray-50 rounded-md shadow-md">
+                    <h3>월별 평균 출석인원</h3>
+                    <div className="mt-4 max-h-[320px] overflow-y-scroll">
+                      <Bar 
+                        data={monthlyAverData} 
+                        height={320}
+                        options={{ 
+                          indexAxis: 'y' as const,
+                          // maintainAspectRatio: false, 
+                          plugins: {
+                            legend: {
+                              display: false
+                            },
+                          },
+                          scales: {
+                            x: {
+                              grid: {
+                                display: true,
+                              }
+                            },
+                            y: {
+                              grid: {
+                                display: false
+                              },
+                              beginAtZero: true,
+                            },
+                          }
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </BlockContainer>
+
+          <BlockContainer>
+            <h2 className="text-xl font-bold">이번주 셀별 출석 명단</h2>
+            <div className="py-4">
+              <span className="underline underline-offset-2">기준일: 2023. 07. 02</span>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-x-8">
+                  <div className="flex justify-center items-center p-2 border border-slate-700 rounded-full cursor-pointer">
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <ComboBoxStatus />
+                  <div className="flex justify-center items-center p-2 border border-slate-700 rounded-full cursor-pointer">
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <table className="min-w-full divide-y divide-gray-300">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="py-3.5 pl-4 pr-6 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                          주차
+                        </th>
+                        {cellMemberData.map(member => (
+                          <th scope="col" key={member.id} className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            {member.name}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 bg-white">
+                      {attendanceCellData.map((item) => (
+                        <tr key={item.id}>
+                          <td className="whitespace-nowrap py-5 pl-4 pr-6 text-sm sm:pl-0">
+                            {item.name}
+                          </td>
+                          {item.attendance.sort((a, b) => a.userId - b.userId).map(obj => (
+                            <td key={obj.userId} className="whitespace-nowrap text-sm text-gray-500 text-center">
+                              <div className={`${obj.attendance === false ? 'bg-INDIGO': obj.serviceId !== 5 ? 'bg-MUSTAD': obj.isOnline ? 'bg-blue-600' : 'bg-DARKGREEN'} h-6`}>
+                                {/* {obj.attendance && <span className="font-sm text-white">{obj.serviceId === 5 ? "인터치": `${obj.serviceId}부`}</span>} */}
+                              </div>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-8 flex gap-x-4">
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-MUSTAD mr-2"/>
+                    <span>1~4부예배 참석(성전/온라인 구분X)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-DARKGREEN mr-2"/>
+                    <span>인터치예배 참석(성전)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-blue-600 mr-2"/>
+                    <span>인터치예배 참석(온라인)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-INDIGO mr-2"/>
+                    <span>미참석</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </BlockContainer>
+        </SectionContainer>
+
+      
+      </PageLayout>
     </Layout>
   );
 };

@@ -25,7 +25,7 @@ const CellReportPrintScreen = ({}: CellReportPrintScreenProps) => {
         <SectionContainer>
           <BlockContainer>
             <header className="relative">
-              <div className="mx-auto max-w-7xl border-b border-gray-900/10 px-4 py-10 sm:px-6 lg:px-8 ">
+              <div className="mx-auto max-w-7xl border-b border-gray-900/10 px-4 py-10 sm:px-6 lg:px-4">
                 <div className="mx-auto flex max-w-2xl items-center justify-between gap-x-8 lg:mx-0 lg:max-w-none">
                   <div className="flex items-center gap-x-6">
                     <h1>

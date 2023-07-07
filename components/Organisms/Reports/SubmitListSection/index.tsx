@@ -5,9 +5,10 @@ interface SubmitListSectionProps {}
 
 const SubmitListSection = ({}: SubmitListSectionProps) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-16">
-      <SubmitList title={"제출완료 셀"} />
-      <SubmitList title={"미 제출 셀"} />
+    <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-8">
+      <SubmitList title={"수기제출 셀"} />
+      <SubmitList title={"온라인제출 셀"} />
+      <SubmitList title={"제출 안한 셀"} />
     </div>
   );
 };

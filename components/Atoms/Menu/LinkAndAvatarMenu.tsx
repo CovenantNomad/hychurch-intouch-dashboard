@@ -30,7 +30,7 @@ const submited = [
 
 const LinkAndAvatarMenu = ({ title }: LinkAndAvatarMenuProps) => {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap">
+    <div className="flex flex-wrap items-start justify-between px-6 py-12 border-2 shadow-sm rounded-md sm:flex-nowrap">
       <div>
         <p className="text-sm font-semibold leading-6 text-gray-900">{title}</p>
         <div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
@@ -39,7 +39,7 @@ const LinkAndAvatarMenu = ({ title }: LinkAndAvatarMenuProps) => {
           </Link>
         </div>
       </div>
-      <dl className="flex w-full items-center justify-between gap-x-8 sm:w-auto">
+      <dl className="flex w-full items-center justify-between gap-x-6 sm:w-auto">
         <div className="flex -space-x-1.5">
           <dt className="sr-only">Commenters</dt>
           {submited.map((commenter) => (
