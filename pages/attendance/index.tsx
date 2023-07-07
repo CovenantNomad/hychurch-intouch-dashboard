@@ -6,7 +6,7 @@ import SectionContainer from "../../components/Atoms/Container/SectionContainer"
 import BlockContainer from "../../components/Atoms/Container/BlockContainer";
 import { attendanceCellData, attendanceData, cellMemberData, monthlyAverData, monthlyRegisterData, weeklyRegisterData } from "../../constants/mockStatics";
 import { Bar, Chart } from "react-chartjs-2";
-import { Chart as ChartJS, BarElement, CategoryScale, Legend, LinearScale, Title, Tooltip, PointElement, LineElement } from 'chart.js';
+import { Chart as ChartJS, BarElement, CategoryScale, Legend, LinearScale, Title, Tooltip, PointElement, LineElement, LineController, BarController } from 'chart.js';
 import ComboBoxStatus from "../../components/Blocks/Combobox/ComboBoxStatus";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
@@ -16,6 +16,8 @@ ChartJS.register(
   BarElement,
   PointElement,
   LineElement,
+  LineController,
+  BarController,
   Title,
   Tooltip,
   Legend
