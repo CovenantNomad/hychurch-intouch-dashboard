@@ -9,5 +9,6 @@ export const stateSetting = atom({
     newFamilySelectedCategoryId: 0,
     blessingSelectedCategoryId: 0,
     renewSelectedCategoryId: 0,
+    reportSelectedCategoryId: 0,
   },
 });

@@ -19,8 +19,8 @@ interface BlessingTransferProps {}
 const BlessingTransfer = ({}: BlessingTransferProps) => {
   const now = dayjs();
   const [selectedTab, setSelectedTab] = useState(0);
-  const [datafilter, setDatafilter] = useState({
-    min: getTodayString(dayjs(now.set("year", -1))),
+  const [datefilter, setDatefilter] = useState({
+    min: getTodayString(now.subtract(1, 'month')),
     max: getTodayString(now),
   });
   const { data, isLoading } = useFindCellWithTranferDataQuery<
@@ -37,8 +37,8 @@ const BlessingTransfer = ({}: BlessingTransferProps) => {
       ],
       transferInDateFilter: {
         between: {
-          min: datafilter.min,
-          max: datafilter.max,
+          min: datefilter.min,
+          max: datefilter.max,
         },
       },
       transferOutStatus: [
@@ -48,8 +48,8 @@ const BlessingTransfer = ({}: BlessingTransferProps) => {
       ],
       transferOutDateFilter: {
         between: {
-          min: datafilter.min,
-          max: datafilter.max,
+          min: datefilter.min,
+          max: datefilter.max,
         },
       },
     },
@@ -68,7 +68,7 @@ const BlessingTransfer = ({}: BlessingTransferProps) => {
     {
       id: 1,
       name: "이동결과",
-      component: <TransferHistory data={data} isLoading={isLoading} />,
+      component: <TransferHistory data={data} isLoading={isLoading} datefilter={datefilter} setDatefilter={setDatefilter} />,
     },
   ];
 

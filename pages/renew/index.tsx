@@ -49,7 +49,6 @@ const ReNewPage: NextPage = () => {
       component: <InactiveMember memberList={inActiveList} />,
     },
     { id: 2, name: "새싹셀 편성", component: <RenewTransfer /> },
-    // { id: 3, name: "부재 인원", component: <AbsenceMember /> },
   ];
 
   const { isLoading, data } = useFindRenewCellQuery<

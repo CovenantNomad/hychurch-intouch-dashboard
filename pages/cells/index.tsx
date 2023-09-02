@@ -66,7 +66,6 @@ const Cell: NextPage = () => {
             else if (b.name > a.name) return -1;
             else return 0;
           });
-        console.log(filterList);
         setFilterdList(filterList);
       } else {
         const filterList = data?.findCells.nodes

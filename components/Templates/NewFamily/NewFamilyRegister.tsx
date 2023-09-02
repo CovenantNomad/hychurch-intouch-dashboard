@@ -8,6 +8,8 @@ import { useRegisterNewUserMutation } from "../../../graphql/generated";
 import { SpecialCellIdType } from "../../../interface/cell";
 import { RegisterForm } from "../../../interface/register";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
+import { makeErrorMessage } from "../../../utils/utils";
+import { GraphQLError } from "graphql-request/dist/types";
 
 interface NewFamilyRegisterProps {}
 
@@ -33,9 +35,8 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
         });
         reset();
       },
-      onError: (error) => {
-        // error?.graphQLErrors?.[0]?.extensions?.code || ErrorCode.UNKNOWN_ERROR;
-        console.log(error);
+      onError(error: GraphQLError, variables, context) {
+        toast.error(makeErrorMessage(error.message), { duration: 2000 })
       },
     });
 
