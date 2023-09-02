@@ -42,7 +42,7 @@ export const mockCellRport: CellReportType = {
     wednesdayWorship: "성전예배",
     fridayWorship: "온라인예배",
   },
-  toPastor: `이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.`,
+  toPastor: `이번주 셀회식 계획하고 있습니다.\n이번주 셀회식 계획하고 있습니다.`,
   memberReports: [
     {
       id: 1,
