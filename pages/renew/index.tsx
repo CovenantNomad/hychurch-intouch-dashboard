@@ -33,7 +33,7 @@ const ReNewPage: NextPage = () => {
   const [activeList, setActiveList] = useState<MemberWithTransferOut[]>([]);
   const [inActiveList, setInActiveList] = useState<MemberWithTransferOut[]>([]);
   const [datafilter, setDatafilter] = useState({
-    min: getTodayString(dayjs(now.set("year", -1))),
+    min: getTodayString(now.subtract(1, "year")),
     max: getTodayString(now),
   });
 

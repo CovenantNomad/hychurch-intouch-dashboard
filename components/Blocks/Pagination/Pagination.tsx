@@ -1,5 +1,6 @@
 import React from "react"
 import { usePagination } from "../../../hooks/usePagination"
+import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/react/20/solid'
 
 interface PaginationProps {
   pageSize: number
@@ -11,89 +12,62 @@ interface PaginationProps {
 
 const Pagination = ({ pageSize, setPageSize, currentPage, setCurrentPage, totalCount }: PaginationProps) => {
 
-  const totalPageCount = Math.ceil(totalCount / pageSize)
-  const paginationRange = usePagination({totalPageCount, siblingCount: 2, currentPage})
+  const paginationRange = usePagination({ pageSize, totalCount, siblingCount: 2, currentPage })
 
-
-  const onLimitHandler = (e: React.SyntheticEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.currentTarget.value))
-  }
-
-  if (currentPage === 0 || paginationRange!.length < 2) {
-    return null;
-  }
+  // const onLimitHandler = (e: React.SyntheticEvent<HTMLSelectElement>) => {
+  //   setPageSize(Number(e.currentTarget.value))
+  // }
 
   return (
-    <div>
-      {/* mobile */}
-      <div className="flex-1 flex justify-between sm:hidden">
+    <nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+      <div className="-mt-px flex w-0 flex-1">
         <button
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+          className="inline-flex items-center border-t-2 border-transparent pr-1 mt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 disabled:hidden"
         >
+          <ArrowLongLeftIcon className="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
           Previous
         </button>
+      </div>
+      <div className="hidden md:-mt-px md:flex md:gap-x-4">
+        {paginationRange?.map((page, index) => {
+          if (page === "...") {
+            return (
+              <button
+                key={index}
+                type="button"
+                disabled
+                className="inline-flex items-center justify-center w-8 h-8 mt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+              >
+                {page}
+              </button>
+            )
+          } else {
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setCurrentPage(Number(page))}
+                className={`inline-flex items-center justify-center w-8 h-8 mt-4 text-sm font-medium text-gray-500 ${currentPage === page && 'bg-gray-200 text-gray-700 rounded-full'} hover:border-gray-300 hover:text-gray-700`}
+              >
+                {page}
+              </button>
+            )
+          }
+        })}
+      </div>
+      <div className="-mt-px flex w-0 flex-1 justify-end">
         <button
-          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          disabled={currentPage === Math.ceil(totalCount / pageSize)}
+          onClick={() => setCurrentPage(Math.min(currentPage + 1, Math.ceil(totalCount / pageSize)))}
+          className="inline-flex items-center border-t-2 border-transparent pl-1 mt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 disabled:hidden"
         >
           Next
+          <ArrowLongRightIcon className="ml-3 h-5 w-5 text-gray-400" aria-hidden="true" />
         </button>
       </div>
-      {/* desktop */}
-      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div className="flex items-center">
-          <span className="block">View</span>
-          <select
-            id="limit"
-            name="limit"
-            onChange={onLimitHandler}
-            value={pageSize}
-            className="mt-1 block py-1 px-3 mx-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-          >
-            <option value={12}>12</option>
-            <option value={24}>24</option>
-            <option value={36}>36</option>
-            <option value={48}>48</option>
-          </select>
-          <span>person per page</span>
-        </div>
-        <div className="">
-          <button 
-            onClick={() => setCurrentPage(currentPage - 1)} 
-            disabled={currentPage === 1}
-            className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 border-r-0"
-          >
-            <span className="sr-only">Previous</span>
-            &lt;
-          </button>
-          <ul className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            {paginationRange?.map((pageNumber) => {
-              if (pageNumber === "DOTS") {
-                return <li key={pageNumber} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">&#8230;</li>;
-              }
-              if (typeof pageNumber === "number") {
-                return (
-                  <li
-                    key={pageNumber}
-                    className={`${currentPage === pageNumber ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"} relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer`}
-                    onClick={() => setCurrentPage(pageNumber)}
-                  >
-                    {pageNumber}
-                  </li>
-                );
-              }
-            })}
-          </ul>
-          <button 
-            onClick={() => setCurrentPage(currentPage + 1)} 
-            disabled={currentPage === totalPageCount}
-            className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 border-l-0"
-          >
-            <span className="sr-only">Next</span>
-            &gt;
-          </button>
-        </div>
-      </div>
-    </div>
+    </nav>
   )
 }
 
