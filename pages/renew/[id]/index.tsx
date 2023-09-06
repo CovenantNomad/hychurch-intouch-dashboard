@@ -215,7 +215,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                         hasHeader={false}
                       />
                     </div>
-                    <div className="md:col-span-1">
+                    <div className="border px-4 pt-4 rounded-md md:col-span-1">
                       {router.query.transferStatus ===
                       UserCellTransferStatus.Ordered ? (
                         <div>
@@ -240,7 +240,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                         <>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="md:col-span-1">
-                              <h6 className="pb-5 text-base">블레싱 편성</h6>
+                              <h6 className="pb-3 text-base">블레싱 편성</h6>
                               <div className="flex-1">
                                 <button
                                   onClick={() => {
@@ -256,7 +256,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                               </div>
                             </div>
                             <div className="md:col-span-1">
-                              <h6 className="pb-4 text-base">기존 셀 편성</h6>
+                              <h6 className="pb-2 text-base">기존 셀 편성</h6>
                               <ComboBoxImage
                                 showLabel={false}
                                 label={"셀선택"}
