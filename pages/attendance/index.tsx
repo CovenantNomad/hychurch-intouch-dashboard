@@ -32,14 +32,7 @@ const AttendancePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <PageLayout>
-        {/* <TabsWithTwoBlock
-          title={"출석체크 및 셀보고서"}
-          tabs={categories}
-          currentTab={categoryId}
-          setCurrentTab={setCategoryId}
-          setSettingHandler={setSettingHandler}
-        /> */}
+      {/* <PageLayout>
         <SectionContainer>
           <BlockContainer firstBlock>
             <h2 className="text-xl font-bold">인터치 인원 통계</h2>
@@ -275,7 +268,6 @@ const AttendancePage = () => {
                         height={320}
                         options={{ 
                           indexAxis: 'y' as const,
-                          // maintainAspectRatio: false, 
                           plugins: {
                             legend: {
                               display: false
@@ -340,7 +332,7 @@ const AttendancePage = () => {
                           {item.attendance.sort((a, b) => a.userId - b.userId).map(obj => (
                             <td key={obj.userId} className="whitespace-nowrap text-sm text-gray-500 text-center">
                               <div className={`${obj.attendance === false ? 'bg-INDIGO': obj.serviceId !== 5 ? 'bg-MUSTAD': obj.isOnline ? 'bg-blue-600' : 'bg-DARKGREEN'} h-6`}>
-                                {/* {obj.attendance && <span className="font-sm text-white">{obj.serviceId === 5 ? "인터치": `${obj.serviceId}부`}</span>} */}
+                                {obj.attendance && <span className="font-sm text-white">{obj.serviceId === 5 ? "인터치": `${obj.serviceId}부`}</span>}
                               </div>
                             </td>
                           ))}
@@ -373,7 +365,15 @@ const AttendancePage = () => {
         </SectionContainer>
 
       
-      </PageLayout>
+      </PageLayout> */}
+
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-4xl font-bold">
+          현재 페이지는
+          <br />
+          개발 중입니다
+        </h1>
+      </div>
     </Layout>
   );
 };

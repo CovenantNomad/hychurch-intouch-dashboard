@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MemberWithTransferOut } from "../../../../interface/user";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
-import RenewMemberListItem from "../../../Organisms/Renew/RenewMemberListItem";
 import SearchModal from "../../../Blocks/SearchModal/SearchModal";
 import RenewMemberTable from "../../../Organisms/Renew/RenewMemberTable";
 import Pagination from "../../../Blocks/Pagination/Pagination";
@@ -18,6 +17,14 @@ const InactiveMember = ({ memberList }: InactiveMemberProps) => {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
   const offset = (currentPage - 1) * pageSize
+
+  const sortedMemberList = useMemo(() => {
+    return memberList.sort((a, b) => {
+      if (a.name > b.name) return 1;
+      else if (b.name > a.name) return -1;
+      else return 0;
+    })
+  }, [memberList])
 
   return (
     <>
@@ -52,13 +59,7 @@ const InactiveMember = ({ memberList }: InactiveMemberProps) => {
             </div>
           </div>
           <RenewMemberTable
-            memberList={
-              memberList.sort((a, b) => {
-                if (a.name > b.name) return 1;
-                else if (b.name > a.name) return -1;
-                else return 0;
-              }).slice(offset, offset + pageSize)
-            }
+            memberList={sortedMemberList.slice(offset, offset + pageSize)}
           />
           <div className="py-4"><p className="sr-only">여백</p></div>
           <Pagination 
