@@ -1,4 +1,5 @@
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
+import { CommunityFilter } from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -60,5 +61,31 @@ export const getFirstName = (cellName: string) => {
     return name.slice(2);
   } else {
     return name.slice(1);
+  }
+};
+
+export const getCommunityName = (communityName: string) => {
+  if (communityName === CommunityFilter.LIFE) {
+    return "life"
+  }
+  if (communityName === CommunityFilter.LIGHT) {
+    return "light"
+  }
+  if (communityName === CommunityFilter.WAY) {
+    return "way"
+  }
+  if (communityName === CommunityFilter.TRUTH) {
+    return "truth"
+  }
+}
+
+export const onHandleCopy = async (text: string) => {
+  if (text !== null) {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('텍스트가 클립보드에 복사되었습니다.');
+    } catch (error) {
+      console.error('클립보드 복사 실패:', error);
+    }
   }
 };

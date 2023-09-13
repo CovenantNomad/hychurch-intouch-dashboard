@@ -1,0 +1,25 @@
+query findCellsWithMembers(
+  $limit: Int
+) {
+  findCells(limit: $limit) {
+    nodes {
+      id
+      name
+      leaders {
+        id
+        name
+        roles
+      }
+      community
+      members {
+        id
+        name
+        roles
+        cell {
+          id
+          name
+        }
+      }
+    }
+  }
+}

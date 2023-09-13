@@ -25,7 +25,7 @@ import Footer from "../../components/Atoms/Footer";
 import { CellType, SpecialCellIdType } from "../../interface/cell";
 import { CommunityFilter, communityFilterState } from "../../stores/cellState";
 import { communityTabs } from "../../constants/tabs";
-import UnderlineTabs from "../../components/Atoms/Tabs/UnderlineTabs";
+import UnderlineBoxTabs from "../../components/Atoms/Tabs/UnderlineBoxTabs";
 
 const Cell: NextPage = () => {
   const setCreateCellInfo = useSetRecoilState(createCellState);
@@ -116,7 +116,7 @@ const Cell: NextPage = () => {
             </div>
           ) : (
             <>
-              <UnderlineTabs
+              <UnderlineBoxTabs
                 tabs={communityTabs}
                 currentTab={filter}
                 setCurrentTab={setFilter}

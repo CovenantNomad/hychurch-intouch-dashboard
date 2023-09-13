@@ -1,14 +1,10 @@
-export enum COLLCTION {
-  BARNABAS = "Barnabas",
-  MENTEES = "Mentees",
-  BARNABASDAIRIES = "BarnabasDiaries",
-}
-
-export interface BarnabasType {
-  userId: string;
-  name: string;
-  gender: string;
-  birthday: string;
-  phone: string;
-  cardinalNumber: string;
+export enum DALLANTS_COLLCTION {
+  DALLENTS = 'Dallents',
+  ACCOUNTS = 'Accounts',
+  CELLS = 'Cells',
+  STATISTIC = 'Statistic',
+  SETTINGS = 'Settings',
+  HISTORY = 'History',
+  MEMBERS = 'Members',
+  OVERALL = 'Overall',
 }

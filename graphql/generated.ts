@@ -61,6 +61,36 @@ export type CellTransfersOutArgs = {
   status?: InputMaybe<Array<UserCellTransferStatus>>;
 };
 
+export type CellAttendance = {
+  submitStatus: CellLeaderAttendanceSubmissionStatus;
+};
+
+export type CellAttendanceCompleted = CellAttendance & {
+  __typename?: 'CellAttendanceCompleted';
+  submitStatus: CellLeaderAttendanceSubmissionStatus;
+  userChurchServiceHistories: Array<UserChurchServiceHistory>;
+};
+
+export type CellAttendanceNotSubmitted = CellAttendance & {
+  __typename?: 'CellAttendanceNotSubmitted';
+  submitStatus: CellLeaderAttendanceSubmissionStatus;
+};
+
+export type CellAttendanceTempSaved = CellAttendance & {
+  __typename?: 'CellAttendanceTempSaved';
+  submitStatus: CellLeaderAttendanceSubmissionStatus;
+  tempSavedAttendanceHistories: Array<TempSavedAttendanceHistory>;
+};
+
+export enum CellLeaderAttendanceSubmissionStatus {
+  /** 제출 완료 */
+  Complete = 'COMPLETE',
+  /** 미제출 */
+  NotSubmitted = 'NOT_SUBMITTED',
+  /** 임시 저장 */
+  TemporarySave = 'TEMPORARY_SAVE'
+}
+
 /** 예배 */
 export type ChurchService = {
   __typename?: 'ChurchService';
@@ -74,6 +104,17 @@ export type ChurchService = {
   name: Scalars['String'];
   /** 예배 시작 시간 (8:00, 9:30, 11:30, 14:15 등) */
   startAt: Scalars['String'];
+};
+
+export type CreateBarnabaMentorInput = {
+  /** 바나바 멘토 그룹 기수 (1기, 2기,...) */
+  generation: Scalars['Float'];
+  userId: Scalars['ID'];
+};
+
+export type CreateBarnabaMentorPayload = {
+  __typename?: 'CreateBarnabaMentorPayload';
+  success: Scalars['Boolean'];
 };
 
 export type CreateCellInput = {
@@ -157,6 +198,7 @@ export type LoginPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createBarnabaMentor: CreateBarnabaMentorPayload;
   createCell: CreateCellPayload;
   /** 셀원 이동 신청 (단건) */
   createUserCellTransfer: CreateUserCellTransferPayload;
@@ -173,6 +215,11 @@ export type Mutation = {
   /** 사용자 정보를 업데이트 합니다. */
   updateUser: UpdateUserPayload;
   updateUserCellTransfer: UpdateUserCellTransferPayload;
+};
+
+
+export type MutationCreateBarnabaMentorArgs = {
+  input: CreateBarnabaMentorInput;
 };
 
 
@@ -246,6 +293,7 @@ export type Query = {
   findUsers: FindUsersPayload;
   /** 로그인한 사용자의 정보를 조회합니다. */
   me: User;
+  myCellAttendance: CellAttendance;
   /** 셀원 조회. 셀장만 셀원 조회가 가능합니다. */
   myCellMembers?: Maybe<Array<User>>;
   /** 사용자 정보를 조회합니다. */
@@ -268,6 +316,11 @@ export type QueryFindUsersArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryMyCellAttendanceArgs = {
+  attendanceDate: Scalars['String'];
 };
 
 
@@ -319,6 +372,8 @@ export type ResetUserPasswordPayload = {
 export enum RoleType {
   /** 관리자 (목사님, 간사님) */
   Admin = 'ADMIN',
+  /** 바나바 멘토 */
+  BarnabaMentor = 'BARNABA_MENTOR',
   /** 셀 리더 */
   CellLeader = 'CELL_LEADER',
   /** 운영자 (개발자 등) */
@@ -352,18 +407,33 @@ export type StatisticsOfCell = {
 };
 
 export type SubmitCellMemberChurchServiceAttendanceHistoriesInput = {
-  /** 셀원 예배 출석이력 제출 기준일자(yyyy-MM-dd). 예) 2022년 5월 29일 예배에 대한 제출이면 2022-05-29 로 입력 */
-  baseDate: Scalars['String'];
+  /** 셀원 예배 출석일자(yyyy-MM-dd). 예) 2022년 5월 29일 예배에 대한 제출이면 2022-05-29 로 입력 */
+  attendanceDate: Scalars['String'];
+  /** 제출 상태 */
+  submissionStatus: CellLeaderAttendanceSubmissionStatus;
   /** 셀원 출석 이력 목록 */
   userChurchServiceHistories: Array<UserChurchServiceHistoryInput>;
 };
 
 export type SubmitCellMemberChurchServiceAttendanceHistoriesPayload = {
   __typename?: 'SubmitCellMemberChurchServiceAttendanceHistoriesPayload';
-  /** 처리된 출석이력 건수 */
-  processedAttendanceHistoryCount: Scalars['Int'];
-  /** 출석이력 제출요청 건수 */
-  requestedAttendanceHistoryCount: Scalars['Int'];
+  success: Scalars['Boolean'];
+};
+
+export type TempSavedAttendanceHistory = {
+  __typename?: 'TempSavedAttendanceHistory';
+  /** 예배 출석일 (yyyy-MM-dd) */
+  attendedAt: Scalars['String'];
+  /** 예배 아이디 */
+  churchServiceId: Scalars['ID'];
+  /** 비고 */
+  description?: Maybe<Scalars['String']>;
+  /** 성전/온라인 여부 (true => 온라인) */
+  isOnline: Scalars['Boolean'];
+  /** 셀원 아이디 */
+  userId: Scalars['ID'];
+  /** 셀원 이름 */
+  userName: Scalars['String'];
 };
 
 export type UpdateCellFieldsInput = {
@@ -495,8 +565,6 @@ export type UserChurchServiceHistory = {
 };
 
 export type UserChurchServiceHistoryInput = {
-  /** 예배 출석일 (yyyy-MM-dd) */
-  attendedAt: Scalars['String'];
   /** 예배 아이디 */
   churchServiceId: Scalars['ID'];
   /** 비고 */
@@ -505,6 +573,8 @@ export type UserChurchServiceHistoryInput = {
   isOnline: Scalars['Boolean'];
   /** 사용자(셀원) 아이디 */
   userId: Scalars['ID'];
+  /** 사용자(셀원) 이름 */
+  userName: Scalars['String'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -605,6 +675,13 @@ export type FindCellsQueryVariables = Exact<{
 
 
 export type FindCellsQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', totalCount: number, nodes: Array<{ __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } }> } };
+
+export type FindCellsWithMembersQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type FindCellsWithMembersQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', nodes: Array<{ __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> }> } };
 
 export type FindLeaderQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -1281,6 +1358,49 @@ export const useFindCellsQuery = <
     );
 
 useFindCellsQuery.getKey = (variables?: FindCellsQueryVariables) => variables === undefined ? ['findCells'] : ['findCells', variables];
+;
+
+export const FindCellsWithMembersDocument = `
+    query findCellsWithMembers($limit: Int) {
+  findCells(limit: $limit) {
+    nodes {
+      id
+      name
+      leaders {
+        id
+        name
+        roles
+      }
+      community
+      members {
+        id
+        name
+        roles
+        cell {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const useFindCellsWithMembersQuery = <
+      TData = FindCellsWithMembersQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: FindCellsWithMembersQueryVariables,
+      options?: UseQueryOptions<FindCellsWithMembersQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindCellsWithMembersQuery, TError, TData>(
+      variables === undefined ? ['findCellsWithMembers'] : ['findCellsWithMembers', variables],
+      fetcher<FindCellsWithMembersQuery, FindCellsWithMembersQueryVariables>(client, FindCellsWithMembersDocument, variables, headers),
+      options
+    );
+
+useFindCellsWithMembersQuery.getKey = (variables?: FindCellsWithMembersQueryVariables) => variables === undefined ? ['findCellsWithMembers'] : ['findCellsWithMembers', variables];
 ;
 
 export const FindLeaderDocument = `
