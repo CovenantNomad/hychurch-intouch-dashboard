@@ -20,8 +20,8 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
     'getOverallStatics', 
     getIndividualStatics, 
     { 
-      staleTime: 5 * 60 * 1000, 
-      cacheTime: 5 * 60 * 1000 
+      staleTime: 3 * 60 * 1000, 
+      cacheTime: 3 * 60 * 1000 
     }
   )
 
@@ -29,8 +29,8 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
     'getCellStatics', 
     getCellStatics, 
     { 
-      staleTime: 5 * 60 * 1000, 
-      cacheTime: 5 * 60 * 1000 
+      staleTime: 3 * 60 * 1000, 
+      cacheTime: 3 * 60 * 1000 
     }
   )
 

@@ -12,8 +12,8 @@ const OthersDallantSection = ({}: OthersDallantSectionProps) => {
     'getOthersDallents', 
     () => getOthersDallents(),
     {
-      staleTime: 60 * 60 * 1000,
-      cacheTime: 60 * 60 * 1000,
+      staleTime: 3 * 60 * 1000,
+      cacheTime: 3 * 60 * 1000,
     }
   )
 

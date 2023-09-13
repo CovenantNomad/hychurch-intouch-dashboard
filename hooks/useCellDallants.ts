@@ -18,8 +18,8 @@ const useCellDallants = () => {
       limit: FIND_CELL_LIMIT,
     },
     {
-      staleTime: 60 * 60 * 1000,
-      cacheTime: 60 * 60 * 1000 * 24,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
     }
   );
 
@@ -27,8 +27,8 @@ const useCellDallants = () => {
     'getCellsDallents', 
     () => getCellsDallants(),
     {
-      staleTime: 60 * 60 * 1000,
-      cacheTime: 60 * 60 * 1000 * 24,
+      staleTime: 3 * 60 * 1000,
+      cacheTime: 3 * 60 * 1000,
     }
   )
 
