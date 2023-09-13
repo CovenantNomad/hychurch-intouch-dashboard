@@ -13,6 +13,8 @@ import BlockContainer from '../../../Atoms/Container/BlockContainer';
 import Spinner from '../../../Atoms/Spinner';
 import DallantPaymentCommunity from '../DallantPaymentCommunity';
 import UnderlineTabs from '../../../Atoms/Tabs/UnderlineTabs';
+import DallantPaymetOthers from '../DallantPaymetOthers';
+import SimpleAlerts from '../../../Atoms/Alerts/SimpleAlerts';
 
 
 
@@ -35,7 +37,7 @@ const tabs = [
   },
   {
     id: 4,
-    name: "그 외"
+    name: "셀 미포함"
   }
 ]
 
@@ -145,8 +147,8 @@ const DallantPayment = ({ initialSetting, isSettingLoading }: DallantPaymentProp
       setOtherCells(cellData.findCells.nodes
         .filter(
           (cell) =>
-            cell.id.includes(SpecialCellIdType.NewFamily) &&
-            cell.id.includes(SpecialCellIdType.Blessing) &&
+            cell.id.includes(SpecialCellIdType.NewFamily) ||
+            cell.id.includes(SpecialCellIdType.Blessing) ||
             cell.id.includes(SpecialCellIdType.Renew)
         )
         .sort((a, b) => {
@@ -163,6 +165,11 @@ const DallantPayment = ({ initialSetting, isSettingLoading }: DallantPaymentProp
       <BlockContainer firstBlock>
         <div>
           <div className=''>
+            <SimpleAlerts 
+              title={"입력시 주의사항"} 
+              description={`한번 제출하기를 누르면 내역은 삭제되나 금액이 그대로 남아있습니다.\n해당 청년을 다시 제출하고자 하실 때는 남아있는 금액을 지우고 다시 입력해주세요.\n금액을 지우지 않고 내역만 입력해서 제출하면 저장되지 않습니다`} 
+            />
+            <div className='h-2'/>
             <UnderlineTabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
           </div>
           <div className='flex justify-center items-center py-8'>
@@ -188,7 +195,7 @@ const DallantPayment = ({ initialSetting, isSettingLoading }: DallantPaymentProp
                 {currentTab === "길" && <DallantPaymentCommunity cells={wayCommunity} communityName={"길"} />}
                 {currentTab === "진리" && <DallantPaymentCommunity cells={truthCommunity} communityName={"진리"}/>}
                 {currentTab === "생명" && <DallantPaymentCommunity cells={lifeCommunity} communityName={"생명"}/>}
-                {currentTab === "그 외" && <div>그 외 탭</div>}
+                {currentTab === "셀 미포함" && <DallantPaymetOthers cells={otherCells} />}
               </div>
             )}
           </div>

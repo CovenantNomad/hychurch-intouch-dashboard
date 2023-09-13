@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getIndividualStatics } from '../../../../firebase/Dallant/Dallant';
+import { getCellStatics, getIndividualStatics } from '../../../../firebase/Dallant/Dallant';
 import Spinner from '../../../Atoms/Spinner';
 import Pagination from '../../../Blocks/Pagination/Pagination';
 import SimpleStatOnDark from '../../../Atoms/Stats/SimpleStatOnDark';
 import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 import { Bar } from 'react-chartjs-2';
+import Link from 'next/link';
 
 interface DallantStaticSectionProps {}
 
@@ -19,8 +20,17 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
     'getOverallStatics', 
     getIndividualStatics, 
     { 
-      staleTime: 15 * 60 * 1000, 
-      cacheTime: 15 * 60 * 1000 
+      staleTime: 5 * 60 * 1000, 
+      cacheTime: 5 * 60 * 1000 
+    }
+  )
+
+  const { isLoading: isCellLoading, data: cellStatic } = useQuery(
+    'getCellStatics', 
+    getCellStatics, 
+    { 
+      staleTime: 5 * 60 * 1000, 
+      cacheTime: 5 * 60 * 1000 
     }
   )
 
@@ -31,19 +41,14 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
       ) : (
         <div className=''>
           <h2 className='text-lg font-medium leading-6 text-gray-900 mb-4'>달란트 통계 현황</h2>
-          {data ? (
+          {data && cellStatic ? (
             <div className='grid grid-cols-6 gap-x-8'>
               <div className='col-span-4'>
-                <div className='grid grid-cols-2 gap-4'>
+                <div className='grid grid-cols-3 gap-8'>
                   <SimpleStatOnDark 
                     title='1인당 평균 달란트'
                     value={data.averageDallantsByIndividual.toLocaleString('kr-KR')}
                     unit='D'
-                  />
-                  <SimpleStatOnDark 
-                    title='참여인원'
-                    value={data.participants.toLocaleString('kr-KR')}
-                    unit='명'
                   />
                   <SimpleStatOnDark 
                     title='개인 최저 달란트 보유량'
@@ -55,6 +60,28 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
                     value={data.maxDallantsByIndividual.toLocaleString('kr-KR')}
                     unit='D'
                   />
+                  <SimpleStatOnDark 
+                    title='셀 평균 달란트'
+                    value={cellStatic.averageDallantsByCell.toLocaleString('kr-KR')}
+                    unit='D'
+                  />
+                  <SimpleStatOnDark 
+                    title='셀 최저 달란트 보유량'
+                    value={cellStatic.minDallantsByCell.toLocaleString('kr-KR')}
+                    unit='D'
+                  />
+                  <SimpleStatOnDark 
+                    title='셀 최고 달란트 보유량'
+                    value={cellStatic.maxDallantsByCell.toLocaleString('kr-KR')}
+                    unit='D'
+                  />
+                </div>
+                <div className='mt-12 text-right'>
+                  <Link
+                    href={{ pathname: `/dallant/dallant-statistic` }}
+                  >
+                    <p className='text-blue-600 font-medium hover:underline cursor-pointer'>더 많은 통계 보러가기</p>
+                  </Link>
                 </div>
               </div>
               <div className='col-span-2'>

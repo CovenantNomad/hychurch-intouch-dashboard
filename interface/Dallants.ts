@@ -35,7 +35,26 @@ export interface DallantCellListType {
 export interface DallantCellType {
   id: string;
   totalAmount: number;
-  cellMembers: DallantMemberType[]
+  participants: number;
+}
+
+export interface CellDallantViewType {
+  id: string;
+  name: string;
+  community: string;
+  leaders: {
+    id: string;
+    name: string;
+    roles: RoleType[];
+  }[];
+  participants: number;
+  totalAmount: number;
+}
+
+export interface DallantCellDetailType {
+  id: string;
+  totalAmount: number;
+  members: DallantMemberType[]
 }
 
 export interface CombinedCellDallantType {
@@ -67,10 +86,6 @@ export interface OverallStaticDataType {
   maxDallantsByIndividual: number;
   minDallantsByIndividual: number;
   participants: number;
-  quantiles: {
-    percentile: number;
-    range: number[]
-  }
   top20Individuals: {
     dallants: number;
     userId: string;
@@ -81,4 +96,70 @@ export interface OverallStaticDataType {
     seconds: number;
     nanoseconds: number;
   }
+}
+
+export interface CellStaticDataType {
+  cellTotalAmount: number;
+  averageDallantsByCell: number;
+  maxDallantsByCell: number;
+  minDallantsByCell: number;
+  latestUpdateAt: {
+    seconds: number;
+    nanoseconds: number;
+  }
+}
+
+export interface DallantRegisterOthersType {
+  cellId: string;
+  cellName: string;
+  userId: string;
+  userName: string;
+  phone: string;
+}
+
+export interface DallantOthersForm {
+  cellId: string;
+  cellName: string;
+  userId: string;
+  userName: string;
+  description: string;
+  amount: string;
+}
+
+export interface DallantOthersSubmitType {
+  cellId: string;
+  cellName: string;
+  userId: string;
+  userName: string;
+  amount: number;
+  description: string;
+  createdAt: string;
+}
+
+export interface DallantOthersListType {
+  cellId: string;
+  cellName: string;
+  userId: string;
+  userName: string;
+  totalAmount: number;
+}
+
+export interface DallantAccountType {
+  cellId: string;
+  cellName: string;
+  userId: string;
+  userName: string;
+  totalAmount: number;
+}
+
+export interface DallantHistoryType {
+  docId: string;
+  description: string;
+  amount: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface UserDallantType extends DallantAccountType {
+  history: DallantHistoryType[]
 }

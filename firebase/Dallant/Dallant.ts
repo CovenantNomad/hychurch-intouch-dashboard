@@ -1,7 +1,7 @@
 import { DALLANTS_COLLCTION } from './../../interface/firebase';
 import { addDoc, collection, doc, getDoc, getDocs, runTransaction, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../client/firebaseConfig";
-import { seasonNameForm, DallantsSettingType, DallantSubmitType, DallantMemberType, DallantCellType, OverallStaticDataType } from "../../interface/Dallants";
+import { seasonNameForm, DallantsSettingType, DallantSubmitType, DallantMemberType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, DallantHistoryType } from "../../interface/Dallants";
 import { toast } from "react-hot-toast";
 
 export const getDallentSetting = async () => {
@@ -74,7 +74,6 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
               const individualDoc = await transaction.get(individualRef);
               if (individualDoc.exists()) {
                 // 업데이트 후 내역저장
-                console.log(`${data.userName} 업데이트`)
                 const updatedAmount = individualDoc.data().totalAmount + data.amount
                 transaction.update(individualRef, { totalAmount: updatedAmount })
                 await addDoc(collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, data.userId, DALLANTS_COLLCTION.HISTORY), {
@@ -87,7 +86,6 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
                 })
               } else {
                 // 신규 생성
-                console.log(`${data.userName} 신규생성`)
                 transaction.set(individualRef, {
                   cellId: data.cellId,
                   cellName: data.cellName,
@@ -105,7 +103,8 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
                 transaction.set(doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, data.cellId), {
                   cellId: data.cellId,
                   cellName: data.cellName,
-                  community: data.community
+                  community: data.community,
+                  totalAmount: 0
                 }, {
                   merge: false
                 });
@@ -131,7 +130,7 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
   }
 }
 
-export const getCellDallants = async () => {
+export const getCellsDallants = async () => {
   try {
     const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
     const docSnap = await getDoc(DallantSettingRef);
@@ -148,20 +147,12 @@ export const getCellDallants = async () => {
         if (!cellQuerySnapshot.empty) {
           cellQuerySnapshot.forEach(async (cell) => {
 
-            let memberTemp: DallantMemberType[] = []
-
             const membersRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cell.id, DALLANTS_COLLCTION.MEMBERS);
-            const memberquerySnapshot = await getDocs(membersRef);
-            if (!memberquerySnapshot.empty) {
-              memberquerySnapshot.forEach(member => {
-                memberTemp.push(member.data() as DallantMemberType)
-              })
-            }
-
+            const memberquerySnapshot = await getDocs(membersRef)
             resultTemp.push({
               id: cell.id,
               totalAmount: cell.data().totalAmount,
-              cellMembers: memberTemp
+              participants: memberquerySnapshot.size || 0
             })
           })
         } 
@@ -201,3 +192,154 @@ export const getIndividualStatics = async () => {
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
   }
 }
+
+export const getCellStatics = async () => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const staticsRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.STATISTIC, DALLANTS_COLLCTION.CELLSTATISTIC);
+        const staticDoc = await getDoc(staticsRef);
+
+        if (staticDoc.exists()) {
+          return staticDoc.data() as CellStaticDataType
+        } else {
+          return null
+        }
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getCellStatics Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+
+export const getCellDallantDetail = async (cellId: string) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        let resultTemp: DallantCellDetailType = {
+          id: cellId,
+          totalAmount: 0,
+          members: []
+        }
+
+        const cellRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cellId);
+        const cellDoc = await getDoc(cellRef);
+
+        const membersRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cellId, DALLANTS_COLLCTION.MEMBERS);
+        const memberquerySnapshot = await getDocs(membersRef)
+
+        if (cellDoc.exists()) {
+          if (!memberquerySnapshot.empty) {
+            let membersTemp: DallantMemberType[] = []
+
+            memberquerySnapshot.forEach(member => {
+              membersTemp.push({
+                userId: member.data().userId,
+                userName: member.data().userName,
+                totalAmount: member.data().totalAmount,
+              })
+            })
+
+            resultTemp = {
+              id: cellId,
+              totalAmount: cellDoc.data().totalAmount,
+              members: membersTemp
+            }
+
+          } else {
+            resultTemp = {
+              id: cellId,
+              totalAmount: cellDoc.data().totalAmount,
+              members: []
+            }
+          }
+        } 
+
+        return resultTemp 
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getCellDallents Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+
+export const getUserDallant = async (userId: string) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        let userDallant: UserDallantType = {
+          cellId: "",
+          cellName: "",
+          userId: userId,
+          userName: "",
+          totalAmount: 0,
+          history: []
+        }
+
+        const userRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+
+          userDallant = {
+            ...userDallant,
+            cellId: userDoc.data().cellId,
+            cellName: userDoc.data().cellName,
+            userName: userDoc.data().userName,
+            totalAmount: userDoc.data().totalAmount,
+          }
+
+          const historyRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY);
+          const historyQuerySnapshot = await getDocs(historyRef)
+
+          if (!historyQuerySnapshot.empty) {
+            let historyTemp: DallantHistoryType[] = []
+
+            historyQuerySnapshot.forEach(history => {
+              historyTemp.push({
+                docId: history.id,
+                description: history.data().description,
+                amount: history.data().amount,
+                createdAt: history.data().createdAt,
+                updatedAt: history.data().updatedAt,
+              })
+            })
+            
+            userDallant = {
+              ...userDallant,
+              history: historyTemp
+            }
+          } 
+        } 
+
+        return userDallant 
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getCellDallents Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+

@@ -15,7 +15,7 @@ const SimpleAlerts = ({ title, description }: SimpleAlertsProps) => {
         </div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-yellow-800">{title}</h3>
-          <div className="mt-2 text-sm text-yellow-700">
+          <div className="mt-2 text-sm text-yellow-700 whitespace-pre-line">
             <p>{description}</p>
           </div>
         </div>

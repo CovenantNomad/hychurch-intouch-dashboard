@@ -1,4 +1,5 @@
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
+import { MinimumCellType, SpecialCellIdType } from "../interface/cell";
 import { CommunityFilter } from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
@@ -89,3 +90,27 @@ export const onHandleCopy = async (text: string) => {
     }
   }
 };
+
+export const checkCommonCell = (cell: MinimumCellType | null | undefined) => {
+  if (cell) {
+    return cell.id !== SpecialCellIdType.Blessing && cell.id !== SpecialCellIdType.NewFamily && cell.id !== SpecialCellIdType.Renew
+  } else {
+    return false
+  }
+}
+
+export const getSpecialCellName = (cellId: string) => {
+  switch (cellId) {
+    case SpecialCellIdType.NewFamily:
+      return "새가족셀"
+    
+    case SpecialCellIdType.Blessing:
+      return "블레싱셀"
+
+    case SpecialCellIdType.Renew:
+      return "새싹셀"
+  
+    default:
+      return "미편성"
+  }
+}

@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react"
-import { FindCellListsQuery, FindCellListsQueryVariables, FindCellsQuery, FindCellsQueryVariables, FindCellsWithMembersQuery, FindCellsWithMembersQueryVariables, useFindCellListsQuery, useFindCellsQuery, useFindCellsWithMembersQuery } from "../graphql/generated";
-import { CellListType, SpecialCellIdType } from "../interface/cell";
+import { FindCellsWithMembersQuery, FindCellsWithMembersQueryVariables, useFindCellsWithMembersQuery } from "../graphql/generated";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 import { FIND_CELL_LIMIT } from "../constants/constant";
 import { useQuery } from "react-query";
-import { getCellDallants } from "../firebase/Dallant/Dallant";
-import { CombinedCellDallantType, DallantCellListType } from "../interface/Dallants";
-import { useRecoilState } from "recoil";
-import { dallantState } from "../stores/dallantState";
+import { getCellsDallants } from "../firebase/Dallant/Dallant";
+import { CellDallantViewType } from "../interface/Dallants";
 
 const useCellDallants = () => {
   const [ isLoading, setIsLoading ] = useState(false)
-  const [ cellDallants, setCellsDallants ] = useRecoilState(dallantState)
+  const [ cellDallants, setCellsDallants ] = useState<CellDallantViewType[]>([])
   const { isLoading: isCellLoading, data: cellData } = useFindCellsWithMembersQuery<
     FindCellsWithMembersQuery,
     FindCellsWithMembersQueryVariables
@@ -27,8 +24,8 @@ const useCellDallants = () => {
   );
 
   const { isLoading: isDallantLoading, data: dallantData } = useQuery(
-    'getCellDallents', 
-    () => getCellDallants(),
+    'getCellsDallents', 
+    () => getCellsDallants(),
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
@@ -38,29 +35,16 @@ const useCellDallants = () => {
   useEffect(() => {
     if (cellData && dallantData) {
       setIsLoading(true)
-      const combinedArray: CombinedCellDallantType[] = [];
+      const combinedArray: CellDallantViewType[] = [];
 
       cellData.findCells.nodes.forEach(cell => {
         const matchingCell = dallantData.find(cellDallant => cellDallant.id === cell.id);
 
         if (matchingCell) {
-          const combinedMembers = cell.members.map(member1 => {
-            const matchingMember = matchingCell.cellMembers.find(member2 => member2.userId === member1.id);
-            if (matchingMember) {
-              return { ...member1, totalAmount: matchingMember.totalAmount };
-            }
-            return { ...member1, totalAmount: 0 };;
-          });
-          combinedArray.push({ ...cell, totalAmount: matchingCell.totalAmount, members: combinedMembers });
+          combinedArray.push({ ...cell, totalAmount: matchingCell.totalAmount, participants: matchingCell.participants });
 
         } else {
-          const combinedMembers = cell.members.map(member => {
-            return {
-              ...member,
-              totalAmount: 0
-            }
-          })
-          combinedArray.push({ ...cell, totalAmount: 0, members: combinedMembers });
+          combinedArray.push({ ...cell, totalAmount: 0, participants: 0 });
         }
       });
       setCellsDallants(combinedArray)

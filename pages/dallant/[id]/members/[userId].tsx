@@ -3,13 +3,11 @@ import Layout from '../../../../components/Layout/Layout';
 import Head from 'next/head';
 import PageLayout from '../../../../components/Layout/PageLayout';
 import SectionContainer from '../../../../components/Atoms/Container/SectionContainer';
-import { useRouter } from 'next/router';
-import Header from '../../../../components/Atoms/Header';
+import UserDallant from '../../../../components/Templates/Dallant/UserDallant/UserDallant';
 
 interface DallantPaymentPageProps {}
 
 const DallantPaymentPage = ({}: DallantPaymentPageProps) => {
-  const router = useRouter();
   
   return (
     <Layout>
@@ -21,7 +19,7 @@ const DallantPaymentPage = ({}: DallantPaymentPageProps) => {
 
       <PageLayout>
         <SectionContainer>
-          <Header title={"셀원 디테일"} />
+          <UserDallant />
         </SectionContainer>
       </PageLayout>
     </Layout>

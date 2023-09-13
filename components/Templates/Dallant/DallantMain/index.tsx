@@ -8,6 +8,7 @@ import SeasonOffSection from '../../../Organisms/Dallant/SeasonOffSection';
 import DallantTotalSection from '../../../Organisms/Dallant/DallantTotalSection';
 import CellDallantSection from '../../../Organisms/Dallant/CellDallantSection';
 import DallantStaticSection from '../../../Organisms/Dallant/DallantStaticSection';
+import OthersDallantSection from '../../../Organisms/Dallant/OthersDallantSection';
 
 interface DallantMainProps {
   initialSetting: DallantsSettingType | undefined
@@ -21,7 +22,9 @@ const DallantMain = ({ isSettingLoading, initialSetting }: DallantMainProps) => 
       {!initialSetting?.isActivity ? (
         <BlockContainer firstBlock>
           {isSettingLoading ? (
-            <Spinner />
+            <div className='py-8'>
+              <Spinner />
+            </div>
           ) : (
             <SeasonOffSection />
           )}
@@ -30,7 +33,9 @@ const DallantMain = ({ isSettingLoading, initialSetting }: DallantMainProps) => 
         <>
           <BlockContainer firstBlock>
             {isSettingLoading ? (
-              <Spinner />
+              <div className='py-8'>
+                <Spinner />
+              </div>
             ) : (
               <DallantTotalSection />
             )}
@@ -40,6 +45,9 @@ const DallantMain = ({ isSettingLoading, initialSetting }: DallantMainProps) => 
           </BlockContainer> 
           <BlockContainer>
             <CellDallantSection />
+          </BlockContainer>
+          <BlockContainer>
+            <OthersDallantSection />
           </BlockContainer>
         </>
       )}

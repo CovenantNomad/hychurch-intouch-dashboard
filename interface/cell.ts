@@ -156,3 +156,8 @@ export interface CellListWithMemberType {
       name: string; 
     } | null | undefined; }[]
 }
+
+export interface MinimumCellType {
+  id: string;
+  name: string;
+}

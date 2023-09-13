@@ -28,7 +28,12 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
 
   const { control, handleSubmit, watch, reset, formState: { errors }} = useForm();
 
-  const { mutateAsync } = useMutation(createTransaction)
+  const { mutateAsync } = useMutation(createTransaction, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getCellsDallents']})
+      queryClient.invalidateQueries({ queryKey: ['getCellDallentDetail']})
+    }
+  })
 
   const onSubmit = async (data: {[key: string]: DallantForm}) => {
     const inputArray = Object.keys(data).map(key => {
@@ -47,10 +52,6 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
     await mutateAsync(filteredArray)
 
     reset()
-
-    queryClient.invalidateQueries({ queryKey: ['getCellDallents']})
-
-    
   };
 
   return (
