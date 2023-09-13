@@ -18,7 +18,9 @@ const UserDallant = ({}: UserDallantProps) => {
     ['getUserDallant', cellId], 
     () => getUserDallant(cellId!),
     {
-      enabled: Boolean(cellId)
+      enabled: Boolean(cellId),
+      staleTime: 3 * 60 * 1000,
+      cacheTime: 3 * 60 * 1000,
     }
   )
 
