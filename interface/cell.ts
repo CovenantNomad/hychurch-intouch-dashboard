@@ -124,3 +124,40 @@ export interface CellType {
     countOfActiveMembers: number;
   };
 }
+
+export interface CellListType {
+  id: string;
+  name: string;
+  leaders: {
+    id: string;
+    name: string;
+    roles: RoleType[];
+  }[];
+  community: string;
+}
+
+export interface CellListWithMemberType {
+  id: string;
+  name: string;
+  community: string;
+  leaders: {
+    id: string;
+    name: string;
+    roles: RoleType[];
+  }[];
+  members: { 
+    __typename?: "User" | undefined; 
+    id: string; 
+    name: string; 
+    roles: RoleType[]; 
+    cell?: { 
+      __typename?: "Cell" | undefined; 
+      id: string; 
+      name: string; 
+    } | null | undefined; }[]
+}
+
+export interface MinimumCellType {
+  id: string;
+  name: string;
+}

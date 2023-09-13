@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
-import { createBarnabas } from "../../../../firebase/barnabas";
 import {
   SearchUsersQuery,
   SearchUsersQueryVariables,
@@ -51,15 +50,15 @@ const MentorSelection = ({}: MentorSelectionProps) => {
     }
   );
 
-  const { mutateAsync } = useMutation(createBarnabas, {
-    onError(error, variables, context) {
-      console.log("오류: ", error);
-      toast.error("오류가 발생하였습니다.");
-    },
-    onSuccess(data, variables, context) {
-      toast.success(`${variables.name}, 바나바로 임명하였습니다`);
-    },
-  });
+  // const { mutateAsync } = useMutation(createBarnabas, {
+  //   onError(error, variables, context) {
+  //     console.log("오류: ", error);
+  //     toast.error("오류가 발생하였습니다.");
+  //   },
+  //   onSuccess(data, variables, context) {
+  //     toast.success(`${variables.name}, 바나바로 임명하였습니다`);
+  //   },
+  // });
 
   const onSubmitHandler = debounce(({ name }: SearchBarForm) => {
     queryClient.invalidateQueries("searchUsers");
@@ -77,19 +76,19 @@ const MentorSelection = ({}: MentorSelectionProps) => {
     setCardinalNumber(e.target.value);
   };
 
-  const onSaveMentor = useCallback(async () => {
-    if (mentor) {
-      const saveData = {
-        userId: mentor.id,
-        name: mentor.name,
-        gender: mentor.gender || "MAN",
-        birthday: mentor.birthday || "1990-01-01",
-        phone: mentor.phone,
-        cardinalNumber: cardinalNumber,
-      };
-      await mutateAsync(saveData);
-    }
-  }, [cardinalNumber, mentor, mutateAsync]);
+  // const onSaveMentor = useCallback(async () => {
+  //   if (mentor) {
+  //     const saveData = {
+  //       userId: mentor.id,
+  //       name: mentor.name,
+  //       gender: mentor.gender || "MAN",
+  //       birthday: mentor.birthday || "1990-01-01",
+  //       phone: mentor.phone,
+  //       cardinalNumber: cardinalNumber,
+  //     };
+  //     await mutateAsync(saveData);
+  //   }
+  // }, [cardinalNumber, mentor, mutateAsync]);
 
   return (
     <>
@@ -181,14 +180,14 @@ const MentorSelection = ({}: MentorSelectionProps) => {
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                <button
+                {/* <button
                   type="button"
                   onClick={onSaveMentor}
                   disabled={mentor === null || cardinalNumber === ""}
                   className="inline-flex justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm bg-GREEN disabled:bg-GRAY004"
                 >
                   임명
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

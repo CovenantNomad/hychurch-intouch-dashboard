@@ -54,8 +54,6 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     }
   }, [router]);
 
-  console.log(data);
-
   return (
     <Layout>
       <Head>
@@ -151,15 +149,5 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     </Layout>
   );
 };
-
-// export  const getServerSideProps = async (context: GetServerSidePropsContext)=> {
-//   const { data } = await graphlqlRequestClient.request(SearchUsersDocument)
-
-//   console.log(data)
-//   return {
-//     props: {}
-//   }
-
-// }
 
 export default MemberDetailPage;

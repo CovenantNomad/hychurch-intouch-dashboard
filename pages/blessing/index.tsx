@@ -19,8 +19,8 @@ const categories = [
     name: "멘티 리스트",
     component: <MenteeManagement />,
   },
-  { id: 1, name: "바나바 관리", component: <MentorManagement /> },
-  { id: 2, name: "블레싱 편성", component: <BlessingTransfer /> },
+  // { id: 1, name: "바나바 관리", component: <MentorManagement /> },
+  { id: 1, name: "블레싱 편성", component: <BlessingTransfer /> },
 ];
 
 const BlessingPage = () => {

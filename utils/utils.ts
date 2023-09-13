@@ -1,4 +1,6 @@
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
+import { MinimumCellType, SpecialCellIdType } from "../interface/cell";
+import { CommunityFilter } from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -62,3 +64,53 @@ export const getFirstName = (cellName: string) => {
     return name.slice(1);
   }
 };
+
+export const getCommunityName = (communityName: string) => {
+  if (communityName === CommunityFilter.LIFE) {
+    return "life"
+  }
+  if (communityName === CommunityFilter.LIGHT) {
+    return "light"
+  }
+  if (communityName === CommunityFilter.WAY) {
+    return "way"
+  }
+  if (communityName === CommunityFilter.TRUTH) {
+    return "truth"
+  }
+}
+
+export const onHandleCopy = async (text: string) => {
+  if (text !== null) {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('텍스트가 클립보드에 복사되었습니다.');
+    } catch (error) {
+      console.error('클립보드 복사 실패:', error);
+    }
+  }
+};
+
+export const checkCommonCell = (cell: MinimumCellType | null | undefined) => {
+  if (cell) {
+    return cell.id !== SpecialCellIdType.Blessing && cell.id !== SpecialCellIdType.NewFamily && cell.id !== SpecialCellIdType.Renew
+  } else {
+    return false
+  }
+}
+
+export const getSpecialCellName = (cellId: string) => {
+  switch (cellId) {
+    case SpecialCellIdType.NewFamily:
+      return "새가족셀"
+    
+    case SpecialCellIdType.Blessing:
+      return "블레싱셀"
+
+    case SpecialCellIdType.Renew:
+      return "새싹셀"
+  
+    default:
+      return "미편성"
+  }
+}

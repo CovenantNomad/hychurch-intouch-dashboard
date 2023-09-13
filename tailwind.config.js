@@ -6,10 +6,15 @@ module.exports = {
       screens: {
         "3xl": "1920px",
       },
+      backgroundImage: {
+        dallantBackground: "url('/images/dallant_background.jpeg')"
+      },
       fontFamily: {
         notosans: ["Noto Sans KR", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
         nanumBrush: ["Nanum Brush Script", "cursive"],
+        blackHans: ["Black Han Sans", "sans-serif"],
+        jua: ["Jua", "sans-serif"]
       },
       colors: {
         BLACK: "#16171a",
