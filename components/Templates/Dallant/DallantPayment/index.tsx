@@ -21,19 +21,19 @@ import SimpleAlerts from '../../../Atoms/Alerts/SimpleAlerts';
 const tabs = [
   {
     id: 0,
-    name: "빛"
-  },
-  {
-    id: 1,
     name: "길"
   },
   {
-    id: 2,
+    id: 1,
     name: "진리"
   },
   {
-    id: 3,
+    id: 2,
     name: "생명"
+  },
+  {
+    id: 3,
+    name: "빛"
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const recommendText = [
   },
   {
     id: 1,
-    text: '향유옥합 기도운동'
+    text: '캐스트 기도운동'
   }
 ]
 
@@ -191,10 +191,10 @@ const DallantPayment = ({ initialSetting, isSettingLoading }: DallantPaymentProp
               <Spinner />
             ) : (
               <div>
-                {currentTab === "빛" && <DallantPaymentCommunity cells={lightCommunity} communityName={"빛"}/>}
                 {currentTab === "길" && <DallantPaymentCommunity cells={wayCommunity} communityName={"길"} />}
                 {currentTab === "진리" && <DallantPaymentCommunity cells={truthCommunity} communityName={"진리"}/>}
                 {currentTab === "생명" && <DallantPaymentCommunity cells={lifeCommunity} communityName={"생명"}/>}
+                {currentTab === "빛" && <DallantPaymentCommunity cells={lightCommunity} communityName={"빛"}/>}
                 {currentTab === "셀 미포함" && <DallantPaymetOthers cells={otherCells} />}
               </div>
             )}
