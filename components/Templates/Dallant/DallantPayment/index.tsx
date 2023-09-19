@@ -52,12 +52,9 @@ const recommendText = [
   }
 ]
 
-interface DallantPaymentProps {
-  initialSetting: DallantsSettingType | undefined
-  isSettingLoading: boolean;
-}
+interface DallantPaymentProps {}
 
-const DallantPayment = ({ initialSetting, isSettingLoading }: DallantPaymentProps) => {
+const DallantPayment = ({}: DallantPaymentProps) => {
   const [ currentTab, setCurrentTab ] = useState(tabs[0].name)
   const [ lightCommunity, setLightCommunity ] = useState<CellListWithMemberType[]>([]);
   const [ wayCommunity, setWayCommunity ] = useState<CellListWithMemberType[]>([]);

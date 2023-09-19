@@ -15,6 +15,10 @@ import { stateSetting } from "../../stores/stateSetting";
 // Data
 import { useQuery } from "react-query";
 import { getDallentSetting } from "../../firebase/Dallant/Dallant";
+import Spinner from "../../components/Atoms/Spinner";
+import EmptyStateSimple from "../../components/Atoms/EmptyStates/EmptyStateSimple";
+import SeasonOffSection from "../../components/Organisms/Dallant/SeasonOffSection";
+import BlockContainer from "../../components/Atoms/Container/BlockContainer";
 
 
 const TalentPage: NextPage = () => {
@@ -38,12 +42,12 @@ const TalentPage: NextPage = () => {
     {
       id: 0,
       name: "달란트 현황",
-      component: <DallantMain initialSetting={initialSetting} isSettingLoading={isSettingLoading} />,
+      component: <DallantMain />,
     },
     {
       id: 1,
       name: "달란트 지급",
-      component: <DallantPayment initialSetting={initialSetting} isSettingLoading={isSettingLoading} />,
+      component: <DallantPayment />,
     },
     {
       id: 2,
@@ -68,7 +72,25 @@ const TalentPage: NextPage = () => {
           setCurrentTab={setCategoryId}
           setSettingHandler={setSettingHandler}
         />
-        <SectionContainer>{categories[categoryId].component}</SectionContainer>
+        <SectionContainer>
+          {initialSetting && initialSetting.isActivity ? (
+            <>
+              {isSettingLoading ? (
+                <BlockContainer firstBlock>
+                  <Spinner />
+                </BlockContainer>
+              ) : (
+                <>
+                  {categories[categoryId].component}
+                </>
+              )}
+            </>
+          ) : (
+              <BlockContainer firstBlock>
+                <SeasonOffSection />
+              </BlockContainer>
+          )}
+        </SectionContainer>
       </PageLayout>
     </Layout>
   );

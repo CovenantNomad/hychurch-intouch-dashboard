@@ -6,7 +6,6 @@ import { CommunityFilter } from '../../../../stores/cellState';
 //components
 import CellDallantList from '../CellDallantList';
 import CellDallantListItem from '../CellDallantListItem';
-import Spinner from '../../../Atoms/Spinner';
 
 
 interface CellDallantSectionProps {}
@@ -14,12 +13,21 @@ interface CellDallantSectionProps {}
 const CellDallantSection = ({}: CellDallantSectionProps) => {
   const { isLoading, cellDallants } = useCellDallants()
 
+
   return (
     <div>
       <div>
         <h2 className='text-lg font-medium leading-6 text-gray-900'>셀별 달란트 현황</h2>
         {isLoading ? (
-          <Spinner />
+          <div className='grid grid-cols-4 gap-x-4 mt-4'>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="animate-pulse space-y-6 py-6 px-10 rounded-xl bg-[#F7F7F7]">
+                <div className="h-[8px] w-1/2 bg-slate-200 rounded justify-items-end"></div>
+                <div className="h-[6px] w-1/3 bg-slate-200 rounded"></div>
+                <div className="h-[6px] w-1/3 bg-slate-200 rounded"></div>
+              </div>
+            ))}
+          </div>
         ) : (
           <div>
             {cellDallants && (

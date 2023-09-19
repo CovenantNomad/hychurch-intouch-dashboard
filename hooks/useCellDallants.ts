@@ -5,11 +5,12 @@ import { FIND_CELL_LIMIT } from "../constants/constant";
 import { useQuery } from "react-query";
 import { getCellsDallants } from "../firebase/Dallant/Dallant";
 import { CellDallantViewType } from "../interface/Dallants";
+import { SpecialCellIdType } from "../interface/cell";
 
 const useCellDallants = () => {
   const [ isLoading, setIsLoading ] = useState(false)
-  const [ cellDallants, setCellsDallants ] = useState<CellDallantViewType[]>([])
-  const { isLoading: isCellLoading, data: cellData } = useFindCellsWithMembersQuery<
+  const [ cellDallants, setCellsDallants ] = useState<CellDallantViewType[] | null>(null)
+  const { isLoading: isCellLoading, data: cellData, isFetching: isCellFetching } = useFindCellsWithMembersQuery<
     FindCellsWithMembersQuery,
     FindCellsWithMembersQueryVariables
   >(
@@ -19,39 +20,63 @@ const useCellDallants = () => {
     },
     {
       staleTime: 10 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
     }
   );
 
-  const { isLoading: isDallantLoading, data: dallantData } = useQuery(
+  const { isLoading: isDallantLoading, data: dallantData, isFetching: isDallantFetching, isStale } = useQuery(
     'getCellsDallents', 
-    () => getCellsDallants(),
+    getCellsDallants,
     {
-      staleTime: 3 * 60 * 1000,
-      cacheTime: 3 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
     }
   )
 
   useEffect(() => {
-    if (cellData && dallantData) {
-      setIsLoading(true)
-      const combinedArray: CellDallantViewType[] = [];
+    if (!isCellLoading && !isDallantLoading && !isCellFetching && !isDallantFetching) {
 
-      cellData.findCells.nodes.forEach(cell => {
-        const matchingCell = dallantData.find(cellDallant => cellDallant.id === cell.id);
+      if (cellData && cellData.findCells && dallantData && dallantData.length !== 0) {
+        const combinedArray: CellDallantViewType[] = [];
+  
+        const commonCell = cellData.findCells.nodes.filter((cell) =>
+          !cell.id.includes(SpecialCellIdType.NewFamily) &&
+          !cell.id.includes(SpecialCellIdType.Blessing) &&
+          !cell.id.includes(SpecialCellIdType.Renew)
+        )
 
-        if (matchingCell) {
-          combinedArray.push({ ...cell, totalAmount: matchingCell.totalAmount, participants: matchingCell.participants });
+        commonCell.forEach(cell => {
+          const matchingCell = dallantData.find(cellDallant => cellDallant.id == cell.id)
 
-        } else {
-          combinedArray.push({ ...cell, totalAmount: 0, participants: 0 });
-        }
-      });
-      setCellsDallants(combinedArray)
+          if (matchingCell) {
+            combinedArray.push({
+              ...cell,
+              totalAmount: matchingCell.totalAmount,
+              participants: matchingCell.participants
+            })
+          } else {
+            combinedArray.push({
+              ...cell,
+              totalAmount: 0,
+              participants: 0
+            })
+          }
+        })
+
+        setCellsDallants(combinedArray)
+
+      } else {
+        setCellsDallants(null)
+      }
+
       setIsLoading(false)
+
+    } else {
+      setIsLoading(true)
     }
 
-  }, [dallantData, cellData])
+
+  }, [isCellLoading, isDallantLoading, isCellFetching, isDallantFetching, dallantData, cellData])
 
 
   return {
