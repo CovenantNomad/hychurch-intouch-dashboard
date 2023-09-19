@@ -7,57 +7,80 @@ import SimpleStatOnDark from '../../../Atoms/Stats/SimpleStatOnDark';
 import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 import { Bar } from 'react-chartjs-2';
 import Link from 'next/link';
+import DallantTopPlayerList from '../DallantTopPlayerList';
 
 interface DallantStaticSectionProps {}
 
 const DallantStaticSection = ({}: DallantStaticSectionProps) => {
   // pagination state
-  const [ pageSize, setPageSize ] = useState(5)
-  const [ currentPage, setCurrentPage ] = useState(1)
-  const offset = (currentPage - 1) * pageSize
 
-  const { isLoading, data } = useQuery(
+
+  const { isLoading: isOverallStatic, isFetching: isOverallFetching, data: overallStatic } = useQuery(
     'getOverallStatics', 
     getIndividualStatics, 
     { 
-      staleTime: 3 * 60 * 1000, 
-      cacheTime: 3 * 60 * 1000 
+      staleTime: 5 * 60 * 1000, 
+      cacheTime: 15 * 60 * 1000 
     }
   )
 
-  const { isLoading: isCellLoading, data: cellStatic } = useQuery(
+  const { isLoading: isCellLoading, isFetching: isCellFetching, data: cellStatic } = useQuery(
     'getCellStatics', 
     getCellStatics, 
     { 
-      staleTime: 3 * 60 * 1000, 
-      cacheTime: 3 * 60 * 1000 
+      staleTime: 5 * 60 * 1000, 
+      cacheTime: 15 * 60 * 1000 
     }
   )
 
   return (
     <div>
-      {isLoading ? (
-        <Spinner />
+      <h2 className='text-lg font-medium leading-6 text-gray-900 mb-4'>달란트 통계 현황</h2>
+      {(isOverallStatic || isCellLoading || isOverallFetching || isCellFetching) ? (
+        <div className='grid grid-cols-6 gap-x-8'>
+          <div className='col-span-4'>
+            <div className='grid grid-cols-3 gap-8'>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="animate-pulse space-y-6 py-10 px-10 rounded-xl bg-[#F7F7F7]">
+                  <div className="h-1 w-1/3 bg-slate-200 rounded"></div>
+                  <div className="h-1.5 w-full bg-slate-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className='col-span-2'>
+            <div className='divide-y divide-gray-100 overflow-hidden bg-white shadow-sm rounded-xl'>
+              <div className="border-y border-b-gray-200 border-t-gray-100 bg-gray-50 px-3 py-4">
+                <h3 className='text-lg font-semibold leading-6 text-gray-900'>달란트 보유 Top 20</h3>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="animate-pulse flex justify-between py-6 px-10 rounded-xl bg-[#F7F7F7]">
+                    <div className="h-1.5 w-1/4 bg-slate-200 rounded"></div>
+                    <div className="h-1.5 w-1/3 bg-slate-200 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className=''>
-          <h2 className='text-lg font-medium leading-6 text-gray-900 mb-4'>달란트 통계 현황</h2>
-          {data && cellStatic ? (
+        <>
+          {overallStatic && cellStatic ? (
             <div className='grid grid-cols-6 gap-x-8'>
               <div className='col-span-4'>
                 <div className='grid grid-cols-3 gap-8'>
                   <SimpleStatOnDark 
                     title='1인당 평균 달란트'
-                    value={data.averageDallantsByIndividual.toLocaleString('kr-KR')}
+                    value={overallStatic.averageDallantsByIndividual.toLocaleString('kr-KR')}
                     unit='D'
                   />
                   <SimpleStatOnDark 
                     title='개인 최저 달란트 보유량'
-                    value={data.minDallantsByIndividual.toLocaleString('kr-KR')}
+                    value={overallStatic.minDallantsByIndividual.toLocaleString('kr-KR')}
                     unit='D'
                   />
                   <SimpleStatOnDark 
                     title='개인 최고 달란트 보유량'
-                    value={data.maxDallantsByIndividual.toLocaleString('kr-KR')}
+                    value={overallStatic.maxDallantsByIndividual.toLocaleString('kr-KR')}
                     unit='D'
                   />
                   <SimpleStatOnDark 
@@ -85,27 +108,7 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
                 </div>
               </div>
               <div className='col-span-2'>
-                <div className='divide-y divide-gray-100 overflow-hidden bg-white shadow-sm rounded-xl'>
-                  <div className="border-y border-b-gray-200 border-t-gray-100 bg-gray-50 px-3 py-4">
-                    <h3 className='text-lg font-semibold leading-6 text-gray-900'>달란트 보유 Top 20</h3>
-                  </div>
-                  {data?.top20Individuals.slice(offset, offset + pageSize).map((people, index) => (
-                    <div key={people.userId} className='flex items-center justify-between px-4 py-5 hover:bg-gray-50'>
-                      <div className='flex items-center gap-x-6'>
-                        <p className='text-sm'>{offset + index + 1}</p>
-                        <p className='text-base font-medium'>{people.userName}</p>
-                      </div>
-                      <p className='font-medium'>{people.dallants.toLocaleString('kr-KR')} D</p>
-                    </div>
-                  ))}
-                </div>
-                <Pagination 
-                  pageSize={pageSize}
-                  setPageSize={setPageSize}
-                  currentPage={currentPage}
-                  setCurrentPage={setCurrentPage}
-                  totalCount={data!.top20Individuals.length}
-                />
+                <DallantTopPlayerList data={overallStatic} />
               </div>
             </div>
           ) : (
@@ -113,7 +116,7 @@ const DallantStaticSection = ({}: DallantStaticSectionProps) => {
               <EmptyStateSimple />
             </div>
           )}
-        </div>
+        </>
       )}
       
     </div>

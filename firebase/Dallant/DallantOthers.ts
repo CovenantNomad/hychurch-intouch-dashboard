@@ -136,18 +136,19 @@ export const getOthersDallents = async () => {
 
           let othersDallantList: DallantOthersListType[] = []
 
-          othersMemberIdList.map(async (userId) => {
+          for (const userId of othersMemberIdList) {
             const individualRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId);
             const individualDoc = await getDoc(individualRef);
 
             if (individualDoc.exists()) {
-              othersDallantList.push(individualDoc.data() as DallantOthersListType)
+              othersDallantList.push(individualDoc.data() as DallantOthersListType);
             }
-          })
+          }
 
           return othersDallantList
 
         } else {
+          console.log("@Firebase: 데이터 없음")
           return null
         }
       }

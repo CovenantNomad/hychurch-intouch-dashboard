@@ -8,36 +8,41 @@ import OthersDallantList from '../OthersDallantList/OthersDallantList';
 interface OthersDallantSectionProps {}
 
 const OthersDallantSection = ({}: OthersDallantSectionProps) => {
-  const { isLoading, data } = useQuery(
+  const { isLoading, data, isFetching } = useQuery(
     'getOthersDallents', 
-    () => getOthersDallents(),
+    getOthersDallents,
     {
-      staleTime: 3 * 60 * 1000,
-      cacheTime: 3 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
     }
   )
 
   return (
     <div>
       <h2 className='text-lg font-medium leading-6 text-gray-900'>미편성 청년 달란트 현황</h2>
-      {isLoading ? (
-        <div className='py-8'>
-          <Spinner />
+      {isLoading || isFetching  ? (
+        <div className='grid grid-cols-4 gap-x-4 mt-4'>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="animate-pulse space-y-6 py-6 px-10 rounded-xl bg-[#F7F7F7]">
+              <div className="h-[8px] w-1/2 bg-slate-200 rounded justify-items-end"></div>
+              <div className="h-[6px] w-1/3 bg-slate-200 rounded"></div>
+              <div className="h-[6px] w-1/3 bg-slate-200 rounded"></div>
+            </div>
+          ))}
         </div>
       ) : (
         <div>
           {data ? (
-            <div className='grid grid-cols-4 gap-4 mt-8'>
+            <div className='grid grid-cols-4 gap-x-4 mt-4'>
               {data.map(member => (
-                <div key={member.userId} className='col-span-1'>
-                  <OthersDallantList
-                    cellId={member.cellId}
-                    cellName={member.cellName}
-                    userId={member.userId}
-                    userName={member.userName}
-                    totalAmount={member.totalAmount}
-                  />
-                </div>
+                <OthersDallantList
+                  key={member.userId} 
+                  cellId={member.cellId}
+                  cellName={member.cellName}
+                  userId={member.userId}
+                  userName={member.userName}
+                  totalAmount={member.totalAmount}
+                />
               ))}
             </div>
           ) : (
