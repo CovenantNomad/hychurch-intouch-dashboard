@@ -67,3 +67,7 @@ export const makeWeekAndDate = (dateString: string) => {
     dateString.split("-")[1]
   }월 ${dateString.split("-")[2].padStart(2, "0")}주`;
 };
+
+export const convertSecondToDate = (seconds: number) => {
+  return dayjs(seconds * 1000)
+}

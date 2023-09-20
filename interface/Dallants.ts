@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { RoleType } from "../graphql/generated";
 
 export interface DallantsSettingType {
@@ -157,7 +158,8 @@ export interface DallantHistoryType {
   description: string;
   amount: number;
   createdAt: string;
-  updatedAt?: string;
+  createdTimestamp: Timestamp;
+  totalAmount: number;
 }
 
 export interface UserDallantType extends DallantAccountType {

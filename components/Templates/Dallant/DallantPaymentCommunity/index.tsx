@@ -30,8 +30,9 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
 
   const { mutateAsync } = useMutation(createTransaction, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getCellsDallents']})
-      queryClient.invalidateQueries({ queryKey: ['getCellDallentDetail']})
+      queryClient.invalidateQueries(['getCellsDallents'])
+      queryClient.invalidateQueries(['getCellDallentDetail'])
+      queryClient.invalidateQueries(['getUserDallant'])
     }
   })
 
