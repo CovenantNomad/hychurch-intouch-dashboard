@@ -6,8 +6,23 @@ export interface DallantsSettingType {
   currentSeasonName: string;
 }
 
-export interface seasonNameForm {
+export interface SeasonNameForm {
   name: string;
+}
+
+export interface CreateSeasonSubmitDate {
+  name: string;
+  startDate: string;
+}
+
+export interface DallantFormType {
+  cellId: string;
+  userId: string;
+  cellName: string;
+  userName: string;
+  community: string;
+  description: string;
+  amount: string;
 }
 
 export interface DallantSubmitType {

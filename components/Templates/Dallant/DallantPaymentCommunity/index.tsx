@@ -1,26 +1,33 @@
-import React from 'react';
-import { CellListWithMemberType } from '../../../../interface/cell';
-import { Controller, useForm } from 'react-hook-form';
-import { getTodayString } from '../../../../utils/dateUtils';
-import dayjs, { Dayjs } from 'dayjs';
-import CellAccordionItem from '../../../Organisms/Dallant/CellAccordionItem';
+import React, { useState, Fragment } from 'react';
+import dayjs from 'dayjs';
+import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
+//types
 import { createTransaction } from '../../../../firebase/Dallant/Dallant';
-import { DallantSubmitType } from '../../../../interface/Dallants';
+import { DallantFormType } from '../../../../interface/Dallants';
+import { CellListWithMemberType } from '../../../../interface/cell';
+//components
+import CellAccordionItem from '../../../Organisms/Dallant/CellAccordionItem';
+//utils
+import { getTodayString } from '../../../../utils/dateUtils';
+import { Dialog, Transition } from '@headlessui/react';
+import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
+import Spinner from '../../../Atoms/Spinner';
 
 interface DallantPaymentCommunityProps {
   communityName: string
   cells: CellListWithMemberType[]
 }
 
-interface DallantForm {
-  cellId: string;
-  userId: string;
-  cellName: string;
-  userName: string;
-  community: string;
-  description: string;
-  amount: string;
+interface DallantPaymentSubmitData {
+    amount: number;
+    createdAt: string;
+    cellId: string;
+    userId: string;
+    cellName: string;
+    userName: string;
+    community: string;
+    description: string;
 }
 
 function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommunityProps) {
@@ -28,7 +35,7 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
 
   const { control, handleSubmit, watch, reset, formState: { errors }} = useForm();
 
-  const { mutateAsync } = useMutation(createTransaction, {
+  const { mutateAsync, isLoading, isError } = useMutation(createTransaction, {
     onSuccess: () => {
       queryClient.invalidateQueries(['getCellsDallents'])
       queryClient.invalidateQueries(['getCellDallentDetail'])
@@ -36,9 +43,9 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
     }
   })
 
-  const onSubmit = async (data: {[key: string]: DallantForm}) => {
+  const onSubmit = async (data: {[key: string]: DallantFormType}) => {
     const inputArray = Object.keys(data).map(key => {
-      if (data[key].amount !== undefined) {
+      if (!isNaN(Number(data[key].amount))) {
         return {
           ...data[key],
           amount: Number(data[key].amount),
@@ -63,7 +70,17 @@ function DallantPaymentCommunity({ communityName, cells }: DallantPaymentCommuni
         ))}
       </div>
       <div className='mt-16'>
-        <button type="submit" className='w-full bg-blue-600 text-white py-3 rounded-md'>제출하기</button>
+        <button
+          type="submit" 
+          disabled={isLoading || isError}
+          className={`w-full bg-blue-600 text-white py-3 rounded-md disabled:bg-black/10 disabled:text-black/40 disabled:cursor-not-allowed`}
+        >
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <span>제출하기</span>
+          )}
+        </button>
       </div>
     </form>
   );

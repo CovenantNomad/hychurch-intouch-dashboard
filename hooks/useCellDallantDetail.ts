@@ -19,7 +19,7 @@ const useCellDallantDetail = ( cellId : string) => {
     },
     {
       staleTime: 15 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000 * 24,
+      cacheTime: 30 * 60 * 1000,
       enabled: Boolean(cellId)
     }
   );

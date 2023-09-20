@@ -16,9 +16,9 @@ import { stateSetting } from "../../stores/stateSetting";
 import { useQuery } from "react-query";
 import { getDallentSetting } from "../../firebase/Dallant/Dallant";
 import Spinner from "../../components/Atoms/Spinner";
-import EmptyStateSimple from "../../components/Atoms/EmptyStates/EmptyStateSimple";
-import SeasonOffSection from "../../components/Organisms/Dallant/SeasonOffSection";
+import SeasonOffSection from "../../components/Organisms/Dallant/Settings/SeasonOffSection";
 import BlockContainer from "../../components/Atoms/Container/BlockContainer";
+import CreateSeason from "../../components/Organisms/Dallant/Settings/CreateSeason";
 
 
 const TalentPage: NextPage = () => {
@@ -86,9 +86,10 @@ const TalentPage: NextPage = () => {
               )}
             </>
           ) : (
-              <BlockContainer firstBlock>
-                <SeasonOffSection />
-              </BlockContainer>
+            <BlockContainer firstBlock>
+              <SeasonOffSection />
+              <CreateSeason /> 
+            </BlockContainer>
           )}
         </SectionContainer>
       </PageLayout>
