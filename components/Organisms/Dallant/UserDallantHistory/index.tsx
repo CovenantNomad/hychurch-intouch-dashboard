@@ -22,14 +22,6 @@ const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryP
 
   return (
     <>
-      <h3 className="text-2xl font-medium mb-8">적립내역</h3>
-      <div className='flex gap-x-8 pb-2 mb-4 '>
-        <div className='w-[24px]'></div>
-        <div className='flex-1 text-gray-500'>내역</div>
-        <div className='flex-1 text-gray-500'>날짜</div>
-        <div className='flex-[2] pr-4 text-right text-gray-500'>적립</div>
-        <div className='flex-[2] pr-4 text-right text-gray-500'>총액</div>
-      </div>
       {isLoading && isFetching ? (
         <div>
           {Array.from({ length: 4 }).map((_, index) => (
@@ -45,39 +37,37 @@ const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryP
         <>
           {data ? (
             <>
-              <ul role="list" className="space-y-6 pt-4 pb-8">
-                {data.history.sort((a, b) => historySortFunc(a, b)).slice(offset, offset + pageSize).map((transaction, index) => (
-                  <li key={transaction.docId} className="relative flex gap-x-8 py-1">
-                    <div
-                      className={`${(index === (data.history.length <= pageSize ? data.history.length - 1: pageSize - 1)) ? 'h-6 absolute left-0 top-0 flex w-6 justify-center' : '-bottom-6 absolute left-0 top-0 flex w-6 justify-center'}`}
-                    >
-                      <div className={`w-px bg-gray-300`} />
+              <ul role="list" className="pt-4 pb-8 divide-y divide-y-[#dcdee0]">
+                {data.history.reverse().slice(offset, offset + pageSize).map((transaction, index) => (
+                  <li key={transaction.docId} className='flex'>
+                    <div className='min-w-[52px] pt-5 text-sm'>
+                      {transaction.createdAt.split('-')[1]}.{transaction.createdAt.split('-')[2]}
                     </div>
-                    <div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-                      <div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+                    <div className='w-full pt-5 pb-5'>
+                      <div className='flex justify-between item-center'>
+                        <div>
+                          {transaction.description}
+                        </div>
+                        <div>
+                          <strong>{transaction.totalAmount} D</strong>
+                        </div>
+                      </div>
+                      <div className='flex justify-end pt-1'>
+                        <strong className='text-sm text-blue-500'>{transaction.amount} D 적립</strong>
+                      </div>
                     </div>
-                    <p className="flex-1 text-base leading-5 text-gray-500">
-                      <span className="font-medium text-gray-900">{transaction.description}</span>
-                    </p>
-                    <p className="flex-1 text-sm leading-5 text-gray-500">
-                      <span className="font-medium text-gray-900">{transaction.createdAt}</span>
-                    </p>
-                    <p className="flex-[2] pr-4 text-base leading-5 text-gray-900 text-right">
-                      {transaction.amount} D
-                    </p>
-                    <p className="flex-[2] pr-4 text-base leading-5 text-gray-900 text-right">
-                      {data.history.slice(0, index + 1).reduce((sum, item) => sum + item.amount, 0)} D
-                    </p>
                   </li>
                 ))}
               </ul>
-              <Pagination 
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalCount={data.history.length}
-              />
+              <div className=''>
+                <Pagination 
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  totalCount={data.history.length}
+                />
+              </div>
             </>
           ) : (
             <div className='py-8'>

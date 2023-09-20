@@ -52,21 +52,21 @@ const UserDallant = ({}: UserDallantProps) => {
         />
       </BlockContainer>
       <BlockContainer>
-        <div className='grid grid-cols-3 gap-x-8'>
-          <div className='col-span-1'>
-            <UserDallantStatistic 
-              isLoading={isLoading}
-              isFetching={isFetching}
-              data={data}
-            />
-          </div>
-          <div className='col-span-2'>
-            <UserDallantHistory 
-              isLoading={isLoading}
-              isFetching={isFetching}
-              data={data}
-            />
-          </div>
+        <div className='max-w-xl mx-auto'>
+          <UserDallantStatistic 
+            isLoading={isLoading}
+            isFetching={isFetching}
+            data={data}
+          />
+        </div>
+      </BlockContainer>
+      <BlockContainer>
+        <div className='max-w-xl mx-auto'>
+          <UserDallantHistory 
+            isLoading={isLoading}
+            isFetching={isFetching}
+            data={data}
+          />
         </div>
       </BlockContainer>
     </>

@@ -55,41 +55,41 @@ const UserDallantStatistic = ({ isLoading, isFetching, data }: UserDallantStatis
       ) : (
         <>
           {data ? (
-            <dl className='divide-y divide-white/40 bg-black'>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white col-span-1">총 달란트</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{data.totalAmount.toLocaleString('kr-KR')} D</dd>
+            <dl className='px-5 pt-3 pb-2 border border-[#dcdee0] rounded-xl'>
+              <div className="w-full flex py-4">
+                <dt className="text-base font-medium leading-6">총 달란트</dt>
+                <dd className="text-base font-medium leading-6 ml-auto">{data.totalAmount.toLocaleString('kr-KR')} D</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">적립 횟수</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{data.history.length} 회</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">적립 횟수</dt>
+                <dd className="text-sm ml-auto">{data.history.length} 회</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">마지막 적립일</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{recentDate}</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">1회 최대 적립금</dt>
+                <dd className="text-sm ml-auto">{maxDallant.toLocaleString('kr-KR')} D</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">1회 최대 적립금</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{maxDallant.toLocaleString('kr-KR')} D</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">마지막 적립일</dt>
+                <dd className="text-sm ml-auto">{recentDate}</dd>
               </div>
             </dl>
           ) : (
-            <dl className='divide-y divide-white/40 bg-black'>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white col-span-1">총 달란트</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">0 D</dd>
+            <dl className='px-5 pt-3 pb-2 border border-[#dcdee0] rounded-xl'>
+              <div className="w-full flex py-4">
+                <dt className="text-base font-medium leading-6">총 달란트</dt>
+                <dd className="text-base font-medium leading-6 ml-auto">0 D</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">적립 횟수</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">0 회</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">적립 횟수</dt>
+                <dd className="text-sm ml-auto">0 회</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">마지막 적립일</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{recentDate}</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">1회 최대 적립금</dt>
+                <dd className="text-sm ml-auto">0 D</dd>
               </div>
-              <div className="w-full grid grid-cols-2 px-4 py-6">
-                <dt className="text-base font-medium leading-6 text-white">1회 최대 적립금</dt>
-                <dd className="text-base font-medium leading-6 text-gray-400 text-right pr-8">{maxDallant.toLocaleString('kr-KR')} D</dd>
+              <div className="w-full flex py-3">
+                <dt className="text-sm">마지막 적립일</dt>
+                <dd className="text-sm ml-auto">0000-00-00</dd>
               </div>
             </dl>
           )}

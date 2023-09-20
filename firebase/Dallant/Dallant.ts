@@ -1,5 +1,5 @@
 import { DALLANTS_COLLCTION } from './../../interface/firebase';
-import { addDoc, collection, doc, getDoc, getDocs, runTransaction, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, runTransaction, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../client/firebaseConfig";
 import { seasonNameForm, DallantsSettingType, DallantSubmitType, DallantMemberType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, DallantHistoryType } from "../../interface/Dallants";
 import { toast } from "react-hot-toast";
@@ -79,7 +79,8 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
                 await addDoc(collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, data.userId, DALLANTS_COLLCTION.HISTORY), {
                   createdAt: data.createdAt,
                   description: data.description,
-                  amount: data.amount
+                  amount: data.amount,
+                  totalAmount: updatedAmount
                 });
                 transaction.update(doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, data.cellId, DALLANTS_COLLCTION.MEMBERS, data.userId), {
                   totalAmount: updatedAmount
@@ -97,7 +98,8 @@ export const createTransaction = async (submitData: (DallantSubmitType| undefine
                 await addDoc(collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, data.userId, DALLANTS_COLLCTION.HISTORY), {
                   createdAt: data.createdAt,
                   description: data.description,
-                  amount: data.amount
+                  amount: data.amount,
+                  totalAmount: data.amount
                 });
                 // 셀 신규 생성
                 transaction.set(doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, data.cellId), {
@@ -312,7 +314,8 @@ export const getUserDallant = async (userId: string) => {
           const userData = userDoc.data();
 
           const historyRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY);
-          const historyQuerySnapshot = await getDocs(historyRef)
+          const historyQuery = query(historyRef, orderBy("createdAt", "asc"))
+          const historyQuerySnapshot = await getDocs(historyQuery)
 
           const historyData = !historyQuerySnapshot.empty
             ? historyQuerySnapshot.docs.map((history) => {
@@ -322,10 +325,11 @@ export const getUserDallant = async (userId: string) => {
                   description: historyData.description,
                   amount: historyData.amount,
                   createdAt: historyData.createdAt,
-                  updatedAt: historyData.updatedAt,
+                  totalAmount: historyData.totalAmount,
                 };
               })
             : [];
+
 
           const userDallant: UserDallantType = {
             cellId: userData.cellId,
@@ -353,3 +357,41 @@ export const getUserDallant = async (userId: string) => {
   }
 }
 
+
+export const updateTotalAmount = async () => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const accountRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS);
+        const accountQuerySnapshot = await getDocs(accountRef);
+
+        if (!accountQuerySnapshot.empty) {
+          for (const account of accountQuerySnapshot.docs) {
+
+            const historyRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, account.id, DALLANTS_COLLCTION.HISTORY);
+            const historyQuerySnapshot = await getDocs(historyRef)
+
+            if (!historyQuerySnapshot.empty) {
+              for (const singleHistory of historyQuerySnapshot.docs) {
+                const singleRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, account.id, DALLANTS_COLLCTION.HISTORY, singleHistory.id)
+                await updateDoc(singleRef, {
+                  totalAmount: account.data().totalAmount
+                })
+              }
+            } 
+          }
+
+        }
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getCellDallents Error: ", error);
+    return null;
+  }
+}

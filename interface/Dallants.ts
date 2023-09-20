@@ -157,7 +157,7 @@ export interface DallantHistoryType {
   description: string;
   amount: number;
   createdAt: string;
-  updatedAt?: string;
+  totalAmount: number;
 }
 
 export interface UserDallantType extends DallantAccountType {
