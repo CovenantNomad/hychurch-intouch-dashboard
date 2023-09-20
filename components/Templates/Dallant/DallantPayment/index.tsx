@@ -164,7 +164,7 @@ const DallantPayment = ({}: DallantPaymentProps) => {
           <div className=''>
             <SimpleAlerts 
               title={"입력시 주의사항"} 
-              description={`한번 제출하기를 누르면 내역은 삭제되나 금액이 그대로 남아있습니다.\n해당 청년을 다시 제출하고자 하실 때는 남아있는 금액을 지우고 다시 입력해주세요.\n금액을 지우지 않고 내역만 입력해서 제출하면 저장되지 않습니다`} 
+              description={`1. 금액을 입력하면 꼭 내역을 입력해주세요.\n2. 금액은 1이상의 양수만 입력해주세요.\n3. 엔터를 누르면 바로 제출됩니다. 탭으로 이동해주세요.\n4. 한번 제출하면 다른 공동체로 갔다와주세요. 데이터가 남아 있어요ㅠ`} 
             />
             <div className='h-2'/>
             <UnderlineTabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />

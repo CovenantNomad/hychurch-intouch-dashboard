@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { DallantHistoryType, UserDallantType } from '../../../../interface/Dallants';
+import { UserDallantType } from '../../../../interface/Dallants';
 import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 import Pagination from '../../../Blocks/Pagination/Pagination';
-import dayjs from 'dayjs';
-import { convertSecondToDate, getTodayString } from '../../../../utils/dateUtils';
+import { convertSecondToDate } from '../../../../utils/dateUtils';
+import Link from 'next/link';
 
 interface UserDallantHistoryProps {
   isLoading: boolean;
@@ -11,18 +11,10 @@ interface UserDallantHistoryProps {
   data: UserDallantType | null | undefined
 }
 
-const historySortFunc = (a: DallantHistoryType, b: DallantHistoryType) => {
-  const dateA = new Date(a.createdAt);
-  const dateB = new Date(b.createdAt);
-  return dateB.getTime() - dateA.getTime();
-}
-
 const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryProps) => {
   const [ pageSize, setPageSize ] = useState(10)
   const [ currentPage, setCurrentPage ] = useState(1)
   const offset = (currentPage - 1) * pageSize
-
-  console.log(data)
 
   return (
     <>
@@ -41,31 +33,49 @@ const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryP
         <>
           {data ? (
             <>
-              <ul role="list" className="pt-4 pb-8 divide-y divide-y-[#dcdee0]">
-                {data.history.reverse().slice(offset, offset + pageSize).map((transaction, index) => (
-                  <li key={transaction.docId} className='flex'>
-                    <div className='min-w-[52px] pt-5 text-sm'>
-                      {transaction.createdAt.split('-')[1]}.{transaction.createdAt.split('-')[2]}
-                    </div>
-                    <div className='w-full pt-5 pb-5'>
-                      <div className='flex justify-between item-center'>
-                        <div>
-                          {transaction.description}
+              <ul role="list" className="pt-4 pb-8 divide-y divide-[#dcdee0]">
+                {data.history.sort((a, b) => Number(b.createdTimestamp) - Number(a.createdTimestamp)).slice(offset, offset + pageSize).map((transaction, index) => (
+                  <Link
+                    key={transaction.docId} 
+                    href={{
+                      pathname: `/dallant/${data.cellId}/members/${data.userId}/history/${transaction.docId}`,
+                      query: { 
+                        userId: data.userId, 
+                        userName: data.userName, 
+                        cellId: data.cellId, 
+                        cellName: data.cellName,
+                        amount: transaction.amount,
+                        totalAmount: transaction.totalAmount,
+                        description: transaction.description,
+                        createdTimestamp: transaction.createdTimestamp.seconds,
+                      },
+                    }}
+                    as={`/dallant/${data.cellId}/members/${data.userId}/history/${transaction.docId}`}
+                  >
+                    <li className='flex cursor-pointer'>
+                      <div className='min-w-[52px] pt-5 text-sm'>
+                        {transaction.createdAt.split('-')[1]}.{transaction.createdAt.split('-')[2]}
+                      </div>
+                      <div className='w-full pt-5 pb-5'>
+                        <div className='flex justify-between item-center'>
+                          <div>
+                            {transaction.description}
+                          </div>
+                          <div>
+                            <strong className='text-blue-500'>{transaction.totalAmount} D</strong>
+                          </div>
                         </div>
-                        <div>
-                          <strong>{transaction.totalAmount} D</strong>
+                        <div className='flex justify-between items-center mt-[1px]'>
+                          <div className='text-xs text-key-700'>
+                            {convertSecondToDate(transaction.createdTimestamp.seconds).format('YYYY.MM.DD HH:mm:ss')}
+                          </div>
+                          <div>
+                            <strong className='text-sm text-gray-500'>{transaction.amount} D 적립</strong>
+                          </div>
                         </div>
                       </div>
-                      <div className='flex justify-between items-center mt-[1px]'>
-                        <div className='text-xs text-blue-500'>
-                          {convertSecondToDate(transaction.createdTimestamp.seconds).format('YYYY.MM.DD HH:mm:ss')}
-                        </div>
-                        <div>
-                          <strong className='text-sm text-blue-500'>{transaction.amount} D 적립</strong>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
+                    </li>
+                  </Link>
                 ))}
               </ul>
               <div className=''>

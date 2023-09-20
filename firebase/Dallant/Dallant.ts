@@ -1,7 +1,7 @@
 import { DALLANTS_COLLCTION } from './../../interface/firebase';
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, runTransaction, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../client/firebaseConfig";
-import { seasonNameForm, DallantsSettingType, DallantSubmitType, DallantMemberType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, DallantHistoryType } from "../../interface/Dallants";
+import { DallantsSettingType, DallantSubmitType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, CreateSeasonSubmitDate } from "../../interface/Dallants";
 import { toast } from "react-hot-toast";
 
 export const getDallentSetting = async () => {
@@ -16,21 +16,25 @@ export const getDallentSetting = async () => {
   }
 };
 
-export const createDallentSeason = async (data: seasonNameForm) => {
+export const createDallentSeason = async ({ name, startDate }: CreateSeasonSubmitDate) => {
   try {
     // Update Setting
-    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const dallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
 
-    await updateDoc(DallantSettingRef, {
+    await updateDoc(dallantSettingRef, {
       isActivity: true,
-      currentSeasonName: data.name
+      currentSeasonName: name
     });
 
     //SEASON Document 생성
-    await setDoc(doc(db, DALLANTS_COLLCTION.DALLENTS, data.name), {});
+    await setDoc(doc(db, DALLANTS_COLLCTION.DALLENTS, name), {
+      createdAt: serverTimestamp(),
+      startDate: startDate
+    });
 
-    await setDoc(doc(db, DALLANTS_COLLCTION.DALLENTS, data.name, DALLANTS_COLLCTION.STATISTIC, DALLANTS_COLLCTION.OVERALL), {
-      totalAmount: 0
+    await setDoc(doc(db, DALLANTS_COLLCTION.DALLENTS, name, DALLANTS_COLLCTION.STATISTIC, DALLANTS_COLLCTION.OVERALL), {
+      totalAmount: 0,
+      latestUpdateAt:serverTimestamp()
     });
 
     toast.success(`새로운 시즌이 시작됩니다.`)
@@ -41,11 +45,21 @@ export const createDallentSeason = async (data: seasonNameForm) => {
   }
 }
 
-export const terminateDallentSeason = async () => {
+export const terminateDallentSeason = async (terminateDate: string) => {
   try {
-    const talentSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const dalentSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(dalentSettingRef);
 
-    await updateDoc(talentSettingRef, {
+    if (docSnap.exists()) {
+      const seasonName = docSnap.data().currentSeasonName
+
+      await updateDoc(doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName), {
+        terminateAt: serverTimestamp(),
+        terminateDate: terminateDate
+      });
+    }
+
+    await updateDoc(dalentSettingRef, {
       isActivity: false,
       currentSeasonName: ""
     });
@@ -60,8 +74,8 @@ export const terminateDallentSeason = async () => {
 
 export const createTransaction = async (submitData: (DallantSubmitType| undefined)[]) => {
   try {
-    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
-    const docSnap = await getDoc(DallantSettingRef);
+    const dallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(dallantSettingRef);
 
     if (docSnap.exists()) {
       if (docSnap.data().isActivity) {
@@ -316,7 +330,7 @@ export const getUserDallant = async (userId: string) => {
           const userData = userDoc.data();
 
           const historyRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY);
-          const historyQuery = query(historyRef, orderBy("createdTimestamp", "asc"))
+          const historyQuery = query(historyRef, orderBy("createdTimestamp", "desc"))
           const historyQuerySnapshot = await getDocs(historyQuery)
 
           const historyData = !historyQuerySnapshot.empty
@@ -357,45 +371,5 @@ export const getUserDallant = async (userId: string) => {
     console.log("@getCellDallents Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
     return null
-  }
-}
-
-
-export const updateTotalAmount = async () => {
-  try {
-    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
-    const docSnap = await getDoc(DallantSettingRef);
-
-    if (docSnap.exists()) {
-      if (docSnap.data().isActivity) {
-        const seasonName = docSnap.data().currentSeasonName
-
-        const accountRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS);
-        const accountQuerySnapshot = await getDocs(accountRef);
-
-        if (!accountQuerySnapshot.empty) {
-          for (const account of accountQuerySnapshot.docs) {
-
-            const historyRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, account.id, DALLANTS_COLLCTION.HISTORY);
-            const historyQuerySnapshot = await getDocs(historyRef)
-
-            if (!historyQuerySnapshot.empty) {
-              for (const singleHistory of historyQuerySnapshot.docs) {
-                const singleRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, account.id, DALLANTS_COLLCTION.HISTORY, singleHistory.id)
-                await updateDoc(singleRef, {
-                  totalAmount: account.data().totalAmount,
-                  createdTimestamp: serverTimestamp(),
-                })
-              }
-            } 
-          }
-
-        }
-      }
-    }
-    
-  } catch (error: any) {
-    console.log("@getCellDallents Error: ", error);
-    return null;
   }
 }

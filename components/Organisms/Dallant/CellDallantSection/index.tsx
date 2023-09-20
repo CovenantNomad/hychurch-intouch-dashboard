@@ -6,6 +6,7 @@ import { CommunityFilter } from '../../../../stores/cellState';
 //components
 import CellDallantList from '../CellDallantList';
 import CellDallantListItem from '../CellDallantListItem';
+import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 
 
 interface CellDallantSectionProps {}
@@ -30,7 +31,7 @@ const CellDallantSection = ({}: CellDallantSectionProps) => {
           </div>
         ) : (
           <div>
-            {cellDallants && (
+            {cellDallants ? (
               <div className='grid grid-cols-4 gap-x-4 mt-4'>
                 <CellDallantList cellName='길' bgColor='bg-[#FF808B]/30' titleColor='text-rose-500'>
                   {cellDallants
@@ -100,6 +101,10 @@ const CellDallantSection = ({}: CellDallantSectionProps) => {
                       />
                     ))}
                 </CellDallantList>
+              </div>
+            ) : (
+              <div className='py-8'>
+                <EmptyStateSimple />
               </div>
             )}
           </div>

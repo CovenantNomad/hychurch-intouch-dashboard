@@ -82,7 +82,6 @@ const CellAccordionItem = ({ communityName, cell, control, watch, errors }: Cell
                   <Controller
                     name={`${user.id}.description`} // 내역 필드
                     control={control}
-                    defaultValue=""
                     rules={{
                       required: {
                         value: watch(`${user.id}.amount`) !== "" && watch(`${user.id}.amount`) !== undefined,
@@ -97,22 +96,31 @@ const CellAccordionItem = ({ communityName, cell, control, watch, errors }: Cell
                       />
                     )}
                   />
-                  {errors[`${user.id}`] && <p className='text-sm text-red-600 pl-2 mt-1'>내역을 입력해주세요</p>}
+                  {errors[`${user.id}`]?.description && <p className='text-sm text-red-600 pl-2 mt-1'>내역을 입력해주세요</p>}
                 </div>
                 <div className="flex-[1]">
                   <div className="relative rounded-md shadow-sm">
                     <Controller
-                      name={`${user.id}.amount`}
+                      name={`${user.id}.amount`} // 금액 필드
                       control={control}
                       render={({ field }) => (
                         <input
                           {...field}
-                          type="number"
-                          min={0}
+                          type="text"
                           placeholder="금액"
                           className="block w-full rounded-md border-0 py-1.5 pl-2 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       )}
+                      rules={{
+                        min: {
+                          value: 1,
+                          message: "1 이상의 값을 입력하세요"
+                        },
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "숫자만 입력해주세요"
+                        }
+                      }}
                     />
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                       <span className="text-gray-500 text-sm" id="price-currency">
@@ -120,6 +128,11 @@ const CellAccordionItem = ({ communityName, cell, control, watch, errors }: Cell
                       </span>
                     </div>
                   </div>
+                  {errors[`${user.id}`]?.amount && (
+                    <p className='text-sm text-red-600 pl-2 mt-1'>
+                      {parseInt(watch(`${user.id}.amount`), 10) === 0  ? "0이상 입력" : "숫자만 입력"}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

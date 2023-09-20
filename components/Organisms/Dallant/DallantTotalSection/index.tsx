@@ -41,7 +41,7 @@ const DallantTotalSection = ({}: DallantTotalSectionProps) => {
               </div>
               <div className='col-span-1 flex flex-col items-center justify-center'>
                 <p className='text-small'>현재 참여인원</p>
-                <p className='text-5xl font-bold text-gray-900 py-3'>{data.participants}명 🏃</p>
+                <p className='text-5xl font-bold text-gray-900 py-3'>{data.participants || 0}명 🏃</p>
               </div>
             </div>
           ) : (

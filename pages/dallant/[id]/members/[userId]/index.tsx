@@ -1,9 +1,10 @@
 import React from 'react';
-import Layout from '../../../../components/Layout/Layout';
 import Head from 'next/head';
-import PageLayout from '../../../../components/Layout/PageLayout';
-import SectionContainer from '../../../../components/Atoms/Container/SectionContainer';
-import UserDallant from '../../../../components/Templates/Dallant/UserDallant/UserDallant';
+import Layout from '../../../../../components/Layout/Layout';
+import PageLayout from '../../../../../components/Layout/PageLayout';
+import SectionContainer from '../../../../../components/Atoms/Container/SectionContainer';
+import UserDallant from '../../../../../components/Templates/Dallant/UserDallant/UserDallant';
+
 
 interface DallantPaymentPageProps {}
 
