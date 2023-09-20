@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast";
 import { db } from "../../client/firebaseConfig";
-import { addDoc, collection, doc, getDoc, getDocs, runTransaction, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, runTransaction, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { DALLANTS_COLLCTION } from '../../interface/firebase';
 import { DallantOthersListType, DallantOthersSubmitType, DallantRegisterOthersType } from "../../interface/Dallants";
 
@@ -81,8 +81,10 @@ export const createOthersTransaction = async (submitData: (DallantOthersSubmitTy
                 transaction.update(individualRef, { totalAmount: updatedAmount })
                 await addDoc(collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, data.userId, DALLANTS_COLLCTION.HISTORY), {
                   createdAt: data.createdAt,
+                  createdTimestamp: serverTimestamp(),
                   description: data.description,
-                  amount: data.amount
+                  amount: data.amount,
+                  totalAmount: updatedAmount
                 });
               } else {
                 // 신규 생성
@@ -96,8 +98,10 @@ export const createOthersTransaction = async (submitData: (DallantOthersSubmitTy
                 // 내역 추가하기
                 await addDoc(collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, data.userId, DALLANTS_COLLCTION.HISTORY), {
                   createdAt: data.createdAt,
+                  createdTimestamp: serverTimestamp(),
                   description: data.description,
-                  amount: data.amount
+                  amount: data.amount,
+                  totalAmount: data.amount,
                 });
               }
             })

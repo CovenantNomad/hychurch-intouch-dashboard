@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { DallantHistoryType, UserDallantType } from '../../../../interface/Dallants';
 import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 import Pagination from '../../../Blocks/Pagination/Pagination';
+import dayjs from 'dayjs';
+import { convertSecondToDate, getTodayString } from '../../../../utils/dateUtils';
 
 interface UserDallantHistoryProps {
   isLoading: boolean;
@@ -19,6 +21,8 @@ const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryP
   const [ pageSize, setPageSize ] = useState(10)
   const [ currentPage, setCurrentPage ] = useState(1)
   const offset = (currentPage - 1) * pageSize
+
+  console.log(data)
 
   return (
     <>
@@ -52,8 +56,13 @@ const UserDallantHistory = ({ isLoading, isFetching, data }: UserDallantHistoryP
                           <strong>{transaction.totalAmount} D</strong>
                         </div>
                       </div>
-                      <div className='flex justify-end pt-1'>
-                        <strong className='text-sm text-blue-500'>{transaction.amount} D 적립</strong>
+                      <div className='flex justify-between items-center mt-[1px]'>
+                        <div className='text-xs text-blue-500'>
+                          {convertSecondToDate(transaction.createdTimestamp.seconds).format('YYYY.MM.DD HH:mm:ss')}
+                        </div>
+                        <div>
+                          <strong className='text-sm text-blue-500'>{transaction.amount} D 적립</strong>
+                        </div>
                       </div>
                     </div>
                   </li>

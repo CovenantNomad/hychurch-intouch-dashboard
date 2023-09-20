@@ -24,7 +24,8 @@ const OthersDallantPayment = ({}: OthersDallantPaymentProps) => {
 
   const { mutateAsync } = useMutation(createOthersTransaction, {
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['getOthersDallents']})
+      queryClient.invalidateQueries(['getOthersDallents'])
+      queryClient.invalidateQueries(['getUserDallant'])
     }
   })
 
