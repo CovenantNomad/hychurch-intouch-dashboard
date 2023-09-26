@@ -1,7 +1,7 @@
 import { DALLANTS_COLLCTION } from './../../interface/firebase';
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, runTransaction, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, runTransaction, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "../../client/firebaseConfig";
-import { DallantsSettingType, DallantSubmitType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, CreateSeasonSubmitDate } from "../../interface/Dallants";
+import { DallantsSettingType, DallantSubmitType, DallantCellType, OverallStaticDataType, DallantCellDetailType, CellStaticDataType, UserDallantType, CreateSeasonSubmitDate, DallantHistoryType, UpdateUserHistroyType, DeleteUserHistroyType, DeleteCellMemberType } from "../../interface/Dallants";
 import { toast } from "react-hot-toast";
 
 export const getDallentSetting = async () => {
@@ -371,5 +371,221 @@ export const getUserDallant = async (userId: string) => {
     console.log("@getCellDallents Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
     return null
+  }
+}
+
+export const getUserHistory = async (userId: string, docId: string) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const historyRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY, docId);
+        const histroyDoc = await getDoc(historyRef);
+
+        if (histroyDoc.exists()) {
+
+          const historyData: DallantHistoryType = {
+            docId: histroyDoc.id,
+            description: histroyDoc.data().description,
+            amount: histroyDoc.data().amount,
+            createdAt: histroyDoc.data().createdAt,
+            createdTimestamp: histroyDoc.data().createdTimestamp,
+            totalAmount: histroyDoc.data().totalAmount
+          };
+
+          return historyData;
+
+        } else {
+          return null
+        }
+      }
+    } 
+
+    return null
+    
+  } catch (error: any) {
+    console.log("@getUserHistory Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+    return null
+  }
+}
+
+export const updateUserHistory = async ({ cellId, userId, docId, description, amount, onlyDescriptionUpdate }: UpdateUserHistroyType) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const historyRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY, docId);
+        const histroyDoc = await getDoc(historyRef);
+
+        if (histroyDoc.exists()) {
+
+          if (onlyDescriptionUpdate) {
+            updateDoc(historyRef, {
+              description
+            })
+          } else {
+            const difference = amount - histroyDoc.data().amount
+
+            // 해당 적립 내용 업데이트
+            await updateDoc(historyRef, {
+              description,
+              amount,
+              totalAmount: histroyDoc.data().totalAmount + difference,
+            })
+
+            // 개인 총액 업데이트
+            const accountRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId);
+            const accountDoc = await getDoc(accountRef);
+
+            if (accountDoc.exists()) {
+              await updateDoc(accountRef, {
+                totalAmount: accountDoc.data().totalAmount + difference,
+              })
+            } else {
+              toast.error(`해당 청년의 달란트 통장이 없습니다`)
+            }
+
+            // 셀멤버에서 총액 업데이트
+            const cellMemberRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cellId, DALLANTS_COLLCTION.MEMBERS, userId);
+            const cellMemberDoc = await getDoc(cellMemberRef);
+
+            if (cellMemberDoc.exists()) {
+              await updateDoc(cellMemberRef, {
+                totalAmount: cellMemberDoc.data().totalAmount + difference,
+              })
+            }
+
+            // 해당 날짜 이후 모든 히스토리 업데이트
+            const allHistoryRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY);
+            const historyQuery = query(allHistoryRef, where("createdTimestamp", ">", histroyDoc.data().createdTimestamp))
+            const historyQuerySnapshot = await getDocs(historyQuery)
+
+            if (!historyQuerySnapshot.empty) {
+              for (const doc of historyQuerySnapshot.docs) {
+                await updateDoc(doc.ref, {
+                  totalAmount: doc.data().totalAmount + difference,
+                });
+              }
+            } 
+          }
+
+          toast.success(`업데이트 성공했습니다`)
+
+        } else {
+          console.log("해당 달란트를 적립한 내역이 없습니다")
+          toast.error(`해당 달란트를 적립한 내역이 없습니다`)
+        }
+      }
+    } 
+    
+  } catch (error: any) {
+    console.log("@updateUserHistory Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+export const deleteUserHistory = async ({ cellId, userId, docId }: DeleteUserHistroyType) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const historyRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY, docId);
+        const histroyDoc = await getDoc(historyRef);
+
+        if (histroyDoc.exists()) {
+          const difference = histroyDoc.data().amount
+
+          // 개인 총액 업데이트
+          const accountRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId);
+          const accountDoc = await getDoc(accountRef);
+
+          if (accountDoc.exists()) {
+            await updateDoc(accountRef, {
+              totalAmount: accountDoc.data().totalAmount - difference,
+            })
+          } else {
+            toast.error(`해당 청년의 달란트 통장이 없습니다`)
+          }
+
+          // 셀멤버에서 총액 업데이트
+          const cellMemberRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cellId, DALLANTS_COLLCTION.MEMBERS, userId);
+          const cellMemberDoc = await getDoc(cellMemberRef);
+
+          if (cellMemberDoc.exists()) {
+            await updateDoc(cellMemberRef, {
+              totalAmount: cellMemberDoc.data().totalAmount - difference,
+            })
+          }
+
+          // 해당 날짜 이후 모든 히스토리 업데이트
+          const allHistoryRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ACCOUNTS, userId, DALLANTS_COLLCTION.HISTORY);
+          const historyQuery = query(allHistoryRef, where("createdTimestamp", ">", histroyDoc.data().createdTimestamp))
+          const historyQuerySnapshot = await getDocs(historyQuery)
+
+          if (!historyQuerySnapshot.empty) {
+            for (const doc of historyQuerySnapshot.docs) {
+              await updateDoc(doc.ref, {
+                totalAmount: doc.data().totalAmount - difference,
+              });
+            }
+          } 
+
+          await deleteDoc(historyRef)
+
+          toast.success('해당 적립내역을 삭제했습니다')
+
+        } else {
+          toast.error('해당 적립내역을 찾을 수 없습니다')
+        }
+      }
+    } 
+
+    
+  } catch (error: any) {
+    console.log("@deleteUserHistory Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+export const deleteCellMember = async ({cellId, userId}: DeleteCellMemberType) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const cellMemberRef = doc(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.CELLS, cellId, DALLANTS_COLLCTION.MEMBERS, userId);
+        const cellMemberDoc = await getDoc(cellMemberRef);
+
+        if (cellMemberDoc.exists()) {
+          await deleteDoc(cellMemberRef)
+
+          toast.success('해당 청년을 셀에서 제외 하였습니다')
+
+        } else {
+          toast.error('해당 청년에 대한 데이터를 찾을 수 없습니다')
+        }
+      }
+    } 
+
+    
+  } catch (error: any) {
+    console.log("@deleteCellMember Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
   }
 }

@@ -180,3 +180,23 @@ export interface DallantHistoryType {
 export interface UserDallantType extends DallantAccountType {
   history: DallantHistoryType[]
 }
+
+export interface UpdateUserHistroyType {
+  cellId: string;
+  userId: string;
+  docId: string;
+  description: string;
+  amount: number;
+  onlyDescriptionUpdate: boolean;
+}
+
+export interface DeleteUserHistroyType {
+  cellId: string;
+  userId: string;
+  docId: string;
+}
+
+export interface DeleteCellMemberType {
+  cellId: string;
+  userId: string;
+}
