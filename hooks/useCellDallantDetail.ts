@@ -3,12 +3,13 @@ import { useQuery } from "react-query";
 import { getCellDallantDetail } from "../firebase/Dallant/Dallant";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 import { FindCellQuery, FindCellQueryVariables, useFindCellQuery } from "../graphql/generated";
-import { CombinedCellDallantType } from "../interface/Dallants";
+import { CombinedCellDallantType, DallantMemberType } from "../interface/Dallants";
 import toast from "react-hot-toast";
 
 const useCellDallantDetail = ( cellId : string) => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ cellDallant, setCellsDallant ] = useState<CombinedCellDallantType | null>()
+  const [ transferMember, setTransferMember ] = useState<DallantMemberType[] | null>(null)
   const { isLoading: isCellLoading, isFetching: isCellFetching, data: cellData } = useFindCellQuery<
     FindCellQuery,
     FindCellQueryVariables
@@ -56,6 +57,14 @@ const useCellDallantDetail = ( cellId : string) => {
               members: combinedMembers,
               totalAmount: dallantData.totalAmount
             })
+
+            const membersNotInCell = dallantData.members.filter((dallantMember) => {
+              return !cellData.findCell.members.some((cellMember) => dallantMember.userId === cellMember.id);
+            });
+
+            setTransferMember(membersNotInCell)
+
+
           } else {
             setCellsDallant(null)
           }
@@ -78,7 +87,8 @@ const useCellDallantDetail = ( cellId : string) => {
 
   return {
     isLoading,
-    cellDallant
+    cellDallant,
+    transferMember
   }
 }
 

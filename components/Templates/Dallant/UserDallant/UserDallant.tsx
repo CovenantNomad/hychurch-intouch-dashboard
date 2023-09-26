@@ -27,7 +27,7 @@ const UserDallant = ({}: UserDallantProps) => {
   )
 
   useEffect(() => {
-    if (router.query.id) {
+    if (router.query.userId) {
       if (typeof router.query.userId === 'string'){
         setUserId(router.query.userId)
       } else if (Array.isArray(router.query.userId)) {

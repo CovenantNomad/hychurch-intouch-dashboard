@@ -9,6 +9,7 @@ import CellDallantDetailHeader from '../../../Organisms/Dallant/CellDallantDetai
 import CellDallantDetailTotal from '../../../Organisms/Dallant/CellDallantDetailTotal';
 import PrintModal from '../../../Blocks/Modals/PrintModal';
 import CellDallantDetailMembers from '../../../Organisms/Dallant/CellDallantDetailMembers';
+import CellDallantTransferMember from '../../../Organisms/Dallant/CellDallantTransferMember/CellDallantTransferMember';
 
 
 interface CellDetailSectionProps {}
@@ -18,7 +19,7 @@ const CellDetailSection = ({}: CellDetailSectionProps) => {
   const [ open, setOpen ] = useState(false)
   const [ cellId, setCellId ] = useState<string>("")
 
-  const { isLoading, cellDallant } = useCellDallantDetail(cellId)
+  const { isLoading, cellDallant, transferMember } = useCellDallantDetail(cellId)
 
   useEffect(() => {
     if (router.query.id) {
@@ -52,6 +53,13 @@ const CellDetailSection = ({}: CellDetailSectionProps) => {
         <CellDallantDetailMembers 
           isLoading={isLoading}
           cellDallant={cellDallant}
+        />
+      </BlockContainer>
+      <BlockContainer>
+        <CellDallantTransferMember 
+          isLoading={isLoading}
+          cellId={cellId}
+          transferMember={transferMember}
         />
       </BlockContainer>
       <PrintModal open={open} setOpen={setOpen} cellDallant={cellDallant}/>
