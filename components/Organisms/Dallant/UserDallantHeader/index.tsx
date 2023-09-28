@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ArrowLeftIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import Tooltips from '../../../Atoms/Tooltips/Tooltips';
 
 interface UserDallantHeaderProps {
   userName: string;
