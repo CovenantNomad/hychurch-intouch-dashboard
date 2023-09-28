@@ -200,3 +200,11 @@ export interface DeleteCellMemberType {
   cellId: string;
   userId: string;
 }
+
+// 통계
+export interface DallantCellStaticType {
+  cellId: string;
+  cellName: string;
+  totalAmount: number;
+  participants: number;
+}
