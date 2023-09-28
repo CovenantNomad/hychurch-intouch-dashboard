@@ -50,6 +50,7 @@ const CellDallantRank = ({ isLoading, isFetching, data }: CellScatterProps) => {
       },
     },
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false
