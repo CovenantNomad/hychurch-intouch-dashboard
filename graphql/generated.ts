@@ -1,6 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
 import { RequestInit } from 'graphql-request/dist/types.dom';
-import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from 'react-query';
+import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from 'react-query';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -18,6 +18,24 @@ export type Scalars = {
   Int: number;
   Float: number;
 };
+
+/** 출석체크 */
+export type AttendanceCheck = {
+  __typename?: 'AttendanceCheck';
+  /** 예배 출석일 (yyyy-MM-dd) */
+  attendanceDate: Scalars['String'];
+  /** 출석체크 식별자 */
+  id: Scalars['ID'];
+  /** 출석체크 상태 */
+  status: AttendanceCheckStatus;
+};
+
+export enum AttendanceCheckStatus {
+  /** 출석체크 완료(마감) */
+  Completed = 'COMPLETED',
+  /** 진행중 */
+  InProgress = 'IN_PROGRESS'
+}
 
 export type BetweenFilter = {
   max: Scalars['String'];
@@ -65,6 +83,18 @@ export type CellAttendance = {
   submitStatus: CellLeaderAttendanceSubmissionStatus;
 };
 
+/** 셀 출석체크 제출 현황 데이터. 마감 여부에 따라 셀 또는 셀 스냅샷 정보가 조회됩니다. */
+export type CellAttendanceCheckSubmission = {
+  __typename?: 'CellAttendanceCheckSubmission';
+  /** 공동체 */
+  cellCommunity: Scalars['String'];
+  /** 셀 아이디 */
+  cellId: Scalars['ID'];
+  /** 셀 이름 */
+  cellName: Scalars['String'];
+  submissionStatus: CellLeaderAttendanceSubmissionStatus;
+};
+
 export type CellAttendanceCompleted = CellAttendance & {
   __typename?: 'CellAttendanceCompleted';
   submitStatus: CellLeaderAttendanceSubmissionStatus;
@@ -104,6 +134,16 @@ export type ChurchService = {
   name: Scalars['String'];
   /** 예배 시작 시간 (8:00, 9:30, 11:30, 14:15 등) */
   startAt: Scalars['String'];
+};
+
+export type CompleteAttendanceCheckInput = {
+  /** 셀원 예배 출석일자(yyyy-MM-dd). 예) 2022년 5월 29일 예배에 대한 제출이면 2022-05-29 로 입력 */
+  attendanceDate: Scalars['String'];
+};
+
+export type CompleteAttendanceCheckPayload = {
+  __typename?: 'CompleteAttendanceCheckPayload';
+  attendanceCheck: AttendanceCheck;
 };
 
 export type CreateBarnabaMentorInput = {
@@ -198,6 +238,8 @@ export type LoginPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** 출석체크 마감 */
+  completeAttendanceCheck: CompleteAttendanceCheckPayload;
   createBarnabaMentor: CreateBarnabaMentorPayload;
   createCell: CreateCellPayload;
   /** 셀원 이동 신청 (단건) */
@@ -215,6 +257,11 @@ export type Mutation = {
   /** 사용자 정보를 업데이트 합니다. */
   updateUser: UpdateUserPayload;
   updateUserCellTransfer: UpdateUserCellTransferPayload;
+};
+
+
+export type MutationCompleteAttendanceCheckArgs = {
+  input: CompleteAttendanceCheckInput;
 };
 
 
@@ -284,6 +331,8 @@ export type MutationUpdateUserCellTransferArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  /** 셀별 출석체크 제출 현황 조회 */
+  cellAttendanceCheckSubmissions: Array<CellAttendanceCheckSubmission>;
   /** 셀 단건 조회 */
   findCell: Cell;
   /** 셀 전체 조회 */
@@ -293,11 +342,17 @@ export type Query = {
   findUsers: FindUsersPayload;
   /** 로그인한 사용자의 정보를 조회합니다. */
   me: User;
+  /** 셀 리더의 셀원 출석 체크 제출 정보를 조회합니다. */
   myCellAttendance: CellAttendance;
   /** 셀원 조회. 셀장만 셀원 조회가 가능합니다. */
   myCellMembers?: Maybe<Array<User>>;
   /** 사용자 정보를 조회합니다. */
   user: User;
+};
+
+
+export type QueryCellAttendanceCheckSubmissionsArgs = {
+  attendanceDate: Scalars['String'];
 };
 
 
@@ -577,6 +632,20 @@ export type UserChurchServiceHistoryInput = {
   userName: Scalars['String'];
 };
 
+export type CheckCellAttendanceSubmissionsQueryVariables = Exact<{
+  attendanceDate: Scalars['String'];
+}>;
+
+
+export type CheckCellAttendanceSubmissionsQuery = { __typename?: 'Query', cellAttendanceCheckSubmissions: Array<{ __typename?: 'CellAttendanceCheckSubmission', cellId: string, cellName: string, cellCommunity: string, submissionStatus: CellLeaderAttendanceSubmissionStatus }> };
+
+export type CompleteAttendanceCheckMutationVariables = Exact<{
+  input: CompleteAttendanceCheckInput;
+}>;
+
+
+export type CompleteAttendanceCheckMutation = { __typename?: 'Mutation', completeAttendanceCheck: { __typename?: 'CompleteAttendanceCheckPayload', attendanceCheck: { __typename?: 'AttendanceCheck', id: string, attendanceDate: string, status: AttendanceCheckStatus } } };
+
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
@@ -773,6 +842,60 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
 
+
+export const CheckCellAttendanceSubmissionsDocument = `
+    query checkCellAttendanceSubmissions($attendanceDate: String!) {
+  cellAttendanceCheckSubmissions(attendanceDate: $attendanceDate) {
+    cellId
+    cellName
+    cellCommunity
+    submissionStatus
+  }
+}
+    `;
+export const useCheckCellAttendanceSubmissionsQuery = <
+      TData = CheckCellAttendanceSubmissionsQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: CheckCellAttendanceSubmissionsQueryVariables,
+      options?: UseQueryOptions<CheckCellAttendanceSubmissionsQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<CheckCellAttendanceSubmissionsQuery, TError, TData>(
+      ['checkCellAttendanceSubmissions', variables],
+      fetcher<CheckCellAttendanceSubmissionsQuery, CheckCellAttendanceSubmissionsQueryVariables>(client, CheckCellAttendanceSubmissionsDocument, variables, headers),
+      options
+    );
+
+useCheckCellAttendanceSubmissionsQuery.getKey = (variables: CheckCellAttendanceSubmissionsQueryVariables) => ['checkCellAttendanceSubmissions', variables];
+;
+
+export const CompleteAttendanceCheckDocument = `
+    mutation completeAttendanceCheck($input: CompleteAttendanceCheckInput!) {
+  completeAttendanceCheck(input: $input) {
+    attendanceCheck {
+      id
+      attendanceDate
+      status
+    }
+  }
+}
+    `;
+export const useCompleteAttendanceCheckMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<CompleteAttendanceCheckMutation, TError, CompleteAttendanceCheckMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<CompleteAttendanceCheckMutation, TError, CompleteAttendanceCheckMutationVariables, TContext>(
+      ['completeAttendanceCheck'],
+      (variables?: CompleteAttendanceCheckMutationVariables) => fetcher<CompleteAttendanceCheckMutation, CompleteAttendanceCheckMutationVariables>(client, CompleteAttendanceCheckDocument, variables, headers)(),
+      options
+    );
+useCompleteAttendanceCheckMutation.getKey = () => ['completeAttendanceCheck'];
 
 export const LoginDocument = `
     mutation login($input: LoginInput!) {
