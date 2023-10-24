@@ -9,4 +9,7 @@ export enum DALLANTS_COLLCTION {
   OVERALL = 'Overall',
   CELLSTATISTIC = 'CellStatistic',
   SETTINGS = 'Settings',
+  RESTAURANTS = 'Restaurants',
+  MENUS = 'Menus',
+  ORDERED = 'Orederd',
 }

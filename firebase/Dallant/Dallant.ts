@@ -23,6 +23,7 @@ export const createDallentSeason = async ({ name, startDate }: CreateSeasonSubmi
 
     await updateDoc(dallantSettingRef, {
       isActivity: true,
+      isCellDayOpen: false,
       currentSeasonName: name
     });
 

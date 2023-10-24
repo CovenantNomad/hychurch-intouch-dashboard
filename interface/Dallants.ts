@@ -3,6 +3,7 @@ import { RoleType } from "../graphql/generated";
 
 export interface DallantsSettingType {
   isActivity: boolean;
+  isCellDayOpen: boolean;
   currentSeasonName: string;
 }
 
@@ -207,4 +208,72 @@ export interface DallantCellStaticType {
   cellName: string;
   totalAmount: number;
   participants: number;
+}
+
+
+// 셀모임의 날
+export interface RestaurantFormType {
+  restaurantName: string;
+}
+
+export interface MenuType {
+  menuId: string;
+  menuName: string;
+  menuDescription?: string;
+  menuPrice: string;
+  menuImageUrl: string;
+}
+
+export interface CreateMenuFormType {
+  menuName: string;
+  menuDescription?: string;
+  menuPrice: string;
+}
+
+export interface CreateMenuType {
+  restaurantId: string;
+  menuName: string;
+  menuDescription: string;
+  menuPrice: string;
+  menuImageUrl: string;
+}
+
+export interface UpdateMenuType {
+  restaurantId: string;
+  menuId: string;
+  menuName?: string;
+  menuDescription?: string;
+  menuPrice?: string;
+  menuImageUrl?: string;
+}
+
+export interface DeleteMenuType {
+  restaurantId: string;
+  menuId: string;
+}
+
+export interface RestaurantType {
+  restaurantId: string;
+  restaurantName: string;
+  ordered: string;
+  menu: MenuType[];
+}
+
+export interface CartItemsType {
+  menu: MenuType;
+  amount: string;
+  price: string;
+}
+
+export interface CartType {
+  cellId: string;
+  totalAmount: string;
+  cartItems: CartItemsType[]
+}
+
+export interface OrderType {
+  cellId: string;
+  menuId: string;
+  amount: string;
+  price: string;
 }

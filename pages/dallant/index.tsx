@@ -19,6 +19,8 @@ import Spinner from "../../components/Atoms/Spinner";
 import SeasonOffSection from "../../components/Organisms/Dallant/Settings/SeasonOffSection";
 import BlockContainer from "../../components/Atoms/Container/BlockContainer";
 import CreateSeason from "../../components/Organisms/Dallant/Settings/CreateSeason";
+import CellDay from "../../components/Templates/Dallant/CellDay";
+import CellDayOrder from "../../components/Templates/Dallant/CellDayOrder";
 
 
 const TalentPage: NextPage = () => {
@@ -51,6 +53,16 @@ const TalentPage: NextPage = () => {
     },
     {
       id: 2,
+      name: "셀모임의 날",
+      component: <CellDay />,
+    },
+    {
+      id: 3,
+      name: "셀모임의 날 - 주문현황",
+      component: <CellDayOrder />,
+    },
+    {
+      id: 4,
       name: "달란트 세팅",
       component: <DallantSetting initialSetting={initialSetting} isSettingLoading={isSettingLoading} />,
     },
