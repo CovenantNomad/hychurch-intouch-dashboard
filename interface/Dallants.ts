@@ -1,6 +1,11 @@
 import { Timestamp } from "firebase/firestore";
 import { RoleType } from "../graphql/generated";
 
+export enum OrderStatus {
+  NOT_SUBMITTED = 'NOT_SUBMITTED',
+  COMPLETE = 'COMPLETE',
+}
+
 export interface DallantsSettingType {
   isActivity: boolean;
   isCellDayOpen: boolean;
@@ -259,21 +264,29 @@ export interface RestaurantType {
   menu: MenuType[];
 }
 
-export interface CartItemsType {
-  menu: MenuType;
-  amount: string;
-  price: string;
+export interface CartItemType {
+  orderedMenuItem: MenuType
+  itemQuantity: string
+  itemPrice: string
 }
 
 export interface CartType {
-  cellId: string;
-  totalAmount: string;
-  cartItems: CartItemsType[]
+  cartItems: CartItemType[]
+  cartItemCount: string
+  totalPrice: string
 }
 
-export interface OrderType {
-  cellId: string;
-  menuId: string;
-  amount: string;
-  price: string;
+export interface OrderStateMentType {
+  cellId: string
+  orderStatus: OrderStatus
+  orderNumber?: string
+  orderDocument?: CartType
+  orderTime?: Timestamp
 }
+
+export interface OrderStockType {
+  menuId: string
+  menuName: string
+  orderUnits: number
+}
+

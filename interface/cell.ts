@@ -161,3 +161,9 @@ export interface MinimumCellType {
   id: string;
   name: string;
 }
+
+export interface CommunityType {
+  id: string;
+  communityName: string;
+  cellList: CellListType[] | null
+}

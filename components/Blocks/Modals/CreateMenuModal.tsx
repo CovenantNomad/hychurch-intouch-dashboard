@@ -2,7 +2,7 @@ import React, { Dispatch, Fragment, SetStateAction, useCallback, useState } from
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { createMenu, createRestaurants, uploadMenuImage } from "../../../firebase/Dallant/CellDay";
+import { createMenu, uploadMenuImage } from "../../../firebase/Dallant/CellDay";
 import { CreateMenuFormType } from "../../../interface/Dallants";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { useDropzone } from "react-dropzone";

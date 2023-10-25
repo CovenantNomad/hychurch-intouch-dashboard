@@ -1,9 +1,9 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../client/firebaseConfig";
 import { DALLANTS_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
-import { CreateMenuType, DeleteMenuType, MenuType, RestaurantFormType, RestaurantType, UpdateMenuType } from "../../interface/Dallants";
+import { CartItemType, CreateMenuType, DeleteMenuType, MenuType, OrderStateMentType, OrderStatus, OrderStockType, RestaurantFormType, RestaurantType, UpdateMenuType } from "../../interface/Dallants";
 
 
 export const createRestaurants = async ({ restaurantName }: RestaurantFormType) => {
@@ -223,6 +223,112 @@ export const openingCellDay = async ( openState: boolean ) => {
 
   } catch (error: any) {
     console.log("@openingCellDay Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+
+export const getOrders = async () => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        let orderList: OrderStateMentType[] = []
+
+        const orderRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ORDER);
+        const querySanpshot = await getDocs(orderRef);
+
+        if (!querySanpshot.empty) {
+          querySanpshot.forEach((doc) => {
+            orderList.push(doc.data() as OrderStateMentType)
+          })
+        }
+          
+        return orderList
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getOthersList Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+export const getOrderById = async (cellId: string) => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        const orderRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ORDER);
+        const cellOrder = query(orderRef, where('cellId', '==', cellId))
+
+        const cellOrderQuerySnapshot = await getDocs(cellOrder)
+
+        if (cellOrderQuerySnapshot.empty) {
+          return {
+            cellId: cellId,
+            orderStatus: OrderStatus.NOT_SUBMITTED,
+          }
+
+        } else {
+          let tempList: OrderStateMentType[] = []
+          cellOrderQuerySnapshot.docs.map((doc) => {
+            tempList.push({
+              cellId: doc.data().cellId,
+              orderStatus: doc.data().orderStatus,
+              orderNumber: doc.data().orderNumber,
+              orderDocument: doc.data().orderDocument,
+              orderTime: doc.data().orderTime,
+            })
+          })
+
+          return tempList[0]
+        }
+
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getOrderById Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+  }
+}
+
+
+export const getOrderStock = async () => {
+  try {
+    const DallantSettingRef = doc(db, DALLANTS_COLLCTION.DALLENTS, DALLANTS_COLLCTION.SETTINGS);
+    const docSnap = await getDoc(DallantSettingRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isActivity) {
+        const seasonName = docSnap.data().currentSeasonName
+
+        let orderStockList: OrderStockType[] = []
+
+        const orderStockRef = collection(db, DALLANTS_COLLCTION.DALLENTS, seasonName, DALLANTS_COLLCTION.ORDERSTOCK);
+        const querySanpshot = await getDocs(orderStockRef);
+
+        if (!querySanpshot.empty) {
+          querySanpshot.forEach((doc) => {
+            orderStockList.push(doc.data() as OrderStockType)
+          })
+        }
+          
+        return orderStockList
+      }
+    }
+    
+  } catch (error: any) {
+    console.log("@getOrderStock Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
   }
 }

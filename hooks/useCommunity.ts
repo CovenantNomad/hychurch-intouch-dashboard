@@ -2,15 +2,10 @@ import { useEffect, useState } from "react"
 import { FindCellListsQuery, FindCellListsQueryVariables, useFindCellListsQuery } from "../graphql/generated";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 //types
-import { CellListType, SpecialCellIdType } from "../interface/cell";
+import { CellListType, CommunityType, SpecialCellIdType } from "../interface/cell";
 import { CommunityFilter } from "../stores/cellState";
 import { FIND_CELL_LIMIT } from "../constants/constant";
 
-interface CommunityType {
-  id: string;
-  communityName: string;
-  cellList: CellListType[] | null
-}
 
 const useCommunity = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)

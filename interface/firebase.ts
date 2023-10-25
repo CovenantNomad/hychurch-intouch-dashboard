@@ -11,5 +11,6 @@ export enum DALLANTS_COLLCTION {
   SETTINGS = 'Settings',
   RESTAURANTS = 'Restaurants',
   MENUS = 'Menus',
-  ORDERED = 'Orederd',
+  ORDER = 'Order',
+  ORDERSTOCK = 'OrderStock',
 }
