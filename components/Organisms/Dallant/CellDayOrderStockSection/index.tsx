@@ -1,24 +1,18 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
-import { getOrderStock } from '../../../../firebase/Dallant/CellDay';
+import React from 'react';
 import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import useOrderStock from '../../../../hooks/useOrderStock';
+import OrderStockListItem from '../../../Blocks/ListItems/CellDay/OrderStockListItem/OrderStockListItem';
 
 interface CellDayOrderStockSectionProps {}
 
 const CellDayOrderStockSection = ({}: CellDayOrderStockSectionProps) => {
-  const { isLoading, isFetching, data } = useQuery(
-    ['getOrderStock'], 
-    getOrderStock, 
-    {
-      staleTime: 5 * 60 * 1000, 
-      cacheTime: 10 * 60 * 1000 
-    }
-  )
+  const { restaurants, isRestaurantsLoading, isRestaurantsFetching, isLoading, combinedData } = useOrderStock()
+
+  console.log(combinedData)
 
   return (
     <div>
-      {isLoading || isFetching ? (
+      {isRestaurantsLoading || isRestaurantsFetching ? (
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
           <div className='animate-pulse w-full h-14 bg-gray-200 rounded-md' />
           <div className='animate-pulse w-full h-14 bg-gray-200 rounded-md' />
@@ -28,23 +22,51 @@ const CellDayOrderStockSection = ({}: CellDayOrderStockSectionProps) => {
         </div>
       ) : (
         <div>
-          {data ? (
-            <>
-              {data.map(item => (
-                <div
-                  key={item.menuId}
-                  className="flex justify-between items-center py-4 px-4 border border-gray-300 rounded-md"
+          {restaurants ? (
+            <div className='grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8'>
+              {restaurants.sort((a, b) => {return Number(a.ordered) - Number(b.ordered)}).map(restaurant => (
+                <div 
+                  key={restaurant.restaurantId}
+                  className='border px-4 py-4'
                 >
-                  <span className="block font-bold">
-                    {item.menuName}
-                  </span>
-                  <div className="flex items-center gap-x-2">
-                    <span className="text-sm">주문수량 : </span>
-                    <span className="text-lg font-bold">{item.orderUnits}개</span>
+                  <h5 className='text-lg font-bold'>{restaurant.restaurantName}</h5>
+                  <div className='mt-4'>
+                    {isLoading ? (
+                      <div className='space-y-3'>
+                        <div className='animate-pulse flex justify-between py-4 px-4 border border-gray-300 rounded-md'>
+                          <div className='w-1/6 h-1.5 bg-gray-200 rounded-md'/>
+                          <div className='w-1/4 h-1.5 bg-gray-200 rounded-md'/>
+                        </div>
+                        <div className='animate-pulse flex justify-between py-4 px-4 border border-gray-300 rounded-md'>
+                          <div className='w-1/6 h-1.5 bg-gray-200 rounded-md'/>
+                          <div className='w-1/4 h-1.5 bg-gray-200 rounded-md'/>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        {combinedData ? (
+                          <div>
+                            {combinedData.filter(item => item.restaurantId === restaurant.restaurantId)[0].orderStock.length !== 0 ? (
+                              <div className='space-y-4'>
+                              {combinedData.filter(item => item.restaurantId === restaurant.restaurantId)[0].orderStock.map((order) => (
+                                <OrderStockListItem key={order.menuId} menuName={order.menuName} orderUnits={order.orderUnits} />
+                              ))}
+                              </div>
+                            ) : (
+                              <EmptyStateSimple />
+                            )}
+                          </div>
+                        ) : (
+                          <div>
+                            <EmptyStateSimple />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
-            </>
+            </div>
           ) : (
             <div>
               <EmptyStateSimple />

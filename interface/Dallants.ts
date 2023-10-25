@@ -222,6 +222,7 @@ export interface RestaurantFormType {
 }
 
 export interface MenuType {
+  restaurantId: string;
   menuId: string;
   menuName: string;
   menuDescription?: string;
@@ -288,5 +289,13 @@ export interface OrderStockType {
   menuId: string
   menuName: string
   orderUnits: number
+  restaurantId: string;
+}
+
+export interface CombinedOrderStockType {
+  restaurantId: string;
+  restaurantName: string;
+  ordered: string;
+  orderStock: OrderStockType[]
 }
 

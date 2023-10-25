@@ -3,7 +3,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../client/firebaseConfig";
 import { DALLANTS_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
-import { CartItemType, CreateMenuType, DeleteMenuType, MenuType, OrderStateMentType, OrderStatus, OrderStockType, RestaurantFormType, RestaurantType, UpdateMenuType } from "../../interface/Dallants";
+import { CreateMenuType, DeleteMenuType, MenuType, OrderStateMentType, OrderStatus, OrderStockType, RestaurantFormType, RestaurantType, UpdateMenuType } from "../../interface/Dallants";
 
 
 export const createRestaurants = async ({ restaurantName }: RestaurantFormType) => {
@@ -66,6 +66,7 @@ export const getRestaurants = async () => {
                   menuDescription: menu.data().menuDescription,
                   menuPrice: menu.data().menuPrice,
                   menuImageUrl: menu.data().menuImageUrl,
+                  restaurantId: menu.data().restaurantId
                 })
               })
               restaurantList.push({
@@ -132,7 +133,8 @@ export const createMenu = async ({ restaurantId, menuName, menuDescription, menu
           menuName,
           menuDescription,
           menuPrice,
-          menuImageUrl
+          menuImageUrl,
+          restaurantId,
         });
 
         toast.success(`메뉴가 추가 되었습니다.`)
