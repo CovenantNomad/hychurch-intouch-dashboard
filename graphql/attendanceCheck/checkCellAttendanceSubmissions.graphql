@@ -1,0 +1,8 @@
+query checkCellAttendanceSubmissions($attendanceDate: String!) {
+  cellAttendanceCheckSubmissions(attendanceDate: $attendanceDate) {
+    cellId
+    cellName
+    cellCommunity
+    submissionStatus
+  }
+}

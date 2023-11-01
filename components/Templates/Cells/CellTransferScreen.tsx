@@ -13,7 +13,6 @@ import { getTodayString } from "../../../utils/dateUtils";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
 import SectionContainer from "../../Atoms/Container/SectionContainer";
 import HorizontalTabs from "../../Atoms/Tabs/HorizontalTabs";
-import VerticalTabs from "../../Atoms/Tabs/VerticalTabs";
 import SectionTitle from "../../Atoms/Typography/SectionTitle";
 import TransferConfirm from "../../Organisms/Cells/CellTransfer/TransferConfirm";
 import TransferHistory from "../../Organisms/Cells/CellTransfer/TransferHistory";

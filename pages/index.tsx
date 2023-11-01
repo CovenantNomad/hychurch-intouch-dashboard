@@ -8,7 +8,6 @@ import { MeDocument, useLoginMutation } from "../graphql/generated";
 import { LoginForm } from "../interface/login";
 import { makeErrorMessage } from "../utils/utils";
 import { GraphQLError } from "graphql";
-import { useQueryClient } from "react-query";
 import { useSetRecoilState } from "recoil";
 import { userState } from "../stores/userState";
 

@@ -1,8 +1,14 @@
 import { Timestamp } from "firebase/firestore";
 import { RoleType } from "../graphql/generated";
 
+export enum OrderStatus {
+  NOT_SUBMITTED = 'NOT_SUBMITTED',
+  COMPLETE = 'COMPLETE',
+}
+
 export interface DallantsSettingType {
   isActivity: boolean;
+  isCellDayOpen: boolean;
   currentSeasonName: string;
 }
 
@@ -208,3 +214,88 @@ export interface DallantCellStaticType {
   totalAmount: number;
   participants: number;
 }
+
+
+// 셀모임의 날
+export interface RestaurantFormType {
+  restaurantName: string;
+}
+
+export interface MenuType {
+  restaurantId: string;
+  menuId: string;
+  menuName: string;
+  menuDescription?: string;
+  menuPrice: string;
+  menuImageUrl: string;
+}
+
+export interface CreateMenuFormType {
+  menuName: string;
+  menuDescription?: string;
+  menuPrice: string;
+}
+
+export interface CreateMenuType {
+  restaurantId: string;
+  menuName: string;
+  menuDescription: string;
+  menuPrice: string;
+  menuImageUrl: string;
+}
+
+export interface UpdateMenuType {
+  restaurantId: string;
+  menuId: string;
+  menuName?: string;
+  menuDescription?: string;
+  menuPrice?: string;
+  menuImageUrl?: string;
+}
+
+export interface DeleteMenuType {
+  restaurantId: string;
+  menuId: string;
+}
+
+export interface RestaurantType {
+  restaurantId: string;
+  restaurantName: string;
+  ordered: string;
+  menu: MenuType[];
+}
+
+export interface CartItemType {
+  orderedMenuItem: MenuType
+  itemQuantity: string
+  itemPrice: string
+}
+
+export interface CartType {
+  cartItems: CartItemType[]
+  cartItemCount: string
+  totalPrice: string
+}
+
+export interface OrderStateMentType {
+  cellId: string
+  orderStatus: OrderStatus
+  orderNumber?: string
+  orderDocument?: CartType
+  orderTime?: Timestamp
+}
+
+export interface OrderStockType {
+  menuId: string
+  menuName: string
+  orderUnits: number
+  restaurantId: string;
+}
+
+export interface CombinedOrderStockType {
+  restaurantId: string;
+  restaurantName: string;
+  ordered: string;
+  orderStock: OrderStockType[]
+}
+

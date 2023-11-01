@@ -1,0 +1,9 @@
+mutation completeAttendanceCheck($input: CompleteAttendanceCheckInput!) {
+  completeAttendanceCheck(input: $input) {
+    attendanceCheck {
+      id
+      attendanceDate
+      status
+    }
+  }
+}
