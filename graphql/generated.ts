@@ -331,6 +331,8 @@ export type MutationUpdateUserCellTransferArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  /** 출석 체크 마감 상태를 조회합니다. */
+  attendanceCheck: AttendanceCheckStatus;
   /** 셀별 출석체크 제출 현황 조회 */
   cellAttendanceCheckSubmissions: Array<CellAttendanceCheckSubmission>;
   /** 셀 단건 조회 */
@@ -348,6 +350,11 @@ export type Query = {
   myCellMembers?: Maybe<Array<User>>;
   /** 사용자 정보를 조회합니다. */
   user: User;
+};
+
+
+export type QueryAttendanceCheckArgs = {
+  attendanceDate: Scalars['String'];
 };
 
 
@@ -576,7 +583,8 @@ export type User = {
 
 /** 사용자(인터치 소속 성도, 간사님, 목사님) */
 export type UserUserChurchServiceHistoriesArgs = {
-  baseDate: Scalars['String'];
+  maxDate: Scalars['String'];
+  minDate: Scalars['String'];
 };
 
 /** 셀원의 셀 이동 신청 내역 */
@@ -631,6 +639,24 @@ export type UserChurchServiceHistoryInput = {
   /** 사용자(셀원) 이름 */
   userName: Scalars['String'];
 };
+
+export type FindCellAttendanceQueryVariables = Exact<{
+  id: Scalars['Float'];
+  minDate: Scalars['String'];
+  maxDate: Scalars['String'];
+}>;
+
+
+export type FindCellAttendanceQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, members: Array<{ __typename?: 'User', id: string, name: string, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> }> } };
+
+export type FindIndividualAttendanceQueryVariables = Exact<{
+  id: Scalars['ID'];
+  minDate: Scalars['String'];
+  maxDate: Scalars['String'];
+}>;
+
+
+export type FindIndividualAttendanceQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', attendedAt: string, isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> } };
 
 export type CheckCellAttendanceSubmissionsQueryVariables = Exact<{
   attendanceDate: Scalars['String'];
@@ -842,6 +868,77 @@ export type UpdateUserMutationVariables = Exact<{
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
 
+
+export const FindCellAttendanceDocument = `
+    query findCellAttendance($id: Float!, $minDate: String!, $maxDate: String!) {
+  findCell(id: $id) {
+    id
+    name
+    members {
+      id
+      name
+      userChurchServiceHistories(minDate: $minDate, maxDate: $maxDate) {
+        isOnline
+        churchService {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export const useFindCellAttendanceQuery = <
+      TData = FindCellAttendanceQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindCellAttendanceQueryVariables,
+      options?: UseQueryOptions<FindCellAttendanceQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindCellAttendanceQuery, TError, TData>(
+      ['findCellAttendance', variables],
+      fetcher<FindCellAttendanceQuery, FindCellAttendanceQueryVariables>(client, FindCellAttendanceDocument, variables, headers),
+      options
+    );
+
+useFindCellAttendanceQuery.getKey = (variables: FindCellAttendanceQueryVariables) => ['findCellAttendance', variables];
+;
+
+export const FindIndividualAttendanceDocument = `
+    query findIndividualAttendance($id: ID!, $minDate: String!, $maxDate: String!) {
+  user(id: $id) {
+    id
+    name
+    userChurchServiceHistories(minDate: $minDate, maxDate: $maxDate) {
+      attendedAt
+      isOnline
+      churchService {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+export const useFindIndividualAttendanceQuery = <
+      TData = FindIndividualAttendanceQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindIndividualAttendanceQueryVariables,
+      options?: UseQueryOptions<FindIndividualAttendanceQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindIndividualAttendanceQuery, TError, TData>(
+      ['findIndividualAttendance', variables],
+      fetcher<FindIndividualAttendanceQuery, FindIndividualAttendanceQueryVariables>(client, FindIndividualAttendanceDocument, variables, headers),
+      options
+    );
+
+useFindIndividualAttendanceQuery.getKey = (variables: FindIndividualAttendanceQueryVariables) => ['findIndividualAttendance', variables];
+;
 
 export const CheckCellAttendanceSubmissionsDocument = `
     query checkCellAttendanceSubmissions($attendanceDate: String!) {

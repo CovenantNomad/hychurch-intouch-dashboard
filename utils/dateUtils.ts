@@ -87,3 +87,37 @@ export function getMostRecentSunday() {
   return mostRecentSunday;
 
 }
+
+
+export function getSearchSundayRange (desiredWeeks: number) {
+
+  // 현재 날짜
+  const currentDate = dayjs();
+
+  // 현재 날짜를 기준으로 과거의 일요일을 찾는 함수
+  function findLastSunday(date: dayjs.Dayjs, weeks: number) {
+    const lastSundays = [];
+    
+    for (let i = 0; i < weeks; i++) {
+      const lastSunday = date.subtract(i * 7, 'day').startOf('week');
+      lastSundays.push(lastSunday.format('YYYY-MM-DD'));
+    }
+    
+    return lastSundays;
+  }
+  
+  // 과거 일요일 날짜 찾기
+  const sundayRange = findLastSunday(currentDate, desiredWeeks);
+
+  // 과거 일요일 날짜 찾기
+  const minDate = sundayRange[sundayRange.length - 1]
+
+  const maxDate = getMostRecentSunday().format('YYYY-MM-DD')
+
+  return {
+    minDate, 
+    maxDate,
+    sundayRange
+  }
+
+}

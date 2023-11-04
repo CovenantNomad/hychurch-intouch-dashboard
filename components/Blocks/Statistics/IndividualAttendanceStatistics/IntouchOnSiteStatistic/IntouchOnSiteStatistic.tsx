@@ -40,15 +40,11 @@ const IntouchOnSiteStatistic = ({numberOfOnSite}: IntouchOnSiteStatisticProps) =
     { value: 4 - numberOfOnSite, color: 'bg-red-500' },
   ];
 
-  console.log(segments)
-
   // const totalValue = 4;
 
   const totalValue = segments.reduce((total, segment) => total + segment.value, 0);
 
   let startAngle = 0;
-
-  console.log(totalValue)
 
   return (
     <div className='p-4 border rounded-lg'>

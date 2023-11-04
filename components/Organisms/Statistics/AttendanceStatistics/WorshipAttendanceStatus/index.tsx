@@ -1,43 +1,23 @@
 import React from 'react';
 import WroshipServiceCard from '../../../../Blocks/Statistics/WorshipAttendanceSatus/WroshipServiceCard';
 import { NoSymbolIcon } from '@heroicons/react/24/outline';
+import EmptyStateSimple from '../../../../Atoms/EmptyStates/EmptyStateSimple';
+import useCellAttendance from '../../../../../hooks/useCellAttendance';
+import Skeleton from '../../../../Atoms/Skeleton/Skeleton';
+import { Dayjs } from 'dayjs';
+import { useQuery } from 'react-query';
+import { getCellMeeting } from '../../../../../firebase/CellMeeting/CellMeeting';
 
 interface WorshipAttendanceStatusProps {
   cellId: string | null;
   cellName: string | null;
+  recentSunday: Dayjs;
   onSelectHandler: (id: string, name: string) => void;
   onResetHandler: () => void;
 }
 
-export interface mockMemberType {
-  id: string;
-  name: string;
-  attended: boolean;
-  onSite: boolean;
-  cellMeeting: boolean;
-}
-
-const mockIntouchOfflineData = [
-  { id: '2', name: '남정훈', attended: true, onSite: true, cellMeeting: true},
-  { id: '316', name: '박미희', attended: true, onSite: true, cellMeeting: true},
-  { id: '318', name: '오연재', attended: true, onSite: false, cellMeeting: false},
-  { id: '71', name: '이범석', attended: true, onSite: true, cellMeeting: false},
-  { id: '246', name: '문진철', attended: true, onSite: true, cellMeeting: true},
-  { id: '39', name: '이진석', attended: true, onSite: true, cellMeeting: true},
-  { id: '658', name: '김정미', attended: true, onSite: true, cellMeeting: true},
-  { id: '48', name: '정한나', attended: true, onSite: false, cellMeeting: false},
-  { id: '455', name: '이예진A', attended: true, onSite: false, cellMeeting: false},
-]
-
-const mockOthersOfflineData = [
-  { id: '70', name: '오하늘', attended: true, onSite: true, cellMeeting: false},
-]
-
-const mockMissingData = [
-  { id: '41', name: '윤홍찬', attended: false, onSite: false, cellMeeting: false},
-]
-
-const WorshipAttendanceStatus = ({ cellId, cellName, onSelectHandler, onResetHandler }: WorshipAttendanceStatusProps) => {
+const WorshipAttendanceStatus = ({ cellId, cellName, recentSunday, onSelectHandler, onResetHandler }: WorshipAttendanceStatusProps) => {
+  const { isLoading, intouchAttendaceMember, othersAttendaceMember, missingMember } = useCellAttendance(cellId, recentSunday)
 
   return (
     <div className='h-full px-6 py-10 border'>
@@ -46,14 +26,33 @@ const WorshipAttendanceStatus = ({ cellId, cellName, onSelectHandler, onResetHan
         <button
           onClick={onResetHandler}
         >
-          <span className='text-sm'>초기화</span>
+          <span className='text-sm'>선택취소</span>
         </button>
       </div>
       {cellId ? (
-        <div className='mt-4'>
-          <WroshipServiceCard title="인터치예배" memberList={mockIntouchOfflineData} onSelectHandler={onSelectHandler} />
-          <WroshipServiceCard title="1~4부예배" memberList={mockOthersOfflineData} onSelectHandler={onSelectHandler} />
-          <WroshipServiceCard title="미참석" memberList={mockMissingData} onSelectHandler={onSelectHandler} />
+        <div>
+          {isLoading ? (
+            <div className='mt-4 grid grid-cols-2 gap-x-8'>
+              <Skeleton className="w-[300px] h-[40px]" />
+              <Skeleton className="w-[300px] h-[40px]" />
+            </div>
+          ) : (
+            <>
+              {intouchAttendaceMember && othersAttendaceMember && missingMember ? (
+                <>
+                  <div className='mt-4'>
+                    <WroshipServiceCard title="청년예배" memberList={intouchAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="1~4부예배" memberList={othersAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="미참석" memberList={missingMember} onSelectHandler={onSelectHandler} />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <EmptyStateSimple />
+                </div>
+              )}
+            </>
+          )}
         </div>
       ) : (
         <div className='mt-6'>
