@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import IndividualAttendanceHistory from '../IndividualAttendanceHistory';
 import IndividualAttendanceHistoryStatistic from '../IndividualAttendanceHistoryStatistic';
+import { FindIndividualAttendanceQuery, FindIndividualAttendanceQueryVariables, useFindIndividualAttendanceQuery } from '../../../../../graphql/generated';
+import graphlqlRequestClient from '../../../../../client/graphqlRequestClient';
+import AttendanceStateCard from '../../../../Blocks/Cards/AttendanceStateCard';
+import { getSearchSundayRange } from '../../../../../utils/dateUtils';
+import { AttendanceHistoryType, AttendanceMemberType } from '../../../../../interface/attendance';
+import { BarList, Color, Select, SelectItem } from "@tremor/react";
+import { trackerType } from '../../../../../interface/ui';
+import useMemberAttendance from '../../../../../hooks/useMemberAttendance';
+import AttendanceNumberCard from '../../../../Blocks/Cards/AttendanceNumberCard';
 
 interface IndividualAttendanceSatusProps {
+  isOpen: boolean;
   memberId: string | null;
   memberName: string | null;
-  isOpen: boolean;
   onResetHandler: () => void;
 }
 
@@ -19,14 +28,12 @@ export interface mockAttendanceHistoryType {
   cellMeeting: boolean;
 }
 
-const mockAttendanceHistoryData = [
-  { id: '0', week: '9월 2주', attendedIntouch: true, onSiteIntouch: true, attendedOthers: true,  onSiteOthers: true, cellMeeting: true},
-  { id: '1', week: '9월 3주', attendedIntouch: true, onSiteIntouch: false, attendedOthers: false, onSiteOthers: false, cellMeeting: true},
-  { id: '2', week: '9월 4주', attendedIntouch: true, onSiteIntouch: false, attendedOthers: true, onSiteOthers: false,   cellMeeting: true},
-  { id: '3', week: '10월 1주', attendedIntouch: true, onSiteIntouch: true, attendedOthers: false, onSiteOthers: false, cellMeeting: false},
-]
-
 const IndividualAttendanceSatus = ({ memberId, memberName, isOpen, onResetHandler }: IndividualAttendanceSatusProps) => {
+  const [ value, setValue ] = useState<string>("4");
+  const { isLoading, numOfattended, numOfOffline, numOfOtherServiceAttended, trackData, minDate, maxDate } = useMemberAttendance(memberId, Number(value))
+  
+  
+
   return (
     <>
       {isOpen && (
@@ -39,17 +46,40 @@ const IndividualAttendanceSatus = ({ memberId, memberName, isOpen, onResetHandle
               <span className='text-sm'>닫기</span>
             </button>
           </div>
+          <div className='flex justify-end items-center max-w-sm mx-auto mt-8'>
+            <span className='text-sm mr-3'>조회기간</span>
+            <div className="space-y-6">
+              <Select value={value} onValueChange={setValue}>
+                <SelectItem value="4">
+                  4주
+                </SelectItem>
+                <SelectItem value="8">
+                  8주
+                </SelectItem>
+                <SelectItem value="12">
+                  12주
+                </SelectItem>
+              </Select>
+            </div>
+          </div>
           <div>
             {memberId && (
               <>
-                <div className='mt-6'>
-                  <IndividualAttendanceHistory
-                    attendanceHistoryData={mockAttendanceHistoryData}
+                <div className='mt-6 space-y-4'>
+                  <AttendanceStateCard 
+                    title='청년예배 출석'
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    numOfattended={numOfattended}
+                    numOfOffline={numOfOffline}
+                    searchRange={Number(value)}
+                    data={trackData}
                   />
-                </div>
-                <div className='mt-6'>
-                  <IndividualAttendanceHistoryStatistic 
-                    attendanceHistoryData={mockAttendanceHistoryData}
+                  <AttendanceNumberCard 
+                    title='참석하는 예배'
+                    numOfattended={numOfattended}
+                    numOfOtherServiceAttended={numOfOtherServiceAttended}
+                    searchRange={Number(value)}
                   />
                 </div>
               </>

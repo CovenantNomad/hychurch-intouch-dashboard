@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import WorshipAttendanceStatus from '../../../../Organisms/Statistics/AttendanceStatistics/WorshipAttendanceStatus';
 import IndividualAttendanceSatus from '../../../../Organisms/Statistics/AttendanceStatistics/IndividualAttendanceSatus';
 import AttendanceStatisticsHeader from '../../../../Organisms/Statistics/AttendanceStatistics/AttendanceStatisticsHeader/AttendanceStatisticsHeader';
+import { getMostRecentSunday } from '../../../../../utils/dateUtils';
 
 interface CellAttendanceStatusProps {}
 
 const CellAttendanceStatus = ({}: CellAttendanceStatusProps) => {
+  const recentSunday = getMostRecentSunday();
   const [ isOpen, SetIsOpen ] = useState(false)
   const [ selectedCellId, setSelectedCellId ] = useState<string | null>(null)
   const [ selectedCellName, setSelectedCellName ] = useState<string | null>(null)
@@ -15,6 +17,9 @@ const CellAttendanceStatus = ({}: CellAttendanceStatusProps) => {
   const onSelectCellHandler = (id: string, name: string) => {
     setSelectedCellId(id)
     setSelectedCellName(name)
+    setSelectedMemberId(null)
+    setSelectedMemberName(null)
+    SetIsOpen(false)
   }
 
   const onResetCellHandler = () => {
@@ -39,7 +44,7 @@ const CellAttendanceStatus = ({}: CellAttendanceStatusProps) => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold">이번주 셀별 출석 명단 <span className='text-sm inline-block ml-4'>(기준일자: 2023.10.01)</span></h2>
+      <h2 className="text-xl font-bold">이번주 셀별 출석 명단 <span className='text-sm inline-block ml-4'>{`(기준일자: ${recentSunday.format('YYYY-MM-DD')})`}</span></h2>
       <AttendanceStatisticsHeader 
         onSelectHandler={onSelectCellHandler}
       />
@@ -48,6 +53,7 @@ const CellAttendanceStatus = ({}: CellAttendanceStatusProps) => {
           <WorshipAttendanceStatus 
             cellId={selectedCellId}
             cellName={selectedCellName}
+            recentSunday={recentSunday}
             onSelectHandler={onSelectMemberHandler}
             onResetHandler={onResetCellHandler}
           />

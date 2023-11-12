@@ -1,13 +1,15 @@
 import React from 'react';
-import { CheckIcon, VideoCameraIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { mockMemberType } from '../../../../Organisms/Statistics/AttendanceStatistics/WorshipAttendanceStatus';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { AttendanceMemberType } from '../../../../../interface/attendance';
 
 interface MemberAttendanceListItemProps {
-  member: mockMemberType
+  member: AttendanceMemberType
   onSelectHandler: (id: string, name: string) => void;
 }
 
 const MemberAttendanceListItem = ({ member, onSelectHandler }: MemberAttendanceListItemProps) => {
+  const cellMeeting = true
+
   return (
     <div>
       <button
@@ -24,29 +26,29 @@ const MemberAttendanceListItem = ({ member, onSelectHandler }: MemberAttendanceL
           <div className='w-10'>
             <p className='text-xs text-center'>예배</p>
             <span className="flex items-center justify-center pt-1">
-              {!member.attended ? (
+              {!member.attendance ? (
                 <XMarkIcon className='h-5 w-5 text-rose-700'/>
               ) : (
                 <>
-                {member.onSite ? (
+                {!member.isOnline ? (
                   <CheckIcon className='h-5 w-5 text-teal-700'/>
                 ) : (
-                  <VideoCameraIcon className='h-5 w-5 text-teal-700'/>
+                  <CheckIcon className='h-5 w-5 text-yellow-500'/>
                 )}
                 </>
               )}
             </span>
           </div>
-          <div className='w-10'>
+          {/* <div className='w-10'>
             <p className='text-xs text-center'>셀모임</p>
             <span className="flex items-center justify-center pt-1">
-              {member.cellMeeting ? (
+              {cellMeeting ? (
                 <CheckIcon className='h-5 w-5 text-teal-700'/>
               ) : (
                 <XMarkIcon className='h-5 w-5 text-rose-700'/>
               )}
             </span>
-          </div>
+          </div> */}
         </div>
       </button>
     </div>

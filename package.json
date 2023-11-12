@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.12",
     "@heroicons/react": "^2.0.14",
     "@tanstack/react-query-devtools": "^4.20.4",
+    "@tremor/react": "^3.10.1",
     "@types/lodash": "^4.14.191",
     "@types/react-cookies": "^0.1.0",
     "@types/react-paginate": "^7.1.1",

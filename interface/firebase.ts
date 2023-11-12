@@ -14,3 +14,9 @@ export enum DALLANTS_COLLCTION {
   ORDER = 'Order',
   ORDERSTOCK = 'OrderStock',
 }
+
+export enum CELLMEETING_COLLCTION {
+  CELLMEETING = 'CellMeeting',
+  HISTORY = 'History',
+  MEMBERS = 'Members',
+}
