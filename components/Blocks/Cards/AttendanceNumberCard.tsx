@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Title, Tracker, Flex, Text, BarList, Bold } from "@tremor/react";
+import { Card, Title, Flex, Text, BarList, Bold } from "@tremor/react";
 import { trackerType } from '../../../interface/ui';
 
 interface AttendanceStateCardProps {

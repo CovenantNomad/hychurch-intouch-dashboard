@@ -67,7 +67,7 @@ const IndividualAttendanceSatus = ({ memberId, memberName, isOpen, onResetHandle
               <>
                 <div className='mt-6 space-y-4'>
                   <AttendanceStateCard 
-                    title='청년예배 출석'
+                    title='인터치 청년예배 출석 통계'
                     minDate={minDate}
                     maxDate={maxDate}
                     numOfattended={numOfattended}
@@ -76,7 +76,7 @@ const IndividualAttendanceSatus = ({ memberId, memberName, isOpen, onResetHandle
                     data={trackData}
                   />
                   <AttendanceNumberCard 
-                    title='참석하는 예배'
+                    title='출석 중인 예배'
                     numOfattended={numOfattended}
                     numOfOtherServiceAttended={numOfOtherServiceAttended}
                     searchRange={Number(value)}
