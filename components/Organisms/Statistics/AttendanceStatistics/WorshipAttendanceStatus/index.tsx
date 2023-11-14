@@ -5,8 +5,6 @@ import EmptyStateSimple from '../../../../Atoms/EmptyStates/EmptyStateSimple';
 import useCellAttendance from '../../../../../hooks/useCellAttendance';
 import Skeleton from '../../../../Atoms/Skeleton/Skeleton';
 import { Dayjs } from 'dayjs';
-import { useQuery } from 'react-query';
-import { getCellMeeting } from '../../../../../firebase/CellMeeting/CellMeeting';
 
 interface WorshipAttendanceStatusProps {
   cellId: string | null;

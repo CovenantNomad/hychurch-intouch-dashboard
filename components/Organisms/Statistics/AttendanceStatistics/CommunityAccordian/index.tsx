@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { CellListType } from '../../../../../interface/cell';
 import CellNameChip from '../../../../Blocks/CellNameChip';
+import { AttendanceSubmissionType } from '../../../../../interface/attendance';
+import { CellLeaderAttendanceSubmissionStatus } from '../../../../../graphql/generated';
 
 interface CommunityAccordianProps {
   isLoading: boolean;
   communityName: string;
   cellList: CellListType[] | null | undefined
+  checkSubmission: AttendanceSubmissionType[] | null
   onSelectHandler: (id: string, name: string) => void
 }
 
-const CommunityAccordian = ({ isLoading, communityName, cellList, onSelectHandler }: CommunityAccordianProps) => {
+const CommunityAccordian = ({ isLoading, communityName, cellList, checkSubmission, onSelectHandler }: CommunityAccordianProps) => {
   const [ isOpen, setIsOpen ] = useState(false)
+
+  console.log(checkSubmission)
 
   return (
     <div className='flex flex-col bg-blue-100 px-4 py-3 lg:flex-row lg:py-4'>
@@ -43,11 +48,15 @@ const CommunityAccordian = ({ isLoading, communityName, cellList, onSelectHandle
           </div>
         ) : (
           <div className=''>
-            {cellList ? (
+            {cellList && checkSubmission ? (
               <div className='flex flex-wrap gap-x-4 gap-y-2'>
-                {cellList.map(cell => (
-                  <CellNameChip key={cell.id} cellId={cell.id} cellName={cell.name} onSelectHandler={onSelectHandler}/>
-                ))}
+                {cellList.map(cell => {
+                  const checkedCell = checkSubmission.find(item => item.cellId === cell.id)
+
+                  return (
+                    <CellNameChip key={cell.id} cellId={cell.id} cellName={cell.name} submissionStatus={checkedCell?.submissionStatus === CellLeaderAttendanceSubmissionStatus.Complete} onSelectHandler={onSelectHandler}/>
+                  )
+                })}
               </div>
             ) : (
               <div>

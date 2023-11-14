@@ -41,9 +41,9 @@ const useMemberAttendance = ( memberId: string | null, desiredWeeks: number ) =>
         return data.attendedAt === targetDate && data.churchService.id === '5';
       })
 
-      numOfOthersAttended = data.user.userChurchServiceHistories.filter(data => {
-        return data.attendedAt === targetDate && data.churchService.id !== '5';
-      }).length
+      const othersAttended = data.user.userChurchServiceHistories.filter(data => {
+        return data.attendedAt === targetDate && (data.churchService.id === '1' || data.churchService.id === '2' || data.churchService.id === '3' || data.churchService.id === '4');
+      })
 
       if (filteredForIntouch.length !== 0) {
         const attendedDate = filteredForIntouch.map(item => {
@@ -56,6 +56,16 @@ const useMemberAttendance = ( memberId: string | null, desiredWeeks: number ) =>
           }
         })
         filteredData.push(...attendedDate);
+      } else if (othersAttended.length !== 0) {
+        numOfOthersAttended += 1
+
+        const absentDate = [{
+          isAttended: false,
+          attendedAt: targetDate,
+          isOnline: false
+        }]
+
+        filteredData.push(...absentDate);
       } else {
         const absentDate = [{
           isAttended: false,
