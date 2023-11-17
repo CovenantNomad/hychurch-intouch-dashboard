@@ -2,13 +2,16 @@ import dayjs from "dayjs";
 import React, { useState } from "react";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import {
+  FindAttendanceCheckQuery,
+  FindAttendanceCheckQueryVariables,
   FindCellWithTranferDataQuery,
   FindCellWithTranferDataQueryVariables,
+  useFindAttendanceCheckQuery,
   useFindCellWithTranferDataQuery,
   UserCellTransferStatus,
 } from "../../../../graphql/generated";
 import { SpecialCellIdType } from "../../../../interface/cell";
-import { getTodayString } from "../../../../utils/dateUtils";
+import { getMostRecentSunday, getTodayString } from "../../../../utils/dateUtils";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import HorizontalTabs from "../../../Atoms/Tabs/HorizontalTabs";
 import TransferConfirm from "../../../Organisms/Cells/CellTransfer/TransferConfirm";
@@ -18,6 +21,7 @@ interface BlessingTransferProps {}
 
 const BlessingTransfer = ({}: BlessingTransferProps) => {
   const now = dayjs();
+  const recentSunday = getMostRecentSunday()
   const [selectedTab, setSelectedTab] = useState(0);
   const [datefilter, setDatefilter] = useState({
     min: getTodayString(now.subtract(1, 'month')),
@@ -59,11 +63,25 @@ const BlessingTransfer = ({}: BlessingTransferProps) => {
     }
   );
 
+  const { isLoading: isAttendanceLoading, isFetching: isAttendanceFetching, data: attendanceStatus } = useFindAttendanceCheckQuery<
+    FindAttendanceCheckQuery,
+    FindAttendanceCheckQueryVariables
+  >(
+    graphlqlRequestClient,
+    {
+      attendanceDate: recentSunday.format('YYYY-MM-DD'),
+    },
+    {
+      staleTime: 15 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+
   const tabs = [
     {
       id: 0,
       name: "이동승인",
-      component: <TransferConfirm data={data} isLoading={isLoading} />,
+      component: <TransferConfirm data={data} isLoading={isLoading} isAttendanceLoading={isAttendanceLoading} isAttendanceFetching={isAttendanceFetching} attendanceStatus={attendanceStatus} />,
     },
     {
       id: 1,
