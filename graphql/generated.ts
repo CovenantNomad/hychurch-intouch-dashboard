@@ -672,6 +672,13 @@ export type CompleteAttendanceCheckMutationVariables = Exact<{
 
 export type CompleteAttendanceCheckMutation = { __typename?: 'Mutation', completeAttendanceCheck: { __typename?: 'CompleteAttendanceCheckPayload', attendanceCheck: { __typename?: 'AttendanceCheck', id: string, attendanceDate: string, status: AttendanceCheckStatus } } };
 
+export type FindAttendanceCheckQueryVariables = Exact<{
+  attendanceDate: Scalars['String'];
+}>;
+
+
+export type FindAttendanceCheckQuery = { __typename?: 'Query', attendanceCheck: AttendanceCheckStatus };
+
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
@@ -993,6 +1000,29 @@ export const useCompleteAttendanceCheckMutation = <
       options
     );
 useCompleteAttendanceCheckMutation.getKey = () => ['completeAttendanceCheck'];
+
+export const FindAttendanceCheckDocument = `
+    query findAttendanceCheck($attendanceDate: String!) {
+  attendanceCheck(attendanceDate: $attendanceDate)
+}
+    `;
+export const useFindAttendanceCheckQuery = <
+      TData = FindAttendanceCheckQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindAttendanceCheckQueryVariables,
+      options?: UseQueryOptions<FindAttendanceCheckQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindAttendanceCheckQuery, TError, TData>(
+      ['findAttendanceCheck', variables],
+      fetcher<FindAttendanceCheckQuery, FindAttendanceCheckQueryVariables>(client, FindAttendanceCheckDocument, variables, headers),
+      options
+    );
+
+useFindAttendanceCheckQuery.getKey = (variables: FindAttendanceCheckQueryVariables) => ['findAttendanceCheck', variables];
+;
 
 export const LoginDocument = `
     mutation login($input: LoginInput!) {

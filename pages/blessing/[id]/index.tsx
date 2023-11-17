@@ -3,18 +3,21 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
-import Footer from "../../../components/Atoms/Footer";
 import Spinner from "../../../components/Atoms/Spinner";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import Layout from "../../../components/Layout/Layout";
 import {
+  AttendanceCheckStatus,
   CreateUserCellTransferMutation,
   CreateUserCellTransferMutationVariables,
+  FindAttendanceCheckQuery,
+  FindAttendanceCheckQueryVariables,
   FindCellListsQuery,
   FindCellListsQueryVariables,
   FindUserQuery,
   FindUserQueryVariables,
   useCreateUserCellTransferMutation,
+  useFindAttendanceCheckQuery,
   useFindCellListsQuery,
   useFindUserQuery,
   UserCellTransferStatus,
@@ -27,19 +30,19 @@ import Summary from "../../../components/Blocks/Summary/Summary";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "react-query";
 import { makeErrorMessage } from "../../../utils/utils";
-import { getTodayString } from "../../../utils/dateUtils";
+import { getMostRecentSunday, getTodayString } from "../../../utils/dateUtils";
 import dayjs from "dayjs";
 import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
-import Container from "../../../components/Atoms/Container/Container";
-import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import PageLayout from "../../../components/Layout/PageLayout";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
+import SkeletonListItem from "../../../components/Atoms/Skeleton/SkeletonListItem";
 
 interface NewFamilyMemberProps {}
 
 const BlessingMember = ({}: NewFamilyMemberProps) => {
+  const recentSunday = getMostRecentSunday()
   const router = useRouter();
   const queryClient = useQueryClient();
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -80,6 +83,20 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
+    }
+  );
+
+  const { isLoading: isAttendanceLoading, isFetching: isAttendanceFetching, data: attendanceStatus } = useFindAttendanceCheckQuery<
+    FindAttendanceCheckQuery,
+    FindAttendanceCheckQueryVariables
+  >(
+    graphlqlRequestClient,
+    {
+      attendanceDate: recentSunday.format('YYYY-MM-DD'),
+    },
+    {
+      staleTime: 15 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
     }
   );
 
@@ -235,57 +252,74 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                       </div>
                     ) : (
                       <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="md:col-span-1">
-                            <h6 className="pb-4 text-base">기존 셀 편성</h6>
-                            <ComboBoxImage
-                              showLabel={false}
-                              label={"셀선택"}
-                              selected={selectedCell}
-                              setSelected={setSelectedCell}
-                              selectList={cellList}
-                              widthFull
-                            />
-                          </div>
-                          <div className="md:col-span-1">
-                            <h6 className="pb-5 text-base">새싹셀 편성</h6>
-                            <div className="flex-1">
-                              <button
-                                onClick={() => {
-                                  setSelectedCell({
-                                    id: String(44),
-                                    name: "새싹",
-                                  });
-                                }}
-                                className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                              >
-                                새싹셀 편성
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-8">
-                          <Summary
-                            header="Transfer Summary"
-                            label="Transfer"
-                            disabled={
-                              selectedMember.id === "" ||
-                              selectedCell.id === "" ||
-                              router.query.transferStatus ===
-                                UserCellTransferStatus.Ordered
-                            }
-                            onClick={onOpenHandler}
-                          >
-                            <Summary.Row
-                              title="새가족 이름"
-                              value={selectedMember.name}
-                            />
-                            <Summary.Row
-                              title="편성 셀"
-                              value={selectedCell.name}
-                            />
-                          </Summary>
-                        </div>
+                        {isAttendanceLoading || isAttendanceFetching ? (
+                          <SkeletonListItem />
+                        ) : (
+                          <>
+                            {attendanceStatus && attendanceStatus.attendanceCheck === AttendanceCheckStatus.Completed ? (
+                              <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                  <div className="md:col-span-1">
+                                    <h6 className="pb-4 text-base">기존 셀 편성</h6>
+                                    <ComboBoxImage
+                                      showLabel={false}
+                                      label={"셀선택"}
+                                      selected={selectedCell}
+                                      setSelected={setSelectedCell}
+                                      selectList={cellList}
+                                      widthFull
+                                    />
+                                  </div>
+                                  <div className="md:col-span-1">
+                                    <h6 className="pb-5 text-base">새싹셀 편성</h6>
+                                    <div className="flex-1">
+                                      <button
+                                        onClick={() => {
+                                          setSelectedCell({
+                                            id: String(44),
+                                            name: "새싹",
+                                          });
+                                        }}
+                                        className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                      >
+                                        새싹셀 편성
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-8">
+                                  <Summary
+                                    header="Transfer Summary"
+                                    label="Transfer"
+                                    disabled={
+                                      selectedMember.id === "" ||
+                                      selectedCell.id === "" ||
+                                      router.query.transferStatus ===
+                                        UserCellTransferStatus.Ordered
+                                    }
+                                    onClick={onOpenHandler}
+                                  >
+                                    <Summary.Row
+                                      title="새가족 이름"
+                                      value={selectedMember.name}
+                                    />
+                                    <Summary.Row
+                                      title="편성 셀"
+                                      value={selectedCell.name}
+                                    />
+                                  </Summary>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="h-full flex justify-center items-center mt-6 py-6">
+                                <p className="whitespace-pre-line text-center">
+                                  {`아직 셀리더들이 출석체크 중입니다.\n`}
+                                  {`출석체크가 마감 된 후 새가족 셀편성을 진행해주세요.`}
+                                </p>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </>
                     )}
                   </div>

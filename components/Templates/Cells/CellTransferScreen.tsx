@@ -3,13 +3,16 @@ import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
+  FindAttendanceCheckQuery,
+  FindAttendanceCheckQueryVariables,
   FindCellWithTranferDataQuery,
   FindCellWithTranferDataQueryVariables,
+  useFindAttendanceCheckQuery,
   useFindCellWithTranferDataQuery,
   UserCellTransferStatus,
 } from "../../../graphql/generated";
 import { selectedState } from "../../../stores/selectedState";
-import { getTodayString } from "../../../utils/dateUtils";
+import { getMostRecentSunday, getTodayString } from "../../../utils/dateUtils";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
 import SectionContainer from "../../Atoms/Container/SectionContainer";
 import HorizontalTabs from "../../Atoms/Tabs/HorizontalTabs";
@@ -22,6 +25,7 @@ interface CellTransferProps {}
 
 const CellTransferScreen = ({}: CellTransferProps) => {
   const now = dayjs();
+  const recentSunday = getMostRecentSunday()
   const [selectedTab, setSelectedTab] = useState(0);
   const { selectedCell } = useRecoilValue(selectedState);
   const [datefilter, setDatefilter] = useState({
@@ -65,12 +69,26 @@ const CellTransferScreen = ({}: CellTransferProps) => {
     }
   );
 
+  const { isLoading: isAttendanceLoading, isFetching: isAttendanceFetching, data: attendanceStatus } = useFindAttendanceCheckQuery<
+    FindAttendanceCheckQuery,
+    FindAttendanceCheckQueryVariables
+  >(
+    graphlqlRequestClient,
+    {
+      attendanceDate: recentSunday.format('YYYY-MM-DD'),
+    },
+    {
+      staleTime: 15 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+
   const tabs = [
-    { id: 0, name: "이동신청", component: <TransferProcess /> },
+    { id: 0, name: "이동신청", component: <TransferProcess isAttendanceLoading={isAttendanceLoading} isAttendanceFetching={isAttendanceFetching} attendanceStatus={attendanceStatus} /> },
     {
       id: 1,
       name: "이동승인",
-      component: <TransferConfirm data={data} isLoading={isLoading} />,
+      component: <TransferConfirm data={data} isLoading={isLoading} isAttendanceLoading={isAttendanceLoading} isAttendanceFetching={isAttendanceFetching} attendanceStatus={attendanceStatus} />,
     },
     {
       id: 2,
