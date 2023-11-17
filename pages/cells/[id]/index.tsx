@@ -20,7 +20,6 @@ import CellDeleteScreen from "../../../components/Templates/Cells/CellDeleteScre
 import CellEditScreen from "../../../components/Templates/Cells/CellEditScreen";
 import Container from "../../../components/Atoms/Container/Container";
 import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
-import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 
 const CellDetail = () => {
   const { query } = useRouter();

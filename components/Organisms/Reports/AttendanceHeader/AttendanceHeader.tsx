@@ -52,13 +52,20 @@ const AttendanceHeader = ({ attendanceDate, attendanceStatus }: AttendanceHeader
           </button>
         </div>
         <div>
-          <button
-            onClick={() => setIsDeadlineOpen(true)} 
-            disabled={isLoading || !attendanceStatus || data?.completeAttendanceCheck.attendanceCheck.status === AttendanceCheckStatus.Completed}
-            className={`inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium shadow-sm border-transparent bg-BLUE text-white cursor-pointer hover:bg-blue-500 disabled:bg-gray-400 disabled:hover:bg-gray-300 disabled:cursor-not-allowed`}
-          >
-            <span>{data?.completeAttendanceCheck.attendanceCheck.status === AttendanceCheckStatus.Completed ? "마감완료" : "출석체크 마감"}</span>
-          </button>
+          {attendanceStatus ? (
+            <div className='inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium shadow-sm border-transparent bg-BLUE text-white '>
+              <span>출석체크가 마감되었습니다</span>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsDeadlineOpen(true)} 
+              disabled={isLoading || !attendanceStatus || data?.completeAttendanceCheck.attendanceCheck.status === AttendanceCheckStatus.Completed}
+              className={`inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium shadow-sm border-transparent bg-BLUE text-white cursor-pointer hover:bg-blue-500 disabled:bg-gray-400 disabled:hover:bg-gray-300 disabled:cursor-not-allowed`}
+            >
+              <span>{data?.completeAttendanceCheck.attendanceCheck.status === AttendanceCheckStatus.Completed ? "마감완료" : "출석체크 마감"}</span>
+            </button>
+          )}
+          
         </div>
       </div>
       <AttendanceInputModal 
