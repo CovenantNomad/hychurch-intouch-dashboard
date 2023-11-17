@@ -7,6 +7,7 @@ import { AttendanceCheckStatus, CompleteAttendanceCheckMutation, CompleteAttenda
 //components
 import AttendanceInputModal from '../../../Blocks/Modals/AttendanceInputModal';
 import SimpleModal from '../../../Blocks/Modals/SimpleModal';
+import { useQueryClient } from 'react-query';
 
 interface AttendanceHeaderProps {
   attendanceDate: string;
@@ -14,6 +15,7 @@ interface AttendanceHeaderProps {
 }
 
 const AttendanceHeader = ({ attendanceDate, attendanceStatus }: AttendanceHeaderProps) => {
+  const queryClient = useQueryClient();
   const [ isOpen, setIsOpen ] = useState(false)
   const [ isDeadlineOpen, setIsDeadlineOpen ] = useState(false)
 
@@ -37,6 +39,10 @@ const AttendanceHeader = ({ attendanceDate, attendanceStatus }: AttendanceHeader
   >(graphlqlRequestClient, {
     onSuccess() {
       toast.success('이번주 출석체크를 마감하겠습니다.');
+      queryClient.invalidateQueries({
+        queryKey: ["findAttendanceCheck"],
+      });
+
     },
     onError() {
       toast.error('출석체크가 이미 마감되었습니다');
