@@ -12,6 +12,9 @@ module.exports = {
       screens: {
         "3xl": "1920px",
       },
+      gridTemplateColumns: {
+        '24': 'repeat(24, minmax(0, 1fr))',
+      },
       backgroundImage: {
         dallantBackground: "url('/images/dallant_background.jpeg')"
       },

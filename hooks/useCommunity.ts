@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { FindCellListsQuery, FindCellListsQueryVariables, useFindCellListsQuery } from "../graphql/generated";
+import { Cell, FindCellListsQuery, FindCellListsQueryVariables, useFindCellListsQuery } from "../graphql/generated";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 //types
 import { CellListType, CommunityType, SpecialCellIdType } from "../interface/cell";
@@ -10,6 +10,8 @@ import { FIND_CELL_LIMIT } from "../constants/constant";
 const useCommunity = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ data, setData ] = useState<CommunityType[] | null>(null)
+  const [ newFamily, setNewFamily ] = useState<CellListType[] | null>(null)
+  const [ blessing, setBlessing ] = useState<CellListType[]| null>(null)
 
   const { isLoading: isDataLoading, isFetching: isDataFetching, data: cellListData } = useFindCellListsQuery<
     FindCellListsQuery,
@@ -35,7 +37,13 @@ const useCommunity = () => {
     if (!isDataLoading && !isDataFetching) {
 
       if (cellListData && cellListData.findCells) {
-  
+
+        const newFamilyCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamily))
+        setNewFamily(newFamilyCell)
+
+        const blessingCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Blessing))
+        setBlessing(blessingCell)
+
         const commonCell = cellListData.findCells.nodes.filter((cell) =>
           !cell.id.includes(SpecialCellIdType.NewFamily) &&
           !cell.id.includes(SpecialCellIdType.Blessing) &&
@@ -81,7 +89,9 @@ const useCommunity = () => {
 
   return {
     isLoading,
-    data
+    data,
+    newFamily,
+    blessing
   }
 }
 
