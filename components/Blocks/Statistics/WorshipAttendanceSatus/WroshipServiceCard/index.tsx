@@ -26,10 +26,10 @@ const WroshipServiceCard = ({ title, memberList, onSelectHandler }: WroshipServi
           </div>
         ) : (
           <div
-            className="w-full flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 p-6 text-center mt-4"
+            className="w-full flex flex-col justify-center items-center rounded-lg border-2 border-dashed border-gray-300 p-4 text-center mt-4"
           >
-            <NoSymbolIcon className='w-6 h-6 text-gray-400'/>
-            <p className="mt-4 text-sm font-semibold text-gray-900">해당되는 셀원이 없습니다</p>
+            {/* <NoSymbolIcon className='w-6 h-6 text-gray-400'/>
+            <p className="mt-4 text-sm font-semibold text-gray-900">해당되는 셀원이 없습니다</p> */}
           </div>
         )}
       </div>

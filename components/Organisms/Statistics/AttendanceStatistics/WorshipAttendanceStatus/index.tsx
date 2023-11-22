@@ -15,7 +15,7 @@ interface WorshipAttendanceStatusProps {
 }
 
 const WorshipAttendanceStatus = ({ cellId, cellName, recentSunday, onSelectHandler, onResetHandler }: WorshipAttendanceStatusProps) => {
-  const { isLoading, intouchAttendaceMember, othersAttendaceMember, missingMember } = useCellAttendance(cellId, recentSunday)
+  const { isLoading, intouchAttendaceMember, firstAttendaceMember, secondAttendaceMember, thirdAttendaceMember, fourthAttendaceMember, missingMember } = useCellAttendance(cellId, recentSunday)
 
   return (
     <div className='h-full px-6 py-10 border'>
@@ -36,11 +36,14 @@ const WorshipAttendanceStatus = ({ cellId, cellName, recentSunday, onSelectHandl
             </div>
           ) : (
             <>
-              {intouchAttendaceMember && othersAttendaceMember && missingMember ? (
+              {intouchAttendaceMember && fourthAttendaceMember && missingMember ? (
                 <>
                   <div className='mt-4'>
                     <WroshipServiceCard title="청년예배" memberList={intouchAttendaceMember} onSelectHandler={onSelectHandler} />
-                    <WroshipServiceCard title="1~4부예배" memberList={othersAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="4부예배" memberList={fourthAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="3부예배" memberList={thirdAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="2부예배" memberList={secondAttendaceMember} onSelectHandler={onSelectHandler} />
+                    <WroshipServiceCard title="1부예배" memberList={firstAttendaceMember} onSelectHandler={onSelectHandler} />
                     <WroshipServiceCard title="미참석" memberList={missingMember} onSelectHandler={onSelectHandler} />
                   </div>
                 </>
