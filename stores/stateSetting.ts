@@ -6,6 +6,7 @@ export const stateSetting = atom({
   default: {
     theme: Theme.default,
     cellSelectedCategoryId: 0,
+    attendanceSelectedCategoryId: 0,
     newFamilySelectedCategoryId: 0,
     blessingSelectedCategoryId: 0,
     renewSelectedCategoryId: 0,
