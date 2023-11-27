@@ -24,7 +24,6 @@ const AttendanceOverview = ({}: AttendanceOverviewProps) => {
       cacheTime: 30 * 60 * 1000,
     }
   );
-  // attendanceCompleteStatus && attendanceCompleteStatus.attendanceCheck === AttendanceCheckStatus.Completed
 
   return (
     <BlockContainer firstBlock>
@@ -34,7 +33,7 @@ const AttendanceOverview = ({}: AttendanceOverviewProps) => {
         </div>
       ) : (
         <>
-          {true ? (
+          {attendanceCompleteStatus && attendanceCompleteStatus.attendanceCheck === AttendanceCheckStatus.Completed ? (
             <div className="space-y-4">
               <AttendnaceTable recentSunday={recentSunday} />
               <AttendanceCountTable recentSunday={recentSunday}/>
