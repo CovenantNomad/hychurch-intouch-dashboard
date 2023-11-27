@@ -9,7 +9,6 @@ const useCellAttendance = ( cellId: string | null, recentSunday: Dayjs ) => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ missingMember, setMissingMember ] = useState<AttendanceMemberType[]>([])
   const [ intouchAttendaceMember, setIntouchAttendaceMember ] = useState<AttendanceMemberType[]>([])
-  const [ othersAttendaceMember, setOthersAttendaceMember ] = useState<AttendanceMemberType[]>([])
   const [ firstAttendaceMember, setFirstAttendaceMember ] = useState<AttendanceMemberType[]>([])
   const [ secondAttendaceMember, setSecondAttendaceMember ] = useState<AttendanceMemberType[]>([])
   const [ thirdAttendaceMember, setThirdAttendaceMember ] = useState<AttendanceMemberType[]>([])

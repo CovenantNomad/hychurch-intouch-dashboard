@@ -1,0 +1,11 @@
+query findThisWeekServicesCount($attendanceDate: String!) {
+  churchServiceAttendanceStats(attendanceDate: $attendanceDate) {
+    attendanceDate
+		churchService {
+			id
+			name
+		}
+		isOnline
+		totalCount
+  }
+}

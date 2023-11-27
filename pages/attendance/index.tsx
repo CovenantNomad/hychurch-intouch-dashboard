@@ -24,7 +24,7 @@ const AttendancePage = () => {
     },
     {
       id: 1,
-      name: "셀별출석현황",
+      name: "셀별출석현황(실시간)",
       component: <ThisWeekAttendance />,
     },
   ];
@@ -58,14 +58,6 @@ const AttendancePage = () => {
         />
         <SectionContainer>{categories[categoryId].component}</SectionContainer>
       </PageLayout>
-
-      {/* <div className="h-screen flex justify-center items-center">
-        <h1 className="text-4xl font-bold">
-          현재 페이지는
-          <br />
-          개발 중입니다
-        </h1>
-      </div> */}
     </FullScreenLayout>
   );
 };

@@ -136,6 +136,15 @@ export type ChurchService = {
   startAt: Scalars['String'];
 };
 
+export type ChurchServiceAttendanceStat = {
+  __typename?: 'ChurchServiceAttendanceStat';
+  /** 예배 출석 일자 */
+  attendanceDate: Scalars['String'];
+  churchService: ChurchService;
+  isOnline: Scalars['Boolean'];
+  totalCount: Scalars['Int'];
+};
+
 export type CompleteAttendanceCheckInput = {
   /** 셀원 예배 출석일자(yyyy-MM-dd). 예) 2022년 5월 29일 예배에 대한 제출이면 2022-05-29 로 입력 */
   attendanceDate: Scalars['String'];
@@ -223,6 +232,16 @@ export enum Gender {
   Woman = 'WOMAN'
 }
 
+export type IntouchManualAttendance = {
+  __typename?: 'IntouchManualAttendance';
+  /** 예배 출석 일자 */
+  attendanceDate: Scalars['String'];
+  /** 인터치 예배 출석 인원 (성전 예배 수기 측정값) */
+  count: Scalars['Int'];
+  /** 유일 식별자 */
+  id: Scalars['ID'];
+};
+
 export type LoginInput = {
   /** 로그인 비밀번호 */
   password: Scalars['String'];
@@ -250,6 +269,8 @@ export type Mutation = {
   registerNewUser: RegisterNewUserPayload;
   removeUserFromSeedlingCell: RemoveUserFromSeedlingCellPayload;
   resetUserPassword: ResetUserPasswordPayload;
+  /** 인터치 성전예배 출석인원 수기측정 값을 저장합니다. (해당 일자에 이미 저장된 값이 있으면 수정합니다) */
+  saveIntouchManualAttendance: SaveIntouchManualAttendancePayload;
   signUp: SignUpPayload;
   /** 셀장이 셀원들의 예배 출석 이력 다건을 기록합니다. */
   submitCellMemberChurchServiceAttendanceHistories: SubmitCellMemberChurchServiceAttendanceHistoriesPayload;
@@ -305,6 +326,11 @@ export type MutationResetUserPasswordArgs = {
 };
 
 
+export type MutationSaveIntouchManualAttendanceArgs = {
+  input: SaveIntouchManualAttendanceInput;
+};
+
+
 export type MutationSignUpArgs = {
   input: SignUpInput;
 };
@@ -335,6 +361,7 @@ export type Query = {
   attendanceCheck: AttendanceCheckStatus;
   /** 셀별 출석체크 제출 현황 조회 */
   cellAttendanceCheckSubmissions: Array<CellAttendanceCheckSubmission>;
+  churchServiceAttendanceStats: Array<ChurchServiceAttendanceStat>;
   /** 셀 단건 조회 */
   findCell: Cell;
   /** 셀 전체 조회 */
@@ -359,6 +386,11 @@ export type QueryAttendanceCheckArgs = {
 
 
 export type QueryCellAttendanceCheckSubmissionsArgs = {
+  attendanceDate: Scalars['String'];
+};
+
+
+export type QueryChurchServiceAttendanceStatsArgs = {
   attendanceDate: Scalars['String'];
 };
 
@@ -443,6 +475,18 @@ export enum RoleType {
   /** 부 리더 */
   ViceLeader = 'VICE_LEADER'
 }
+
+export type SaveIntouchManualAttendanceInput = {
+  /** 예배 출석 일자 */
+  attendanceDate: Scalars['String'];
+  /** 인터치 예배 출석 인원 (성전 예배 수기 측정값) */
+  count: Scalars['Int'];
+};
+
+export type SaveIntouchManualAttendancePayload = {
+  __typename?: 'SaveIntouchManualAttendancePayload';
+  intouchManualAttendance: IntouchManualAttendance;
+};
 
 export type SignUpInput = {
   /** 회원 가입 인증 번호 */
@@ -657,6 +701,13 @@ export type FindIndividualAttendanceQueryVariables = Exact<{
 
 
 export type FindIndividualAttendanceQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', attendedAt: string, isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> } };
+
+export type FindThisWeekServicesCountQueryVariables = Exact<{
+  attendanceDate: Scalars['String'];
+}>;
+
+
+export type FindThisWeekServicesCountQuery = { __typename?: 'Query', churchServiceAttendanceStats: Array<{ __typename?: 'ChurchServiceAttendanceStat', attendanceDate: string, isOnline: boolean, totalCount: number, churchService: { __typename?: 'ChurchService', id: string, name: string } }> };
 
 export type CheckCellAttendanceSubmissionsQueryVariables = Exact<{
   attendanceDate: Scalars['String'];
@@ -945,6 +996,37 @@ export const useFindIndividualAttendanceQuery = <
     );
 
 useFindIndividualAttendanceQuery.getKey = (variables: FindIndividualAttendanceQueryVariables) => ['findIndividualAttendance', variables];
+;
+
+export const FindThisWeekServicesCountDocument = `
+    query findThisWeekServicesCount($attendanceDate: String!) {
+  churchServiceAttendanceStats(attendanceDate: $attendanceDate) {
+    attendanceDate
+    churchService {
+      id
+      name
+    }
+    isOnline
+    totalCount
+  }
+}
+    `;
+export const useFindThisWeekServicesCountQuery = <
+      TData = FindThisWeekServicesCountQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindThisWeekServicesCountQueryVariables,
+      options?: UseQueryOptions<FindThisWeekServicesCountQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindThisWeekServicesCountQuery, TError, TData>(
+      ['findThisWeekServicesCount', variables],
+      fetcher<FindThisWeekServicesCountQuery, FindThisWeekServicesCountQueryVariables>(client, FindThisWeekServicesCountDocument, variables, headers),
+      options
+    );
+
+useFindThisWeekServicesCountQuery.getKey = (variables: FindThisWeekServicesCountQueryVariables) => ['findThisWeekServicesCount', variables];
 ;
 
 export const CheckCellAttendanceSubmissionsDocument = `
