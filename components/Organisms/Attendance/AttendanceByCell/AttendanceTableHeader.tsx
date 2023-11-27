@@ -2,7 +2,7 @@ type AttendanceTableHeaderProps = {}
 
 const AttendanceTableHeader = ({}: AttendanceTableHeaderProps) => {
   return (
-    <thead>
+    <thead className="">
       <tr className="grid grid-rows-2 grid-cols-24 divide-x divide-y border-b bg-gray-100">
         <th className="row-span-2 col-span-2 self-center py-1 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-0">
           셀이름
@@ -26,37 +26,37 @@ const AttendanceTableHeader = ({}: AttendanceTableHeaderProps) => {
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          성전
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          온라인
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          성전
         </th>
         <th colSpan={3} className="row-span-1 col-span-3 px-3 py-1 text-center text-sm font-semibold text-gray-900">
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          온라인
         </th>
         <th colSpan={2} className="row-span-1 col-span-2 px-3 py-1 text-center text-sm font-semibold text-gray-900">
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          성전
         </th>
         <th colSpan={4} className="row-span-1 col-span-4 px-3 py-1 text-center text-sm font-semibold text-gray-900">
           명단
         </th>
         <th colSpan={1} className="row-span-1 col-span-1 px-3 py-1 text-center text-sm font-semibold text-gray-900">
-          인원
+          온라인
         </th>
         <th colSpan={3} className="row-span-1 col-span-3 py-1 pl-3 pr-4 text-center text-sm font-semibold text-gray-900 sm:pr-0">
           명단
