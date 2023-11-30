@@ -9,6 +9,7 @@ import { stateSetting } from "../../stores/stateSetting";
 import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
 import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview/AttendanceOverview";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
+import OverviewStatistics from "../../components/Templates/Statistics/OverviewStatistics/OverviewStatistics";
 
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
@@ -26,6 +27,11 @@ const AttendancePage = () => {
       id: 1,
       name: "셀별출석현황(실시간)",
       component: <ThisWeekAttendance />,
+    },
+    {
+      id: 2,
+      name: "통계",
+      component: <OverviewStatistics />,
     },
   ];
 
