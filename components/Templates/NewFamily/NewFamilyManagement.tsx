@@ -49,8 +49,6 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
     }
   );
 
-  console.log(teamList)
-
   useEffect(() => {
     if (data) {
       const teamTemp = data.findCell.leaders.filter((item) =>
