@@ -2,10 +2,10 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
-  FindNewFamilyCellQuery,
-  FindNewFamilyCellQueryVariables,
+  FindNewFamilyCellWithTransferQuery,
+  FindNewFamilyCellWithTransferQueryVariables,
   RoleType,
-  useFindNewFamilyCellQuery,
+  useFindNewFamilyCellWithTransferQuery,
   UserCellTransferStatus,
 } from "../../../graphql/generated";
 import { SpecialCellIdType } from "../../../interface/cell";
@@ -28,9 +28,9 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
     min: getTodayString(dayjs(now.set("year", -1))),
     max: getTodayString(now),
   });
-  const { isLoading, data } = useFindNewFamilyCellQuery<
-    FindNewFamilyCellQuery,
-    FindNewFamilyCellQueryVariables
+  const { isLoading, data } = useFindNewFamilyCellWithTransferQuery<
+    FindNewFamilyCellWithTransferQuery,
+    FindNewFamilyCellWithTransferQueryVariables
   >(
     graphlqlRequestClient,
     {
@@ -48,6 +48,8 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
       cacheTime: 30 * 60 * 1000,
     }
   );
+
+  console.log(teamList)
 
   useEffect(() => {
     if (data) {

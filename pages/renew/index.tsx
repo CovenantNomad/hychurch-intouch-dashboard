@@ -23,6 +23,7 @@ import { SpecialCellIdType } from "../../interface/cell";
 import { MemberWithTransferOut } from "../../interface/user";
 import { stateSetting } from "../../stores/stateSetting";
 import { getTodayString } from "../../utils/dateUtils";
+import RenewAttendance from "../../components/Templates/Renew/RenewAttendance";
 
 const ReNewPage: NextPage = () => {
   const now = dayjs();
@@ -49,6 +50,7 @@ const ReNewPage: NextPage = () => {
       component: <InactiveMember memberList={inActiveList} />,
     },
     { id: 2, name: "새싹셀 편성", component: <RenewTransfer /> },
+    { id: 3, name: "새싹셀 출석체크", component: <RenewAttendance /> },
   ];
 
   const { isLoading, data } = useFindRenewCellQuery<

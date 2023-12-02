@@ -41,6 +41,16 @@ export interface Member {
   description?: string | null | undefined;
 }
 
+export type SimpleMemberWithRole = {
+  id: string;
+  name: string;
+  birthday?: string | null | undefined;
+  gender?: Gender | null | undefined;
+  isActive: boolean;
+  registrationDate?: string | null | undefined;
+  roles: RoleType[];
+}
+
 export interface MemberWithTransferOut extends Member {
   transferStatus?: UserCellTransferStatus;
   toCellId?: string;

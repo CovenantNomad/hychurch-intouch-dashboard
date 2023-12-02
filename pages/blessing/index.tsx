@@ -12,6 +12,7 @@ import BlessingTransfer from "../../components/Templates/Blessing/BlessingTransf
 import MenteeManagement from "../../components/Templates/Blessing/MenteeManagement";
 import MentorManagement from "../../components/Templates/Blessing/MentorManagement";
 import { stateSetting } from "../../stores/stateSetting";
+import BlessingAttendance from "../../components/Templates/Blessing/BlessingAttendance";
 
 const categories = [
   {
@@ -21,6 +22,7 @@ const categories = [
   },
   // { id: 1, name: "바나바 관리", component: <MentorManagement /> },
   { id: 1, name: "블레싱 편성", component: <BlessingTransfer /> },
+  { id: 2, name: "블레싱 출석체크", component: <BlessingAttendance /> },
 ];
 
 const BlessingPage = () => {

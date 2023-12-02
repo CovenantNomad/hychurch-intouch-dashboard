@@ -1,13 +1,13 @@
+import { useCallback, useState } from "react";
 import Head from "next/head";
-import Layout from "../../components/Layout/Layout";
+import { useRecoilState } from "recoil";
+import { stateSetting } from "../../stores/stateSetting";
+//components
 import PageLayout from "../../components/Layout/PageLayout";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
-import { useRecoilState } from "recoil";
-import { useCallback, useState } from "react";
-import { stateSetting } from "../../stores/stateSetting";
 import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
-import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview/AttendanceOverview";
+import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
 
 const AttendancePage = () => {
@@ -19,14 +19,19 @@ const AttendancePage = () => {
   const categories = [
     {
       id: 0,
-      name: "이번주출석현황",
-      component: <AttendanceOverview />,
-    },
-    {
-      id: 1,
       name: "셀별출석현황(실시간)",
       component: <ThisWeekAttendance />,
     },
+    {
+      id: 1,
+      name: "이번주예배출석",
+      component: <AttendanceOverview />,
+    },
+    // {
+    //   id: 2,
+    //   name: "이번주셀모임출석",
+    //   component: <CellMeetingOverview />,
+    // },
   ];
 
   const setSettingHandler = useCallback(

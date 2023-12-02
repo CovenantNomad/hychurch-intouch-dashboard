@@ -16,8 +16,6 @@ interface CommunityAccordianProps {
 const CommunityAccordian = ({ isLoading, communityName, cellList, checkSubmission, onSelectHandler }: CommunityAccordianProps) => {
   const [ isOpen, setIsOpen ] = useState(false)
 
-  console.log(checkSubmission)
-
   return (
     <div className='flex flex-col bg-blue-100 px-4 py-3 lg:flex-row lg:py-4'>
       <div className='flex items-center pl-2 pr-6 py-1 lg:pr-10'>

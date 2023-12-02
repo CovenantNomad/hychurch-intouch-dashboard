@@ -5,6 +5,7 @@ import EmptyStateSimple from '../../../../Atoms/EmptyStates/EmptyStateSimple';
 import useCellAttendance from '../../../../../hooks/useCellAttendance';
 import Skeleton from '../../../../Atoms/Skeleton/Skeleton';
 import { Dayjs } from 'dayjs';
+import { SpecialCellIdType } from '../../../../../interface/cell';
 
 interface WorshipAttendanceStatusProps {
   cellId: string | null;
@@ -44,7 +45,9 @@ const WorshipAttendanceStatus = ({ cellId, cellName, recentSunday, onSelectHandl
                     <WroshipServiceCard title="3부예배" memberList={thirdAttendaceMember} onSelectHandler={onSelectHandler} />
                     <WroshipServiceCard title="2부예배" memberList={secondAttendaceMember} onSelectHandler={onSelectHandler} />
                     <WroshipServiceCard title="1부예배" memberList={firstAttendaceMember} onSelectHandler={onSelectHandler} />
-                    <WroshipServiceCard title="미참석" memberList={missingMember} onSelectHandler={onSelectHandler} />
+                    {cellId !== SpecialCellIdType.NewFamily && cellId !== SpecialCellIdType.Blessing && cellId !== SpecialCellIdType.Renew &&(
+                      <WroshipServiceCard title="미참석" memberList={missingMember} onSelectHandler={onSelectHandler} />
+                    )}
                   </div>
                 </>
               ) : (
