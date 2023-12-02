@@ -13,6 +13,7 @@ const useCheckCellAttendanceSubmissions = ( attendanceDate: string ) => {
   const [ communityLife, setCommunityLife ] = useState<AttendanceSubmissionType[] | null>(null)
   const [ communityTruth, setCommunityTruth ] = useState<AttendanceSubmissionType[] | null>(null)
   const [ communityLight, setCommunityLight ] = useState<AttendanceSubmissionType[] | null>(null)
+  const [ specialCells, setSpecialCells ] = useState<AttendanceSubmissionType[] | null>(null)
   const { isLoading: isDataLoading, isFetching, data } = useCheckCellAttendanceSubmissionsQuery<
     CheckCellAttendanceSubmissionsQuery, 
     CheckCellAttendanceSubmissionsQueryVariables
@@ -38,6 +39,12 @@ const useCheckCellAttendanceSubmissions = ( attendanceDate: string ) => {
           !cell.cellId.includes(SpecialCellIdType.Blessing) &&
           !cell.cellId.includes(SpecialCellIdType.Renew)
         )
+
+        setSpecialCells(data.cellAttendanceCheckSubmissions.filter((cell) =>
+          cell.cellId.includes(SpecialCellIdType.NewFamily) ||
+          cell.cellId.includes(SpecialCellIdType.Blessing) ||
+          cell.cellId.includes(SpecialCellIdType.Renew)
+        ))
 
         setCommunityWay(commonCell
           .filter(item => item.cellCommunity === CommunityFilter.WAY)
@@ -102,6 +109,7 @@ const useCheckCellAttendanceSubmissions = ( attendanceDate: string ) => {
     communityLife,
     communityTruth,
     communityLight,
+    specialCells
   }
 }
 

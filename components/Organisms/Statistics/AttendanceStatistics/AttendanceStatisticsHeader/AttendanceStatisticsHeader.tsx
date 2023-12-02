@@ -11,7 +11,7 @@ interface AttendanceStatisticsHeaderProps {
 const AttendanceStatisticsHeader = ({ onSelectHandler }: AttendanceStatisticsHeaderProps) => {
   const recentSunday = getMostRecentSunday();
   const { isLoading, data } = useCommunity()
-  const { isLoading: isCheckLoading, attendanceStatus, communityWay, communityTruth, communityLife, communityLight } = useCheckCellAttendanceSubmissions(recentSunday.format('YYYY-MM-DD'))
+  const { isLoading: isCheckLoading, attendanceStatus, communityWay, communityTruth, communityLife, communityLight, specialCells } = useCheckCellAttendanceSubmissions(recentSunday.format('YYYY-MM-DD'))
 
   return (
     <div className='space-y-2 mt-2 lg:space-y-0 lg:divide-y lg:divide-gray-300 lg:mt-4'>
@@ -41,6 +41,13 @@ const AttendanceStatisticsHeader = ({ onSelectHandler }: AttendanceStatisticsHea
         communityName={'빛'}
         cellList={data?.filter(community => community.communityName === "빛")[0].cellList}
         checkSubmission={communityLight}
+        onSelectHandler={onSelectHandler}
+      />
+      <CommunityAccordian 
+        isLoading={isLoading}
+        communityName={'특별'}
+        cellList={data?.filter(community => community.communityName === "스페셜")[0].cellList}
+        checkSubmission={specialCells}
         onSelectHandler={onSelectHandler}
       />
     </div>

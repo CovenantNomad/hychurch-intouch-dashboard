@@ -693,6 +693,11 @@ export type FindCellAttendanceQueryVariables = Exact<{
 
 export type FindCellAttendanceQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, members: Array<{ __typename?: 'User', id: string, name: string, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> }> } };
 
+export type FindChurchServicesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindChurchServicesQuery = { __typename?: 'Query', findChurchServices: Array<{ __typename?: 'ChurchService', id: string, name: string, startAt: string, isActive: boolean, description?: string | null }> };
+
 export type FindIndividualAttendanceQueryVariables = Exact<{
   id: Scalars['ID'];
   minDate: Scalars['String'];
@@ -708,6 +713,20 @@ export type FindThisWeekServicesCountQueryVariables = Exact<{
 
 
 export type FindThisWeekServicesCountQuery = { __typename?: 'Query', churchServiceAttendanceStats: Array<{ __typename?: 'ChurchServiceAttendanceStat', attendanceDate: string, isOnline: boolean, totalCount: number, churchService: { __typename?: 'ChurchService', id: string, name: string } }> };
+
+export type FindmyCellAttendanceQueryVariables = Exact<{
+  attendanceDate: Scalars['String'];
+}>;
+
+
+export type FindmyCellAttendanceQuery = { __typename?: 'Query', myCellAttendance: { __typename: 'CellAttendanceCompleted', submitStatus: CellLeaderAttendanceSubmissionStatus, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', id: string, attendedAt: string, isOnline: boolean, description?: string | null, user: { __typename?: 'User', id: string, name: string }, churchService: { __typename?: 'ChurchService', id: string, name: string } }> } | { __typename: 'CellAttendanceNotSubmitted', submitStatus: CellLeaderAttendanceSubmissionStatus } | { __typename: 'CellAttendanceTempSaved', submitStatus: CellLeaderAttendanceSubmissionStatus, tempSavedAttendanceHistories: Array<{ __typename?: 'TempSavedAttendanceHistory', userId: string, userName: string, churchServiceId: string, isOnline: boolean, attendedAt: string, description?: string | null }> } };
+
+export type SubmitAttendanceMutationVariables = Exact<{
+  input: SubmitCellMemberChurchServiceAttendanceHistoriesInput;
+}>;
+
+
+export type SubmitAttendanceMutation = { __typename?: 'Mutation', submitCellMemberChurchServiceAttendanceHistories: { __typename?: 'SubmitCellMemberChurchServiceAttendanceHistoriesPayload', success: boolean } };
 
 export type CheckCellAttendanceSubmissionsQueryVariables = Exact<{
   attendanceDate: Scalars['String'];
@@ -760,12 +779,19 @@ export type FindBlessingCellQuery = { __typename?: 'Query', findCell: { __typena
 
 export type FindNewFamilyCellQueryVariables = Exact<{
   id: Scalars['Float'];
+}>;
+
+
+export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }> } };
+
+export type FindNewFamilyCellWithTransferQueryVariables = Exact<{
+  id: Scalars['Float'];
   transferOutStatus?: InputMaybe<Array<UserCellTransferStatus> | UserCellTransferStatus>;
   transferOutDateFilter?: InputMaybe<DateFilter>;
 }>;
 
 
-export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+export type FindNewFamilyCellWithTransferQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type FindRenewCellQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -964,6 +990,35 @@ export const useFindCellAttendanceQuery = <
 useFindCellAttendanceQuery.getKey = (variables: FindCellAttendanceQueryVariables) => ['findCellAttendance', variables];
 ;
 
+export const FindChurchServicesDocument = `
+    query findChurchServices {
+  findChurchServices {
+    id
+    name
+    startAt
+    isActive
+    description
+  }
+}
+    `;
+export const useFindChurchServicesQuery = <
+      TData = FindChurchServicesQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: FindChurchServicesQueryVariables,
+      options?: UseQueryOptions<FindChurchServicesQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindChurchServicesQuery, TError, TData>(
+      variables === undefined ? ['findChurchServices'] : ['findChurchServices', variables],
+      fetcher<FindChurchServicesQuery, FindChurchServicesQueryVariables>(client, FindChurchServicesDocument, variables, headers),
+      options
+    );
+
+useFindChurchServicesQuery.getKey = (variables?: FindChurchServicesQueryVariables) => variables === undefined ? ['findChurchServices'] : ['findChurchServices', variables];
+;
+
 export const FindIndividualAttendanceDocument = `
     query findIndividualAttendance($id: ID!, $minDate: String!, $maxDate: String!) {
   user(id: $id) {
@@ -1028,6 +1083,84 @@ export const useFindThisWeekServicesCountQuery = <
 
 useFindThisWeekServicesCountQuery.getKey = (variables: FindThisWeekServicesCountQueryVariables) => ['findThisWeekServicesCount', variables];
 ;
+
+export const FindmyCellAttendanceDocument = `
+    query findmyCellAttendance($attendanceDate: String!) {
+  myCellAttendance(attendanceDate: $attendanceDate) {
+    __typename
+    ... on CellAttendanceNotSubmitted {
+      submitStatus
+    }
+    ... on CellAttendanceCompleted {
+      submitStatus
+      userChurchServiceHistories {
+        id
+        attendedAt
+        isOnline
+        description
+        user {
+          id
+          name
+        }
+        churchService {
+          id
+          name
+        }
+      }
+    }
+    ... on CellAttendanceTempSaved {
+      submitStatus
+      tempSavedAttendanceHistories {
+        userId
+        userName
+        churchServiceId
+        isOnline
+        attendedAt
+        description
+      }
+    }
+  }
+}
+    `;
+export const useFindmyCellAttendanceQuery = <
+      TData = FindmyCellAttendanceQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindmyCellAttendanceQueryVariables,
+      options?: UseQueryOptions<FindmyCellAttendanceQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindmyCellAttendanceQuery, TError, TData>(
+      ['findmyCellAttendance', variables],
+      fetcher<FindmyCellAttendanceQuery, FindmyCellAttendanceQueryVariables>(client, FindmyCellAttendanceDocument, variables, headers),
+      options
+    );
+
+useFindmyCellAttendanceQuery.getKey = (variables: FindmyCellAttendanceQueryVariables) => ['findmyCellAttendance', variables];
+;
+
+export const SubmitAttendanceDocument = `
+    mutation submitAttendance($input: SubmitCellMemberChurchServiceAttendanceHistoriesInput!) {
+  submitCellMemberChurchServiceAttendanceHistories(input: $input) {
+    success
+  }
+}
+    `;
+export const useSubmitAttendanceMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<SubmitAttendanceMutation, TError, SubmitAttendanceMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<SubmitAttendanceMutation, TError, SubmitAttendanceMutationVariables, TContext>(
+      ['submitAttendance'],
+      (variables?: SubmitAttendanceMutationVariables) => fetcher<SubmitAttendanceMutation, SubmitAttendanceMutationVariables>(client, SubmitAttendanceDocument, variables, headers)(),
+      options
+    );
+useSubmitAttendanceMutation.getKey = () => ['submitAttendance'];
 
 export const CheckCellAttendanceSubmissionsDocument = `
     query checkCellAttendanceSubmissions($attendanceDate: String!) {
@@ -1259,7 +1392,51 @@ useFindBlessingCellQuery.getKey = (variables: FindBlessingCellQueryVariables) =>
 ;
 
 export const FindNewFamilyCellDocument = `
-    query findNewFamilyCell($id: Float!, $transferOutStatus: [UserCellTransferStatus!], $transferOutDateFilter: DateFilter) {
+    query findNewFamilyCell($id: Float!) {
+  findCell(id: $id) {
+    id
+    name
+    leaders {
+      id
+      name
+      birthday
+      gender
+      isActive
+      registrationDate
+      roles
+    }
+    members {
+      id
+      name
+      birthday
+      gender
+      isActive
+      registrationDate
+      roles
+    }
+  }
+}
+    `;
+export const useFindNewFamilyCellQuery = <
+      TData = FindNewFamilyCellQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables: FindNewFamilyCellQueryVariables,
+      options?: UseQueryOptions<FindNewFamilyCellQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<FindNewFamilyCellQuery, TError, TData>(
+      ['findNewFamilyCell', variables],
+      fetcher<FindNewFamilyCellQuery, FindNewFamilyCellQueryVariables>(client, FindNewFamilyCellDocument, variables, headers),
+      options
+    );
+
+useFindNewFamilyCellQuery.getKey = (variables: FindNewFamilyCellQueryVariables) => ['findNewFamilyCell', variables];
+;
+
+export const FindNewFamilyCellWithTransferDocument = `
+    query findNewFamilyCellWithTransfer($id: Float!, $transferOutStatus: [UserCellTransferStatus!], $transferOutDateFilter: DateFilter) {
   findCell(id: $id) {
     id
     name
@@ -1314,22 +1491,22 @@ export const FindNewFamilyCellDocument = `
   }
 }
     `;
-export const useFindNewFamilyCellQuery = <
-      TData = FindNewFamilyCellQuery,
+export const useFindNewFamilyCellWithTransferQuery = <
+      TData = FindNewFamilyCellWithTransferQuery,
       TError = unknown
     >(
       client: GraphQLClient,
-      variables: FindNewFamilyCellQueryVariables,
-      options?: UseQueryOptions<FindNewFamilyCellQuery, TError, TData>,
+      variables: FindNewFamilyCellWithTransferQueryVariables,
+      options?: UseQueryOptions<FindNewFamilyCellWithTransferQuery, TError, TData>,
       headers?: RequestInit['headers']
     ) =>
-    useQuery<FindNewFamilyCellQuery, TError, TData>(
-      ['findNewFamilyCell', variables],
-      fetcher<FindNewFamilyCellQuery, FindNewFamilyCellQueryVariables>(client, FindNewFamilyCellDocument, variables, headers),
+    useQuery<FindNewFamilyCellWithTransferQuery, TError, TData>(
+      ['findNewFamilyCellWithTransfer', variables],
+      fetcher<FindNewFamilyCellWithTransferQuery, FindNewFamilyCellWithTransferQueryVariables>(client, FindNewFamilyCellWithTransferDocument, variables, headers),
       options
     );
 
-useFindNewFamilyCellQuery.getKey = (variables: FindNewFamilyCellQueryVariables) => ['findNewFamilyCell', variables];
+useFindNewFamilyCellWithTransferQuery.getKey = (variables: FindNewFamilyCellWithTransferQueryVariables) => ['findNewFamilyCellWithTransfer', variables];
 ;
 
 export const FindRenewCellDocument = `

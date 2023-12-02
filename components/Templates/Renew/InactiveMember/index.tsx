@@ -4,6 +4,7 @@ import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import SearchModal from "../../../Blocks/SearchModal/SearchModal";
 import RenewMemberTable from "../../../Organisms/Renew/RenewMemberTable";
 import Pagination from "../../../Blocks/Pagination/Pagination";
+import SearchButton from "../../../Atoms/SearchButton";
 
 interface InactiveMemberProps {
   memberList: MemberWithTransferOut[];
@@ -35,28 +36,10 @@ const InactiveMember = ({ memberList }: InactiveMemberProps) => {
               <h6 className="text-xl font-bold">셀 미참여 활동청년</h6>
               <p className="text-sm md:text-base">인터치예배도 참석하지 않는 청년들입니다</p>
             </div>
-            <div className="">
-              <button
-                onClick={() => setOpen(true)}
-                className="w-full flex items-center text-left space-x-3 px-4 h-9 bg-white ring-1 ring-slate-900/10 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm rounded-lg text-slate-400 dark:bg-slate-800 dark:ring-0 dark:text-slate-300 dark:highlight-white/5 dark:hover:bg-slate-700 md:w-72"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="flex-none text-slate-300 dark:text-slate-400"
-                  aria-hidden="true"
-                >
-                  <path d="m19 19-3.5-3.5"></path>
-                  <circle cx="11" cy="11" r="6"></circle>
-                </svg>
-                <span>이름을 검색하세요</span>
-              </button>
-            </div>
+            <SearchButton
+              placeholder={'이름으로 검색하세요'}
+              onClickHandler={() => setOpen(true)}
+            />
           </div>
           <RenewMemberTable
             memberList={sortedMemberList.slice(offset, offset + pageSize)}

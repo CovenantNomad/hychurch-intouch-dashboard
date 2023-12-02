@@ -8,7 +8,7 @@ type OverviewStatisticsProps = {}
 const OverviewStatistics = ({}: OverviewStatisticsProps) => {
   return (
     <>
-      <BlockContainer firstBlock>
+      {/* <BlockContainer firstBlock>
         <HeadCountStatistics />
       </BlockContainer>
       <BlockContainer>
@@ -16,7 +16,14 @@ const OverviewStatistics = ({}: OverviewStatisticsProps) => {
       </BlockContainer>
       <BlockContainer>
         <WorshipStatistics />
-      </BlockContainer>
+      </BlockContainer> */}
+      <div className="h-screen flex justify-center items-center">
+        <h1 className="text-4xl font-bold">
+          현재 페이지는
+          <br />
+          개발 중입니다
+        </h1>
+      </div>
     </>
   );
 };

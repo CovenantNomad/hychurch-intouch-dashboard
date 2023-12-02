@@ -1,12 +1,11 @@
-import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MemberWithTransferOut } from "../../../interface/user";
-import { classNames } from "../../../utils/utils";
+import { MemberWithTransferOut, SimpleMemberWithRole } from "../../../interface/user";
 import Link from "next/link";
 
 interface SearchModalProps {
-  people: MemberWithTransferOut[];
+  people: MemberWithTransferOut[] | SimpleMemberWithRole[];
   open: boolean;
   query: string;
   setOpen: Dispatch<SetStateAction<boolean>>;

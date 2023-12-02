@@ -6,9 +6,10 @@ import { MemberWithTransferOut } from "../../../../interface/user";
 import NewFamilyListItem from "../NewFamilyListItem";
 import {
   getWeek,
-  makeObjKeyByWeek,
   makeWeekAndDate,
 } from "../../../../utils/dateUtils";
+import SearchModal from "../../../Blocks/SearchModal/SearchModal";
+import SearchButton from "../../../Atoms/SearchButton";
 dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
 
@@ -16,9 +17,11 @@ interface NewFamilyMemberSectionProps {
   memberList: MemberWithTransferOut[];
 }
 
-const NewFamilyMemberSection = ({
-  memberList,
-}: NewFamilyMemberSectionProps) => {
+const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => {
+  //Search State
+  const [query, setQuery] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
+  //Grouping Lists
   const [groupList, setGroupList] = useState<
     {
       name: string;
@@ -28,6 +31,7 @@ const NewFamilyMemberSection = ({
 
   useEffect(() => {
     if (memberList) {
+      //등록일에 따라 그룹화
       let init: { [index: string]: Array<MemberWithTransferOut> } = {};
       const groupValues = memberList.reduce((acc, current) => {
         acc[getWeek(current.registrationDate || "2022-12-31")] =
@@ -46,7 +50,13 @@ const NewFamilyMemberSection = ({
 
   return (
     <div>
-      <h6 className="text-xl font-bold pb-6">새가족 명단</h6>
+      <div className="flex justify-between items-center py-3">
+        <h6 className="text-xl font-bold">새가족 명단</h6>
+        <SearchButton 
+          placeholder={'이름으로 검색하세요'}
+          onClickHandler={() => setOpen(true)}
+        />
+      </div>
       <div className="">
         {groupList
           .sort(
@@ -72,8 +82,16 @@ const NewFamilyMemberSection = ({
                   ))}
               </div>
             </div>
-          ))}
+          ))
+        }
       </div>
+      <SearchModal
+        people={memberList}
+        open={open}
+        setOpen={setOpen}
+        query={query}
+        setQuery={setQuery}
+      />
     </div>
   );
 };

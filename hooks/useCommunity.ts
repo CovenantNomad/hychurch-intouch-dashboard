@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Cell, FindCellListsQuery, FindCellListsQueryVariables, useFindCellListsQuery } from "../graphql/generated";
+import { FindCellListsQuery, FindCellListsQueryVariables, useFindCellListsQuery } from "../graphql/generated";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 //types
 import { CellListType, CommunityType, SpecialCellIdType } from "../interface/cell";
@@ -10,8 +10,9 @@ import { FIND_CELL_LIMIT } from "../constants/constant";
 const useCommunity = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ data, setData ] = useState<CommunityType[] | null>(null)
-  const [ newFamily, setNewFamily ] = useState<CellListType[] | null>(null)
-  const [ blessing, setBlessing ] = useState<CellListType[]| null>(null)
+  const [ newFamily, setNewFamily ] = useState<CellListType | null>(null)
+  const [ blessing, setBlessing ] = useState<CellListType | null>(null)
+  const [ renew, setRenew ] = useState<CellListType | null>(null)
 
   const { isLoading: isDataLoading, isFetching: isDataFetching, data: cellListData } = useFindCellListsQuery<
     FindCellListsQuery,
@@ -38,11 +39,14 @@ const useCommunity = () => {
 
       if (cellListData && cellListData.findCells) {
 
-        const newFamilyCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamily))
+        const newFamilyCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamily))[0]
         setNewFamily(newFamilyCell)
 
-        const blessingCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Blessing))
+        const blessingCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Blessing))[0]
         setBlessing(blessingCell)
+
+        const rewewCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Renew))[0]
+        setRenew(rewewCell)
 
         const commonCell = cellListData.findCells.nodes.filter((cell) =>
           !cell.id.includes(SpecialCellIdType.NewFamily) &&
@@ -66,11 +70,14 @@ const useCommunity = () => {
           .filter(item => item.community === CommunityFilter.LIGHT)
           .sort((a, b) => filterByCellName(a, b))
 
+        const specialCells = [newFamilyCell, blessingCell, rewewCell]
+
         setData([
           {id: '0', communityName: "길", cellList: communityWay},
           {id: '1', communityName: "진리", cellList: communityTruth},
           {id: '2', communityName: "생명", cellList: communityLife},
           {id: '3', communityName: "빛", cellList: communityLight},
+          {id: '4', communityName: "스페셜", cellList: specialCells},
         ])
 
       } else {
@@ -91,7 +98,8 @@ const useCommunity = () => {
     isLoading,
     data,
     newFamily,
-    blessing
+    blessing,
+    renew
   }
 }
 

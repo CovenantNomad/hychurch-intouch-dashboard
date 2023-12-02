@@ -11,13 +11,21 @@ import NewFamilyManagement from "../../components/Templates/NewFamily/NewFamilyM
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
 import PageLayout from "../../components/Layout/PageLayout";
+import NewFamiltyAttendance from "../../components/Templates/NewFamily/NewFamiltyAttendance";
 
 const categories = [
-  { id: 0, name: "새가족 등록카드", component: <NewFamilyRegister /> },
+  { id: 0, 
+    name: "새가족 등록카드", 
+    component: <NewFamilyRegister /> },
   {
     id: 1,
     name: "새가족 명단관리",
     component: <NewFamilyManagement />,
+  },
+  {
+    id: 2,
+    name: "새가족 출석체크",
+    component: <NewFamiltyAttendance />,
   },
 ];
 

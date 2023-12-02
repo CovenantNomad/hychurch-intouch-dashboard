@@ -1,4 +1,5 @@
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
+import { AttendanceHistory, TempSavedAttendanceHistory } from "../interface/attendance";
 import { MinimumCellType, SpecialCellIdType } from "../interface/cell";
 import { CommunityFilter } from "../stores/cellState";
 
@@ -43,6 +44,28 @@ export const getGender = (gender: Gender) => {
 
     case Gender.Woman:
       return "자매";
+
+    default:
+      break;
+  }
+};
+
+export const getServiceName = (id: String) => {
+  switch (id) {
+    case "1":
+      return "1부예배 (07:00)";
+
+    case "2":
+      return "2부예배 (08:00)";  
+
+    case "3":
+      return "3부예배 (09:30)";
+    
+    case "4":
+      return "4부예배 (11:30)";
+
+    case "5":
+      return "청년예배 (14:15)";
 
     default:
       break;
@@ -113,4 +136,39 @@ export const getSpecialCellName = (cellId: string) => {
     default:
       return "미편성"
   }
+}
+
+
+export const groupByChurchServiceId = (attendanceList: TempSavedAttendanceHistory[]) => {
+  return attendanceList.reduce((acc: { [key: string]: TempSavedAttendanceHistory[] }, item) => {
+    // 현재 아이템의 churchServiceId를 키로 사용합니다.
+    const key = item.churchServiceId;
+
+    // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
+    acc[key].push(item);
+
+    return acc;
+  }, {});
+}
+
+export const groupBySubmitListByChurchServiceId = (attendanceList: AttendanceHistory[]) => {
+  return attendanceList.reduce((acc: { [key: string]: AttendanceHistory[] }, item) => {
+    // 현재 아이템의 churchServiceId를 키로 사용합니다.
+    const key = item.churchService.id;
+
+    // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
+    acc[key].push(item);
+
+    return acc;
+  }, {});
 }
