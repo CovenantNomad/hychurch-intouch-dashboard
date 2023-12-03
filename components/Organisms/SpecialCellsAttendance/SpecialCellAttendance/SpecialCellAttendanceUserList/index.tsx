@@ -66,7 +66,7 @@ const SpecialCellAttendanceUserList = ({ cellName, memberList, attendanceList, s
           <div>
             <div className='grid grid-cols-6 gap-4'>
               {memberList
-                .filter((member) => member.roles.includes(RoleType.CellLeader))
+                .filter((member) => member.roles.includes(RoleType.CellLeader) || member.roles.includes(RoleType.ViceLeader))
                 .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
                 .map(member => (
                   <SpecialCellAttendanceUserListItem 
