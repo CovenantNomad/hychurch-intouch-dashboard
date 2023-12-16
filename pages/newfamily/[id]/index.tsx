@@ -38,6 +38,7 @@ import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
+import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 
 interface NewFamilyMemberProps {}
 
@@ -58,7 +59,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     name: "",
   });
 
-  const { isLoading, data: user } = useFindUserQuery<
+  const { isLoading, isFetching, data: user } = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -198,12 +199,8 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       </Head>
 
       <PageLayout>
-        {isLoading ? (
-          <SectionContainer>
-            <BlockContainer firstBlock>
-              <Spinner />
-            </BlockContainer>
-          </SectionContainer>
+        {isLoading || isFetching ? (
+          <SkeletonMemberInfo />
         ) : user ? (
           <>
             <SpecialTypeCellHeader
@@ -223,6 +220,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                       <UserInfomation
                         name={user.user.name}
                         gender={user.user.gender}
+                        grade={user.user.grade}
                         isActive={user.user.isActive}
                         birthday={user.user.birthday}
                         registrationDate={user.user.registrationDate}
@@ -341,18 +339,19 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                     id={user.user.id}
                     name={user.user.name}
                     gender={user.user.gender}
+                    grade={user.user.grade}
                     isActive={user.user.isActive}
                     birthday={user.user.birthday}
                     phone={user.user.phone}
                     address={user.user.address}
                     description={user.user.description}
                     cell={user.user.cell}
-                    hasRegisterDate={true}
                     registrationYear={user.user.registrationDate?.split("-")[0]}
                     registrationMonth={
                       user.user.registrationDate?.split("-")[1]
                     }
                     registrationDay={user.user.registrationDate?.split("-")[2]}
+                    editModeHandler={setEditMode}
                   />
                 )}
               </BlockContainer>

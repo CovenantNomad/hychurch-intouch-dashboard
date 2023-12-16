@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
+import { Gender, RoleType, UserCellTransferStatus, UserGrade } from "../graphql/generated";
 
 export interface MemberProps {
   member: {
@@ -25,6 +25,7 @@ export interface Member {
   id: string;
   name: string;
   phone: string;
+  grade: UserGrade;
   isActive: boolean;
   birthday?: string | null | undefined;
   registrationDate?: string | null | undefined;
@@ -46,6 +47,7 @@ export type SimpleMemberWithRole = {
   name: string;
   birthday?: string | null | undefined;
   gender?: Gender | null | undefined;
+  grade: UserGrade;
   isActive: boolean;
   registrationDate?: string | null | undefined;
   roles: RoleType[];
@@ -58,18 +60,10 @@ export interface MemberWithTransferOut extends Member {
   orderDate?: string;
 }
 
-export interface UserInfomationProps {
-  gender: Gender | null | undefined;
-  isActive: boolean;
-  birthday: string | null | undefined;
-  phone: string;
-  address: string | null | undefined;
-  description: string | null | undefined;
-}
-
 export interface UpdateUserInfomationProps {
   id: string;
   name: string;
+  grade: UserGrade;
   isActive: boolean;
   birthday?: string | null | undefined;
   gender?: Gender | null | undefined;
@@ -86,6 +80,5 @@ export interface UpdateUserInfomationProps {
   registrationYear?: string;
   registrationMonth?: string;
   registrationDay?: string;
-  hasRegisterDate?: boolean;
-  editModeHandler?: Dispatch<SetStateAction<boolean>>;
+  editModeHandler: Dispatch<SetStateAction<boolean>>;
 }

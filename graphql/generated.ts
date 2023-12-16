@@ -369,6 +369,7 @@ export type Query = {
   findChurchServices: Array<ChurchService>;
   /** 전체 사용자 조회 */
   findUsers: FindUsersPayload;
+  intouchManualAttendance: Array<IntouchManualAttendance>;
   /** 로그인한 사용자의 정보를 조회합니다. */
   me: User;
   /** 셀 리더의 셀원 출석 체크 제출 정보를 조회합니다. */
@@ -410,6 +411,12 @@ export type QueryFindUsersArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryIntouchManualAttendanceArgs = {
+  maxDate: Scalars['String'];
+  minDate: Scalars['String'];
 };
 
 
@@ -579,6 +586,8 @@ export type UpdateUserInput = {
   description?: InputMaybe<Scalars['String']>;
   /** 성별 */
   gender: Gender;
+  /** 사용자 등급 */
+  grade: UserGrade;
   /** 아이디 */
   id: Scalars['ID'];
   /** 자주 출석하는 지 여부 */
@@ -609,6 +618,8 @@ export type User = {
   description?: Maybe<Scalars['String']>;
   /** 성별 */
   gender?: Maybe<Gender>;
+  /** 사용자 등급 */
+  grade: UserGrade;
   /** 아이디 */
   id: Scalars['ID'];
   /** 자주 출석하는 지 여부 */
@@ -683,6 +694,21 @@ export type UserChurchServiceHistoryInput = {
   /** 사용자(셀원) 이름 */
   userName: Scalars['String'];
 };
+
+export enum UserGrade {
+  /** 예배출석, 셀모임 모두 잘 하시는 분들 */
+  A = 'A',
+  /** 예배출석, 셀모임 중 하나만 꾸준하거나 하는 분들(명확한 기준은 없음…) */
+  B = 'B',
+  /** 셀 배정은 되었으나 활동을 잘 안하는.. (거의 안나옴) */
+  C = 'C',
+  /** 예배출석만 하는 새싹셀 인원 */
+  D = 'D',
+  /** 예배출석이 많이 뜸해진 새싹셀 인원 */
+  E = 'E',
+  /** 정말 더 이상 안오시는 분들 (영커플로 부서 이동, 이사, 이직 등) */
+  F = 'F'
+}
 
 export type FindCellAttendanceQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -775,14 +801,14 @@ export type FindBlessingCellQueryVariables = Exact<{
 }>;
 
 
-export type FindBlessingCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+export type FindBlessingCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type FindNewFamilyCellQueryVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }> } };
+export type FindNewFamilyCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, grade: UserGrade, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, gender?: Gender | null, grade: UserGrade, isActive: boolean, registrationDate?: string | null, roles: Array<RoleType> }> } };
 
 export type FindNewFamilyCellWithTransferQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -791,7 +817,7 @@ export type FindNewFamilyCellWithTransferQueryVariables = Exact<{
 }>;
 
 
-export type FindNewFamilyCellWithTransferQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+export type FindNewFamilyCellWithTransferQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type FindRenewCellQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -800,7 +826,7 @@ export type FindRenewCellQueryVariables = Exact<{
 }>;
 
 
-export type FindRenewCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
+export type FindRenewCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, transfersOut: Array<{ __typename?: 'UserCellTransfer', id: string, status: UserCellTransferStatus, orderDate: string, completeDate?: string | null, user: { __typename?: 'User', id: string, name: string, gender?: Gender | null }, fromCell: { __typename?: 'Cell', id: string, name: string }, toCell: { __typename?: 'Cell', id: string, name: string } }> } };
 
 export type RemoveUserMutationVariables = Exact<{
   input: RemoveUserFromSeedlingCellInput;
@@ -828,7 +854,7 @@ export type FindCellQueryVariables = Exact<{
 }>;
 
 
-export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
+export type FindCellQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, members: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }>, statistics: { __typename?: 'StatisticsOfCell', totalCountOfMembers: number, countOfActiveMembers: number } } };
 
 export type FindCellListsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -911,7 +937,7 @@ export type FindUserQueryVariables = Exact<{
 }>;
 
 
-export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
+export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, grade: UserGrade, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -920,7 +946,7 @@ export type FindUsersQueryVariables = Exact<{
 }>;
 
 
-export type FindUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
+export type FindUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type RegisterNewUserMutationVariables = Exact<{
   input: RegisterNewUserInput;
@@ -943,14 +969,14 @@ export type SearchUsersQueryVariables = Exact<{
 }>;
 
 
-export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, registrationDate?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
+export type SearchUsersQuery = { __typename?: 'Query', findUsers: { __typename?: 'FindUsersPayload', totalCount: number, nodes: Array<{ __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, registrationDate?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null }> } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UpdateUserInput;
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, grade: UserGrade, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
 
 
 export const FindCellAttendanceDocument = `
@@ -1326,6 +1352,7 @@ export const FindBlessingCellDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -1340,6 +1367,7 @@ export const FindBlessingCellDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       registrationDate
@@ -1401,6 +1429,7 @@ export const FindNewFamilyCellDocument = `
       name
       birthday
       gender
+      grade
       isActive
       registrationDate
       roles
@@ -1410,6 +1439,7 @@ export const FindNewFamilyCellDocument = `
       name
       birthday
       gender
+      grade
       isActive
       registrationDate
       roles
@@ -1444,6 +1474,7 @@ export const FindNewFamilyCellWithTransferDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -1458,6 +1489,7 @@ export const FindNewFamilyCellWithTransferDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       registrationDate
@@ -1518,6 +1550,7 @@ export const FindRenewCellDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -1532,6 +1565,7 @@ export const FindRenewCellDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       registrationDate
@@ -1677,6 +1711,7 @@ export const FindCellDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -2142,6 +2177,7 @@ export const FindUserDocument = `
     name
     phone
     isActive
+    grade
     birthday
     registrationDate
     gender
@@ -2181,6 +2217,7 @@ export const FindUsersDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -2271,6 +2308,7 @@ export const SearchUsersDocument = `
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -2312,6 +2350,7 @@ export const UpdateUserDocument = `
       name
       phone
       isActive
+      grade
       birthday
       gender
       address

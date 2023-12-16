@@ -5,6 +5,7 @@ query searchUsers($name: String, $limit: Int, $offset: Int) {
       id
       name
       phone
+      grade
       isActive
       birthday
       gender

@@ -10,6 +10,7 @@ query findRenewCell(
       id
       name
       phone
+      grade
       isActive
       birthday
       gender
@@ -24,6 +25,7 @@ query findRenewCell(
       id
       name
       phone
+      grade
       isActive
       birthday
       registrationDate

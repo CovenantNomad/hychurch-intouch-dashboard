@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
+  UserGrade,
   useResetUserPasswordMutation,
   useUpdateUserMutation,
 } from "../../../graphql/generated";
@@ -17,6 +18,7 @@ const EditUserInfomation = ({
   id,
   name,
   gender,
+  grade,
   isActive,
   birthday,
   phone,
@@ -26,7 +28,6 @@ const EditUserInfomation = ({
   registrationYear,
   registrationMonth,
   registrationDay,
-  hasRegisterDate = false,
   editModeHandler,
 }: UpdateUserInfomationProps) => {
   const today = dayjs();
@@ -35,7 +36,6 @@ const EditUserInfomation = ({
     handleSubmit,
     register,
     formState: { errors },
-    reset,
   } = useForm<EditForm>();
   const { mutate, isLoading, isError, isSuccess } = useUpdateUserMutation(
     graphlqlRequestClient,
@@ -48,6 +48,10 @@ const EditUserInfomation = ({
         if (cell?.id === SpecialCellIdType.NewFamily) {
           queryClient.invalidateQueries({
             queryKey: ["findNewFamilyCell"],
+          });
+        } else if (cell?.id === SpecialCellIdType.Blessing) {
+          queryClient.invalidateQueries({
+            queryKey: ["findBlessingCell"],
           });
         } else if (cell?.id === SpecialCellIdType.Renew) {
           queryClient.invalidateQueries({
@@ -104,22 +108,22 @@ const EditUserInfomation = ({
     phone,
     address,
     description,
+    grade,
     isActive,
     newRegistrationYear,
     newRegistrationMonth,
     newRegistrationDay,
   }: EditForm) => {
     const birthday = `${year}-${month}-${day}`;
-    let registrationDate = `${registrationYear}-${registrationMonth}-${registrationDay}`;
-    if (newRegistrationYear && newRegistrationMonth && newRegistrationDay) {
-      registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
-    }
+    const registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
     const isActiveStatus = isActive === "활동" ? true : false;
+
     mutate({
       input: {
         id,
         name,
         gender,
+        grade,
         isActive: isActiveStatus,
         phone,
         birthday,
@@ -145,12 +149,12 @@ const EditUserInfomation = ({
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">
-            <div className="col-span-6">
+            <div className="col-span-6 sm:col-span-3">
               <label
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700"
               >
-                이름
+                이름*
               </label>
               <input
                 type="text"
@@ -187,7 +191,7 @@ const EditUserInfomation = ({
                 htmlFor="gender"
                 className="block text-sm font-medium text-gray-700"
               >
-                성별
+                성별*
               </label>
               <select
                 id="gender"
@@ -207,30 +211,57 @@ const EditUserInfomation = ({
 
             <div className="col-span-6 sm:col-span-3">
               <label
+                htmlFor="grade"
+                className="block text-sm font-medium text-gray-700"
+              >
+                활동등급*
+              </label>
+              <select
+                id="grade"
+                defaultValue={grade}
+                {...register("grade")}
+                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-navy-blue sm:text-sm"
+              >
+                <option value={UserGrade.A}>A</option>
+                <option value={UserGrade.B}>B</option>
+                <option value={UserGrade.C}>C</option>
+                <option value={UserGrade.D}>D</option>
+                <option value={UserGrade.E}>E</option>
+                <option value={UserGrade.F}>F</option>
+              </select>
+              {errors.grade && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.grade.message}
+                </p>
+              )}
+            </div>
+
+            <div className="col-span-6 sm:col-span-3">
+              <label
                 htmlFor="isActive"
                 className="block text-sm font-medium text-gray-700"
               >
-                활동여부
+                셀보고서 포함여부*
               </label>
               <select
                 id="isActive"
-                defaultValue={isActive ? "활동" : "미활동"}
+                defaultValue={isActive ? "포함" : "미포함"}
                 {...register("isActive")}
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-navy-blue sm:text-sm"
               >
-                <option value={"활동"}>활동</option>
-                <option value={"미활동"}>미활동</option>
+                <option value={"포함"}>포함</option>
+                <option value={"미포함"}>미포함</option>
               </select>
-              {errors.gender && (
+              {errors.isActive && (
                 <p className="mt-1 px-3 text-sm text-red-600">
-                  {errors.gender.message}
+                  {errors.isActive.message}
                 </p>
               )}
             </div>
 
             <div className="col-span-6 -mb-6">
               <span className="block text-sm font-medium text-gray-700">
-                생년월일
+                생년월일*
               </span>
             </div>
 
@@ -357,7 +388,7 @@ const EditUserInfomation = ({
                 htmlFor="phone"
                 className="block text-sm font-medium text-gray-700"
               >
-                전화번호
+                전화번호*
               </label>
               <input
                 id="phone"
@@ -418,139 +449,135 @@ const EditUserInfomation = ({
               </div>
             </div>
 
-            {hasRegisterDate && (
-              <>
-                <div className="col-span-6 -mb-6">
-                  <span className="block text-sm font-medium text-gray-700">
-                    등록일*
-                  </span>
-                </div>
+            <div className="col-span-6 -mb-6">
+              <span className="block text-sm font-medium text-gray-700">
+                등록일*
+              </span>
+            </div>
 
-                <div className="col-span-2">
-                  <div className="relative flex items-center w-full">
-                    <label htmlFor="year" className="sr-only">
-                      년
-                    </label>
-                    <input
-                      id="year"
-                      type="text"
-                      placeholder="YYYY"
-                      defaultValue={registrationYear}
-                      {...register("newRegistrationYear", {
-                        minLength: {
-                          value: 4,
-                          message: "4자리로 입력해주세요 (YYYY)",
-                        },
-                        maxLength: {
-                          value: 4,
-                          message: "4자리로 입력해주세요 (YYYY)",
-                        },
-                        max: {
-                          value: today.get("year"),
-                          message: `${today.get("year")}년을 넘을 수 없습니다`,
-                        },
-                      })}
-                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                    />
-                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                      년
-                    </span>
-                  </div>
-                  {errors.newRegistrationYear && (
-                    <p className="mt-1 px-3 text-sm text-red-600">
-                      {errors.newRegistrationYear.message}
-                    </p>
-                  )}
-                </div>
+            <div className="col-span-2">
+              <div className="relative flex items-center w-full">
+                <label htmlFor="year" className="sr-only">
+                  년
+                </label>
+                <input
+                  id="year"
+                  type="text"
+                  placeholder="YYYY"
+                  defaultValue={registrationYear ? registrationYear : '2022'}
+                  {...register("newRegistrationYear", {
+                    minLength: {
+                      value: 4,
+                      message: "4자리로 입력해주세요 (YYYY)",
+                    },
+                    maxLength: {
+                      value: 4,
+                      message: "4자리로 입력해주세요 (YYYY)",
+                    },
+                    max: {
+                      value: today.get("year"),
+                      message: `${today.get("year")}년을 넘을 수 없습니다`,
+                    },
+                  })}
+                  className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                />
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  년
+                </span>
+              </div>
+              {errors.newRegistrationYear && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.newRegistrationYear.message}
+                </p>
+              )}
+            </div>
 
-                <div className="col-span-2">
-                  <div className="relative flex items-center w-full">
-                    <label htmlFor="month" className="sr-only">
-                      월
-                    </label>
-                    <input
-                      id="month"
-                      type="text"
-                      placeholder="MM"
-                      defaultValue={registrationMonth}
-                      {...register("newRegistrationMonth", {
-                        setValueAs: (v: string) => v.padStart(2, "0"),
-                        minLength: {
-                          value: 2,
-                          message: "2자리로 입력해주세요 (MM)",
-                        },
-                        maxLength: {
-                          value: 2,
-                          message: "4자리로 입력해주세요 (MM)",
-                        },
-                        min: {
-                          value: 1,
-                          message: "1월보다 작을 수 없습니다",
-                        },
-                        max: {
-                          value: 12,
-                          message: "12월을 넘을 수 없습니다",
-                        },
-                      })}
-                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                    />
-                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                      월
-                    </span>
-                  </div>
-                  {errors.newRegistrationMonth && (
-                    <p className="mt-1 px-3 text-sm text-red-600">
-                      {errors.newRegistrationMonth.message}
-                    </p>
-                  )}
-                </div>
+            <div className="col-span-2">
+              <div className="relative flex items-center w-full">
+                <label htmlFor="month" className="sr-only">
+                  월
+                </label>
+                <input
+                  id="month"
+                  type="text"
+                  placeholder="MM"
+                  defaultValue={registrationMonth ? registrationMonth : '12'}
+                  {...register("newRegistrationMonth", {
+                    setValueAs: (v: string) => v.padStart(2, "0"),
+                    minLength: {
+                      value: 2,
+                      message: "2자리로 입력해주세요 (MM)",
+                    },
+                    maxLength: {
+                      value: 2,
+                      message: "4자리로 입력해주세요 (MM)",
+                    },
+                    min: {
+                      value: 1,
+                      message: "1월보다 작을 수 없습니다",
+                    },
+                    max: {
+                      value: 12,
+                      message: "12월을 넘을 수 없습니다",
+                    },
+                  })}
+                  className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                />
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  월
+                </span>
+              </div>
+              {errors.newRegistrationMonth && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.newRegistrationMonth.message}
+                </p>
+              )}
+            </div>
 
-                <div className="col-span-2">
-                  <div className="relative flex items-center w-full">
-                    <label htmlFor="day" className="sr-only">
-                      일
-                    </label>
-                    <input
-                      id="day"
-                      type="text"
-                      placeholder="DD"
-                      defaultValue={registrationDay}
-                      {...register("newRegistrationDay", {
-                        setValueAs: (v: string) => v.padStart(2, "0"),
-                        minLength: {
-                          value: 2,
-                          message: "2자리로 입력해주세요 (MM)",
-                        },
-                        maxLength: {
-                          value: 2,
-                          message: "4자리로 입력해주세요 (MM)",
-                        },
-                        min: {
-                          value: 1,
-                          message: "1일보다 작을 수 없습니다",
-                        },
-                        max: {
-                          value: 31,
-                          message: "31일을 넘을 수 없습니다",
-                        },
-                      })}
-                      className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
-                    />
-                    <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
-                      일
-                    </span>
-                  </div>
-                  {errors.newRegistrationDay && (
-                    <p className="mt-1 px-3 text-sm text-red-600">
-                      {errors.newRegistrationDay.message}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
+            <div className="col-span-2">
+              <div className="relative flex items-center w-full">
+                <label htmlFor="day" className="sr-only">
+                  일
+                </label>
+                <input
+                  id="day"
+                  type="text"
+                  placeholder="DD"
+                  defaultValue={registrationDay ? registrationDay : '31'}
+                  {...register("newRegistrationDay", {
+                    setValueAs: (v: string) => v.padStart(2, "0"),
+                    minLength: {
+                      value: 2,
+                      message: "2자리로 입력해주세요 (DD)",
+                    },
+                    maxLength: {
+                      value: 2,
+                      message: "4자리로 입력해주세요 (DD)",
+                    },
+                    min: {
+                      value: 1,
+                      message: "1일보다 작을 수 없습니다",
+                    },
+                    max: {
+                      value: 31,
+                      message: "31일을 넘을 수 없습니다",
+                    },
+                  })}
+                  className="mt-1 block w-[80%] py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none text-right focus:border-navy-blue sm:w-[90%] sm:text-sm"
+                />
+                <span className="absolute top-1/2 right-0 -mt-2 text-gray-500 text-sm">
+                  일
+                </span>
+              </div>
+              {errors.newRegistrationDay && (
+                <p className="mt-1 px-3 text-sm text-red-600">
+                  {errors.newRegistrationDay.message}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex justify-end gap-4 py-3 bg-white">
+        <div className="flex justify-between py-3 bg-white">
           <button
             type="button"
             onClick={resetHandler}
@@ -558,12 +585,22 @@ const EditUserInfomation = ({
           >
             비밀번호 초기화
           </button>
-          <button
-            type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
-          >
-            수정하기
-          </button>
+
+          <div className="space-x-4">
+            <button
+              type="button"
+              onClick={() => editModeHandler(false)}
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-RED"
+            >
+              취소
+            </button>
+            <button
+              type="submit"
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
+            >
+              수정하기
+            </button>
+          </div>
         </div>
       </form>
       <Toaster

@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Dispatch, SetStateAction } from "react";
-import { Gender } from "../../../graphql/generated";
+import { Gender, UserGrade } from "../../../graphql/generated";
 import Avatar, { AvatarSize } from "../../Atoms/Avatar";
 
 export interface UserInfomationProps {
   name: string;
   gender: Gender | null | undefined;
+  grade: UserGrade
   isActive: boolean;
   birthday: string | null | undefined;
   registrationDate?: string | null | undefined;
@@ -19,6 +18,7 @@ export interface UserInfomationProps {
 const UserInfomation = ({
   name,
   gender,
+  grade,
   isActive,
   birthday,
   phone,
@@ -49,15 +49,21 @@ const UserInfomation = ({
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">활동여부</dt>
+            <dt className="text-sm font-medium text-gray-500">생년월일</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {isActive ? "활동" : "비활동"}
+              {birthday || "미입력"}
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">생년월일</dt>
+            <dt className="text-sm font-medium text-gray-500">활동등급</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {birthday || "1900-01-01"}
+              {grade}
+            </dd>
+          </div>
+          <div className="sm:col-span-1">
+            <dt className="text-sm font-medium text-gray-500">셀보고서 포함 여부</dt>
+            <dd className="mt-1 text-sm text-gray-900">
+              {isActive ? "포함" : "비포함"}
             </dd>
           </div>
           <div className="sm:col-span-1">
@@ -66,14 +72,12 @@ const UserInfomation = ({
           </div>
           <div className="sm:col-span-2">
             <dt className="text-sm font-medium text-gray-500">주소</dt>
-            <dd className="mt-1 text-sm text-gray-900">{address}</dd>
+            <dd className="mt-1 text-sm text-gray-900">{address && address}</dd>
           </div>
-          {registrationDate && (
-            <div className="sm:col-span-2">
-              <dt className="text-sm font-medium text-gray-500">등록일</dt>
-              <dd className="mt-1 text-sm text-gray-900">{registrationDate}</dd>
-            </div>
-          )}
+          <div className="sm:col-span-2">
+            <dt className="text-sm font-medium text-gray-500">등록일</dt>
+            <dd className="mt-1 text-sm text-gray-900">{registrationDate === null ? "미입력" : registrationDate === "2022-12-31" ? "2023년 이전등록" : registrationDate}</dd>
+          </div>
         </dl>
       </div>
       <div

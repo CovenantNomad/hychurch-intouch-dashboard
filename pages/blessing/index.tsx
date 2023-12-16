@@ -1,16 +1,12 @@
 import Head from "next/head";
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
-import Container from "../../components/Atoms/Container/Container";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
-import Footer from "../../components/Atoms/Footer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
 import BlessingTransfer from "../../components/Templates/Blessing/BlessingTransfer";
 import MenteeManagement from "../../components/Templates/Blessing/MenteeManagement";
-import MentorManagement from "../../components/Templates/Blessing/MentorManagement";
 import { stateSetting } from "../../stores/stateSetting";
 import BlessingAttendance from "../../components/Templates/Blessing/BlessingAttendance";
 

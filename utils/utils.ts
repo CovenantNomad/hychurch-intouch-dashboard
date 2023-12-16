@@ -172,3 +172,19 @@ export const groupBySubmitListByChurchServiceId = (attendanceList: AttendanceHis
     return acc;
   }, {});
 }
+
+export const getCellUrl = (cellId: string | undefined, userId: string) => {
+  switch (cellId) {
+    case SpecialCellIdType.NewFamily:
+      return `/newfamily/${userId}`
+    
+    case SpecialCellIdType.Blessing:
+      return `/blessing/${userId}`
+
+    case SpecialCellIdType.Renew:
+      return `/renew/${userId}`
+  
+    default:
+      return `/cells/${cellId}/members/${userId}`
+  }
+}

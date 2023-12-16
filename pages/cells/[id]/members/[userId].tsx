@@ -21,6 +21,7 @@ import Container from "../../../../components/Atoms/Container/Container";
 import SectionBackground from "../../../../components/Atoms/Container/SectionBackground";
 import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
 import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
+import SkeletonMemberInfo from "../../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 
 interface MemberDetailPage {}
 
@@ -29,7 +30,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
   const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
 
-  const { isLoading, data } = useFindUserQuery<
+  const { isLoading, isFetching, data } = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -39,8 +40,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     },
     {
       enabled: userId !== "",
-      staleTime: 3 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
     }
   );
 
@@ -54,6 +55,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     }
   }, [router]);
 
+  console.log(data)
+
   return (
     <Layout>
       <Head>
@@ -64,10 +67,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
 
       <Container>
         <SectionBackground>
-          {isLoading ? (
-            <div className="w-full h-screen flex justify-center">
-              <Spinner />
-            </div>
+          {isLoading || isFetching ? (
+            <SkeletonMemberInfo />
           ) : (
             <SectionContainer>
               {data ? (
@@ -86,28 +87,17 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           <UserInfomation
                             name={data.user.name}
                             gender={data.user.gender}
+                            grade={data.user.grade}
                             isActive={data.user.isActive}
                             birthday={data.user.birthday}
                             phone={data.user.phone}
                             address={data.user.address}
+                            registrationDate={data.user.registrationDate}
                             description={data.user.description}
                             editModeHandler={() => setEditMode(true)}
                             hasHeader={false}
                           />
                         </div>
-                        {/* <div className="md:col-span-4">
-                          <div className="flex gap-4 mb-4">
-                            <div className="flex-1 h-[120px] border">
-                              올해 예배 출석
-                            </div>
-                            <div className="flex-1 h-[120px] border">
-                              올해 셀모임 출석
-                            </div>
-                          </div>
-                          <div className="h-[240px] border">
-                            예배출석 그래프
-                          </div>
-                        </div> */}
                       </section>
                     ) : (
                       <section className="rounded-md bg-white lg:px-4 lg:py-5">
@@ -115,13 +105,13 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           id={data.user.id}
                           name={data.user.name}
                           gender={data.user.gender}
+                          grade={data.user.grade}
                           isActive={data.user.isActive}
                           birthday={data.user.birthday}
                           phone={data.user.phone}
                           address={data.user.address}
                           description={data.user.description}
                           cell={data.user.cell}
-                          hasRegisterDate={false}
                           registrationYear={
                             data.user.registrationDate?.split("-")[0]
                           }
@@ -131,6 +121,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                           registrationDay={
                             data.user.registrationDate?.split("-")[2]
                           }
+                          editModeHandler={setEditMode}
                         />
                       </section>
                     )}
