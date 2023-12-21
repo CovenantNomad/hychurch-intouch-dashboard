@@ -1,15 +1,17 @@
-import useCommunity from "../../../../hooks/useCommunity";
+import { Dayjs } from "dayjs";
+// components
 import AttendanceTableRow from "./AttendanceTableRow";
 import AttendanceTableHeader from "./AttendanceTableHeader";
-import { Dayjs } from "dayjs";
 import AttendanceTableRowSkeleton from "./AttendanceTableRowSkeleton";
+// hooks
+import useOrderedCellList from "../../../../hooks/useOrderedCellList";
 
 type AttendnaceTableProps = {
   recentSunday: Dayjs
 }
 
 const AttendnaceTable = ({ recentSunday }: AttendnaceTableProps) => {
-  const { isLoading, data, newFamily, blessing, renew } = useCommunity()
+  const { isLoading, orderedCellList, newFamily, blessing, renew } = useOrderedCellList()
 
   return (
     <table className="relative min-w-full border border-gray-200">
@@ -22,23 +24,14 @@ const AttendnaceTable = ({ recentSunday }: AttendnaceTableProps) => {
         </tbody>
       ) : (
         <>
-          {data && newFamily && blessing && renew ? (
+          {orderedCellList && newFamily && blessing && renew ? (
             <tbody className="divide-y divide-gray-200">
-              {data.filter(community => community.communityName === "길")[0].cellList?.map(cell => (
-                  <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
-                ))}
-                {data.filter(community => community.communityName === "진리")[0].cellList?.map(cell => (
-                  <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
-                ))}
-                {data.filter(community => community.communityName === "생명")[0].cellList?.map(cell => (
-                  <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
-                ))}
-                {data.filter(community => community.communityName === "빛")[0].cellList?.map(cell => (
-                  <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
-                ))}
-                <AttendanceTableRow cell={newFamily} recentSunday={recentSunday}/>
-                <AttendanceTableRow cell={blessing} recentSunday={recentSunday}/>
-                <AttendanceTableRow cell={renew} recentSunday={recentSunday}/>
+              {orderedCellList.map(cell => (
+                <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
+              ))}
+              <AttendanceTableRow cell={newFamily} recentSunday={recentSunday}/>
+              <AttendanceTableRow cell={blessing} recentSunday={recentSunday}/>
+              <AttendanceTableRow cell={renew} recentSunday={recentSunday}/>
             </tbody>
           ) : (
             <tbody className="divide-y divide-gray-200">

@@ -116,7 +116,7 @@ const EditUserInfomation = ({
   }: EditForm) => {
     const birthday = `${year}-${month}-${day}`;
     const registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
-    const isActiveStatus = isActive === "활동" ? true : false;
+    const isActiveStatus = isActive === "포함" ? true : false;
 
     mutate({
       input: {
@@ -227,7 +227,6 @@ const EditUserInfomation = ({
                 <option value={UserGrade.C}>C</option>
                 <option value={UserGrade.D}>D</option>
                 <option value={UserGrade.E}>E</option>
-                <option value={UserGrade.F}>F</option>
               </select>
               {errors.grade && (
                 <p className="mt-1 px-3 text-sm text-red-600">

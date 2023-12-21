@@ -15,6 +15,7 @@ interface TransferConfirmProps {
 }
 
 const TransferConfirm = ({ data, isLoading, isAttendanceLoading, isAttendanceFetching, attendanceStatus }: TransferConfirmProps) => {
+  
   return (
     <div className="pb-24 bg-white">
       {isAttendanceLoading || isAttendanceFetching ? (

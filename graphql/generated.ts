@@ -861,7 +861,7 @@ export type FindCellListsQueryVariables = Exact<{
 }>;
 
 
-export type FindCellListsQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', nodes: Array<{ __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, roles: Array<RoleType> }> }> } };
+export type FindCellListsQuery = { __typename?: 'Query', findCells: { __typename?: 'FindCellsPayload', nodes: Array<{ __typename?: 'Cell', id: string, name: string, community: string, leaders: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, roles: Array<RoleType> }> }> } };
 
 export type FindCellWithTranferDataQueryVariables = Exact<{
   id: Scalars['Float'];
@@ -937,7 +937,7 @@ export type FindUserQueryVariables = Exact<{
 }>;
 
 
-export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, grade: UserGrade, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
+export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type FindUsersQueryVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -976,7 +976,7 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, isActive: boolean, grade: UserGrade, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, gender?: Gender | null, address?: string | null, roles: Array<RoleType>, description?: string | null, cell?: { __typename?: 'Cell', id: string, name: string } | null } } };
 
 
 export const FindCellAttendanceDocument = `
@@ -1758,6 +1758,7 @@ export const FindCellListsDocument = `
       leaders {
         id
         name
+        birthday
         roles
       }
     }
@@ -2176,8 +2177,8 @@ export const FindUserDocument = `
     id
     name
     phone
-    isActive
     grade
+    isActive
     birthday
     registrationDate
     gender
@@ -2349,8 +2350,8 @@ export const UpdateUserDocument = `
       id
       name
       phone
-      isActive
       grade
+      isActive
       birthday
       gender
       address

@@ -131,6 +131,7 @@ export interface CellListType {
   leaders: {
     id: string;
     name: string;
+    birthday?: string | null | undefined;
     roles: RoleType[];
   }[];
   community: string;
