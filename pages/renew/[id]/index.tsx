@@ -40,6 +40,7 @@ import RemoveUserSection from "../../../components/Organisms/Renew/RemoveUserSec
 import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 import SkeletonListItem from "../../../components/Atoms/Skeleton/SkeletonListItem";
+import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 
 interface RenewMemberProps {}
 
@@ -60,7 +61,7 @@ const RenewMember = ({}: RenewMemberProps) => {
     name: "",
   });
 
-  const { isLoading, data: user } = useFindUserQuery<
+  const { isLoading, isFetching, data: user } = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -70,8 +71,8 @@ const RenewMember = ({}: RenewMemberProps) => {
     },
     {
       enabled: userId !== "",
-      staleTime: 3 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
     }
   );
 
@@ -111,7 +112,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       toast.success("셀에 편성되었습니다.");
       queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(SpecialCellIdType.Renew) }],
+        queryKey: ["findRenewCell"],
       });
       queryClient.invalidateQueries({
         queryKey: ["findCell", { id: Number(selectedCell.id) }],
@@ -121,7 +122,7 @@ const RenewMember = ({}: RenewMemberProps) => {
         name: "",
       });
       setOpenModal(false);
-      router.back();
+      router.push('/renew');
     },
     onError(error) {
       if (error instanceof Error) {
@@ -201,12 +202,8 @@ const RenewMember = ({}: RenewMemberProps) => {
       </Head>
 
       <PageLayout>
-        {isLoading ? (
-          <SectionContainer>
-            <BlockContainer firstBlock>
-              <Spinner />
-            </BlockContainer>
-          </SectionContainer>
+        {isLoading || isFetching ? (
+          <SkeletonMemberInfo />
         ) : user ? (
           <>
             <SpecialTypeCellHeader
@@ -226,6 +223,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                       <UserInfomation
                         name={user.user.name}
                         gender={user.user.gender}
+                        grade={user.user.grade}
                         isActive={user.user.isActive}
                         birthday={user.user.birthday}
                         registrationDate={user.user.registrationDate}
@@ -335,18 +333,19 @@ const RenewMember = ({}: RenewMemberProps) => {
                     id={user.user.id}
                     name={user.user.name}
                     gender={user.user.gender}
+                    grade={user.user.grade}
                     isActive={user.user.isActive}
                     birthday={user.user.birthday}
                     phone={user.user.phone}
                     address={user.user.address}
                     description={user.user.description}
                     cell={user.user.cell}
-                    hasRegisterDate={true}
                     registrationYear={user.user.registrationDate?.split("-")[0]}
                     registrationMonth={
                       user.user.registrationDate?.split("-")[1]
                     }
                     registrationDay={user.user.registrationDate?.split("-")[2]}
+                    editModeHandler={setEditMode}
                   />
                 )}
               </BlockContainer>

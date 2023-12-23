@@ -7,6 +7,7 @@ query findNewFamilyCell($id: Float!) {
       name
       birthday
       gender
+      grade
       isActive
       registrationDate
       roles
@@ -16,6 +17,7 @@ query findNewFamilyCell($id: Float!) {
       name
       birthday
       gender
+      grade
       isActive
       registrationDate
       roles

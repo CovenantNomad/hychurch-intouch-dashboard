@@ -5,7 +5,7 @@ interface SubTitleTextProps {
 }
 
 const SubTitleText = ({ children }: SubTitleTextProps) => {
-  return <p className="text-sm text-gray-500">{children}</p>;
+  return <span className="text-sm text-gray-500">{children}</span>;
 };
 
 export default SubTitleText;

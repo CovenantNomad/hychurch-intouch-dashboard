@@ -38,6 +38,7 @@ import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
 import PageLayout from "../../../components/Layout/PageLayout";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 import SkeletonListItem from "../../../components/Atoms/Skeleton/SkeletonListItem";
+import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 
 interface NewFamilyMemberProps {}
 
@@ -57,7 +58,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     name: "",
   });
 
-  const { isLoading, data: user } = useFindUserQuery<
+  const { isLoading, isFetching, data: user } = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -67,8 +68,8 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     },
     {
       enabled: userId !== "",
-      staleTime: 3 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
     }
   );
 
@@ -198,12 +199,8 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       </Head>
 
       <PageLayout>
-        {isLoading ? (
-          <SectionContainer>
-            <BlockContainer firstBlock>
-              <Spinner />
-            </BlockContainer>
-          </SectionContainer>
+        {isLoading || isFetching ? (
+          <SkeletonMemberInfo />
         ) : user ? (
           <>
             <SpecialTypeCellHeader
@@ -220,6 +217,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                     <UserInfomation
                       name={user.user.name}
                       gender={user.user.gender}
+                      grade={user.user.grade}
                       isActive={user.user.isActive}
                       birthday={user.user.birthday}
                       registrationDate={user.user.registrationDate}

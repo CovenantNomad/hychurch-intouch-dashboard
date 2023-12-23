@@ -45,7 +45,7 @@ const NewFamiltyAttendance = ({}: NewFamiltyAttendanceProps) => {
       id: Number(SpecialCellIdType.NewFamily),
     },
     {
-      staleTime: 10 * 60 * 1000,
+      staleTime: 15 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
     }
   );

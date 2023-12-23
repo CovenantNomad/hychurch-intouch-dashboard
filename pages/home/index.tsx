@@ -4,8 +4,7 @@ import Container from "../../components/Atoms/Container/Container";
 import Footer from "../../components/Atoms/Footer";
 // components
 import Layout from "../../components/Layout/Layout";
-import MemberSearch from "../../components/Templates/Members/MemberSearch";
-import MembersMain from "../../components/Templates/Members/MembersMain";
+import MemberSearch from "../../components/Templates/HomeSearch/MemberSearch";
 
 const HomePage: NextPage = () => {
   return (
@@ -19,9 +18,6 @@ const HomePage: NextPage = () => {
       <Container>
         <div className="bg-white">
           <MemberSearch />
-        </div>
-        <div className="mt-2 py-6 bg-white">
-          <MembersMain />
         </div>
         <Footer />
       </Container>

@@ -1,6 +1,7 @@
+import { cellOrderByAge } from "../constants/cellOrder";
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
 import { AttendanceHistory, TempSavedAttendanceHistory } from "../interface/attendance";
-import { MinimumCellType, SpecialCellIdType } from "../interface/cell";
+import { CellListType, CommunityType, MinimumCellType, SpecialCellIdType } from "../interface/cell";
 import { CommunityFilter } from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
@@ -172,3 +173,24 @@ export const groupBySubmitListByChurchServiceId = (attendanceList: AttendanceHis
     return acc;
   }, {});
 }
+
+export const getCellUrl = (cellId: string | undefined, userId: string) => {
+  switch (cellId) {
+    case SpecialCellIdType.NewFamily:
+      return `/newfamily/${userId}`
+    
+    case SpecialCellIdType.Blessing:
+      return `/blessing/${userId}`
+
+    case SpecialCellIdType.Renew:
+      return `/renew/${userId}`
+  
+    default:
+      return `/cells/${cellId}/members/${userId}`
+  }
+}
+
+// const folder의 cellOrder 파일에 미리 정의한 순서에 따라서 정렬하는 sort 함수
+export const sortedCellByAge = (a:CellListType, b:CellListType) => {
+  return cellOrderByAge.indexOf(a.name) - cellOrderByAge.indexOf(b.name);
+};

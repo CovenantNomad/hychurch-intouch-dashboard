@@ -1,4 +1,4 @@
-import { Gender } from "../graphql/generated";
+import { Gender, UserGrade } from "../graphql/generated";
 
 export interface RegisterForm {
   name: string;
@@ -17,6 +17,7 @@ export interface RegisterForm {
 export interface EditForm {
   name: string;
   gender: Gender;
+  grade: UserGrade;
   isActive: string;
   year?: string;
   month?: string;

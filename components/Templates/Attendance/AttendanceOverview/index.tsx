@@ -25,6 +25,8 @@ const AttendanceOverview = ({}: AttendanceOverviewProps) => {
     }
   );
 
+  // attendanceCompleteStatus && attendanceCompleteStatus.attendanceCheck === AttendanceCheckStatus.Completed
+
   return (
     <BlockContainer firstBlock>
       {isLoading || isFetching ? (
@@ -33,7 +35,7 @@ const AttendanceOverview = ({}: AttendanceOverviewProps) => {
         </div>
       ) : (
         <>
-          {attendanceCompleteStatus && attendanceCompleteStatus.attendanceCheck === AttendanceCheckStatus.Completed ? (
+          {true ? (
             <div className="space-y-4">
               <AttendnaceTable recentSunday={recentSunday} />
               <AttendanceCountTable recentSunday={recentSunday}/>
