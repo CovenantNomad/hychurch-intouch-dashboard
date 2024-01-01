@@ -1,23 +1,24 @@
-import { useState } from 'react';
 import BlockContainer from '../../../Atoms/Container/BlockContainer';
-import SubmitListSection from '../../../Organisms/Reports/SubmitListSection';
 import Spinner from '../../../Atoms/Spinner';
+import EvaluationFormHeader from '../../../Organisms/Reports/EvaluationFormHeader';
+import { useQuery } from 'react-query';
+import { getEvalutationActivation } from '../../../../firebase/EvaluationForm/evaluationFrom';
 
 type CellEvaluationFormScreenProps = {}
 
 const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, isFetching, data } = useQuery('getEvalutationActivation', getEvalutationActivation)
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className="w-full h-screen flex justify-center">
           <Spinner />
         </div>
       ) : (
         <>
           <BlockContainer firstBlock>
-            <div>ffff</div>
+            <EvaluationFormHeader setting={data}/>
           </BlockContainer>
         </>
       )}

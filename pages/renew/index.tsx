@@ -18,6 +18,7 @@ import {
   FindRenewCellQueryVariables,
   useFindRenewCellQuery,
   UserCellTransferStatus,
+  UserGrade,
 } from "../../graphql/generated";
 import { SpecialCellIdType } from "../../interface/cell";
 import { MemberWithTransferOut } from "../../interface/user";
@@ -41,12 +42,12 @@ const ReNewPage: NextPage = () => {
   const categories = [
     {
       id: 0,
-      name: "셀 미참여 인원",
+      name: "E등급 인원",
       component: <FreeAgencyMember memberList={activeList} />,
     },
     {
       id: 1,
-      name: "비활동 인원",
+      name: "F등급 인원",
       component: <InactiveMember memberList={inActiveList} />,
     },
     { id: 2, name: "새싹셀 편성", component: <RenewTransfer /> },
@@ -96,9 +97,9 @@ const ReNewPage: NextPage = () => {
           : member;
       });
 
-      setActiveList(blessingWithTransfer.filter((member) => member.isActive));
+      setActiveList(blessingWithTransfer.filter((member) => member.grade === UserGrade.E));
       setInActiveList(
-        blessingWithTransfer.filter((member) => !member.isActive)
+        blessingWithTransfer.filter((member) => member.grade === UserGrade.F)
       );
     }
   }, [data]);
