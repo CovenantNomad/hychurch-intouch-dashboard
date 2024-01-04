@@ -2,7 +2,7 @@ import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { onActivateEvaluationForm, onInActivateEvaluationForm, updateEvalutionFormSetting } from "../../../../firebase/EvaluationForm/evaluationFrom";
+import { onActivateEvaluationForm, onInActivateEvaluationForm, updateEvalutionFormSetting } from "../../../../firebase/EvaluationForm/evaluationFromSetting";
 import { EvaluationSettingType, TEvaluationSettingForm } from "../../../../interface/EvaluationFormTypes";
 import EmptyStateSimple from "../../../Atoms/EmptyStates/EmptyStateSimple";
 import { DateRangePicker } from "@tremor/react";
@@ -107,7 +107,6 @@ const EvaluationSettingModal = ({ open, setOpen, setting }: EvaluationSettingMod
                                       onValueChange={field.onChange}
                                       enableSelect={false}
                                       locale={ko}
-                                      color="rose"
                                       className="max-w-sm mx-auto" 
                                     />
                                   )}
@@ -126,7 +125,6 @@ const EvaluationSettingModal = ({ open, setOpen, setting }: EvaluationSettingMod
                                       onValueChange={field.onChange}
                                       enableSelect={false}
                                       locale={ko}
-                                      color="rose"
                                       className="max-w-sm mx-auto" 
                                     />
                                   )}
