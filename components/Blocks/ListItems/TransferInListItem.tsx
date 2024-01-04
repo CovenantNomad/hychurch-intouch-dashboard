@@ -91,6 +91,10 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
         queryClient.invalidateQueries({ queryKey: ["findBlessingCell"] });
       }
 
+      queryClient.invalidateQueries({
+        queryKey: ["findUser", { id: data.updateUserCellTransfer.userCellTransfer.user.id }],
+      });
+
       toast.success(
         `이동요청이 ${getTransferStatus(
           data.updateUserCellTransfer.userCellTransfer.status

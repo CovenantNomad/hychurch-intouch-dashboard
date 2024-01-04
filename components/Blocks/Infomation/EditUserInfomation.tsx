@@ -63,7 +63,7 @@ const EditUserInfomation = ({
           });
         }
         queryClient.invalidateQueries({
-          queryKey: ["findUser", { id: id }],
+          queryKey: ["findUser", { id: data.updateUser.user.id }],
         });
         queryClient.invalidateQueries({
           queryKey: ["searchUsers"],
@@ -227,6 +227,7 @@ const EditUserInfomation = ({
                 <option value={UserGrade.C}>C</option>
                 <option value={UserGrade.D}>D</option>
                 <option value={UserGrade.E}>E</option>
+                <option value={UserGrade.F}>F</option>
               </select>
               {errors.grade && (
                 <p className="mt-1 px-3 text-sm text-red-600">

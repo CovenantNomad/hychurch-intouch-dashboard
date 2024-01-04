@@ -11,6 +11,7 @@ import SectionContainer from "../../components/Atoms/Container/SectionContainer"
 import AttendanceReportScreen from "../../components/Templates/Reports/AttendanceReportScreen";
 import CellReportSubmitScreen from "../../components/Templates/Reports/CellReportSubmitScreen";
 import TabsWithTwoBlock from "../../components/Atoms/Tabs/TabsWithTwoBlock";
+import CellEvaluationFormScreen from "../../components/Templates/Reports/CellEvaluationFormScreen";
 
 const categories = [
   { id: 0, name: "출석체크", component: <AttendanceReportScreen /> },
@@ -18,6 +19,11 @@ const categories = [
     id: 1,
     name: "셀보고서",
     component: <CellReportSubmitScreen />,
+  },
+  {
+    id: 2,
+    name: "셀평가서",
+    component: <CellEvaluationFormScreen />,
   },
 ];
 

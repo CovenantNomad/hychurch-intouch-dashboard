@@ -20,3 +20,10 @@ export enum CELLMEETING_COLLCTION {
   HISTORY = 'History',
   MEMBERS = 'Members',
 }
+
+export enum EVALUATIONFORM_COLLCTION {
+  EVALUATIONFORM = 'EvaluationForm',
+  SETTINGS = 'Settings',
+  SUBMISSION = 'SUBMISSION',
+  MEMBERLIST = 'MEMBERLIST'
+}

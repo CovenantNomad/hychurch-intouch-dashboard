@@ -33,8 +33,8 @@ const InactiveMember = ({ memberList }: InactiveMemberProps) => {
         <div>
           <div className="md:flex md:justify-between md:items-center md:pb-4 md:border-b md:mb-8">
             <div className="pb-3 mb-4 border-b md:border-b-0 md:pb-0 md:mb-0">
-              <h6 className="text-xl font-bold">셀 미참여 활동청년</h6>
-              <p className="text-sm md:text-base">인터치예배도 참석하지 않는 청년들입니다</p>
+              <h6 className="text-xl font-bold">F등급 인원</h6>
+              <p className="text-sm md:text-base">셀모임 참석 X | 예배 출석 X</p>
             </div>
             <SearchButton
               placeholder={'이름으로 검색하세요'}
