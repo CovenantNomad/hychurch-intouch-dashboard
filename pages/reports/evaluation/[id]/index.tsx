@@ -1,39 +1,57 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Layout from "../../../../components/Layout/Layout";
 import Head from "next/head";
 import PageLayout from "../../../../components/Layout/PageLayout";
 import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
 import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
-import ReactToPrint from "react-to-print";
-import CellReportTemplate from "../../../../components/Templates/Reports/CellReportTemplate/CellReportTemplate";
-import { mockCellRport } from "../../../../constants/mockCellReport";
+import ReactToPrint, { useReactToPrint } from "react-to-print";
 import CellEvaluationFormPrintTemplate from "../../../../components/Templates/Reports/CellEvaluationFormPrintTemplate";
 import { useRouter } from "next/router";
-import { FindCellQuery, FindCellQueryVariables, useFindCellQuery } from "../../../../graphql/generated";
-import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import { convertSecondToDate } from "../../../../utils/dateUtils";
+import dayjs from "dayjs";
+import { useQuery } from "react-query";
+import { getCellEvaluationFormByCellId } from "../../../../firebase/EvaluationForm/evaluationFromSubmission";
+import EmptyStateSimple from "../../../../components/Atoms/EmptyStates/EmptyStateSimple";
+import { IndividualEvaluationDataType } from "../../../../interface/EvaluationFormTypes";
+import EvaluationFormMemberEditSection from "../../../../components/Organisms/Reports/EvaluationFormMemberEditSection";
+import CellEvaluationFormPrintHeader from "../../../../components/Templates/Reports/CellEvaluationFormPrintHeader";
 
 
 const EvaluationPrintScreen = () => {
-  const evaluationPritRef = useRef<HTMLDivElement | null>(null);
-
   const router = useRouter()
+  const evaluationPritHeaderRef = useRef<HTMLDivElement | null>(null);
+  const evaluationPritContentRef = useRef<HTMLDivElement | null>(null);
+  const [ isEdit, setIsEdit ] = useState(false)
+  const [ memberList, setMemberList ] = useState<IndividualEvaluationDataType[] | null>(null)
+
+  const handlePrint = useReactToPrint({
+    content: () => evaluationPritContentRef.current,
+  });
+  
   const { id } = router.query
 
-  const { isLoading, data } = useFindCellQuery<
-    FindCellQuery,
-    FindCellQueryVariables
-  >(
-    graphlqlRequestClient,
+  const { isLoading, isFetching, data } = useQuery(
+    ['getCellEvaluationFormByCellId', String(id)], 
+    () => getCellEvaluationFormByCellId(String(id)),
     {
-      id: Number(id),
-    },
-    {
-      enabled: !!Number(id),
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
     }
-  );
+  )
 
+  useEffect(() => {
+    if (!isLoading && !isFetching && data) {
+      setMemberList(data.memberList)
+    }
+
+  }, [data, isLoading, isFetching])
+
+  const onResetMemberList = () => {
+    if (data){
+      setMemberList(data.memberList)
+    }
+  }
+  
   return (
     <Layout>
       <Head>
@@ -48,33 +66,75 @@ const EvaluationPrintScreen = () => {
             <div className="lg:hidden">
               모바일에서는 사용할 수 없습니다
             </div>
-            <header className="hidden lg:block relative">
-              <div className="border-b border-gray-900/10 py-10">
-                <div className="items-center justify-between">
-                  <div className="flex items-center gap-x-6">
-                    <h1>
-                      <div className="text-sm leading-6 text-gray-500">
-                        <span className="text-gray-700">2023. 05. 07.</span>
+            {isLoading || isFetching ? (
+              <div>로딩중...</div>
+            ) : (
+              <>
+                {data && memberList ? (
+                  <div>
+                    <header className="hidden lg:block relative">
+                      <div className="rounded-lg bg-gray-50 px-4 py-6 sm:flex sm:items-center sm:justify-between sm:space-x-6 sm:px-6 lg:space-x-8">
+                        <dl className="flex-auto space-y-6 divide-y divide-gray-200 text-sm sm:grid sm:grid-cols-3 sm:gap-x-6 sm:space-y-0 sm:divide-y-0 lg:w-1/2 lg:flex-none lg:gap-x-8">
+                          <div className="flex justify-between font-medium text-gray-900 sm:block">
+                            <dt className="font-medium text-gray-600">셀이름</dt>
+                            <dd className="sm:mt-1">
+                              {data.cellName}
+                            </dd>
+                          </div>
+                          <div className="flex justify-between pt-6 sm:block sm:pt-0 text-gray-900">
+                            <dt className="font-medium text-gray-600">제출상태</dt>
+                            <dd className="sm:mt-1">
+                              {data.submissionStatus}
+                            </dd>
+                          </div>
+                          <div className="flex justify-between pt-6 font-medium text-gray-900 sm:block sm:pt-0">
+                            <dt className="font-medium text-gray-600">제출시간</dt>
+                            <dd className="sm:mt-1">
+                              {dayjs(convertSecondToDate(data.submissionDate!.seconds)).format('YYYY-MM-DD HH:mm')}
+                            </dd>
+                          </div>
+                        </dl>
+                        <div className="flex space-x-4 space-y-0">
+                          <button
+                            onClick={() => setIsEdit(!isEdit)} 
+                            className="mt-6 flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                          >
+                            {isEdit ? '편집완료' : '편집하기'}
+                          </button>
+                          <button 
+                            onClick={handlePrint}
+                            className="mt-6 flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                          >
+                            출력하기
+                          </button>
+                        </div>
                       </div>
-                      <div className="mt-1 text-base font-semibold leading-6 text-gray-900">
-                        {data?.findCell.name}
-                      </div>
-                    </h1>
-                  </div>
-                  <div className="flex items-center">
-                    <ReactToPrint
-                      trigger={() => (
-                        <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                          Print
-                        </button>
+                    </header>
+                    <div>
+                      {isEdit ? (
+                        <EvaluationFormMemberEditSection 
+                          memberList={memberList}
+                          setMemberList={setMemberList}
+                          onResetHandler={onResetMemberList}
+                        />
+                      ) : (
+                        <>
+                          <CellEvaluationFormPrintTemplate 
+                            ref={evaluationPritContentRef} 
+                            cellName={data.cellName} 
+                            memberList={memberList}
+                          />
+                        </>
                       )}
-                      content={() => evaluationPritRef.current}
-                    />
+                    </div>
                   </div>
-                </div>
-              </div>
-            </header>
-            <CellEvaluationFormPrintTemplate ref={evaluationPritRef} cell={data}/>
+                ) : (
+                  <div>
+                    <EmptyStateSimple />
+                  </div>
+                )}
+              </>
+            )}
           </BlockContainer>
         </SectionContainer>
       </PageLayout>

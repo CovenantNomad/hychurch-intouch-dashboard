@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, query, runTransaction, where } from "
 import { db } from "../../client/firebaseConfig";
 import { EVALUATIONFORM_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
-import { EvaluationSettingType, IndividualEvaluationDataType, TEvaluationSubmission } from "../../interface/EvaluationFormTypes";
+import { EvaluationSettingType, IndividualEvaluationDataType, TCellEvaluationFrom, TEvaluationSubmission } from "../../interface/EvaluationFormTypes";
 
 
 export const getEvaluationSubmissionCheck = async ( seasonName: string, communityName: string ) => {
@@ -32,9 +32,66 @@ export const getEvaluationSubmissionCheck = async ( seasonName: string, communit
   }
 }
 
+export const getCellEvaluationFormByCellId = async ( cellId: string ) => {
+  try {
+    const settingRef = doc(db, EVALUATIONFORM_COLLCTION.EVALUATIONFORM, EVALUATIONFORM_COLLCTION.SETTINGS)
+    const settingDoc = await getDoc(settingRef);
+
+    if (settingDoc.exists()) {
+      if (settingDoc.data().isActive) {
+        const seasonName = settingDoc.data().seasonName
+
+        // 제출정보 가져오기
+        const submissionRef = doc(
+          db,
+          EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
+          seasonName,
+          EVALUATIONFORM_COLLCTION.SUBMISSION,
+          cellId
+        )
+
+        const submissionDoc = (await getDoc(submissionRef)).data() as TEvaluationSubmission
+
+        // 작성내용 가져오기
+
+        const membersCollecionRef = collection(
+          db,
+          EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
+          seasonName,
+          EVALUATIONFORM_COLLCTION.MEMBERLIST,
+        )
+
+        const memberQuery = query(membersCollecionRef, where('previousCellId', '==', cellId))
+        const querySnapshot = await getDocs(memberQuery);
+
+        let tempList: IndividualEvaluationDataType[] = []
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          tempList.push(doc.data() as IndividualEvaluationDataType)
+        });
+
+        // return 값 작성하기
+        const resultData: TCellEvaluationFrom = {
+          ...submissionDoc,
+          memberList: tempList
+        }
+
+        return resultData
+
+      } else {
+        return null
+      }
+    }
+
+  } catch (error: any) {
+    console.log('@getCellMeeting Error: ', error)
+    return null
+  }
+}
+
+
 export const getEvaluationFormByUserId = async ( userId: string ) => {
   try {
-    console.log('시작점!')
     const settingRef = doc(db, EVALUATIONFORM_COLLCTION.EVALUATIONFORM, EVALUATIONFORM_COLLCTION.SETTINGS)
     const settingDoc = await getDoc(settingRef);
 

@@ -28,18 +28,16 @@ interface RemoveFormType {
 const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [ open, setOpen ] = useState(false)
   const {
     handleSubmit,
     register,
     control,
     watch,
-    clearErrors,
-    setValue,
     formState: { errors },
   } = useForm<RemoveFormType>({
     defaultValues: {
-      reason: ""
+      reason: "",
+      otherReason: ""
     }
   });
 
@@ -66,28 +64,30 @@ const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
   });
 
   const onSubmitHandler = (data: RemoveFormType) => {
-    console.log(data)
-    let reason
 
     if (data.reason === '기타') {
-      reason = `${data.reason} - ${data.otherReason}`
+      removeUserMutate({
+        input: {
+          userId: id,
+          reason: data.reason,
+          reasonDetail: data.otherReason
+        },
+      });
     } else {
-      reason = data.reason
+      removeUserMutate({
+        input: {
+          userId: id,
+          reason: data.reason,
+        },
+      });
     }
-
-    removeUserMutate({
-      input: {
-        userId: id,
-        reason: data.reason,
-      },
-    });
   };
 
   return (
     <>
       <SectionTitle>청년 제외</SectionTitle>
       <form onSubmit={handleSubmit(onSubmitHandler)}>
-        <div className="flex items-center gap-x-6">
+        <div className="flex flex-col items-center gap-x-6 lg:flex-row">
           <Controller
             name='reason'
             control={control}
@@ -114,7 +114,7 @@ const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
             )}
           />
           {watch('reason') === '기타' && (
-            <div className="">
+            <div className="w-full mt-1 lg:w-fit lg:flex-grow lg:mt-0">
               <label
                 htmlFor="otherReason"
                 className="sr-only"
@@ -134,15 +134,15 @@ const RemoveUserSection = ({ id, name }: RemoveUserSectionProps) => {
                     message: "너무 많은 내용을 입력하였습니다 (최대길이오류)",
                   },
                 })}
-                className="inline-block w-full max-w-md py-2.5 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
+                className="inline-block w-full py-2.5 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
               />
             </div>
           )}
-          <div>
+          <div className="flex justify-center w-full mt-4 lg:w-fit lg:mt-0">
             <button
               type="submit"
               disabled={watch('reason') === ''}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-RED disabled:bg-slate-300 disabled:cursor-not-allowed"
+              className="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-RED disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
               제외하기
             </button>
