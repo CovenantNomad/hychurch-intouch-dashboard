@@ -15,7 +15,7 @@ const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
   return (
     <>
       {isLoading || isFetching ? (
-        <div className="h-screen bg-white">
+        <div className="h-screen bg-white pt-8">
           <Spinner />
         </div>
       ) : (
