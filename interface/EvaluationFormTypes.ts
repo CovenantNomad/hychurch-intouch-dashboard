@@ -43,3 +43,11 @@ export type IndividualEvaluationDataType = {
   meeting: string
   description: string
 }
+
+export type TCellEvaluationFrom = {
+  cellId: string;
+  cellName: string;
+  submissionStatus: EvaluationSubmissionStatus;
+  submissionDate?: Timestamp;
+  memberList: IndividualEvaluationDataType[]
+}

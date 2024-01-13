@@ -1,74 +1,94 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef } from 'react';
 import EvaluationFormPrintCard from '../../../Organisms/Reports/EvaluationFormPrintCard';
-import { FindCellQuery, RoleType } from '../../../../graphql/generated';
+import { IndividualEvaluationDataType } from '../../../../interface/EvaluationFormTypes';
 
 type CellEvaluationFormPrintTemplateProps = {
-  cell: FindCellQuery | undefined;
+  cellName: string;
+  memberList: IndividualEvaluationDataType[]
 }
 
 const CellEvaluationFormPrintTemplate = forwardRef<HTMLDivElement, CellEvaluationFormPrintTemplateProps>((props, ref) => {
-  const { cell } = props
-  const [numPages, setNumPages] = useState(1);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const additionalMargin = numPages > 1 ? '40px' : '0';
-
-
-  useEffect(() => {
-    if (contentRef.current) {
-      const contentHeight = contentRef.current.getBoundingClientRect().height;
-      const numPages = Math.ceil(contentHeight / window.innerHeight);
-      setNumPages(numPages);
-    }
-  }, [cell]);
+  const { cellName, memberList } = props
 
   return (
-    <main ref={ref} className='h-screen m-0 p-0'>
-      {/* <style>
-        {`
-          @media print {
-            .page-break {
-              page-break-before: always;
-              margin-top: 40px;
-            }
-          }
-        `}
-      </style> */}
-      <div className='px-4' ref={contentRef}>
-        <div className='grid grid-cols-4 gap-4 py-3'>
-          <h1 className='col-span-1 text-lg font-bold text-end border px-4 py-1'>셀이름: {cell?.findCell.name}</h1>
-        </div>
-        <div className='grid grid-cols-4 grid-rows-2 gap-4'>
-          {cell?.findCell.members
-            .filter((member) => !member.roles.includes(RoleType.CellLeader))
-            .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+    // <main ref={ref} className='h-screen m-0 p-0'>
+    //   <div className='px-4'>
+    //     <div className='grid grid-cols-4 gap-4 py-3'>
+    //       <h1 className='col-span-1 text-lg font-bold text-end border px-4 py-1'>셀이름: {cellName}</h1>
+    //     </div>
+    //     <div className='grid grid-cols-4 gap-3 print:break-after-page'>
+    //       {memberList
+    //         .sort((a, b) => {
+    //           const rankA = a.meeting.replace('등급', '');
+    //           const rankB = b.meeting.replace('등급', '');
+          
+    //           if (rankA !== rankB) {
+    //             return parseInt(rankA) - parseInt(rankB);
+    //           }
+          
+    //           // 같은 등급 내에서 이름으로 정렬
+    //           return a.userName.localeCompare(b.userName);
+    //         })
+    //         .map((member) => (
+    //         <div key={member.userId} className='col-span-1' style={{ pageBreakInside: 'avoid' }}>
+    //           <EvaluationFormPrintCard member={member} />
+    //         </div>
+    //       ))}
+    //     </div>
+    //   </div>
+    // </main>
+    <div ref={ref} className='h-screen m-0 p-0'>
+      <div className='px-4'>
+        <table className='w-full'>
+          <thead>
+            <tr style={{ height: '12px' }}> {/* 공백 행 추가 */}
+              <td colSpan={4}></td>
+            </tr>
+            <tr className='flex'>
+              <th scope="col" className='w-1/4 text-right px-1'>
+                <span className='inline-block w-full px-4 py-1 border'>셀이름: {cellName}</span>
+              </th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+            </tr>
+            <tr style={{ height: '10px' }}> {/* 공백 행 추가 */}
+              <td colSpan={4}></td>
+            </tr>
+          </thead>
+          <tbody>
+            {memberList
+              .sort((a, b) => {
+                const rankA = a.meeting.replace('등급', '');
+                const rankB = b.meeting.replace('등급', '');
 
-            .map((member) => (
-            <div key={member.id} className='col-span-1 row-span-1' style={{ pageBreakInside: 'avoid' }}>
-              <EvaluationFormPrintCard userId={member.id} name={member.name} />
-            </div>
-          ))}
-        </div>
-        {/* <div className='print:break-before-page'/>
-        <div className='grid grid-cols-4 gap-4 py-3'>
-          <h1 className='col-span-1 text-lg font-bold text-end border px-4 py-1'>셀이름: {cell?.findCell.name}</h1>
-        </div>
-        <div className='grid grid-cols-4 grid-rows-2 gap-4'>
-          {cell?.findCell.members
-            .filter((member) => !member.roles.includes(RoleType.CellLeader))
-            .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-            .slice(8)
-            .map((member) => (
-            <div key={member.id} className='col-span-1 row-span-1'>
-              <EvaluationFormPrintCard userId={member.id} name={member.name}/>
-            </div>
-          ))}
-        </div> */}
+                if (rankA !== rankB) {
+                  return parseInt(rankA) - parseInt(rankB);
+                }
+
+                // 같은 등급 내에서 이름으로 정렬
+                return a.userName.localeCompare(b.userName);
+              })
+              .map((member, index) => (
+                // 행을 4개의 셀로 분할
+                index % 4 === 0 && (
+                  <tr key={member.userId} className='flex'>
+                    {memberList.slice(index, index + 4).map((item) => (
+                      <td key={item.userId} scope="col" className='w-1/4 align-top px-1 py-1' style={{ pageBreakInside: 'avoid' }}>
+                        <EvaluationFormPrintCard member={item} />
+                      </td>
+                    ))}
+                  </tr>
+                )
+              ))}
+          </tbody>
+        </table>
       </div>
-    </main>
+    </div>
   );
 })
 
 CellEvaluationFormPrintTemplate.displayName = "CellEvaluationForm";
+
 
 export default CellEvaluationFormPrintTemplate;

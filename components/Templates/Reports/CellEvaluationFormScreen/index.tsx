@@ -23,9 +23,9 @@ const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
           <BlockContainer firstBlock>
             <EvaluationFormHeader setting={setting}/>
           </BlockContainer>
-          <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-4 lg:gap-x-2 ">
+          <>
             {setting && setting.isActive ? (
-              <>
+             <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-4 lg:gap-x-2 ">
                 <BlockCardContainer>
                   <EvaluationCommunitySection seasonName={setting.seasonName} communityName='길'/>
                 </BlockCardContainer>
@@ -38,13 +38,13 @@ const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
                 <BlockCardContainer>
                   <EvaluationCommunitySection seasonName={setting.seasonName} communityName='빛'/>
                 </BlockCardContainer>
-              </>
-            ) : (
-              <div>
-                OFF시즌
               </div>
+            ) : (
+              <BlockContainer>
+                <div className='text-center'>지금은 셀편성기간이 아닙니다</div>
+              </BlockContainer>
             )}
-          </div>
+          </>
         </>
       )}
     </>
