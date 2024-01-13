@@ -11,32 +11,6 @@ const CellEvaluationFormPrintTemplate = forwardRef<HTMLDivElement, CellEvaluatio
   const { cellName, memberList } = props
 
   return (
-    // <main ref={ref} className='h-screen m-0 p-0'>
-    //   <div className='px-4'>
-    //     <div className='grid grid-cols-4 gap-4 py-3'>
-    //       <h1 className='col-span-1 text-lg font-bold text-end border px-4 py-1'>셀이름: {cellName}</h1>
-    //     </div>
-    //     <div className='grid grid-cols-4 gap-3 print:break-after-page'>
-    //       {memberList
-    //         .sort((a, b) => {
-    //           const rankA = a.meeting.replace('등급', '');
-    //           const rankB = b.meeting.replace('등급', '');
-          
-    //           if (rankA !== rankB) {
-    //             return parseInt(rankA) - parseInt(rankB);
-    //           }
-          
-    //           // 같은 등급 내에서 이름으로 정렬
-    //           return a.userName.localeCompare(b.userName);
-    //         })
-    //         .map((member) => (
-    //         <div key={member.userId} className='col-span-1' style={{ pageBreakInside: 'avoid' }}>
-    //           <EvaluationFormPrintCard member={member} />
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // </main>
     <div ref={ref} className='h-screen m-0 p-0'>
       <div className='px-4'>
         <table className='w-full'>

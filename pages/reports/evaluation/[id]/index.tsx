@@ -4,7 +4,7 @@ import Head from "next/head";
 import PageLayout from "../../../../components/Layout/PageLayout";
 import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
 import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import CellEvaluationFormPrintTemplate from "../../../../components/Templates/Reports/CellEvaluationFormPrintTemplate";
 import { useRouter } from "next/router";
 import { convertSecondToDate } from "../../../../utils/dateUtils";
@@ -14,12 +14,11 @@ import { getCellEvaluationFormByCellId } from "../../../../firebase/EvaluationFo
 import EmptyStateSimple from "../../../../components/Atoms/EmptyStates/EmptyStateSimple";
 import { IndividualEvaluationDataType } from "../../../../interface/EvaluationFormTypes";
 import EvaluationFormMemberEditSection from "../../../../components/Organisms/Reports/EvaluationFormMemberEditSection";
-import CellEvaluationFormPrintHeader from "../../../../components/Templates/Reports/CellEvaluationFormPrintHeader";
+import Skeleton from "../../../../components/Atoms/Skeleton/Skeleton";
 
 
 const EvaluationPrintScreen = () => {
   const router = useRouter()
-  const evaluationPritHeaderRef = useRef<HTMLDivElement | null>(null);
   const evaluationPritContentRef = useRef<HTMLDivElement | null>(null);
   const [ isEdit, setIsEdit ] = useState(false)
   const [ memberList, setMemberList ] = useState<IndividualEvaluationDataType[] | null>(null)
@@ -51,7 +50,7 @@ const EvaluationPrintScreen = () => {
       setMemberList(data.memberList)
     }
   }
-  
+
   return (
     <Layout>
       <Head>
@@ -67,7 +66,34 @@ const EvaluationPrintScreen = () => {
               모바일에서는 사용할 수 없습니다
             </div>
             {isLoading || isFetching ? (
-              <div>로딩중...</div>
+              <>
+              <div className="flex justify-between py-6">
+                <div className="flex items-center space-x-16">
+                  <div className="space-y-1">
+                    <Skeleton className="h-[14px] w-[60px] bg-gray-100"/>
+                    <Skeleton className="h-[14px] w-[100px] bg-gray-100"/>
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-[14px] w-[60px] bg-gray-100"/>
+                    <Skeleton className="h-[14px] w-[100px] bg-gray-100"/>
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-[14px] w-[60px] bg-gray-100"/>
+                    <Skeleton className="h-[14px] w-[100px] bg-gray-100"/>
+                  </div>
+                </div>
+                <div className="flex space-x-4">
+                  <Skeleton className="h-[38xp] w-[82px] bg-gray-100"/>
+                  <Skeleton className="h-[38xp] w-[82px] bg-gray-100"/>
+                </div>
+              </div>
+              <div className="mt-4">
+                <Skeleton className="h-[34px] w-[224px] bg-gray-100"/>
+                <div className="flex mt-[10px] gap-x-2">
+                  {Array.from({length: 4}).map((_, index) => <Skeleton key={index} className="h-[200px] w-full bg-gray-100" />)}
+                </div>
+              </div>
+              </>
             ) : (
               <>
                 {data && memberList ? (

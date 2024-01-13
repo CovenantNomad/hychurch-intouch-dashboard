@@ -6,6 +6,7 @@ import { getEvaluationSubmissionCheck } from '../../../../firebase/EvaluationFor
 import { EvaluationSubmissionStatus } from '../../../../interface/EvaluationFormTypes';
 import Link from 'next/link';
 import { CellListType } from '../../../../interface/cell';
+import Skeleton from '../../../Atoms/Skeleton/Skeleton';
 
 const EvaluationCommunitySection = ({ seasonName, communityName }: { communityName: string; seasonName: string; }) => {
   const [ communityCellList, setCommunityCellList ] = useState<CellListType[] | null>(null)
@@ -61,7 +62,15 @@ const EvaluationCommunitySection = ({ seasonName, communityName }: { communityNa
       </div>
       <div>
         {isLoading ? (
-          <div>로딩중...</div>
+          <div>
+            <Skeleton className="h-[54px] w-full mt-5 bg-gray-100"/>
+            {Array.from({length: 8}).map((_, index) => (
+              <div key={index} className='flex justify-between px-6 py-5 border rounded-md mt-3'>
+                <Skeleton className="h-[24px] w-[54px] bg-gray-100"/>
+                <Skeleton className="h-[24px] w-[46px] bg-gray-100"/>
+              </div>
+            ))}
+          </div>
         ) : (
           <>
             {data ? (

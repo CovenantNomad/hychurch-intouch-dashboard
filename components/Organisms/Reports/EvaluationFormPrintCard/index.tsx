@@ -5,6 +5,7 @@ import EmptyStateSimple from '../../../Atoms/EmptyStates/EmptyStateSimple';
 import { IndividualEvaluationDataType } from '../../../../interface/EvaluationFormTypes';
 import { FindUserQuery, FindUserQueryVariables, useFindUserQuery } from '../../../../graphql/generated';
 import graphlqlRequestClient from '../../../../client/graphqlRequestClient';
+import Skeleton from '../../../Atoms/Skeleton/Skeleton';
 
 type EvaluationFormPrintCardProps = {
   member: IndividualEvaluationDataType
@@ -33,7 +34,13 @@ const EvaluationFormPrintCard = ({ member }: EvaluationFormPrintCardProps) => {
           <div className='flex justify-between'>
             <div>
               <span className='block text-sm font-bold print:text-[14px]'>이름 : {member.userName}</span>
-              <span className='block text-sm mt-1 print:text-[12px]'>({data && data.user.birthday})</span>
+              {isLoading || isFetching ? (
+                <Skeleton className="h-3 w-18 mt-2" />
+              ) : (
+                <>
+                  {data && <span className='block text-sm mt-1 print:text-[12px]'>({data.user.birthday})</span>}
+                </>
+              )}
             </div>
             <div className='flex flex-col items-end'>
               <span className='w-5 h-5 flex justify-center items-center text-sm font-bold border rounded-full print:text-[14px]'>
