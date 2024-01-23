@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, query, runTransaction, where } from "
 import { db } from "../../client/firebaseConfig";
 import { EVALUATIONFORM_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
-import { EvaluationSettingType, IndividualEvaluationDataType, TCellEvaluationFrom, TEvaluationSubmission } from "../../interface/EvaluationFormTypes";
+import { IndividualEvaluationDataType, TCellEvaluationFrom, TEvaluationSubmission } from "../../interface/EvaluationFormTypes";
 
 
 export const getEvaluationSubmissionCheck = async ( seasonName: string, communityName: string ) => {

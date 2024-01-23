@@ -23,8 +23,8 @@ const useOrderedCellList = () => {
       limit: FIND_CELL_LIMIT,
     },
     {
-      staleTime: 60 * 60 * 1000,
-      cacheTime: 60 * 60 * 1000 * 24,
+      staleTime: 1000 * 60 * 5, //5분
+      cacheTime: 1000 * 60 * 30, //30분
     }
   );
 

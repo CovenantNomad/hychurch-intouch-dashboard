@@ -98,6 +98,7 @@ const AttendanceHeader = ({ attendanceDate, attendanceStatus }: AttendanceHeader
       <AttendanceInputModal 
         open={isOpen}
         setOpen={setIsOpen}
+        attendanceDate={attendanceDate}
       />
       <SimpleModal 
         title={'출석체크 마감'}

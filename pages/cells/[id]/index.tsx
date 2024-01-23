@@ -20,6 +20,7 @@ import CellDeleteScreen from "../../../components/Templates/Cells/CellDeleteScre
 import CellEditScreen from "../../../components/Templates/Cells/CellEditScreen";
 import Container from "../../../components/Atoms/Container/Container";
 import SectionBackground from "../../../components/Atoms/Container/SectionBackground";
+import CellEditLoadingScreen from "../../../components/Templates/Cells/CellEditLoadingScreen";
 
 const CellDetail = () => {
   const { query } = useRouter();
@@ -62,12 +63,14 @@ const CellDetail = () => {
     {
       id: 3,
       name: "셀정보 수정",
-      component: (
+      component: data ? (
         <CellEditScreen
-          id={data?.findCell.id}
-          name={data?.findCell.name}
-          community={data?.findCell.community}
+          id={data.findCell.id}
+          name={data.findCell.name}
+          community={data.findCell.community}
         />
+      ) : (
+        <CellEditLoadingScreen />
       ),
     },
     {

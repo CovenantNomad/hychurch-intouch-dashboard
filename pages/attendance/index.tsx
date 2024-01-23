@@ -9,6 +9,7 @@ import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
 import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
+import CellMeetingOverview from "../../components/Templates/Attendance/CellMeetingOverview";
 
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
@@ -19,19 +20,19 @@ const AttendancePage = () => {
   const categories = [
     {
       id: 0,
-      name: "셀별출석현황(실시간)",
+      name: "이번주 예배출석(셀별)",
       component: <ThisWeekAttendance />,
     },
     {
       id: 1,
-      name: "이번주예배출석",
+      name: "이번주 예배출석(종합)",
       component: <AttendanceOverview />,
     },
-    // {
-    //   id: 2,
-    //   name: "이번주셀모임출석",
-    //   component: <CellMeetingOverview />,
-    // },
+    {
+      id: 2,
+      name: "이번주 셀모임출석(종합)",
+      component: <CellMeetingOverview />,
+    },
   ];
 
   const setSettingHandler = useCallback(

@@ -11,38 +11,11 @@ type AttendanceOverviewProps = {}
 
 const AttendanceOverview = ({}: AttendanceOverviewProps) => {
   const recentSunday = getMostRecentSunday();
-  const { isLoading, isFetching, data: attendanceCompleteStatus } = useFindAttendanceCheckQuery<
-    FindAttendanceCheckQuery,
-    FindAttendanceCheckQueryVariables
-  >(
-    graphlqlRequestClient,
-    {
-      attendanceDate: recentSunday.format('YYYY-MM-DD'),
-    },
-    {
-      staleTime: 15 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000,
-    }
-  );
 
   return (
     <BlockContainer firstBlock>
-      {isLoading || isFetching ? (
-        <div className="py-10">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          {attendanceCompleteStatus && attendanceCompleteStatus.attendanceCheck === AttendanceCheckStatus.Completed ? (
-            <div className="space-y-4">
-              <AttendnaceTable recentSunday={recentSunday} />
-              <AttendanceCountTable recentSunday={recentSunday}/>
-            </div>
-          ) : (
-            <NotCompleteAttendance />
-          )}
-        </>
-      )}
+      <AttendnaceTable recentSunday={recentSunday} />
+      <AttendanceCountTable recentSunday={recentSunday}/>
     </BlockContainer>
   );
 };

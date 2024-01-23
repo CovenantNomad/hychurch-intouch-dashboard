@@ -97,7 +97,6 @@ export interface transferedUser {
 export interface updateCellForm {
   name?: string;
   community?: string;
-  description?: string;
 }
 
 //새가족셀: 39, 블레싱셀: 47, 새싹셀: 44

@@ -1,7 +1,7 @@
 import { cellOrderByAge } from "../constants/cellOrder";
 import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
 import { AttendanceHistory, TempSavedAttendanceHistory } from "../interface/attendance";
-import { CellListType, CommunityType, MinimumCellType, SpecialCellIdType } from "../interface/cell";
+import { CellListType, CommunityType, MinimumCellType, SpecialCellIdType, transferedUser } from "../interface/cell";
 import { CommunityFilter } from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
@@ -194,3 +194,19 @@ export const getCellUrl = (cellId: string | undefined, userId: string) => {
 export const sortedCellByAge = (a:CellListType, b:CellListType) => {
   return cellOrderByAge.indexOf(a.name) - cellOrderByAge.indexOf(b.name);
 };
+
+export const makeLinkUrl = (data: transferedUser) => {
+  switch (data.toCell.id) {
+    case SpecialCellIdType.Renew:
+      return `/renew/${data.user.id}`
+
+    case SpecialCellIdType.NewFamily:
+      return `/newfamily/${data.user.id}`
+
+    case SpecialCellIdType.Blessing:
+      return `/blessing/${data.user.id}`
+  
+    default:
+      return `/cells/${data.toCell.id}/members/${data.user.id}`
+  }
+}

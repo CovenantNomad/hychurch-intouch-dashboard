@@ -16,7 +16,7 @@ const AttendanceCountTableRow = ({ recentSunday }: AttendanceCountTableRowProps)
       attendanceDate: recentSunday.format('YYYY-MM-DD'),
     },
     {
-      staleTime: 15 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
     }
   );

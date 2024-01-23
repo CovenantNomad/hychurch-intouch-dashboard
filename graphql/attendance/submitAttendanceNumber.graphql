@@ -1,0 +1,11 @@
+mutation submitAttendanceNumber(
+  $input: SaveIntouchManualAttendanceInput!
+) {
+  saveIntouchManualAttendance(input: $input) {
+    intouchManualAttendance {
+      id
+      attendanceDate
+      count
+    }
+  }
+}

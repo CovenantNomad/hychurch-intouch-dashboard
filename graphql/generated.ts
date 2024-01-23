@@ -759,6 +759,13 @@ export type SubmitAttendanceMutationVariables = Exact<{
 
 export type SubmitAttendanceMutation = { __typename?: 'Mutation', submitCellMemberChurchServiceAttendanceHistories: { __typename?: 'SubmitCellMemberChurchServiceAttendanceHistoriesPayload', success: boolean } };
 
+export type SubmitAttendanceNumberMutationVariables = Exact<{
+  input: SaveIntouchManualAttendanceInput;
+}>;
+
+
+export type SubmitAttendanceNumberMutation = { __typename?: 'Mutation', saveIntouchManualAttendance: { __typename?: 'SaveIntouchManualAttendancePayload', intouchManualAttendance: { __typename?: 'IntouchManualAttendance', id: string, attendanceDate: string, count: number } } };
+
 export type CheckCellAttendanceSubmissionsQueryVariables = Exact<{
   attendanceDate: Scalars['String'];
 }>;
@@ -1192,6 +1199,32 @@ export const useSubmitAttendanceMutation = <
       options
     );
 useSubmitAttendanceMutation.getKey = () => ['submitAttendance'];
+
+export const SubmitAttendanceNumberDocument = `
+    mutation submitAttendanceNumber($input: SaveIntouchManualAttendanceInput!) {
+  saveIntouchManualAttendance(input: $input) {
+    intouchManualAttendance {
+      id
+      attendanceDate
+      count
+    }
+  }
+}
+    `;
+export const useSubmitAttendanceNumberMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<SubmitAttendanceNumberMutation, TError, SubmitAttendanceNumberMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<SubmitAttendanceNumberMutation, TError, SubmitAttendanceNumberMutationVariables, TContext>(
+      ['submitAttendanceNumber'],
+      (variables?: SubmitAttendanceNumberMutationVariables) => fetcher<SubmitAttendanceNumberMutation, SubmitAttendanceNumberMutationVariables>(client, SubmitAttendanceNumberDocument, variables, headers)(),
+      options
+    );
+useSubmitAttendanceNumberMutation.getKey = () => ['submitAttendanceNumber'];
 
 export const CheckCellAttendanceSubmissionsDocument = `
     query checkCellAttendanceSubmissions($attendanceDate: String!) {
