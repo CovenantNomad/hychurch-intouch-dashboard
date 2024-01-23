@@ -14,9 +14,9 @@ import { useForm } from "react-hook-form";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
 
 interface CellEditScreenProps {
-  id: string | undefined;
-  name: string | undefined;
-  community: string | undefined;
+  id: string;
+  name: string;
+  community: string;
 }
 
 const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
@@ -24,9 +24,14 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
   const {
     handleSubmit,
     register,
+    watch,
     formState: { errors },
-    reset,
-  } = useForm<updateCellForm>();
+  } = useForm<updateCellForm>({
+    defaultValues: {
+      name,
+      community
+    }
+  });
 
   const { mutate } = useUpdateCellFieldsMutation<
     UpdateCellFieldsMutation,
@@ -49,17 +54,13 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
 
   const onSubmitHandler = (data: updateCellForm) => {
     if (id) {
-      if (name !== data.name || community !== data.community) {
-        mutate({
-          input: {
-            id,
-            name: data.name,
-            community: data.community,
-          },
-        });
-      } else {
-        console.log("변경사항이 없습니다");
-      }
+      mutate({
+        input: {
+          id,
+          name: data.name,
+          community: data.community,
+        },
+      });
     }
   };
 
@@ -129,7 +130,8 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
           <div className="py-3 bg-white text-right">
             <button
               type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE"
+              disabled={name === watch('name') && community === watch('community')}
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
               수정하기
             </button>

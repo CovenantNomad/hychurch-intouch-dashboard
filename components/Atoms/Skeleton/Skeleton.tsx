@@ -3,7 +3,7 @@ import { classNames } from '../../../utils/utils';
 
 const Skeleton = ({...props}) => {
   return (
-    <div className={classNames('animate-pulse bg-slate-200 rounded-lg', props.className)}/>
+    <div className={classNames('animate-pulse bg-gray-100 rounded-lg', props.className)}/>
   );
 };
 

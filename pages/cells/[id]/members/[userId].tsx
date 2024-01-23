@@ -55,8 +55,6 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
     }
   }, [router]);
 
-  console.log(data)
-
   return (
     <Layout>
       <Head>

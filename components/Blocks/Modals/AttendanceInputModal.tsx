@@ -1,20 +1,47 @@
 import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
+import { SubmitAttendanceNumberMutation, SubmitAttendanceNumberMutationVariables, useSubmitAttendanceNumberMutation } from "../../../graphql/generated";
+import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import toast from "react-hot-toast";
 
 interface AttendanceInputModalProps {
+  attendanceDate: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const AttendanceInputModal = ({
+  attendanceDate,
   open,
   setOpen,
 }: AttendanceInputModalProps) => {
   const { handleSubmit, register, formState: { errors }} = useForm<{attendance: string}>()
 
-  const onSubmitHandler = (data: {attendance: string}) => {
-    console.log(data)
+  const mutate = useSubmitAttendanceNumberMutation<
+    SubmitAttendanceNumberMutation, 
+    SubmitAttendanceNumberMutationVariables
+  >(graphlqlRequestClient, {
+    onSuccess() {
+      toast.success('이번주 출석인원이 저장되었습니다');
+      // queryClient.invalidateQueries({
+      //   queryKey: ["findAttendanceCheck"],
+      // });
+    },
+    onError() {
+      console.log(mutate.error)
+      toast.error('출석인원을 저장할 수 없습니다.');
+    },
+  })
+
+  const onSubmitHandler = ({ attendance }: { attendance: string }) => {
+    mutate.mutate({
+      input: {
+        attendanceDate: attendanceDate,
+        count: Number(attendance)
+      }
+    })
+    setOpen(false)
   }
 
 

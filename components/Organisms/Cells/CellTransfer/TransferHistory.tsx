@@ -8,6 +8,7 @@ import SkeletonListItem from "../../../Atoms/Skeleton/SkeletonListItem";
 import TransferOutListItem from "../../../Blocks/ListItems/TransferOutListItem";
 import SearchFilterModal from "../../../Blocks/Modals/SearchFilterModal";
 import dayjs from "dayjs";
+import TransferHistoryListItem from "../../../Blocks/ListItems/TransferHistoryListItem";
 
 interface TransferHistoryProps {
   data: FindCellWithTranferDataQuery | undefined;
@@ -56,7 +57,7 @@ const TransferHistory = ({ data, isLoading, datefilter, setDatefilter }: Transfe
             ).length !== 0 ? (
             data.findCell.transfersIn
               .filter((item) => item.status !== "ORDERED")
-              .map((item) => <TransferOutListItem key={item.id} data={item} />)
+              .map((item) => <TransferHistoryListItem key={item.id} data={item} />)
           ) : (
             <EmptyStateSimple />
           )}
@@ -74,7 +75,7 @@ const TransferHistory = ({ data, isLoading, datefilter, setDatefilter }: Transfe
             ).length !== 0 ? (
             data.findCell.transfersOut
               .filter((item) => item.status !== "ORDERED")
-              .map((item) => <TransferOutListItem key={item.id} data={item} />)
+              .map((item) => <TransferHistoryListItem key={item.id} data={item} />)
           ) : (
             <EmptyStateSimple />
           )}

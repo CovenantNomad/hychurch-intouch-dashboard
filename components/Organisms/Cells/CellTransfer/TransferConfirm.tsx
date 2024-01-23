@@ -1,6 +1,5 @@
 import React from "react";
 import { AttendanceCheckStatus, FindAttendanceCheckQuery, FindCellWithTranferDataQuery } from "../../../../graphql/generated";
-import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import EmptyStateSimple from "../../../Atoms/EmptyStates/EmptyStateSimple";
 import SkeletonListItem from "../../../Atoms/Skeleton/SkeletonListItem";
 import TransferInListItem from "../../../Blocks/ListItems/TransferInListItem";

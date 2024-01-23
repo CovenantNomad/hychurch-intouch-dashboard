@@ -130,7 +130,7 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 items-center py-6 px-8 rounded-lg shadow-md border bg-white">
       <div className="col-span-2 flex items-baseline">
-        <h4 className="text-2xl font-bold cursor-pointer mr-2">
+        <h4 className="text-2xl font-bold mr-2">
           {data.user.name}
         </h4>
         <span className="inline-block text-gray-500 text-lg">

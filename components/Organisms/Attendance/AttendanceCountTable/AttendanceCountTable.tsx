@@ -9,7 +9,7 @@ type AttendanceCountTableProps = {
 const AttendanceCountTable = ({ recentSunday }: AttendanceCountTableProps) => {
 
   return (
-    <table className="min-w-full border border-gray-200">
+    <table className="min-w-full border border-gray-200 mt-4">
       <AttendanceCountTableHeader />
       <AttendanceCountTableRow recentSunday={recentSunday} />
     </table>
