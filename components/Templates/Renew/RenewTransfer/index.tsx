@@ -58,10 +58,6 @@ const RenewTransfer = ({}: RenewTransferProps) => {
         },
       },
     },
-    {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
-    }
   );
 
   const { isLoading: isAttendanceLoading, isFetching: isAttendanceFetching, data: attendanceStatus } = useFindAttendanceCheckQuery<
