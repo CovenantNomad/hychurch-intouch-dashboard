@@ -228,6 +228,7 @@ const EditUserInfomation = ({
                 <option value={UserGrade.D}>D</option>
                 <option value={UserGrade.E}>E</option>
                 <option value={UserGrade.F}>F</option>
+                <option value={UserGrade.G}>G</option>
               </select>
               {errors.grade && (
                 <p className="mt-1 px-3 text-sm text-red-600">
