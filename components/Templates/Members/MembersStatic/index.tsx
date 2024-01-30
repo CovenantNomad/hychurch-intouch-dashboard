@@ -23,7 +23,7 @@ const MembersStatic = ({}: MembersStaticProps) => {
   >(
     graphlqlRequestClient,
     {
-      name: "",
+      keyword: "",
       limit: 100,
       offset: 0,
     },

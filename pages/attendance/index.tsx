@@ -10,6 +10,8 @@ import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAt
 import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
 import CellMeetingOverview from "../../components/Templates/Attendance/CellMeetingOverview";
+import CellMeetingStatistic from "../../components/Templates/Attendance/CellMeetingStatistic";
+import AttendanceStatistic from "../../components/Templates/Attendance/AttendanceStatistic";
 
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
@@ -32,6 +34,16 @@ const AttendancePage = () => {
       id: 2,
       name: "이번주 셀모임출석(종합)",
       component: <CellMeetingOverview />,
+    },
+    {
+      id: 3,
+      name: "예배출석 통계",
+      component: <AttendanceStatistic />,
+    },
+    {
+      id: 4,
+      name: "셀모임출석 통계",
+      component: <CellMeetingStatistic />,
     },
   ];
 

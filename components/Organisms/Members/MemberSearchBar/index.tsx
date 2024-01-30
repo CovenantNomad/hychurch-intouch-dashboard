@@ -8,14 +8,14 @@ import { useSetRecoilState } from "recoil";
 import { selectedUser } from "../../../../stores/selectedUser";
 
 interface SearchBarForm {
-  name: string;
+  keyword: string;
 }
 
 interface SearchBarProps {
-  setName: Dispatch<SetStateAction<string | null>>;
+  setKeyword: Dispatch<SetStateAction<string | null>>;
 }
 
-const MemberSearchBar = ({ setName }: SearchBarProps) => {
+const MemberSearchBar = ({ setKeyword }: SearchBarProps) => {
   const setSelectedUserInfo = useSetRecoilState(selectedUser);
   const queryClient = useQueryClient();
   const {
@@ -26,16 +26,16 @@ const MemberSearchBar = ({ setName }: SearchBarProps) => {
     formState: { isSubmitted, isDirty },
   } = useForm<SearchBarForm>();
 
-  const onSubmitHandler = debounce(({ name }: SearchBarForm) => {
+  const onSubmitHandler = debounce(({ keyword }: SearchBarForm) => {
     queryClient.invalidateQueries("searchUsers");
-    setName(name);
+    setKeyword(keyword);
   }, 300);
 
   const onCloseHandle = useCallback(() => {
     queryClient.invalidateQueries("searchUsers");
-    setName(null);
+    setKeyword(null);
     reset();
-    setValue("name", "");
+    setValue("keyword", "");
     setSelectedUserInfo(null);
   }, []);
 
@@ -47,8 +47,8 @@ const MemberSearchBar = ({ setName }: SearchBarProps) => {
       >
         <SearchIcon />
         <input
-          {...register("name")}
-          placeholder="이름으로 인터치 청년을 검색해주세요"
+          {...register("keyword")}
+          placeholder="이름 또는 전화번호로 검색해주세요"
           className="border-none outline-none w-full h-6"
         />
         <input type="submit" className="hidden" />

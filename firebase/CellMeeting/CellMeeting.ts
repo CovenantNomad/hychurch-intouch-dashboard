@@ -1,8 +1,9 @@
-import { collectionGroup, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, collectionGroup, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../client/firebaseConfig";
 import { CELLMEETING_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
 import { TCellMeetingSubmissionDataForCell } from "../../interface/cellMeeting";
+import { DateRangePickerValue } from "@tremor/react";
 
 export const getCellMeetingByCellId = async (cellId: string, baseDateString: string) => {
   try {
@@ -61,3 +62,110 @@ export const getThisWeekCellMeetingStatics = async (baseDateString: string) => {
     return null;
   }
 }
+
+
+// 통계
+export const getCellMeetingStatsByPeriod = async ({ cellId, dateRagnge }: {cellId: string, dateRagnge: DateRangePickerValue}) => {
+  let allAttendanceList: { userId: string; userName: string; }[] = []
+
+  let accumulatedAttendance = 0
+  let accumulatedTotalNumber = 0
+
+  const weeklyAttendanceCount: {
+    [baseDateString: string]: {
+      attendanceNumber: number;
+      totalNumber: number;
+    }
+  } = {};
+
+  
+  const cellRef = collection(
+    db,
+    CELLMEETING_COLLCTION.CELLMEETINGS,
+    CELLMEETING_COLLCTION.DATA,
+    CELLMEETING_COLLCTION.CELLLIST,
+    cellId,
+    CELLMEETING_COLLCTION.CELLHISTORY
+  );
+
+  const q = query(cellRef, where('baseDate', '>=', dateRagnge.from), where('baseDate', '<=', dateRagnge.to));
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    console.log('쿼리 결과 없음')
+
+  } else {
+    const n = querySnapshot.docs.length
+    querySnapshot.forEach((doc) => {
+      allAttendanceList = [...allAttendanceList, ...doc.data().attendanceList]
+      accumulatedAttendance += doc.data().attendanceList.length
+      accumulatedTotalNumber += doc.data().totalMemberList.length
+      if (!weeklyAttendanceCount[doc.data().baseDateString]) {
+        weeklyAttendanceCount[doc.data().baseDateString] = { attendanceNumber: doc.data().attendanceList.length, totalNumber: doc.data().totalList.length}
+      }
+    });
+
+    const groupedAttendances = groupByAttendanceCount(allAttendanceList);
+
+    const averageAttendance = accumulatedAttendance/n
+    const averageTotal = accumulatedTotalNumber/n
+
+    const attendanceRate = accumulatedAttendance/accumulatedTotalNumber * 100
+
+    return {
+      attendanceRate,
+      accumulatedAttendance,
+      accumulatedTotalNumber,
+      averageAttendance,
+      averageTotal,
+      weeklyAttendanceCount,
+      groupedAttendances,
+    }
+  }
+}
+
+
+
+const countAttendances = (attendances: Attendance[]) => {
+  const attendanceCount: AttendanceCount = {};
+
+  attendances.forEach((attendance) => {
+    if (!attendanceCount[attendance.userId]) {
+      attendanceCount[attendance.userId] = { count: 0, userName: attendance.userName };
+    }
+    attendanceCount[attendance.userId].count += 1;
+  });
+
+  return attendanceCount;
+};
+
+const groupByAttendanceCount = (attendances: Attendance[]): GroupedAttendances => {
+  const grouped: GroupedAttendances = {};
+  const attendanceCount = countAttendances(attendances);
+
+  Object.entries(attendanceCount).forEach(([userId, { count, userName }]) => {
+    if (!grouped[count]) {
+      grouped[count] = [];
+    }
+    grouped[count].push({ userId, userName });
+  });
+
+  return grouped;
+};
+
+type Attendance = {
+  userId: string;
+  userName: string;
+};
+
+type AttendanceCount = {
+  [userId: string]: {
+    count: number;
+    userName: string;
+  };
+};
+
+type GroupedAttendances = {
+  [count: number]: Attendance[];
+};

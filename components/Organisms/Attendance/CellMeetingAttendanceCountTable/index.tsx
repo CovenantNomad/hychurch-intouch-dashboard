@@ -26,7 +26,7 @@ const CellMeetingAttendanceCountTable = ({ recentSunday }: CellMeetingAttendance
       <div className='w-full max-w-sm ml-auto mt-8 border divide-y'>
         <div className='flex items-center px-4'>
           <div className='flex-1 py-2'>
-            <span>전체인원</span>
+            <span>셀편성 인원</span>
           </div>
           <div className='flex-[2] py-2 border-l'>
             {isLoading || isFetching ? (
@@ -46,7 +46,7 @@ const CellMeetingAttendanceCountTable = ({ recentSunday }: CellMeetingAttendance
         </div>
         <div className='flex items-center px-4'>
           <div className='flex-1 py-2'>
-            <span>참석인원</span>
+            <span>참석 인원</span>
           </div>
           <div className='flex-[2] py-2 border-l'>
             {isLoading || isFetching ? (
@@ -69,7 +69,7 @@ const CellMeetingAttendanceCountTable = ({ recentSunday }: CellMeetingAttendance
         </div>
         <div className='flex items-center px-4'>
           <div className='flex-1 py-2'>
-            <span>미참석인원</span>
+            <span>미참석 인원</span>
           </div>
           <div className='flex-[2] py-2 border-l'>
             {isLoading || isFetching ? (

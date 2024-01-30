@@ -1,5 +1,5 @@
-query findUsers($name: String, $limit: Int, $offset: Int) {
-  findUsers(name: $name, limit: $limit, offset: $offset) {
+query findUsers($keyword: String, $limit: Int, $offset: Int) {
+  findUsers(keyword: $keyword, limit: $limit, offset: $offset) {
     totalCount
     nodes {
       id

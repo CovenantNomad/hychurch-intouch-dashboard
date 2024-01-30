@@ -7,6 +7,7 @@ import { MeDocument } from "../../../graphql/generated";
 import { INTOUCH_DASHBOARD_ACCESS_TOKEN } from "../../../constants/constant";
 import Layout from "../../Layout/Layout";
 import Container from "../../Atoms/Container/Container";
+import Image from "next/image";
 
 interface SplashScreenProps {
   onFinished: () => void;
@@ -51,8 +52,14 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
   return (
     <Layout>
       <Container>
-        <div className="flex items-center justify-center h-screen">
-          SplashScreen
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="relative w-full max-w-lg aspect-square">
+            <Image src={'/images/splashscreen_001.jpeg'} alt="" layout="fill" className="rounded-lg"/>
+          </div>
+          <h6 className="animate-pulse mt-2 text-center">
+            데시보드도 지어져 가는 중입니다<br />
+            잠시만 기다려주세요
+          </h6>
         </div>
       </Container>
     </Layout>

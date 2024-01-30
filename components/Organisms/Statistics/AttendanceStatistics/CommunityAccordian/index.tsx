@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { CellListType } from '../../../../../interface/cell';
 import CellNameChip from '../../../../Blocks/CellNameChip';
 import { AttendanceSubmissionType } from '../../../../../interface/attendance';
 import { CellLeaderAttendanceSubmissionStatus } from '../../../../../graphql/generated';
@@ -8,12 +7,11 @@ import { CellLeaderAttendanceSubmissionStatus } from '../../../../../graphql/gen
 interface CommunityAccordianProps {
   isLoading: boolean;
   communityName: string;
-  cellList: CellListType[] | null | undefined
   checkSubmission: AttendanceSubmissionType[] | null
   onSelectHandler: (id: string, name: string) => void
 }
 
-const CommunityAccordian = ({ isLoading, communityName, cellList, checkSubmission, onSelectHandler }: CommunityAccordianProps) => {
+const CommunityAccordian = ({ isLoading, communityName, checkSubmission, onSelectHandler }: CommunityAccordianProps) => {
   const [ isOpen, setIsOpen ] = useState(false)
 
   return (
@@ -41,18 +39,17 @@ const CommunityAccordian = ({ isLoading, communityName, cellList, checkSubmissio
       <div className={`${isOpen ? 'block' : 'hidden'} mt-2 lg:flex lg:items-center lg:mt-0`}>
         {isLoading ? (
           <div className="animate-pulse flex space-x-6">
-            <div className="h-8 w-16 bg-slate-600/10 rounded-md"></div>
-            <div className="h-8 w-16 bg-slate-600/10 rounded-md"></div>
+            {Array.from({length: 8}).map((_, index) => <div key={index} className="h-8 w-16 bg-slate-600/10 rounded-md"></div>)}
           </div>
         ) : (
           <div className=''>
-            {cellList && checkSubmission ? (
+            {checkSubmission ? (
               <div className='flex flex-wrap gap-x-4 gap-y-2'>
-                {cellList.map(cell => {
-                  const checkedCell = checkSubmission.find(item => item.cellId === cell.id)
+                {checkSubmission.map(cell => {
+                  const checkedCell = checkSubmission.find(item => item.cellId === cell.cellId)
 
                   return (
-                    <CellNameChip key={cell.id} cellId={cell.id} cellName={cell.name} submissionStatus={checkedCell?.submissionStatus === CellLeaderAttendanceSubmissionStatus.Complete} onSelectHandler={onSelectHandler}/>
+                    <CellNameChip key={cell.cellId} cellId={cell.cellId} cellName={cell.cellName} submissionStatus={checkedCell?.submissionStatus === CellLeaderAttendanceSubmissionStatus.Complete} onSelectHandler={onSelectHandler}/>
                   )
                 })}
               </div>

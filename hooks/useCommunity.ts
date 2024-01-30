@@ -11,6 +11,7 @@ const useCommunity = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ data, setData ] = useState<CommunityType[] | null>(null)
   const [ newFamily, setNewFamily ] = useState<CellListType | null>(null)
+  const [ newFamilyTwo, setNewFamilyTwo ] = useState<CellListType | null>(null)
   const [ blessing, setBlessing ] = useState<CellListType | null>(null)
   const [ renew, setRenew ] = useState<CellListType | null>(null)
 
@@ -42,6 +43,9 @@ const useCommunity = () => {
         const newFamilyCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamily))[0]
         setNewFamily(newFamilyCell)
 
+        const newFamilyTwoCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamilyTwo))[0]
+        setNewFamilyTwo(newFamilyTwoCell)
+
         const blessingCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Blessing))[0]
         setBlessing(blessingCell)
 
@@ -50,6 +54,7 @@ const useCommunity = () => {
 
         const commonCell = cellListData.findCells.nodes.filter((cell) =>
           !cell.id.includes(SpecialCellIdType.NewFamily) &&
+          !cell.id.includes(SpecialCellIdType.NewFamilyTwo) &&
           !cell.id.includes(SpecialCellIdType.Blessing) &&
           !cell.id.includes(SpecialCellIdType.Renew)
         )
@@ -70,7 +75,12 @@ const useCommunity = () => {
           .filter(item => item.community === CommunityFilter.LIGHT)
           .sort((a, b) => filterByCellName(a, b))
 
-        const specialCells = [newFamilyCell, blessingCell, rewewCell]
+          const specialCells = [
+            ...(newFamily ? [newFamily] : []),
+            ...(newFamilyTwo ? [newFamilyTwo] : []),
+            ...(blessing ? [blessing] : []),
+            ...(renew ? [renew] : [])
+          ];
 
         setData([
           {id: '0', communityName: "길", cellList: communityWay},

@@ -12,17 +12,17 @@ interface DallantPaymetOthersProps {
 }
 
 const DallantPaymetOthers = ({cells}: DallantPaymetOthersProps) => {
-  const [name, setName] = useState<string | null>(null);
+  const [ keyword, setKeyword] = useState<string | null>(null);
   const { isLoading, data } = useSearchUsersQuery<
     SearchUsersQuery,
     SearchUsersQueryVariables
   >(
     graphlqlRequestClient,
     {
-      name,
+      keyword,
     },
     {
-      enabled: !!name,
+      enabled: !!keyword,
     }
   );
 
@@ -33,7 +33,7 @@ const DallantPaymetOthers = ({cells}: DallantPaymetOthersProps) => {
         description={'[청년검색] → [달란트 지급목록 등록] → [달란트 입력] 순으로 진행해주세요'} 
       />
       <div className='py-4'/>
-      <MemberSearchBar setName={setName} />
+      <MemberSearchBar setKeyword={setKeyword} />
       <DallantSearchResult isLoading={isLoading} searchResults={data}/>
       <div className='py-4'/>
       <OthersDallantPayment />

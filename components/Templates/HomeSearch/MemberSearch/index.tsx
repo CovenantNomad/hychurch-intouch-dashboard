@@ -11,17 +11,17 @@ import MemberSearchResult from "../../../Organisms/Members/MemberSearchResult";
 interface MemberSearchProps {}
 
 const MemberSearch = ({}: MemberSearchProps) => {
-  const [name, setName] = useState<string | null>(null);
+  const [keyword, setKeyword] = useState<string | null>(null);
   const { isLoading, data, isRefetching, isFetching } = useSearchUsersQuery<
     SearchUsersQuery,
     SearchUsersQueryVariables
   >(
     graphlqlRequestClient,
     {
-      name,
+      keyword,
     },
     {
-      enabled: !!name,
+      enabled: !!keyword,
     }
   );
 
@@ -29,9 +29,9 @@ const MemberSearch = ({}: MemberSearchProps) => {
     <div
       className={`${
         data ? "pt-8 md:pt-12" : "pt-48 pb-32"
-      } transition-all pb-6 xl:pt-12`}
+      } min-h-screen transition-all pb-6 xl:pt-12`}
     >
-      <MemberSearchBar setName={setName} />
+      <MemberSearchBar setKeyword={setKeyword} />
       <MemberSearchResult isLoading={isFetching} searchResults={data} />
     </div>
   );

@@ -11,6 +11,7 @@ const useOrderedCellList = () => {
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
   const [ orderedCellList, setOrderedCellList ] = useState<CellListType[] | null>(null)
   const [ newFamily, setNewFamily ] = useState<CellListType | null>(null)
+  const [ newFamilyTwo, setNewFamilyTwo ] = useState<CellListType | null>(null)
   const [ blessing, setBlessing ] = useState<CellListType | null>(null)
   const [ renew, setRenew ] = useState<CellListType | null>(null)
 
@@ -42,6 +43,9 @@ const useOrderedCellList = () => {
         const newFamilyCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamily))[0]
         setNewFamily(newFamilyCell)
 
+        const newFamilyTwoCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.NewFamilyTwo))[0]
+        setNewFamilyTwo(newFamilyTwoCell)
+
         const blessingCell = cellListData.findCells.nodes.filter((cell) => cell.id.includes(SpecialCellIdType.Blessing))[0]
         setBlessing(blessingCell)
 
@@ -50,6 +54,7 @@ const useOrderedCellList = () => {
 
         const commonCell = cellListData.findCells.nodes.filter((cell) =>
           !cell.id.includes(SpecialCellIdType.NewFamily) &&
+          !cell.id.includes(SpecialCellIdType.NewFamilyTwo) &&
           !cell.id.includes(SpecialCellIdType.Blessing) &&
           !cell.id.includes(SpecialCellIdType.Renew)
         )
@@ -75,6 +80,7 @@ const useOrderedCellList = () => {
     isLoading,
     orderedCellList,
     newFamily,
+    newFamilyTwo,
     blessing,
     renew
   }
