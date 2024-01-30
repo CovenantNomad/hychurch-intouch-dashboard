@@ -11,7 +11,7 @@ type AttendnaceTableProps = {
 }
 
 const AttendnaceTable = ({ recentSunday }: AttendnaceTableProps) => {
-  const { isLoading, orderedCellList, newFamily, blessing, renew } = useOrderedCellList()
+  const { isLoading, orderedCellList, newFamily, newFamilyTwo, blessing, renew } = useOrderedCellList()
 
   return (
     <>
@@ -32,14 +32,15 @@ const AttendnaceTable = ({ recentSunday }: AttendnaceTableProps) => {
           </tbody>
         ) : (
           <>
-            {orderedCellList && newFamily && blessing && renew ? (
+            {orderedCellList ? (
               <tbody className="divide-y divide-gray-200">
                 {orderedCellList.map(cell => (
                   <AttendanceTableRow key={cell.id} cell={cell} recentSunday={recentSunday}/>
                 ))}
-                <AttendanceTableRow cell={newFamily} recentSunday={recentSunday}/>
-                <AttendanceTableRow cell={blessing} recentSunday={recentSunday}/>
-                <AttendanceTableRow cell={renew} recentSunday={recentSunday}/>
+                {newFamily && <AttendanceTableRow cell={newFamily} recentSunday={recentSunday}/>}
+                {newFamilyTwo && <AttendanceTableRow cell={newFamilyTwo} recentSunday={recentSunday}/>}
+                {blessing && <AttendanceTableRow cell={blessing} recentSunday={recentSunday}/>}
+                {renew && <AttendanceTableRow cell={renew} recentSunday={recentSunday}/>}
               </tbody>
             ) : (
               <tbody className="divide-y divide-gray-200">

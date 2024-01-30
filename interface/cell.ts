@@ -103,6 +103,8 @@ export interface updateCellForm {
 export enum SpecialCellIdType {
   /** 새가족셀 (정우현) */
   NewFamily = "39",
+  /** 새가족셀 (이예찬) */
+  NewFamilyTwo = "60",
   /** 블레싱셀 (백선경) */
   Blessing = "47",
   /** 새싹셀 (이찬양) */

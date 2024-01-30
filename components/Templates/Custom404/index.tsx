@@ -12,7 +12,7 @@ const Custom404 = ({}: Custom404Props) => {
       <div>
         <button
           type="button"
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/home")}
           className={"bg-blue-600 px-7 py-4 mt-4 text-lg font-bold text-white "}
         >
           홈으로

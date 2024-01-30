@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import useCellAttendance from "../../../../hooks/useCellAttendance";
-import { CellListType } from "../../../../interface/cell";
+import { CellListType, SpecialCellIdType } from "../../../../interface/cell";
 import AttendanceTableColumnSkeleton from "./AttendanceTableColumnSkeleton";
 
 type AttendanceByCellProps = {

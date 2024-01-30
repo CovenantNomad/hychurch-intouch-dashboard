@@ -408,6 +408,7 @@ export type QueryFindCellsArgs = {
 
 
 export type QueryFindUsersArgs = {
+  keyword?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -952,7 +953,7 @@ export type FindUserQueryVariables = Exact<{
 export type FindUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, name: string, phone: string, grade: UserGrade, isActive: boolean, birthday?: string | null, registrationDate?: string | null, gender?: Gender | null, address?: string | null, description?: string | null, roles: Array<RoleType>, cell?: { __typename?: 'Cell', id: string, name: string } | null } };
 
 export type FindUsersQueryVariables = Exact<{
-  name?: InputMaybe<Scalars['String']>;
+  keyword?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
@@ -975,7 +976,7 @@ export type ResetUserPasswordMutationVariables = Exact<{
 export type ResetUserPasswordMutation = { __typename?: 'Mutation', resetUserPassword: { __typename?: 'ResetUserPasswordPayload', user: { __typename?: 'User', id: string, name: string } } };
 
 export type SearchUsersQueryVariables = Exact<{
-  name?: InputMaybe<Scalars['String']>;
+  keyword?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
@@ -2249,8 +2250,8 @@ useFindUserQuery.getKey = (variables: FindUserQueryVariables) => ['findUser', va
 ;
 
 export const FindUsersDocument = `
-    query findUsers($name: String, $limit: Int, $offset: Int) {
-  findUsers(name: $name, limit: $limit, offset: $offset) {
+    query findUsers($keyword: String, $limit: Int, $offset: Int) {
+  findUsers(keyword: $keyword, limit: $limit, offset: $offset) {
     totalCount
     nodes {
       id
@@ -2340,8 +2341,8 @@ export const useResetUserPasswordMutation = <
 useResetUserPasswordMutation.getKey = () => ['resetUserPassword'];
 
 export const SearchUsersDocument = `
-    query searchUsers($name: String, $limit: Int, $offset: Int) {
-  findUsers(name: $name, limit: $limit, offset: $offset) {
+    query searchUsers($keyword: String, $limit: Int, $offset: Int) {
+  findUsers(keyword: $keyword, limit: $limit, offset: $offset) {
     totalCount
     nodes {
       id
