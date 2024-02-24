@@ -4,6 +4,7 @@ import { CELLMEETING_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
 import { TCellMeetingSubmissionDataForCell } from "../../interface/cellMeeting";
 import { DateRangePickerValue } from "@tremor/react";
+// import { TDateRangePickerStringValue } from "../../components/Templates/Attendance/CellMeetingStatistic";
 
 export const getCellMeetingByCellId = async (cellId: string, baseDateString: string) => {
   try {
@@ -65,65 +66,75 @@ export const getThisWeekCellMeetingStatics = async (baseDateString: string) => {
 
 
 // 통계
-export const getCellMeetingStatsByPeriod = async ({ cellId, dateRagnge }: {cellId: string, dateRagnge: DateRangePickerValue}) => {
-  let allAttendanceList: { userId: string; userName: string; }[] = []
+// export const getCellMeetingStatsByPeriod = async ({ cellId, dateRagnge }: {cellId: string, dateRagnge: DateRangePickerValue}) => {
+//   let allAttendanceList: { userId: string; userName: string; }[] = []
 
-  let accumulatedAttendance = 0
-  let accumulatedTotalNumber = 0
+//   let accumulatedAttendance = 0
+//   let accumulatedTotalNumber = 0
 
-  const weeklyAttendanceCount: {
-    [baseDateString: string]: {
-      attendanceNumber: number;
-      totalNumber: number;
-    }
-  } = {};
-
+//   const weeklyAttendanceCount: {
+//     [baseDateString: string]: {
+//       attendanceNumber: number;
+//       totalNumber: number;
+//     }
+//   } = {};
   
-  const cellRef = collection(
-    db,
-    CELLMEETING_COLLCTION.CELLMEETINGS,
-    CELLMEETING_COLLCTION.DATA,
-    CELLMEETING_COLLCTION.CELLLIST,
-    cellId,
-    CELLMEETING_COLLCTION.CELLHISTORY
-  );
+//   const cellRef = collection(
+//     db,
+//     CELLMEETING_COLLCTION.CELLMEETINGS,
+//     CELLMEETING_COLLCTION.DATA,
+//     CELLMEETING_COLLCTION.CELLLIST,
+//     cellId,
+//     CELLMEETING_COLLCTION.CELLHISTORY
+//   );
 
-  const q = query(cellRef, where('baseDate', '>=', dateRagnge.from), where('baseDate', '<=', dateRagnge.to));
+//   const q = query(cellRef, where('baseDate', '>=', dateRagnge.from), where('baseDate', '<=', dateRagnge.to));
 
-  const querySnapshot = await getDocs(q);
+//   const querySnapshot = await getDocs(q);
 
-  if (querySnapshot.empty) {
-    console.log('쿼리 결과 없음')
+//   if (querySnapshot.empty) {
+//     console.log('쿼리 결과 없음')
 
-  } else {
-    const n = querySnapshot.docs.length
-    querySnapshot.forEach((doc) => {
-      allAttendanceList = [...allAttendanceList, ...doc.data().attendanceList]
-      accumulatedAttendance += doc.data().attendanceList.length
-      accumulatedTotalNumber += doc.data().totalMemberList.length
-      if (!weeklyAttendanceCount[doc.data().baseDateString]) {
-        weeklyAttendanceCount[doc.data().baseDateString] = { attendanceNumber: doc.data().attendanceList.length, totalNumber: doc.data().totalList.length}
-      }
-    });
+//     return 
 
-    const groupedAttendances = groupByAttendanceCount(allAttendanceList);
+//   } else {
+//     console.log('쿼리 있음')
+//     const n = querySnapshot.docs.length
+//     console.log('데이터 수: ', n)
+//     querySnapshot.forEach((doc) => {
+//       console.log(doc.data())
+//       console.log(doc.data().attendanceList)
+//       allAttendanceList.push(doc.data().attendanceList)
+//       accumulatedAttendance += doc.data().attendanceList.length
+//       accumulatedTotalNumber += doc.data().totalMemberList.length
+//       if (!weeklyAttendanceCount[doc.data().baseDateString]) {
+//         weeklyAttendanceCount[doc.data().baseDateString] = { attendanceNumber: doc.data().attendanceList.length, totalNumber: doc.data().totalList.length}
+//       }
+//     });
 
-    const averageAttendance = accumulatedAttendance/n
-    const averageTotal = accumulatedTotalNumber/n
+//     console.log('왜 여기로 안오지?')
+//     const groupedAttendances = groupByAttendanceCount(allAttendanceList);
 
-    const attendanceRate = accumulatedAttendance/accumulatedTotalNumber * 100
+//     console.log("그룹핑: ", groupedAttendances)
 
-    return {
-      attendanceRate,
-      accumulatedAttendance,
-      accumulatedTotalNumber,
-      averageAttendance,
-      averageTotal,
-      weeklyAttendanceCount,
-      groupedAttendances,
-    }
-  }
-}
+//     const averageAttendance = accumulatedAttendance/n
+//     const averageTotal = accumulatedTotalNumber/n
+
+//     const attendanceRate = accumulatedAttendance/accumulatedTotalNumber * 100
+
+//     return {
+//       attendanceRate,
+//       accumulatedAttendance,
+//       accumulatedTotalNumber,
+//       averageAttendance,
+//       averageTotal,
+//       weeklyAttendanceCount,
+//       groupedAttendances,
+//     }
+//   }
+// }
+
+
 
 
 

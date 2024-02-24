@@ -1,4 +1,7 @@
+import { eachDayOfInterval, format, getISOWeek, isSunday } from "date-fns";
 import dayjs from "dayjs";
+
+
 export const getTodayString = (date: dayjs.Dayjs) => {
   //yyyy-MM-dd
   return `${date.year()}-${(date.month() + 1)
@@ -88,7 +91,7 @@ export function getMostRecentSunday() {
 
 }
 
-
+// 현재일로부터 과거 몇주간의 일요일을 찾어서 String으로 리턴하는 함수
 export function getSearchSundayRange (desiredWeeks: number) {
 
   // 현재 날짜
@@ -120,4 +123,29 @@ export function getSearchSundayRange (desiredWeeks: number) {
     sundayRange
   }
 
+}
+
+// 특정한 날짜구간동안에 주일을 찾아서 String[]로 반환하는 함수
+export const getSundayRangeByPeriods = ({startDate, endDate}: {startDate: Date, endDate: Date}) => {
+  const allDates = eachDayOfInterval({ start: startDate, end: endDate });
+  const sundayDates = allDates.filter(date => isSunday(date));
+
+  let resultList: string[] = []
+
+  sundayDates.forEach(date => {
+    resultList.push(format(date, 'yyyy-MM-dd'));
+  });
+
+  return resultList
+}
+
+//해당 월의 몇번째 주인지 알려줌
+
+export const getWeekOfMonth = (date: Date) => {
+  const weekNumber = getISOWeek(date); // 해당 연도에서 현재 날짜의 주차를 가져옵니다.
+
+  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1); // 현재 월의 시작일을 가져옵니다.
+  const monthWeekNumber = weekNumber - getISOWeek(monthStart) + 1; // 해당 월에서 현재 날짜의 주차를 가져옵니다.
+
+  return monthWeekNumber
 }
