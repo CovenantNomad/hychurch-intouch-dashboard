@@ -2,6 +2,7 @@ import { db } from "../../client/firebaseConfig";
 import { collection, collectionGroup, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { CELLMEETING_COLLCTION } from "../../interface/firebase";
 import toast from "react-hot-toast";
+import { DateRangePickerValue } from "@tremor/react";
 
 type TAttendanceNumber = {
   date: string
@@ -206,5 +207,47 @@ export const getCellMeetingMonthlyStatics = async ({ term }: { term: string }) =
     console.log("@getCellMeeting Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
     return null;
+  }
+}
+
+export const getCellMeetingStatsByPeriod = async ({ cellId, from, to }: { cellId: string, from: Date, to: Date }) => {
+  let accumulatedAttendanceNumber = 0
+  let accumulatedTotalNumber = 0
+  let accumulatedAbsentNumber = 0
+
+  const cellRef = collection(
+    db,
+    CELLMEETING_COLLCTION.CELLMEETINGS,
+    CELLMEETING_COLLCTION.DATA,
+    CELLMEETING_COLLCTION.CELLLIST,
+    cellId,
+    CELLMEETING_COLLCTION.CELLHISTORY
+  );
+
+  const q = query(cellRef, where('baseDate', '>=', from), where('baseDate', '<=', to));
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    console.log('데이터 없음')
+    return 
+
+  } else {
+    const n = querySnapshot.docs.length
+    querySnapshot.forEach((doc) => {
+      accumulatedAttendanceNumber += doc.data().attendanceList.length
+      accumulatedTotalNumber += doc.data().totalMemberList.length
+      accumulatedAbsentNumber += doc.data().absentList.length
+    });
+
+    const averageAttendance = accumulatedAttendanceNumber/n
+    const averageAbsent = accumulatedAbsentNumber/n
+    const averageTotal = accumulatedTotalNumber/n
+
+    return {
+      averageAttendance,
+      averageAbsent,
+      averageTotal,
+    }
   }
 }
