@@ -135,9 +135,6 @@ export const getThisWeekCellMeetingStatics = async (baseDateString: string) => {
 // }
 
 
-
-
-
 const countAttendances = (attendances: Attendance[]) => {
   const attendanceCount: AttendanceCount = {};
 

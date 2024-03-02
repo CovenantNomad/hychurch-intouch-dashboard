@@ -27,9 +27,9 @@ const CellMeetingStatistic = () => {
           </div>
         </div>
       </BlockContainer>
-      {/* <BlockContainer>
+      <BlockContainer>
         <CellMeetingCellStaticSection />
-      </BlockContainer> */}
+      </BlockContainer>
     </>
   );
 };
