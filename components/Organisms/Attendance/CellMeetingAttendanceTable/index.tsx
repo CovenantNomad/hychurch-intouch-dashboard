@@ -1,16 +1,15 @@
-import React from 'react';
-import CellMeetingAttendanceHeader from './CellMeetingAttendanceTableHeader';
-import useOrderedCellList from '../../../../hooks/useOrderedCellList';
-import CellMeetingAttendanceTableRowSkeleton from './CellMeetingAttendanceTableRowSkeleton';
-import CellMeetingAttendanceTableRow from './CellMeetingAttendanceTableRow';
 import { Dayjs } from 'dayjs';
+import useOrderedCellList from '../../../../hooks/useOrderedCellList';
+import CellMeetingAttendanceHeader from './CellMeetingAttendanceTableHeader';
+import CellMeetingAttendanceTableRow from './CellMeetingAttendanceTableRow';
+import CellMeetingAttendanceTableRowSkeleton from './CellMeetingAttendanceTableRowSkeleton';
 
 type CellMeetingAttendanceTableProps = {
   recentSunday: Dayjs
 }
 
 const CellMeetingAttendanceTable = ({ recentSunday }: CellMeetingAttendanceTableProps) => {
-  const { isLoading, orderedCellList } = useOrderedCellList()
+  const { isLoading, orderedCellList, newFamilyTwo } = useOrderedCellList()
 
   return (
     <>
@@ -31,10 +30,13 @@ const CellMeetingAttendanceTable = ({ recentSunday }: CellMeetingAttendanceTable
           </tbody>
         ) : (
           <tbody className="divide-y divide-gray-200">
-            {orderedCellList ? (
-              orderedCellList?.map(cell => (
-                <CellMeetingAttendanceTableRow key={cell.id} cell={cell} baseDateString={recentSunday.format('YYYY-MM-DD')}/>
-              ))
+            {orderedCellList && newFamilyTwo ? (
+              <>
+                {orderedCellList?.map(cell => (
+                  <CellMeetingAttendanceTableRow key={cell.id} cell={cell} baseDateString={recentSunday.format('YYYY-MM-DD')}/>
+                ))}
+                <CellMeetingAttendanceTableRow cell={newFamilyTwo} baseDateString={recentSunday.format('YYYY-MM-DD')} />
+              </>
             ) : (
               <tr className="grid grid-cols-1 items-center text-center divide-x">
                 <td className="h-full col-span-1 flex items-center justify-center text-base font-bold py-6">요청하신 데이터가 존재하지 않습니다</td>
