@@ -31,3 +31,23 @@ export type TTERMCellMeetingInput = {
   minAttendance?: number;
   minAttendanceDate?: string;
 };
+
+export type TWeeklyServiceInput = {
+  thirdOff: number;
+  thirdOnline: number;
+  fourthOff: number;
+  fourthOnline: number;
+  fifthOff: number;
+  fifthOnline: number;
+  totalOff: number;
+  totalOnline: number;
+  total: number;
+  date: Date;
+  dateString: string;
+  month: string;
+  year: string;
+  term: string;
+  weekOfMonth: number;
+  weekOfYear: number;
+  weekOfTerm: number;
+};

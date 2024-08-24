@@ -11,6 +11,7 @@ import {
 import toast from "react-hot-toast";
 import {db} from "../../client/firebaseConfig";
 import {CELLMEETING_COLLCTION} from "../../interface/firebase";
+import {getCurrentDate} from "../../utils/date";
 
 type TAttendanceNumber = {
   date: string;
@@ -49,6 +50,8 @@ type TCellmeetingMonthlyStatic = {
   totalAvg: number;
   attendanceRate: number;
 };
+
+const {thisYear} = getCurrentDate();
 
 export const getCellMeetingSeasonNumberStatics = async (term: string) => {
   try {
@@ -132,45 +135,39 @@ export const getCellMeetingSeasonPercentageStatics = async (term: string) => {
   }
 };
 
-export const getCellMeetingYearOverviewStatics = async (term: string) => {
+export const getCellMeetingTermOverviewStatics = async (term: string) => {
   try {
-    const cellMeetingYearRef = doc(
-      db,
-      CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.YEAR,
-      term
-    );
+    if (term === thisYear.toString()) {
+      const cellMeetingYearRef = doc(
+        db,
+        CELLMEETING_COLLCTION.CELLMEETINGS,
+        CELLMEETING_COLLCTION.STATISTICS,
+        CELLMEETING_COLLCTION.YEAR,
+        term
+      );
 
-    const cellMeetingYearDoc = await getDoc(cellMeetingYearRef);
+      const cellMeetingYearDoc = await getDoc(cellMeetingYearRef);
 
-    if (cellMeetingYearDoc.exists()) {
-      return cellMeetingYearDoc.data() as TCellMeetingTermStatic;
+      if (cellMeetingYearDoc.exists()) {
+        return cellMeetingYearDoc.data() as TCellMeetingTermStatic;
+      }
+    } else {
+      const cellMeetingTermRef = doc(
+        db,
+        CELLMEETING_COLLCTION.CELLMEETINGS,
+        CELLMEETING_COLLCTION.STATISTICS,
+        CELLMEETING_COLLCTION.TERM,
+        term
+      );
+
+      const cellMeetingTermDoc = await getDoc(cellMeetingTermRef);
+
+      if (cellMeetingTermDoc.exists()) {
+        return cellMeetingTermDoc.data() as TCellMeetingTermStatic;
+      }
     }
   } catch (error: any) {
     console.log("@getCellMeetingYearStatic Error: ", error);
-    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
-    return null;
-  }
-};
-
-export const getCellMeetingSeasonOverviewStatics = async (term: string) => {
-  try {
-    const cellMeetingTermRef = doc(
-      db,
-      CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.TERM,
-      term
-    );
-
-    const cellMeetingTermDoc = await getDoc(cellMeetingTermRef);
-
-    if (cellMeetingTermDoc.exists()) {
-      return cellMeetingTermDoc.data() as TCellMeetingTermStatic;
-    }
-  } catch (error: any) {
-    console.log("@getCellMeetingSeason Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
     return null;
   }

@@ -25,7 +25,7 @@ const categories = [
 const DevelopCMS = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.blessingSelectedCategoryId
+    setting.developSelectedCategoryId
   );
 
   const setSettingHandler = useCallback(
