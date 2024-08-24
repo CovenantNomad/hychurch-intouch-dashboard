@@ -1,5 +1,5 @@
-import { atom } from "recoil";
-import { Theme } from "../interface/setting";
+import {atom} from "recoil";
+import {Theme} from "../interface/setting";
 
 export const stateSetting = atom({
   key: "MAIN/SETTING",
@@ -12,5 +12,6 @@ export const stateSetting = atom({
     renewSelectedCategoryId: 0,
     reportSelectedCategoryId: 0,
     talentSelectedCategoryId: 0,
+    developSelectedCategoryId: 0,
   },
 });

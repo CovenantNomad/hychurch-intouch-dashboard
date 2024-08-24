@@ -1,51 +1,51 @@
-import { useCallback, useState } from "react";
 import Head from "next/head";
-import { useRecoilState } from "recoil";
-import { stateSetting } from "../../stores/stateSetting";
+import {useCallback, useState} from "react";
+import {useRecoilState} from "recoil";
+import {stateSetting} from "../../stores/stateSetting";
 //components
-import PageLayout from "../../components/Layout/PageLayout";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
-import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
-import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
+import PageLayout from "../../components/Layout/PageLayout";
+import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
+import AttendanceStatistic from "../../components/Templates/Attendance/AttendanceStatistic";
 import CellMeetingOverview from "../../components/Templates/Attendance/CellMeetingOverview";
 import CellMeetingStatistic from "../../components/Templates/Attendance/CellMeetingStatistic";
-import AttendanceStatistic from "../../components/Templates/Attendance/AttendanceStatistic";
+import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
+
+const categories = [
+  {
+    id: 0,
+    name: "이번주 예배출석(셀별)",
+    component: <ThisWeekAttendance />,
+  },
+  {
+    id: 1,
+    name: "이번주 예배출석(종합)",
+    component: <AttendanceOverview />,
+  },
+  {
+    id: 2,
+    name: "이번주 셀모임출석(종합)",
+    component: <CellMeetingOverview />,
+  },
+  {
+    id: 3,
+    name: "예배출석 통계",
+    component: <AttendanceStatistic />,
+  },
+  {
+    id: 4,
+    name: "셀모임출석 통계",
+    component: <CellMeetingStatistic />,
+  },
+];
 
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
     setting.blessingSelectedCategoryId
   );
-
-  const categories = [
-    {
-      id: 0,
-      name: "이번주 예배출석(셀별)",
-      component: <ThisWeekAttendance />,
-    },
-    {
-      id: 1,
-      name: "이번주 예배출석(종합)",
-      component: <AttendanceOverview />,
-    },
-    {
-      id: 2,
-      name: "이번주 셀모임출석(종합)",
-      component: <CellMeetingOverview />,
-    },
-    {
-      id: 3,
-      name: "예배출석 통계",
-      component: <AttendanceStatistic />,
-    },
-    {
-      id: 4,
-      name: "셀모임출석 통계",
-      component: <CellMeetingStatistic />,
-    },
-  ];
 
   const setSettingHandler = useCallback(
     (id: number) => {
@@ -56,7 +56,6 @@ const AttendancePage = () => {
     },
     [setting, setSetting]
   );
-
 
   return (
     <FullScreenLayout>
