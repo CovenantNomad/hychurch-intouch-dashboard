@@ -185,7 +185,7 @@ export const getCellMeetingLastFourWeekStatics = async () => {
       CELLMEETING_COLLCTION.WEEKLY
     );
 
-    const q = query(cellMeetingRef, orderBy("weekOfTerm", "desc"), limit(5));
+    const q = query(cellMeetingRef, orderBy("weekOfYear", "desc"), limit(5));
 
     const querySnapshot = await getDocs(q);
 
