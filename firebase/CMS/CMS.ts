@@ -6,8 +6,12 @@ import {
   TMonthlyCellMeetingInput,
   TTERMCellMeetingInput,
   TWeeklyCellMeetingInput,
+  TWeeklyServiceInput,
 } from "../../interface/CMS";
-import {CELLMEETING_COLLCTION} from "../../interface/firebase";
+import {
+  CELLMEETING_COLLCTION,
+  SERVICE_COLLCTION,
+} from "../../interface/firebase";
 
 export async function insertWeeklyCellMeetingValue(
   inputValue: TWeeklyCellMeetingInput
@@ -203,6 +207,43 @@ export async function insertYearCellMeetingValue({
         minAttendanceDate: inputValue.minAttendanceDate,
       });
     }
+  } catch (error: any) {
+    console.log("@createTotalServiceAttendance Error: ", error);
+  }
+}
+
+//예배출석
+export async function insertWeeklyServiceValue(
+  inputValue: TWeeklyServiceInput
+) {
+  try {
+    const weeklyRef = doc(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.SERVICEATTENDANCE,
+      inputValue.dateString
+    );
+
+    await setDoc(weeklyRef, {
+      thirdOff: Number(inputValue.thirdOff),
+      thirdOnline: Number(inputValue.thirdOnline),
+      fourthOff: Number(inputValue.fourthOff),
+      fourthOnline: Number(inputValue.fourthOnline),
+      fifthOff: Number(inputValue.fifthOff),
+      fifthOnline: Number(inputValue.fifthOnline),
+      totalOff: Number(inputValue.totalOff),
+      totalOnline: Number(inputValue.totalOnline),
+      total: Number(inputValue.total),
+      date: inputValue.date,
+      dateString: inputValue.dateString,
+      month: inputValue.month,
+      year: inputValue.year,
+      term: inputValue.term,
+      weekOfMonth: Number(inputValue.weekOfMonth),
+      weekOfYear: Number(inputValue.weekOfYear),
+      weekOfTerm: Number(inputValue.weekOfTerm),
+    });
   } catch (error: any) {
     console.log("@createTotalServiceAttendance Error: ", error);
   }
