@@ -1,9 +1,14 @@
-import React, { Dispatch, Fragment, SetStateAction } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { useForm } from "react-hook-form";
-import { SubmitAttendanceNumberMutation, SubmitAttendanceNumberMutationVariables, useSubmitAttendanceNumberMutation } from "../../../graphql/generated";
-import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import {Dialog, Transition} from "@headlessui/react";
+import {Dispatch, Fragment, SetStateAction} from "react";
+import {useForm} from "react-hook-form";
 import toast from "react-hot-toast";
+import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import {createTotalServiceAttendance} from "../../../firebase/Services/createServiceCount";
+import {
+  SubmitAttendanceNumberMutation,
+  SubmitAttendanceNumberMutationVariables,
+  useSubmitAttendanceNumberMutation,
+} from "../../../graphql/generated";
 
 interface AttendanceInputModalProps {
   attendanceDate: string;
@@ -16,34 +21,41 @@ const AttendanceInputModal = ({
   open,
   setOpen,
 }: AttendanceInputModalProps) => {
-  const { handleSubmit, register, formState: { errors }} = useForm<{attendance: string}>()
+  const {
+    handleSubmit,
+    register,
+    formState: {errors},
+  } = useForm<{attendance: string}>();
 
   const mutate = useSubmitAttendanceNumberMutation<
-    SubmitAttendanceNumberMutation, 
+    SubmitAttendanceNumberMutation,
     SubmitAttendanceNumberMutationVariables
   >(graphlqlRequestClient, {
     onSuccess() {
-      toast.success('이번주 출석인원이 저장되었습니다');
+      toast.success("이번주 출석인원이 저장되었습니다");
       // queryClient.invalidateQueries({
       //   queryKey: ["findAttendanceCheck"],
       // });
     },
     onError() {
-      console.log(mutate.error)
-      toast.error('출석인원을 저장할 수 없습니다.');
+      console.log(mutate.error);
+      toast.error("출석인원을 저장할 수 없습니다.");
     },
-  })
+  });
 
-  const onSubmitHandler = ({ attendance }: { attendance: string }) => {
+  const onSubmitHandler = ({attendance}: {attendance: string}) => {
     mutate.mutate({
       input: {
         attendanceDate: attendanceDate,
-        count: Number(attendance)
-      }
-    })
-    setOpen(false)
-  }
-
+        count: Number(attendance),
+      },
+    });
+    createTotalServiceAttendance({
+      attendanceDate: attendanceDate,
+      count: Number(attendance),
+    });
+    setOpen(false);
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -91,12 +103,12 @@ const AttendanceInputModal = ({
                             required: "출석인원을 입력해주세요",
                             min: {
                               value: 1,
-                              message: "1 이상의 값을 입력하세요"
+                              message: "1 이상의 값을 입력하세요",
                             },
                             pattern: {
                               value: /^[0-9]+$/,
-                              message: "숫자만 입력해주세요"
-                            }
+                              message: "숫자만 입력해주세요",
+                            },
                           })}
                           className="mt-1 block w-full py-3 px-3 border border-gray-300 outline-none appearance-none rounded-md text-sm"
                         />

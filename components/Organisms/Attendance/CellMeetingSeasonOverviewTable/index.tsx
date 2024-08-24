@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@tremor/react";
 import {useQuery} from "react-query";
-import {getCellMeetingSeasonOverviewStatics} from "../../../../firebase/CellMeeting/CellMeetingStatic";
+import {getCellMeetingYearOverviewStatics} from "../../../../firebase/CellMeeting/CellMeetingStatic";
 
 type CellMeetingSeasonOverviewTableProps = {
   term: string;
@@ -19,8 +19,8 @@ const CellMeetingSeasonOverviewTable = ({
   termDisplay,
 }: CellMeetingSeasonOverviewTableProps) => {
   const {isLoading, isFetching, data} = useQuery(
-    ["getCellMeetingSeasonOverviewStatics", term],
-    () => getCellMeetingSeasonOverviewStatics(term),
+    ["getCellMeetingYearOverviewStatics", term],
+    () => getCellMeetingYearOverviewStatics(term),
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
