@@ -1,23 +1,24 @@
-import React from 'react';
-import { useQuery } from 'react-query';
-import { getCellMeetingMonthlyStatics } from '../../../../firebase/CellMeeting/CellMeetingStatic';
-import { BarChart } from '@tremor/react';
+import {BarChart} from "@tremor/react";
+import {useQuery} from "react-query";
+import {getCellMeetingMonthlyStatics} from "../../../../firebase/CellMeeting/CellMeetingStatic";
 
-type CellMeetingMonthlyStaticProps = {}
+type CellMeetingMonthlyStaticProps = {};
 
 const CellMeetingMonthlyStatic = ({}: CellMeetingMonthlyStaticProps) => {
-  const { isLoading, isFetching, data } = useQuery(
-    ['getCellMeetingMonthlyStatics', '2024FIRST'], 
-    () => getCellMeetingMonthlyStatics({term: '2024FIRST'}),
+  const {isLoading, isFetching, data} = useQuery(
+    ["getCellMeetingMonthlyStatics", "2024FIRST"],
+    () => getCellMeetingMonthlyStatics(),
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
     }
-  )
+  );
 
   return (
-    <div className='border'>
-      <h3 className='font-semibold text-tremor-content px-4 py-3.5'>월간 셀모임 출석률 통계</h3>
+    <div className="border">
+      <h3 className="font-semibold text-tremor-content px-4 py-3.5">
+        월간 셀모임 출석률 통계
+      </h3>
       {isLoading || isFetching ? (
         <div>로딩중...</div>
       ) : (
@@ -26,8 +27,8 @@ const CellMeetingMonthlyStatic = ({}: CellMeetingMonthlyStaticProps) => {
             <BarChart
               data={data}
               index="month"
-              categories={['attendanceRate']}
-              colors={['blue']}
+              categories={["attendanceRate"]}
+              colors={["blue"]}
               // valueFormatter={dataFormatter}
               yAxisWidth={48}
             />
