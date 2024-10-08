@@ -1,8 +1,16 @@
-import { cellOrderByAge } from "../constants/cellOrder";
-import { Gender, RoleType, UserCellTransferStatus } from "../graphql/generated";
-import { AttendanceHistory, TempSavedAttendanceHistory } from "../interface/attendance";
-import { CellListType, CommunityType, MinimumCellType, SpecialCellIdType, transferedUser } from "../interface/cell";
-import { CommunityFilter } from "../stores/cellState";
+import {cellOrderByAge} from "../constants/cellOrder";
+import {Gender, RoleType, UserCellTransferStatus} from "../graphql/generated";
+import {
+  AttendanceHistory,
+  TempSavedAttendanceHistory,
+} from "../interface/attendance";
+import {
+  CellListType,
+  MinimumCellType,
+  SpecialCellIdType,
+  transferedUser,
+} from "../interface/cell";
+import {CommunityFilter} from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -57,11 +65,11 @@ export const getServiceName = (id: String) => {
       return "1부예배 (07:00)";
 
     case "2":
-      return "2부예배 (08:00)";  
+      return "2부예배 (08:00)";
 
     case "3":
       return "3부예배 (09:30)";
-    
+
     case "4":
       return "4부예배 (11:30)";
 
@@ -91,122 +99,139 @@ export const getFirstName = (cellName: string) => {
 
 export const getCommunityName = (communityName: string) => {
   if (communityName === CommunityFilter.LIFE) {
-    return "life"
+    return "life";
   }
   if (communityName === CommunityFilter.LIGHT) {
-    return "light"
+    return "light";
   }
   if (communityName === CommunityFilter.WAY) {
-    return "way"
+    return "way";
   }
   if (communityName === CommunityFilter.TRUTH) {
-    return "truth"
+    return "truth";
   }
-}
+};
 
 export const onHandleCopy = async (text: string) => {
   if (text !== null) {
     try {
       await navigator.clipboard.writeText(text);
-      alert('텍스트가 클립보드에 복사되었습니다.');
+      alert("텍스트가 클립보드에 복사되었습니다.");
     } catch (error) {
-      console.error('클립보드 복사 실패:', error);
+      console.error("클립보드 복사 실패:", error);
     }
   }
 };
 
 export const checkCommonCell = (cell: MinimumCellType | null | undefined) => {
   if (cell) {
-    return cell.id !== SpecialCellIdType.Blessing && cell.id !== SpecialCellIdType.NewFamily && cell.id !== SpecialCellIdType.Renew
+    return (
+      cell.id !== SpecialCellIdType.Blessing &&
+      cell.id !== SpecialCellIdType.NewFamily &&
+      cell.id !== SpecialCellIdType.NewFamilyTwo &&
+      cell.id !== SpecialCellIdType.Renew
+    );
   } else {
-    return false
+    return false;
   }
-}
+};
 
 export const getSpecialCellName = (cellId: string) => {
   switch (cellId) {
     case SpecialCellIdType.NewFamily:
-      return "새가족셀"
-    
+      return "새가족셀";
+
+    case SpecialCellIdType.NewFamilyTwo:
+      return "이예찬셀";
+
     case SpecialCellIdType.Blessing:
-      return "블레싱셀"
+      return "블레싱셀";
 
     case SpecialCellIdType.Renew:
-      return "새싹셀"
-  
+      return "새싹셀";
+
     default:
-      return "미편성"
+      return "미편성";
   }
-}
+};
 
+export const groupByChurchServiceId = (
+  attendanceList: TempSavedAttendanceHistory[]
+) => {
+  return attendanceList.reduce(
+    (acc: {[key: string]: TempSavedAttendanceHistory[]}, item) => {
+      // 현재 아이템의 churchServiceId를 키로 사용합니다.
+      const key = item.churchServiceId;
 
-export const groupByChurchServiceId = (attendanceList: TempSavedAttendanceHistory[]) => {
-  return attendanceList.reduce((acc: { [key: string]: TempSavedAttendanceHistory[] }, item) => {
-    // 현재 아이템의 churchServiceId를 키로 사용합니다.
-    const key = item.churchServiceId;
+      // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
+      if (!acc[key]) {
+        acc[key] = [];
+      }
 
-    // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
-    if (!acc[key]) {
-      acc[key] = [];
-    }
+      // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
+      acc[key].push(item);
 
-    // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
-    acc[key].push(item);
+      return acc;
+    },
+    {}
+  );
+};
 
-    return acc;
-  }, {});
-}
+export const groupBySubmitListByChurchServiceId = (
+  attendanceList: AttendanceHistory[]
+) => {
+  return attendanceList.reduce(
+    (acc: {[key: string]: AttendanceHistory[]}, item) => {
+      // 현재 아이템의 churchServiceId를 키로 사용합니다.
+      const key = item.churchService.id;
 
-export const groupBySubmitListByChurchServiceId = (attendanceList: AttendanceHistory[]) => {
-  return attendanceList.reduce((acc: { [key: string]: AttendanceHistory[] }, item) => {
-    // 현재 아이템의 churchServiceId를 키로 사용합니다.
-    const key = item.churchService.id;
+      // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
+      if (!acc[key]) {
+        acc[key] = [];
+      }
 
-    // 아직 해당 churchServiceId로 그룹화된 배열이 없으면 새 배열을 생성합니다.
-    if (!acc[key]) {
-      acc[key] = [];
-    }
+      // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
+      acc[key].push(item);
 
-    // 현재 아이템을 해당 churchServiceId 배열에 추가합니다.
-    acc[key].push(item);
-
-    return acc;
-  }, {});
-}
+      return acc;
+    },
+    {}
+  );
+};
 
 export const getCellUrl = (cellId: string | undefined, userId: string) => {
   switch (cellId) {
     case SpecialCellIdType.NewFamily:
-      return `/newfamily/${userId}`
-    
+      return `/newfamily/${userId}`;
+
     case SpecialCellIdType.Blessing:
-      return `/blessing/${userId}`
+      return `/blessing/${userId}`;
 
     case SpecialCellIdType.Renew:
-      return `/renew/${userId}`
-  
+      return `/renew/${userId}`;
+
     default:
-      return `/cells/${cellId}/members/${userId}`
+      return `/cells/${cellId}/members/${userId}`;
   }
-}
+};
 
 // const folder의 cellOrder 파일에 미리 정의한 순서에 따라서 정렬하는 sort 함수
-export const sortedCellByAge = (a:CellListType, b:CellListType) => {
+export const sortedCellByAge = (a: CellListType, b: CellListType) => {
   return cellOrderByAge.indexOf(a.name) - cellOrderByAge.indexOf(b.name);
 };
 
 export const makeLinkUrl = (data: transferedUser) => {
   switch (data.toCell.id) {
     case SpecialCellIdType.Renew:
-      return `/renew/${data.user.id}`
+      return `/renew/${data.user.id}`;
 
     case SpecialCellIdType.NewFamily:
-      return `/newfamily/${data.user.id}`
+      return `/newfamily/${data.user.id}`;
 
     case SpecialCellIdType.Blessing:
-      return `/blessing/${data.user.id}`
-  
+      return `/blessing/${data.user.id}`;
+
     default:
-      return `/cells/${data.toCell.id}/members/${data.user.id}`
+      return `/cells/${data.toCell.id}/members/${data.user.id}`;
   }
-}
+};
