@@ -15,6 +15,7 @@
     "@graphql-codegen/typescript-operations": "^2.4.2",
     "@graphql-codegen/typescript-react-query": "^3.5.14",
     "@headlessui/react": "^1.7.12",
+    "@headlessui/tailwindcss": "^0.2.1",
     "@heroicons/react": "^2.0.14",
     "@tanstack/react-query-devtools": "^4.20.4",
     "@tremor/react": "^3.10.1",

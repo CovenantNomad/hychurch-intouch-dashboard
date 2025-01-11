@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import toast from "react-hot-toast";
-import {useMutation} from "react-query";
-import {term} from "../../../../../../constants/constant";
+import {useMutation, useQuery} from "react-query";
+import {getTermInfomation} from "../../../../../../firebase/CellMeeting/CellMeetingStatic";
 import {insertWeeklyCellMeetingValue} from "../../../../../../firebase/CMS/CMS";
 import {TWeeklyCellMeetingInput} from "../../../../../../interface/CMS";
 
@@ -19,6 +19,15 @@ const WeeklyCMS = ({}: Props) => {
   } = useForm<TWeeklyCellMeetingInput>();
 
   const selectedDate = watch("date");
+
+  const {isLoading, isFetching, data} = useQuery(
+    ["getTermInfomation"],
+    () => getTermInfomation(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
 
   const mutation = useMutation(insertWeeklyCellMeetingValue, {
     onSuccess: () => {
@@ -47,11 +56,15 @@ const WeeklyCMS = ({}: Props) => {
       const year = date.getFullYear().toString();
       setValue("month", month);
       setValue("year", year);
-
-      // Term 설정
-      setValue("term", term);
     }
   }, [selectedDate, setValue]);
+
+  useEffect(() => {
+    if (data) {
+      setValue("term", data.term);
+      setValue("termYear", data.termYear);
+    }
+  }, [data, setValue]);
 
   return (
     <div>
@@ -143,9 +156,10 @@ const WeeklyCMS = ({}: Props) => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-
+          </div>
+          <div className="col-span-2">
             {/* term */}
-            <div className="flex items-center mt-5">
+            <div className="flex items-center">
               <label className="flex-shrink-0 flex-grow">Term</label>
               <input
                 type="text"
@@ -154,10 +168,18 @@ const WeeklyCMS = ({}: Props) => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-          </div>
-          <div className="col-span-2">
+            {/* termYear */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">TermYear</label>
+              <input
+                type="text"
+                {...register("termYear", {required: true})}
+                disabled
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
             {/* weekOfMonth */}
-            <div className="flex items-center">
+            <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">Week of Month</label>
               <input
                 type="text"

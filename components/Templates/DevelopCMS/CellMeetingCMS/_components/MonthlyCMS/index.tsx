@@ -1,3 +1,4 @@
+import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import toast from "react-hot-toast";
 import {useMutation} from "react-query";
@@ -11,8 +12,12 @@ const MonthlyCMS = ({}: Props) => {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: {errors},
   } = useForm<TMonthlyCellMeetingInput>();
+
+  const selectedDate = watch("date");
 
   const mutation = useMutation(insertMonthlyCellMeetingValue, {
     onSuccess: () => {
@@ -30,6 +35,17 @@ const MonthlyCMS = ({}: Props) => {
     mutation.mutate(data);
   };
 
+  useEffect(() => {
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+
+      const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+      const year = date.getFullYear().toString();
+      setValue("month", month);
+      setValue("year", year);
+    }
+  }, [selectedDate, setValue]);
+
   return (
     <div>
       <h1 className="mb-5 text-lg font-semibold">월간데이터 입력 사항</h1>
@@ -37,82 +53,128 @@ const MonthlyCMS = ({}: Props) => {
         <div className="grid grid-cols-2 gap-x-6 border-b py-4">
           <div className="col-span-1">
             {/* total */}
-            <div className="flex items-center">
-              <label className="flex-shrink-0 flex-grow">총원</label>
-              <input
-                type="text"
-                {...register("totalAvg", {required: true})}
-                className="w-1/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
-              <span className="text-lg">명</span>
+            <div className="flex items-start">
+              <label className="flex-[1]">총원*</label>
+              <div className="flex-[2]">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    {...register("totalAvg", {required: true})}
+                    className="flex-grow px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                  />
+                  <span className="text-lg">명</span>
+                </div>
+                {errors.totalAvg && (
+                  <span className="block mt-1 text-red-600 text-sm">
+                    필수입력 사항입니다.
+                  </span>
+                )}
+              </div>
             </div>
-            {errors.totalAvg && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
             {/* attendance */}
-            <div className="flex items-center mt-5">
-              <label className="flex-shrink-0 flex-grow">출석</label>
-              <input
-                type="text"
-                {...register("attendanceAvg", {required: true})}
-                className="w-1/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
-              <span className="text-lg">명</span>
+            <div className="flex items-start mt-5">
+              <label className="flex-[1]">출석*</label>
+              <div className="flex-[2]">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    {...register("attendanceAvg", {required: true})}
+                    className="flex-grow px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                  />
+                  <span className="text-lg">명</span>
+                </div>
+                {errors.attendanceAvg && (
+                  <span className="block mt-1 text-red-600 text-sm">
+                    필수입력 사항입니다.
+                  </span>
+                )}
+              </div>
             </div>
-            {errors.attendanceAvg && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
             {/* absent */}
-            <div className="flex items-center mt-5">
-              <label className="flex-shrink-0 flex-grow">결석</label>
-              <input
-                type="text"
-                {...register("absentAvg", {required: true})}
-                className="w-1/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
-              <span className="text-lg">명</span>
+            <div className="flex items-start mt-5">
+              <label className="flex-[1]">결석*</label>
+              <div className="flex-[2]">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    {...register("absentAvg", {required: true})}
+                    className="flex-grow px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                  />
+                  <span className="text-lg">명</span>
+                </div>
+                {errors.attendanceAvg && (
+                  <span className="block mt-1 text-red-600 text-sm">
+                    필수입력 사항입니다.
+                  </span>
+                )}
+              </div>
             </div>
-            {errors.absentAvg && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
-            <div className="flex items-center mt-5">
-              <label className="flex-shrink-0 flex-grow">출석률</label>
-              <input
-                type="text"
-                {...register("attendanceRate", {required: true})}
-                className="w-1/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
-              <span className="text-lg">명</span>
+            {/* 출석률 */}
+            <div className="flex items-start mt-5">
+              <label className="flex-[1]">출석률*</label>
+              <div className="flex-[2]">
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    {...register("attendanceRate", {required: true})}
+                    className="flex-grow px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                  />
+                  <span className="text-lg">%</span>
+                </div>
+                {errors.attendanceAvg && (
+                  <span className="block mt-1 text-red-600 text-sm">
+                    필수입력 사항입니다.
+                  </span>
+                )}
+              </div>
             </div>
-            {errors.attendanceRate && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
           </div>
+
           <div className="border-l col-span-1 px-8">
+            {/* date */}
+            <div className="flex items-start">
+              <label className="w-1/3">날짜*</label>
+              <div className="w-2/3">
+                <input
+                  type="datetime-local"
+                  {...register("date", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+                <span className="block text-sm text-gray-500 mt-1">
+                  매월 마지막 일로 선택해주세요
+                </span>
+                {errors.date && (
+                  <span className="block mt-1 text-red-600">
+                    날짜를 꼭 선택해주세요.
+                  </span>
+                )}
+              </div>
+            </div>
+
             {/* year */}
-            <div className="flex items-center">
-              <label className="flex-shrink-0 flex-grow">Year</label>
-              <input
-                type="text"
-                {...register("year", {required: true})}
-                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
+            <div className="flex items-start mt-5">
+              <label className="w-1/3">Year*</label>
+              <div className="w-2/3">
+                <input
+                  type="text"
+                  disabled
+                  {...register("year", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
             </div>
-            {errors.year && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
             {/* month */}
-            <div className="flex items-center mt-5">
-              <label className="flex-shrink-0 flex-grow">Month</label>
-              <input
-                type="text"
-                {...register("month", {required: true})}
-                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
-              />
+            <div className="flex items-start mt-5">
+              <label className="w-1/3">Month*</label>
+              <div className="w-2/3">
+                <input
+                  type="text"
+                  disabled
+                  {...register("month", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
             </div>
-            {errors.month && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
           </div>
         </div>
         <div className="mt-5 flex justify-end">

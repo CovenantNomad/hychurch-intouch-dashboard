@@ -1,10 +1,9 @@
-import {AreaChart, EventProps} from "@tremor/react";
-import {useState} from "react";
-import {useQuery} from "react-query";
-import {term, termDisplay} from "../../../../../constants/constant";
-import {getCellMeetingSeasonPercentageStatics} from "../../../../../firebase/CellMeeting/CellMeetingStatic";
+import {AreaChart} from "@tremor/react";
+import {TAttendanceRateResults} from "../../../../../firebase/CellMeeting/CellMeetingStatic";
 
-type CellMeetingSeosonAverageChartProps = {};
+type CellMeetingSeosonAverageChartProps = {
+  data: TAttendanceRateResults[];
+};
 
 const customTooltip = (props: any) => {
   const {payload, active, label} = props;
@@ -27,46 +26,33 @@ const customTooltip = (props: any) => {
   );
 };
 
-const CellMeetingSeasonAverageChart =
-  ({}: CellMeetingSeosonAverageChartProps) => {
-    const [value, setValue] = useState<EventProps>(null);
-
-    const {isLoading, isFetching, data} = useQuery(
-      ["getCellMeetingSeasonPercentageStatics", term],
-      () => getCellMeetingSeasonPercentageStatics(term),
-      {
-        staleTime: 10 * 60 * 1000,
-        cacheTime: 30 * 60 * 1000,
-      }
-    );
-
-    return (
-      <>
-        <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          {termDisplay} 셀모임 출석률 통계
-        </h3>
-        {isLoading || isFetching ? (
-          <div>로딩중...</div>
-        ) : (
-          <>
-            {data && (
-              <AreaChart
-                data={data}
-                index="date"
-                categories={["attendanceRate"]}
-                colors={["blue"]}
-                yAxisWidth={30}
-                onValueChange={(v) => setValue(v)}
-                intervalType={"preserveStartEnd"}
-                className="mt-4 h-72 text-sm w-full"
-                customTooltip={customTooltip}
-                showTooltip
-              />
-            )}
-          </>
-        )}
-      </>
-    );
-  };
+const CellMeetingSeasonAverageChart = ({
+  data,
+}: CellMeetingSeosonAverageChartProps) => {
+  return (
+    <>
+      <div className="flex justify-end mb-2">
+        <div className="flex items-center space-x-4 text-xs">
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span>출석률</span>
+          </div>
+        </div>
+      </div>
+      <AreaChart
+        data={data}
+        index="date"
+        categories={["attendanceRate"]}
+        colors={["blue"]}
+        yAxisWidth={30}
+        intervalType={"preserveStartEnd"}
+        className="mt-4 h-72 text-sm w-full"
+        customTooltip={customTooltip}
+        showTooltip
+        showLegend={false}
+      />
+    </>
+  );
+};
 
 export default CellMeetingSeasonAverageChart;
