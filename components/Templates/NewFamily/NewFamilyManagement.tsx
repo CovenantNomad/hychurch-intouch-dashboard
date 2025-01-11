@@ -1,26 +1,23 @@
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
   FindNewFamilyCellWithTransferQuery,
   FindNewFamilyCellWithTransferQueryVariables,
-  RoleType,
   useFindNewFamilyCellWithTransferQuery,
   UserCellTransferStatus,
 } from "../../../graphql/generated";
-import { SpecialCellIdType } from "../../../interface/cell";
-import { Member, MemberWithTransferOut } from "../../../interface/user";
-import { getTodayString } from "../../../utils/dateUtils";
+import {SpecialCellIdType} from "../../../interface/cell";
+import {MemberWithTransferOut} from "../../../interface/user";
+import {getTodayString} from "../../../utils/dateUtils";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
 import Spinner from "../../Atoms/Spinner";
 import NewFamilyMemberSection from "../../Organisms/NewFamily/NewFamilyMemberSection";
-import NewFamilyTeamSection from "../../Organisms/NewFamily/NewFamilyTeamSection";
 
 interface NewFamilyManagementProps {}
 
 const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
   const now = dayjs();
-  const [teamList, setTeamList] = useState<Member[]>([]);
   const [newFamilyList, setNewFamilyList] = useState<MemberWithTransferOut[]>(
     []
   );
@@ -28,7 +25,7 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
     min: getTodayString(dayjs(now.set("year", -1))),
     max: getTodayString(now),
   });
-  const { isLoading, data } = useFindNewFamilyCellWithTransferQuery<
+  const {isLoading, data} = useFindNewFamilyCellWithTransferQuery<
     FindNewFamilyCellWithTransferQuery,
     FindNewFamilyCellWithTransferQueryVariables
   >(
@@ -51,10 +48,6 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
 
   useEffect(() => {
     if (data) {
-      const teamTemp = data.findCell.leaders.filter((item) =>
-        item.roles.includes(RoleType.ViceLeader)
-      );
-      setTeamList(teamTemp);
       const newFamilyTemp = data.findCell.members.filter(
         (item) => item.roles.length === 0
       );
@@ -87,9 +80,6 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
       ) : (
         <>
           <BlockContainer firstBlock>
-            <NewFamilyTeamSection teamList={teamList} />
-          </BlockContainer>
-          <BlockContainer>
             <NewFamilyMemberSection memberList={newFamilyList} />
           </BlockContainer>
         </>

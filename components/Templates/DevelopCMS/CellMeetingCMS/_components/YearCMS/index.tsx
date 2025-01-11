@@ -12,8 +12,6 @@ const YearCMS = ({}: Props) => {
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
     reset,
     formState: {errors},
   } = useForm<TTERMCellMeetingInput>();
@@ -31,7 +29,7 @@ const YearCMS = ({}: Props) => {
   });
 
   const onSubmit = (data: TTERMCellMeetingInput) => {
-    mutation.mutate({year: thisYear.toString(), inputValue: data});
+    mutation.mutate({inputValue: data});
   };
 
   return (
@@ -86,7 +84,7 @@ const YearCMS = ({}: Props) => {
                 {...register("attendanceRateAvg", {required: true})}
                 className="w-1/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
-              <span className="text-lg">명</span>
+              <span className="text-lg">%</span>
             </div>
             {errors.attendanceRateAvg && (
               <span className="block mt-1 text-red-600">입력해주세요</span>
@@ -98,7 +96,7 @@ const YearCMS = ({}: Props) => {
               <label className="flex-shrink-0 flex-grow">최대출석인원</label>
               <input
                 type="text"
-                {...register("maxAttendance", {required: true})}
+                {...register("maxAttendance")}
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
@@ -110,7 +108,7 @@ const YearCMS = ({}: Props) => {
               <label className="flex-shrink-0 flex-grow">최대출석일</label>
               <input
                 type="text"
-                {...register("maxAttendanceDate", {required: true})}
+                {...register("maxAttendanceDate")}
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
@@ -122,7 +120,7 @@ const YearCMS = ({}: Props) => {
               <label className="flex-shrink-0 flex-grow">최소출석인원</label>
               <input
                 type="text"
-                {...register("minAttendance", {required: true})}
+                {...register("minAttendance")}
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
@@ -134,7 +132,58 @@ const YearCMS = ({}: Props) => {
               <label className="flex-shrink-0 flex-grow">최소출석일</label>
               <input
                 type="text"
-                {...register("minAttendanceDate", {required: true})}
+                {...register("minAttendanceDate")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {errors.minAttendanceDate && (
+              <span className="block mt-1 text-red-600">입력해주세요</span>
+            )}
+
+            <div className="border-t mt-5"></div>
+
+            {/* High */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">최고출석률</label>
+              <input
+                type="text"
+                {...register("highRate")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {errors.maxAttendance && (
+              <span className="block mt-1 text-red-600">입력해주세요</span>
+            )}
+            {/* High Date */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">최대출석률일</label>
+              <input
+                type="text"
+                {...register("highRateDate")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {errors.maxAttendanceDate && (
+              <span className="block mt-1 text-red-600">입력해주세요</span>
+            )}
+            {/* Low */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">최저출석률</label>
+              <input
+                type="text"
+                {...register("lowRate")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {errors.minAttendance && (
+              <span className="block mt-1 text-red-600">입력해주세요</span>
+            )}
+            {/* Low Date */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">최저출석률일</label>
+              <input
+                type="text"
+                {...register("lowRateDate")}
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>

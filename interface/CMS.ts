@@ -7,6 +7,7 @@ export type TWeeklyCellMeetingInput = {
   month: string;
   year: string;
   term: string;
+  termYear: string;
   weekOfMonth: number;
   weekOfYear: number;
   weekOfTerm: number;
@@ -19,6 +20,7 @@ export type TMonthlyCellMeetingInput = {
   attendanceRate: number;
   month: string;
   year: string;
+  date: Date;
 };
 
 export type TTERMCellMeetingInput = {
@@ -26,10 +28,14 @@ export type TTERMCellMeetingInput = {
   attendanceAvg: number;
   totalAvg: number;
   attendanceRateAvg: number;
-  maxAttendance?: number;
+  maxAttendance?: string;
   maxAttendanceDate?: string;
-  minAttendance?: number;
+  minAttendance?: string;
   minAttendanceDate?: string;
+  highRate?: string;
+  highRateDate?: string;
+  lowRate?: string;
+  lowRateDate?: string;
 };
 
 export type TWeeklyServiceInput = {

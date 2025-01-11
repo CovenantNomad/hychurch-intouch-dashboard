@@ -34,6 +34,7 @@ export async function insertWeeklyCellMeetingValue(
       month: inputValue.month,
       year: inputValue.year,
       term: inputValue.term,
+      termYear: inputValue.termYear,
       weekOfMonth: Number(inputValue.weekOfMonth),
       weekOfYear: Number(inputValue.weekOfYear),
       weekOfTerm: Number(inputValue.weekOfTerm),
@@ -43,6 +44,7 @@ export async function insertWeeklyCellMeetingValue(
   }
 }
 
+//월간데이터 입력
 export async function insertMonthlyCellMeetingValue(
   inputValue: TMonthlyCellMeetingInput
 ) {
@@ -62,20 +64,36 @@ export async function insertMonthlyCellMeetingValue(
       attendanceRate: Number(inputValue.attendanceRate),
       month: inputValue.month,
       year: inputValue.year,
+      date: new Date(inputValue.date),
     });
   } catch (error: any) {
     console.log("@createTotalServiceAttendance Error: ", error);
   }
 }
 
+//반기데이터 입력
 export async function insertTermCellMeetingValue({
-  term,
   inputValue,
 }: {
-  term: string;
   inputValue: TTERMCellMeetingInput;
 }) {
   try {
+    let term = "";
+
+    const termInfoRef = doc(
+      db,
+      CELLMEETING_COLLCTION.CELLMEETINGS,
+      CELLMEETING_COLLCTION.INFO
+    );
+
+    const termInfoDocSnap = await getDoc(termInfoRef);
+
+    if (!termInfoDocSnap.exists() || !termInfoDocSnap.data().currentTerm) {
+      throw new Error("Current term is not available in the database.");
+    }
+
+    term = termInfoDocSnap.data().currentTerm;
+
     const termRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
@@ -86,129 +104,140 @@ export async function insertTermCellMeetingValue({
 
     const docSnapshot = await getDoc(termRef);
 
+    const dataToUpdate: Partial<TTERMCellMeetingInput> = {
+      absentAvg: inputValue.absentAvg
+        ? Number(inputValue.absentAvg)
+        : undefined,
+      attendanceAvg: inputValue.attendanceAvg
+        ? Number(inputValue.attendanceAvg)
+        : undefined,
+      totalAvg: inputValue.totalAvg ? Number(inputValue.totalAvg) : undefined,
+      attendanceRateAvg: inputValue.attendanceRateAvg
+        ? Number(inputValue.attendanceRateAvg)
+        : undefined,
+    };
+
+    if (inputValue.maxAttendance)
+      dataToUpdate.maxAttendance = inputValue.maxAttendance;
+    if (inputValue.maxAttendanceDate)
+      dataToUpdate.maxAttendanceDate = inputValue.maxAttendanceDate;
+    if (inputValue.minAttendance)
+      dataToUpdate.minAttendance = inputValue.minAttendance;
+    if (inputValue.minAttendanceDate)
+      dataToUpdate.minAttendanceDate = inputValue.minAttendanceDate;
+    if (inputValue.highRate) dataToUpdate.highRate = inputValue.highRate;
+    if (inputValue.highRateDate)
+      dataToUpdate.highRateDate = inputValue.highRateDate;
+    if (inputValue.lowRate) dataToUpdate.lowRate = inputValue.lowRate;
+    if (inputValue.lowRateDate)
+      dataToUpdate.lowRateDate = inputValue.lowRateDate;
+
     if (docSnapshot.exists()) {
-      const dataToUpdate: Partial<TTERMCellMeetingInput> = {};
-      dataToUpdate.absentAvg = Number(inputValue.absentAvg);
-      dataToUpdate.attendanceAvg = Number(inputValue.attendanceAvg);
-      dataToUpdate.totalAvg = Number(inputValue.totalAvg);
-      dataToUpdate.attendanceRateAvg = Number(inputValue.attendanceRateAvg);
-      if (
-        inputValue.maxAttendance !== undefined &&
-        Number(inputValue.maxAttendance) !== 0
-      ) {
-        dataToUpdate.maxAttendance = Number(inputValue.maxAttendance);
-      }
-
-      if (
-        inputValue.maxAttendanceDate !== undefined &&
-        inputValue.maxAttendanceDate !== ""
-      ) {
-        dataToUpdate.maxAttendanceDate = inputValue.maxAttendanceDate;
-      }
-
-      if (
-        inputValue.minAttendance !== undefined &&
-        Number(inputValue.minAttendance) !== 0
-      ) {
-        dataToUpdate.minAttendance = Number(inputValue.minAttendance);
-      }
-
-      if (
-        inputValue.minAttendanceDate !== undefined &&
-        inputValue.minAttendanceDate !== ""
-      ) {
-        dataToUpdate.minAttendanceDate = inputValue.minAttendanceDate;
-      }
-
-      // 문서가 존재하면 updateDoc을 사용하여 업데이트합니다.
       await updateDoc(termRef, dataToUpdate);
     } else {
-      // 문서가 존재하지 않으면 setDoc을 사용하여 새로 생성합니다.
       await setDoc(termRef, {
-        absentAvg: Number(inputValue.absentAvg),
-        attendanceAvg: Number(inputValue.attendanceAvg),
-        totalAvg: Number(inputValue.totalAvg),
-        attendanceRateAvg: Number(inputValue.attendanceRateAvg),
-        maxAttendance: Number(inputValue.maxAttendance),
-        maxAttendanceDate: inputValue.maxAttendanceDate,
-        minAttendance: Number(inputValue.minAttendance),
-        minAttendanceDate: inputValue.minAttendanceDate,
+        absentAvg: Number(inputValue.absentAvg) || 0,
+        attendanceAvg: Number(inputValue.attendanceAvg) || 0,
+        totalAvg: Number(inputValue.totalAvg) || 0,
+        attendanceRateAvg: Number(inputValue.attendanceRateAvg) || 0,
+        maxAttendance: inputValue.maxAttendance || "",
+        maxAttendanceDate: inputValue.maxAttendanceDate || "",
+        minAttendance: inputValue.minAttendance || "",
+        minAttendanceDate: inputValue.minAttendanceDate || "",
+        highRate: inputValue.highRate || "",
+        highRateDate: inputValue.highRateDate || "",
+        lowRate: inputValue.lowRate || "",
+        lowRateDate: inputValue.lowRateDate || "",
       });
     }
   } catch (error: any) {
-    console.log("@createTotalServiceAttendance Error: ", error);
+    console.log("@insertTermCellMeetingValue Error: ", error);
+    throw new Error("Failed to insert or update term cell meeting value.");
   }
 }
 
+//연간데이터 입력
 export async function insertYearCellMeetingValue({
-  year,
   inputValue,
 }: {
-  year: string;
   inputValue: TTERMCellMeetingInput;
 }) {
   try {
+    let termYear = "";
+
+    const termInfoRef = doc(
+      db,
+      CELLMEETING_COLLCTION.CELLMEETINGS,
+      CELLMEETING_COLLCTION.INFO
+    );
+
+    const termInfoDocSnap = await getDoc(termInfoRef);
+
+    if (!termInfoDocSnap.exists() || !termInfoDocSnap.data().currentTerm) {
+      throw new Error("Current term is not available in the database.");
+    }
+
+    termYear = termInfoDocSnap.data().currentTermYear;
+
     const termRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
       CELLMEETING_COLLCTION.YEAR,
-      year
+      termYear
     );
 
     const docSnapshot = await getDoc(termRef);
 
+    const dataToUpdate: Partial<TTERMCellMeetingInput> = {
+      absentAvg: inputValue.absentAvg
+        ? Number(inputValue.absentAvg)
+        : undefined,
+      attendanceAvg: inputValue.attendanceAvg
+        ? Number(inputValue.attendanceAvg)
+        : undefined,
+      totalAvg: inputValue.totalAvg ? Number(inputValue.totalAvg) : undefined,
+      attendanceRateAvg: inputValue.attendanceRateAvg
+        ? Number(inputValue.attendanceRateAvg)
+        : undefined,
+    };
+
+    if (inputValue.maxAttendance)
+      dataToUpdate.maxAttendance = inputValue.maxAttendance;
+    if (inputValue.maxAttendanceDate)
+      dataToUpdate.maxAttendanceDate = inputValue.maxAttendanceDate;
+    if (inputValue.minAttendance)
+      dataToUpdate.minAttendance = inputValue.minAttendance;
+    if (inputValue.minAttendanceDate)
+      dataToUpdate.minAttendanceDate = inputValue.minAttendanceDate;
+    if (inputValue.highRate) dataToUpdate.highRate = inputValue.highRate;
+    if (inputValue.highRateDate)
+      dataToUpdate.highRateDate = inputValue.highRateDate;
+    if (inputValue.lowRate) dataToUpdate.lowRate = inputValue.lowRate;
+    if (inputValue.lowRateDate)
+      dataToUpdate.lowRateDate = inputValue.lowRateDate;
+
     if (docSnapshot.exists()) {
-      const dataToUpdate: Partial<TTERMCellMeetingInput> = {};
-      dataToUpdate.absentAvg = Number(inputValue.absentAvg);
-      dataToUpdate.attendanceAvg = Number(inputValue.attendanceAvg);
-      dataToUpdate.totalAvg = Number(inputValue.totalAvg);
-      dataToUpdate.attendanceRateAvg = Number(inputValue.attendanceRateAvg);
-      if (
-        inputValue.maxAttendance !== undefined &&
-        Number(inputValue.maxAttendance) !== 0
-      ) {
-        dataToUpdate.maxAttendance = Number(inputValue.maxAttendance);
-      }
-
-      if (
-        inputValue.maxAttendanceDate !== undefined &&
-        inputValue.maxAttendanceDate !== ""
-      ) {
-        dataToUpdate.maxAttendanceDate = inputValue.maxAttendanceDate;
-      }
-
-      if (
-        inputValue.minAttendance !== undefined &&
-        Number(inputValue.minAttendance) !== 0
-      ) {
-        dataToUpdate.minAttendance = Number(inputValue.minAttendance);
-      }
-
-      if (
-        inputValue.minAttendanceDate !== undefined &&
-        inputValue.minAttendanceDate !== ""
-      ) {
-        dataToUpdate.minAttendanceDate = inputValue.minAttendanceDate;
-      }
-
-      // 문서가 존재하면 updateDoc을 사용하여 업데이트합니다.
       await updateDoc(termRef, dataToUpdate);
     } else {
-      // 문서가 존재하지 않으면 setDoc을 사용하여 새로 생성합니다.
       await setDoc(termRef, {
-        absentAvg: Number(inputValue.absentAvg),
-        attendanceAvg: Number(inputValue.attendanceAvg),
-        totalAvg: Number(inputValue.totalAvg),
-        attendanceRateAvg: Number(inputValue.attendanceRateAvg),
-        maxAttendance: Number(inputValue.maxAttendance),
-        maxAttendanceDate: inputValue.maxAttendanceDate,
-        minAttendance: Number(inputValue.minAttendance),
-        minAttendanceDate: inputValue.minAttendanceDate,
+        absentAvg: Number(inputValue.absentAvg) || 0,
+        attendanceAvg: Number(inputValue.attendanceAvg) || 0,
+        totalAvg: Number(inputValue.totalAvg) || 0,
+        attendanceRateAvg: Number(inputValue.attendanceRateAvg) || 0,
+        maxAttendance: inputValue.maxAttendance || "",
+        maxAttendanceDate: inputValue.maxAttendanceDate || "",
+        minAttendance: inputValue.minAttendance || "",
+        minAttendanceDate: inputValue.minAttendanceDate || "",
+        highRate: inputValue.highRate || "",
+        highRateDate: inputValue.highRateDate || "",
+        lowRate: inputValue.lowRate || "",
+        lowRateDate: inputValue.lowRateDate || "",
       });
     }
   } catch (error: any) {
-    console.log("@createTotalServiceAttendance Error: ", error);
+    console.log("@insertYearCellMeetingValue Error: ", error);
+    throw new Error("Failed to insert or update yearly cell meeting value.");
   }
 }
 
@@ -246,5 +275,6 @@ export async function insertWeeklyServiceValue(
     });
   } catch (error: any) {
     console.log("@createTotalServiceAttendance Error: ", error);
+    throw new Error("Failed to insert or update term cell meeting value.");
   }
 }

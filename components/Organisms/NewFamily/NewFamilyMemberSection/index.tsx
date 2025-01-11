@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import weekOfYear from "dayjs/plugin/weekOfYear";
 import isoWeek from "dayjs/plugin/isoWeek";
-import { MemberWithTransferOut } from "../../../../interface/user";
-import NewFamilyListItem from "../NewFamilyListItem";
-import {
-  getWeek,
-  makeWeekAndDate,
-} from "../../../../utils/dateUtils";
-import SearchModal from "../../../Blocks/SearchModal/SearchModal";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import {useEffect, useState} from "react";
+import {MemberWithTransferOut} from "../../../../interface/user";
+import {getWeek, makeWeekAndDate} from "../../../../utils/dateUtils";
 import SearchButton from "../../../Atoms/SearchButton";
+import SearchModal from "../../../Blocks/SearchModal/SearchModal";
+import NewFamilyListItem from "../NewFamilyListItem";
 dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
 
@@ -17,7 +14,7 @@ interface NewFamilyMemberSectionProps {
   memberList: MemberWithTransferOut[];
 }
 
-const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => {
+const NewFamilyMemberSection = ({memberList}: NewFamilyMemberSectionProps) => {
   //Search State
   const [query, setQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
@@ -32,7 +29,7 @@ const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => 
   useEffect(() => {
     if (memberList) {
       //등록일에 따라 그룹화
-      let init: { [index: string]: Array<MemberWithTransferOut> } = {};
+      let init: {[index: string]: Array<MemberWithTransferOut>} = {};
       const groupValues = memberList.reduce((acc, current) => {
         acc[getWeek(current.registrationDate || "2022-12-31")] =
           acc[getWeek(current.registrationDate || "2022-12-31")] || [];
@@ -41,7 +38,7 @@ const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => 
       }, init);
 
       const groups = Object.keys(groupValues).map((key) => {
-        return { name: key, selection: groupValues[key] };
+        return {name: key, selection: groupValues[key]};
       });
 
       setGroupList(groups);
@@ -52,8 +49,8 @@ const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => 
     <div>
       <div className="flex justify-between items-center py-3">
         <h6 className="text-xl font-bold">새가족 명단</h6>
-        <SearchButton 
-          placeholder={'이름으로 검색하세요'}
+        <SearchButton
+          placeholder={"이름으로 검색하세요"}
           onClickHandler={() => setOpen(true)}
         />
       </div>
@@ -82,8 +79,7 @@ const NewFamilyMemberSection = ({ memberList }: NewFamilyMemberSectionProps) => 
                   ))}
               </div>
             </div>
-          ))
-        }
+          ))}
       </div>
       <SearchModal
         people={memberList}

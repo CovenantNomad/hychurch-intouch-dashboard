@@ -1,10 +1,9 @@
-import {AreaChart, EventProps} from "@tremor/react";
-import {useState} from "react";
-import {useQuery} from "react-query";
-import {term, termDisplay} from "../../../../../constants/constant";
-import {getCellMeetingSeasonNumberStatics} from "../../../../../firebase/CellMeeting/CellMeetingStatic";
+import {AreaChart} from "@tremor/react";
+import {TTermStaticResults} from "../../../../../firebase/CellMeeting/CellMeetingStatic";
 
-type CellMeetingSeosonNumberChartProps = {};
+type CellMeetingSeosonNumberChartProps = {
+  data: TTermStaticResults[];
+};
 
 const customTooltip = (props: any) => {
   const {payload, active, label} = props;
@@ -29,46 +28,37 @@ const customTooltip = (props: any) => {
   );
 };
 
-const CellMeetingSeasonNumberChart =
-  ({}: CellMeetingSeosonNumberChartProps) => {
-    const [value, setValue] = useState<EventProps>(null);
-
-    const {isLoading, isFetching, data} = useQuery(
-      ["getCellMeetingSeasonNumberStatics", term],
-      () => getCellMeetingSeasonNumberStatics(term),
-      {
-        staleTime: 10 * 60 * 1000,
-        cacheTime: 30 * 60 * 1000,
-      }
-    );
-
-    return (
-      <>
-        <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          {termDisplay} 셀모임 참석/미참석 인원 통계
-        </h3>
-        {isLoading || isFetching ? (
-          <div>로딩중...</div>
-        ) : (
-          <>
-            {data && (
-              <AreaChart
-                data={data}
-                index="date"
-                categories={["attendance", "absent"]}
-                colors={["blue", "red"]}
-                yAxisWidth={40}
-                showXAxis
-                onValueChange={(v) => setValue(v)}
-                intervalType={"preserveStartEnd"}
-                className="mt-4 h-72 text-sm w-full"
-                customTooltip={customTooltip}
-              />
-            )}
-          </>
-        )}
-      </>
-    );
-  };
+const CellMeetingSeasonNumberChart = ({
+  data,
+}: CellMeetingSeosonNumberChartProps) => {
+  return (
+    <>
+      <div className="flex justify-end mb-2">
+        <div className="flex items-center space-x-4 text-xs">
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            <span>출석인원</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
+            <span>결석인원</span>
+          </div>
+        </div>
+      </div>
+      <AreaChart
+        data={data}
+        index="date"
+        categories={["attendance", "absent"]}
+        colors={["blue", "red"]}
+        yAxisWidth={40}
+        showXAxis
+        intervalType={"preserveStartEnd"}
+        className="mt-4 h-72 text-sm w-full"
+        customTooltip={customTooltip}
+        showLegend={false}
+      />
+    </>
+  );
+};
 
 export default CellMeetingSeasonNumberChart;

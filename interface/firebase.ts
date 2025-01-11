@@ -27,6 +27,9 @@ export enum CELLMEETING_COLLCTION {
   MONTHLY = "MONTHLY",
   TERM = "TERM",
   YEAR = "YEAR",
+  INFO = "INFO",
+  CURRENTTERM = "currentTerm",
+  CURRENTTERMYEAR = "currentTermYear",
 }
 
 export enum SERVICE_COLLCTION {

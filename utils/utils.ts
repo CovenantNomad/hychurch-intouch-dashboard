@@ -235,3 +235,26 @@ export const makeLinkUrl = (data: transferedUser) => {
       return `/cells/${data.toCell.id}/members/${data.user.id}`;
   }
 };
+
+export const convertTerm = (input: string): string => {
+  const regex = /^(\d{4})(FIRST|SECOND)$/; // 정규식: 년도와 FIRST/SECOND 형식 매칭
+  const match = input.match(regex);
+
+  if (!match) {
+    throw new Error(
+      "Invalid input format. Expected format: 'YYYYFIRST' or 'YYYYSECOND'."
+    );
+  }
+
+  const year = match[1]; // 년도 추출
+  const term = match[2]; // FIRST 또는 SECOND 추출
+
+  if (term === "FIRST") {
+    return `${year} 상반기`;
+  } else if (term === "SECOND") {
+    return `${year} 하반기`;
+  }
+
+  // 논리적으로 여기에 도달하지 않음
+  throw new Error("Unexpected error in term conversion.");
+};
