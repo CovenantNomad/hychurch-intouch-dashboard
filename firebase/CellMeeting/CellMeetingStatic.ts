@@ -726,9 +726,7 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
             absent: data.absent,
             attendance: data.attendance,
             total: data.total,
-            attendanceRate: String(
-              ((data.attendance / data.total) * 100).toFixed(2)
-            ).padEnd(2, "0"),
+            attendanceRate: String((data.attendance / data.total) * 100),
             dateString: data.dateString,
             term: data.term,
             weekOfTerm: data.weekOfTerm,
