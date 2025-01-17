@@ -39,9 +39,7 @@ const CellMeetingLastWeek = ({}: Props) => {
               </dd>
               <dd className="text-xs text-gray-500">
                 {data
-                  ? `${
-                      data.recentTotal - data.firstWeekTotal >= 0 ? "+" : ""
-                    }` +
+                  ? `${data.recentTotal - data.previousTotal >= 0 ? "+" : ""}` +
                     `${data.recentTotal - data.previousTotal}` +
                     "명" +
                     ` (from ${data.previousDate})`
