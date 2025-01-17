@@ -6,13 +6,14 @@ import Pagination from "../../../Blocks/Pagination/Pagination";
 import SearchModal from "../../../Blocks/SearchModal/SearchModal";
 import RenewMemberTable from "../../../Organisms/Renew/RenewMemberTable";
 
-interface FreeAgencyMemberProps {
+type Props = {
   memberList: MemberWithTransferOut[];
-}
+};
 
-const FreeAgencyMember = ({memberList}: FreeAgencyMemberProps) => {
+const EnrollmentMember = ({memberList}: Props) => {
   const [query, setQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
+
   // pagination state
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,11 +33,11 @@ const FreeAgencyMember = ({memberList}: FreeAgencyMemberProps) => {
         <div>
           <div className="md:flex md:justify-between md:items-center md:pb-4 md:border-b md:mb-8">
             <div className="pb-3 mb-4 border-b md:border-b-0 md:pb-0 md:mb-0">
-              <h6 className="text-xl font-bold">셀 미편성 셀원</h6>
+              <h6 className="text-xl font-bold">재적 청년</h6>
               <p className="text-sm mt-1">
-                셀에 편성되어 있지 않는 청년{" "}
-                <span className="text-red-500">(활동등급: E등급)</span> <br />
-                셀에 편성되지 않고 인터치 예배만 참석할 수도 있습니다.
+                재적으로만 등록된 청년{" "}
+                <span className="text-red-500">(활동등급: G등급)</span> <br />
+                이사, 결혼, 진급 등의 사유는 꼭 청년제외에서 제외해주세요.
               </p>
             </div>
             <SearchButton
@@ -70,4 +71,4 @@ const FreeAgencyMember = ({memberList}: FreeAgencyMemberProps) => {
   );
 };
 
-export default FreeAgencyMember;
+export default EnrollmentMember;
