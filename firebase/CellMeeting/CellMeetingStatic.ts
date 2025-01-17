@@ -660,7 +660,7 @@ export const getCellMeetingHistoricalMonthly = async () => {
       CELLMEETING_COLLCTION.MONTHLY
     );
 
-    const q = query(cellMeetingRef, limit(12));
+    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
 
     const querySnapshot = await getDocs(q);
 
@@ -704,7 +704,7 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
       CELLMEETING_COLLCTION.WEEKLY
     );
 
-    let q = query(cellMeetingRef, orderBy("date"), limit(12));
+    let q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
 
     // 이전 페이지의 마지막 문서 기준으로 시작
     if (lastDoc) {
@@ -726,7 +726,9 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
             absent: data.absent,
             attendance: data.attendance,
             total: data.total,
-            attendanceRate: String((data.attendance / data.total) * 100),
+            attendanceRate: ((data.attendance / data.total) * 100)
+              .toFixed(2)
+              .padStart(2, "0"),
             dateString: data.dateString,
             term: data.term,
             weekOfTerm: data.weekOfTerm,
@@ -739,7 +741,7 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
 
     return {data: resultList, lastVisible};
   } catch (error: any) {
-    console.log("@getCellMeetingHistoricalMonthly Error: ", error);
+    console.log("@getCellMeetingHistoricalWeekly Error: ", error);
     const errorMessage = error.message
       ? error.message.split(":")[0]
       : "알 수 없는 에러";
