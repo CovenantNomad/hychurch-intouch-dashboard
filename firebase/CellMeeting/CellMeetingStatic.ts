@@ -6,6 +6,7 @@ import {
   limit,
   orderBy,
   query,
+  startAfter,
   where,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
@@ -37,6 +38,16 @@ type TAttendanceLastFourWeekStatic = {
   absent: number;
   total: number;
   attendanceRate: string;
+};
+
+export type TCellMeetingWeeklyStatic = {
+  dateString: string;
+  attendance: number;
+  absent: number;
+  total: number;
+  attendanceRate: string;
+  term: string;
+  weekOfTerm: number;
 };
 
 export type TCellMeetingTermStatic = {
@@ -71,7 +82,7 @@ export type TCellmeetingYearlyStatic = {
   termYear: string;
 };
 
-type TCellmeetingMonthlyStatic = {
+export type TCellmeetingMonthlyStatic = {
   year: string;
   month: string;
   dateString: string;
@@ -638,4 +649,107 @@ export const getCellMeetingHistoricalTerms = async () => {
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
     return null;
   }
+};
+
+export const getCellMeetingHistoricalMonthly = async () => {
+  try {
+    const cellMeetingRef = collection(
+      db,
+      CELLMEETING_COLLCTION.CELLMEETINGS,
+      CELLMEETING_COLLCTION.STATISTICS,
+      CELLMEETING_COLLCTION.MONTHLY
+    );
+
+    const q = query(cellMeetingRef, limit(12));
+
+    const querySnapshot = await getDocs(q);
+
+    const resultList: TCellmeetingMonthlyStatic[] = [];
+
+    if (!querySnapshot.empty) {
+      resultList.push(
+        ...querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            absentAvg: data.absentAvg,
+            attendanceAvg: data.attendanceAvg,
+            totalAvg: data.totalAvg,
+            attendanceRate: data.attendanceRate,
+            year: data.year,
+            month: data.month,
+            // year와 month를 2자리 형식으로 보장
+            dateString: `${data.year}-${String(data.month).padStart(2, "0")}`,
+          };
+        })
+      );
+    }
+
+    return resultList;
+  } catch (error: any) {
+    console.log("@getCellMeetingHistoricalMonthly Error: ", error);
+    const errorMessage = error.message
+      ? error.message.split(":")[0]
+      : "알 수 없는 에러";
+    toast.error(`에러가 발생하였습니다\n${errorMessage}`);
+    return null;
+  }
+};
+
+export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
+  try {
+    const cellMeetingRef = collection(
+      db,
+      CELLMEETING_COLLCTION.CELLMEETINGS,
+      CELLMEETING_COLLCTION.STATISTICS,
+      CELLMEETING_COLLCTION.WEEKLY
+    );
+
+    let q = query(cellMeetingRef, orderBy("date"), limit(12));
+
+    // 이전 페이지의 마지막 문서 기준으로 시작
+    if (lastDoc) {
+      q = query(q, startAfter(lastDoc));
+    }
+
+    const querySnapshot = await getDocs(q);
+
+    const resultList: TCellMeetingWeeklyStatic[] = [];
+
+    // 마지막 문서 저장
+    let lastVisible = null;
+
+    if (!querySnapshot.empty) {
+      resultList.push(
+        ...querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            absent: data.absent,
+            attendance: data.attendance,
+            total: data.total,
+            attendanceRate: String(
+              ((data.attendance / data.total) * 100).toFixed(2)
+            ).padEnd(2, "0"),
+            dateString: data.dateString,
+            term: data.term,
+            weekOfTerm: data.weekOfTerm,
+          };
+        })
+      );
+
+      lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+    }
+
+    return {data: resultList, lastVisible};
+  } catch (error: any) {
+    console.log("@getCellMeetingHistoricalMonthly Error: ", error);
+    const errorMessage = error.message
+      ? error.message.split(":")[0]
+      : "알 수 없는 에러";
+    toast.error(`에러가 발생하였습니다\n${errorMessage}`);
+    return null;
+  }
+};
+
+export const fetchCellMeetingHistoricalWeekly = async ({pageParam = null}) => {
+  return await getCellMeetingHistoricalWeekly(pageParam);
 };

@@ -1,3 +1,5 @@
+import {clsx, type ClassValue} from "clsx";
+import {twMerge} from "tailwind-merge";
 import {cellOrderByAge} from "../constants/cellOrder";
 import {Gender, RoleType, UserCellTransferStatus} from "../graphql/generated";
 import {
@@ -14,6 +16,10 @@ import {CommunityFilter} from "../stores/cellState";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+export function cx(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
 export function makeErrorMessage(message: string) {

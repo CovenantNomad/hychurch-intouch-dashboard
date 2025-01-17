@@ -49,7 +49,7 @@ const CellMeetingHistoricalYearlyTable = ({data}: Props) => {
               {year.absentAvg}명
             </TableCell>
             <TableCell className="text-sm text-center">
-              {year.attendanceRateAvg}%
+              {String(year.attendanceRateAvg.toFixed(2)).padEnd(2, "0")}%
             </TableCell>
             <TableCell className="text-sm text-center">
               {year.highRate}%<br />

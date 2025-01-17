@@ -1,5 +1,3 @@
-//CELL MEETING
-
 import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
@@ -13,6 +11,7 @@ import {
   SERVICE_COLLCTION,
 } from "../../interface/firebase";
 
+//주간데이터 입력
 export async function insertWeeklyCellMeetingValue(
   inputValue: TWeeklyCellMeetingInput
 ) {
@@ -221,6 +220,7 @@ export async function insertYearCellMeetingValue({
       await updateDoc(termRef, dataToUpdate);
     } else {
       await setDoc(termRef, {
+        termYear: termYear,
         absentAvg: Number(inputValue.absentAvg) || 0,
         attendanceAvg: Number(inputValue.attendanceAvg) || 0,
         totalAvg: Number(inputValue.totalAvg) || 0,
