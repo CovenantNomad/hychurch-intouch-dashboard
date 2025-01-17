@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
-import { NextPage } from "next";
-import { useRouter } from "next/router";
+import {NextPage} from "next";
 import Head from "next/head";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
 // components
-import Layout from "../../../../components/Layout/Layout";
-import Spinner from "../../../../components/Atoms/Spinner";
-import MemberHeader from "../../../../components/Blocks/Headers/MemberHeader";
-import UserInfomation from "../../../../components/Blocks/Infomation/UserInfomation";
-import EditUserInfomation from "../../../../components/Blocks/Infomation/EditUserInfomation";
 import EmptyStateSimple from "../../../../components/Atoms/EmptyStates/EmptyStateSimple";
+import MemberHeader from "../../../../components/Blocks/Headers/MemberHeader";
+import EditUserInfomation from "../../../../components/Blocks/Infomation/EditUserInfomation";
+import UserInfomation from "../../../../components/Blocks/Infomation/UserInfomation";
+import Layout from "../../../../components/Layout/Layout";
 // api
+import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
+import Container from "../../../../components/Atoms/Container/Container";
+import SectionBackground from "../../../../components/Atoms/Container/SectionBackground";
+import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
+import Footer from "../../../../components/Atoms/Footer";
+import SkeletonMemberInfo from "../../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 import {
   FindUserQuery,
   FindUserQueryVariables,
   useFindUserQuery,
 } from "../../../../graphql/generated";
-import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
-import Footer from "../../../../components/Atoms/Footer";
-import Container from "../../../../components/Atoms/Container/Container";
-import SectionBackground from "../../../../components/Atoms/Container/SectionBackground";
-import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
-import BlockContainer from "../../../../components/Atoms/Container/BlockContainer";
-import SkeletonMemberInfo from "../../../../components/Atoms/Skeleton/SkeletonMemberInfo";
+import UserCellmeetingHistory from "./_components/UserCellmeetingHistory/UserCellmeetingHistory";
 
 interface MemberDetailPage {}
 
@@ -30,7 +30,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
   const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
 
-  const { isLoading, isFetching, data } = useFindUserQuery<
+  const {isLoading, isFetching, data} = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -95,6 +95,9 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                             editModeHandler={() => setEditMode(true)}
                             hasHeader={false}
                           />
+                        </div>
+                        <div className="md:col-span-4">
+                          <UserCellmeetingHistory userId={userId} />
                         </div>
                       </section>
                     ) : (

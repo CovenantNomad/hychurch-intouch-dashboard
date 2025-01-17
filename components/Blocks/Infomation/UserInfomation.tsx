@@ -1,10 +1,10 @@
-import { Gender, UserGrade } from "../../../graphql/generated";
-import Avatar, { AvatarSize } from "../../Atoms/Avatar";
+import {Gender, UserGrade} from "../../../graphql/generated";
+import Avatar, {AvatarSize} from "../../Atoms/Avatar";
 
 export interface UserInfomationProps {
   name: string;
   gender: Gender | null | undefined;
-  grade: UserGrade
+  grade: UserGrade;
   isActive: boolean;
   birthday: string | null | undefined;
   registrationDate?: string | null | undefined;
@@ -43,40 +43,48 @@ const UserInfomation = ({
         )}
         <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">성별</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-gray-700">성별</dt>
+            <dd className="mt-1 text-base text-gray-900">
               {gender === "MAN" ? "형제" : "자매"}
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">생년월일</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-gray-700">생년월일</dt>
+            <dd className="mt-1 text-base text-gray-900">
               {birthday || "미입력"}
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">활동등급</dt>
-            <dd className="mt-1 text-sm text-gray-900">
-              {grade}
-            </dd>
+            <dt className="text-sm font-medium text-gray-700">활동등급</dt>
+            <dd className="mt-1 text-base text-gray-900">{grade} 등급</dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">셀보고서 포함 여부</dt>
-            <dd className="mt-1 text-sm text-gray-900">
+            <dt className="text-sm font-medium text-gray-700">
+              셀보고서 포함 여부
+            </dt>
+            <dd className="mt-1 text-base text-gray-900">
               {isActive ? "포함" : "비포함"}
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">휴대폰번호</dt>
-            <dd className="mt-1 text-sm text-gray-900">{phone}</dd>
+            <dt className="text-sm font-medium text-gray-700">휴대폰번호</dt>
+            <dd className="mt-1 text-base text-gray-900">{phone}</dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">주소</dt>
-            <dd className="mt-1 text-sm text-gray-900">{address && address}</dd>
+            <dt className="text-sm font-medium text-gray-700">주소</dt>
+            <dd className="mt-1 text-base text-gray-900">
+              {address && address}
+            </dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">등록일</dt>
-            <dd className="mt-1 text-sm text-gray-900">{registrationDate === null ? "미입력" : registrationDate === "2022-12-31" ? "2023년 이전등록" : registrationDate}</dd>
+            <dt className="text-sm font-medium text-gray-700">등록일</dt>
+            <dd className="mt-1 text-base text-gray-900">
+              {registrationDate === null
+                ? "미입력"
+                : registrationDate === "2022-12-31"
+                ? "2023년 이전등록"
+                : registrationDate}
+            </dd>
           </div>
         </dl>
       </div>
@@ -85,8 +93,8 @@ const UserInfomation = ({
           !description && "h-20"
         }`}
       >
-        <dt className="text-sm font-medium text-gray-500">비고</dt>
-        <dd className="mt-1 text-sm text-gray-900 whitespace-pre-line">
+        <dt className="text-sm font-medium text-gray-700">비고</dt>
+        <dd className="mt-1 text-base text-gray-900 whitespace-pre-line">
           {description}
         </dd>
       </div>

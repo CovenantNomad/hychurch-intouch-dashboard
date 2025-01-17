@@ -1,8 +1,9 @@
-import React from "react";
-import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { useQueryClient } from "react-query";
+import {Select, SelectItem} from "@tremor/react";
+import dayjs from "dayjs";
+import {useRouter} from "next/router";
+import {Controller, useForm} from "react-hook-form";
+import {toast} from "react-hot-toast";
+import {useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import {
   RemoveUserMutation,
@@ -10,15 +11,15 @@ import {
   UserGrade,
   useRemoveUserMutation,
 } from "../../../../graphql/generated";
-import { SpecialCellIdType } from "../../../../interface/cell";
-import { makeErrorMessage } from "../../../../utils/utils";
+import {SpecialCellIdType} from "../../../../interface/cell";
+import {getTodayString} from "../../../../utils/dateUtils";
+import {makeErrorMessage} from "../../../../utils/utils";
 import SectionTitle from "../../../Atoms/Typography/SectionTitle";
-import { Select, SelectItem } from "@tremor/react";
 
 interface RemoveUserSectionProps {
   id: string;
   name: string;
-  grade: UserGrade
+  grade: UserGrade;
 }
 
 interface RemoveFormType {
@@ -26,7 +27,7 @@ interface RemoveFormType {
   otherReason?: string;
 }
 
-const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
+const RemoveUserSection = ({id, name, grade}: RemoveUserSectionProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const {
@@ -34,22 +35,22 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
     register,
     control,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<RemoveFormType>({
     defaultValues: {
       reason: "",
-      otherReason: ""
-    }
+      otherReason: "",
+    },
   });
 
-  const { mutate: removeUserMutate } = useRemoveUserMutation<
+  const {mutate: removeUserMutate} = useRemoveUserMutation<
     RemoveUserMutation,
     RemoveUserMutationVariables
   >(graphlqlRequestClient, {
     onSuccess() {
       toast.success(`${name}청년을 인터치 청년교회에서 제외되었습니다`);
       queryClient.invalidateQueries({
-        queryKey: ["findRenewCell", { id: Number(SpecialCellIdType.Renew) }],
+        queryKey: ["findRenewCell", {id: Number(SpecialCellIdType.Renew)}],
       });
       router.back();
     },
@@ -65,13 +66,12 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
   });
 
   const onSubmitHandler = (data: RemoveFormType) => {
-
-    if (data.reason === '기타') {
+    if (data.reason === "기타") {
       removeUserMutate({
         input: {
           userId: id,
           reason: data.reason,
-          reasonDetail: data.otherReason
+          reasonDetail: data.otherReason,
         },
       });
     } else {
@@ -79,6 +79,7 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
         input: {
           userId: id,
           reason: data.reason,
+          reasonDetail: `제외일: ${getTodayString(dayjs(new Date()))}`,
         },
       });
     }
@@ -95,36 +96,25 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col items-center gap-x-6 lg:flex-row">
             <Controller
-              name='reason'
+              name="reason"
               control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
+              rules={{required: true}}
+              render={({field}) => (
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
                   className="w-full max-w-sm"
                 >
-                  <SelectItem value="이사">
-                    이사
-                  </SelectItem>
-                  <SelectItem value="결혼">
-                    결혼
-                  </SelectItem>
-                  <SelectItem value="진급">
-                    진급
-                  </SelectItem>
-                  <SelectItem value="기타">
-                    기타
-                  </SelectItem>
+                  <SelectItem value="이사">이사</SelectItem>
+                  <SelectItem value="결혼">결혼</SelectItem>
+                  <SelectItem value="진급">진급</SelectItem>
+                  <SelectItem value="기타">기타</SelectItem>
                 </Select>
               )}
             />
-            {watch('reason') === '기타' && (
+            {watch("reason") === "기타" && (
               <div className="w-full mt-1 lg:w-fit lg:flex-grow lg:mt-0">
-                <label
-                  htmlFor="otherReason"
-                  className="sr-only"
-                >
+                <label htmlFor="otherReason" className="sr-only">
                   사유
                 </label>
                 <input
@@ -132,7 +122,7 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
                   placeholder="사유를 입력해주세요"
                   {...register("otherReason", {
                     required: {
-                      value: watch('reason') === '기타' && true,
+                      value: watch("reason") === "기타" && true,
                       message: "사유를 반드시 입력해주세요",
                     },
                     maxLength: {
@@ -147,7 +137,7 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
             <div className="flex justify-center w-full mt-4 lg:w-fit lg:mt-0">
               <button
                 type="submit"
-                disabled={watch('reason') === ''}
+                disabled={watch("reason") === ""}
                 className="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-RED disabled:bg-slate-300 disabled:cursor-not-allowed"
               >
                 제외하기
@@ -155,7 +145,9 @@ const RemoveUserSection = ({ id, name, grade }: RemoveUserSectionProps) => {
             </div>
           </div>
           {(errors.reason || errors.otherReason) && (
-            <p className="block mt-1 text-sm text-red-600">{errors.reason?.message || errors.otherReason?.message}</p>
+            <p className="block mt-1 text-sm text-red-600">
+              {errors.reason?.message || errors.otherReason?.message}
+            </p>
           )}
         </form>
       )}

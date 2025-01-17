@@ -1,17 +1,17 @@
 import dayjs from "dayjs";
-import type { NextPage } from "next";
+import type {NextPage} from "next";
 import Head from "next/head";
-import { useCallback, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import {useCallback, useEffect, useState} from "react";
+import {useRecoilState} from "recoil";
 import graphlqlRequestClient from "../../client/graphqlRequestClient";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
-import Footer from "../../components/Atoms/Footer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
-import AbsenceMember from "../../components/Templates/Renew/AbsenceMember";
+import EnrollmentMember from "../../components/Templates/Renew/EnrollmentMember";
 import FreeAgencyMember from "../../components/Templates/Renew/FreeAgencyMember";
 import InactiveMember from "../../components/Templates/Renew/InactiveMember";
+import RenewAttendance from "../../components/Templates/Renew/RenewAttendance";
 import RenewTransfer from "../../components/Templates/Renew/RenewTransfer";
 import {
   FindRenewCellQuery,
@@ -20,11 +20,10 @@ import {
   UserCellTransferStatus,
   UserGrade,
 } from "../../graphql/generated";
-import { SpecialCellIdType } from "../../interface/cell";
-import { MemberWithTransferOut } from "../../interface/user";
-import { stateSetting } from "../../stores/stateSetting";
-import { getTodayString } from "../../utils/dateUtils";
-import RenewAttendance from "../../components/Templates/Renew/RenewAttendance";
+import {SpecialCellIdType} from "../../interface/cell";
+import {MemberWithTransferOut} from "../../interface/user";
+import {stateSetting} from "../../stores/stateSetting";
+import {getTodayString} from "../../utils/dateUtils";
 
 const ReNewPage: NextPage = () => {
   const now = dayjs();
@@ -34,6 +33,9 @@ const ReNewPage: NextPage = () => {
   );
   const [activeList, setActiveList] = useState<MemberWithTransferOut[]>([]);
   const [inActiveList, setInActiveList] = useState<MemberWithTransferOut[]>([]);
+  const [enrollmentList, setEnrollmentList] = useState<MemberWithTransferOut[]>(
+    []
+  );
   const [datafilter, setDatafilter] = useState({
     min: getTodayString(now.subtract(1, "year")),
     max: getTodayString(now),
@@ -42,19 +44,24 @@ const ReNewPage: NextPage = () => {
   const categories = [
     {
       id: 0,
-      name: "E등급 인원",
+      name: "셀 미편성 청년",
       component: <FreeAgencyMember memberList={activeList} />,
     },
     {
       id: 1,
-      name: "F등급 인원",
+      name: "비활동 청년",
       component: <InactiveMember memberList={inActiveList} />,
     },
-    { id: 2, name: "새싹셀 편성", component: <RenewTransfer /> },
-    { id: 3, name: "새싹셀 출석체크", component: <RenewAttendance /> },
+    {
+      id: 2,
+      name: "재적 청년",
+      component: <EnrollmentMember memberList={enrollmentList} />,
+    },
+    {id: 3, name: "새싹셀 편성", component: <RenewTransfer />},
+    {id: 4, name: "새싹셀 출석체크", component: <RenewAttendance />},
   ];
 
-  const { isLoading, data } = useFindRenewCellQuery<
+  const {isLoading, data} = useFindRenewCellQuery<
     FindRenewCellQuery,
     FindRenewCellQueryVariables
   >(
@@ -97,9 +104,14 @@ const ReNewPage: NextPage = () => {
           : member;
       });
 
-      setActiveList(blessingWithTransfer.filter((member) => member.grade === UserGrade.E));
+      setActiveList(
+        blessingWithTransfer.filter((member) => member.grade === UserGrade.E)
+      );
       setInActiveList(
         blessingWithTransfer.filter((member) => member.grade === UserGrade.F)
+      );
+      setEnrollmentList(
+        blessingWithTransfer.filter((member) => member.grade === UserGrade.G)
       );
     }
   }, [data]);

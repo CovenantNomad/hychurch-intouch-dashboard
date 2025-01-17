@@ -1,9 +1,9 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
+import {Timestamp} from "firebase/firestore";
 
 export type TSubmissionObject = {
   userId: string;
   userName: string;
-}
+};
 
 export type TCellMeetingSubmissionDataForCell = {
   cellId: string;
@@ -14,7 +14,7 @@ export type TCellMeetingSubmissionDataForCell = {
   attendanceList: TSubmissionObject[];
   absentList: TSubmissionObject[];
   submittedAt: Timestamp;
-}
+};
 
 export type TCellMeetingSubmissionDataForMember = {
   userId: string;
@@ -24,8 +24,15 @@ export type TCellMeetingSubmissionDataForMember = {
   baseDate: Date;
   baseDateString: string;
   hasAttended: boolean;
-}
+};
 
 export interface CellMeetingGlobalState {
-  tempAttendanceList: TCellMeetingSubmissionDataForMember[] | null
+  tempAttendanceList: TCellMeetingSubmissionDataForMember[] | null;
 }
+
+//개인별 셀모임 히스토리
+export type TIndividaulCellmeetingData = {
+  baseDate: Timestamp;
+  baseDateString: string;
+  hasAttended: boolean;
+};
