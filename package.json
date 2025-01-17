@@ -17,12 +17,14 @@
     "@headlessui/react": "^1.7.12",
     "@headlessui/tailwindcss": "^0.2.1",
     "@heroicons/react": "^2.0.14",
+    "@remixicon/react": "^4.6.0",
     "@tanstack/react-query-devtools": "^4.20.4",
     "@tremor/react": "^3.10.1",
     "@types/lodash": "^4.14.191",
     "@types/react-cookies": "^0.1.0",
     "@types/react-paginate": "^7.1.1",
     "chart.js": "^3.9.1",
+    "clsx": "^2.1.1",
     "date-fns": "^3.0.6",
     "dayjs": "^1.11.7",
     "firebase": "^9.17.1",
@@ -47,8 +49,10 @@
     "react-paginate": "^8.2.0",
     "react-query": "^3.39.1",
     "react-to-print": "^2.14.12",
+    "recharts": "^2.15.0",
     "recoil": "^0.7.5",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.2",

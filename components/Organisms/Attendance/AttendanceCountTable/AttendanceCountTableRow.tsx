@@ -1,19 +1,25 @@
-import { Dayjs } from "dayjs";
-import { FindThisWeekServicesCountQuery, FindThisWeekServicesCountQueryVariables, useFindThisWeekServicesCountQuery } from "../../../../graphql/generated";
+import {Dayjs} from "dayjs";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import {
+  FindThisWeekServicesCountQuery,
+  FindThisWeekServicesCountQueryVariables,
+  useFindThisWeekServicesCountQuery,
+} from "../../../../graphql/generated";
 
 type AttendanceCountTableRowProps = {
-  recentSunday: Dayjs
-}
+  recentSunday: Dayjs;
+};
 
-const AttendanceCountTableRow = ({ recentSunday }: AttendanceCountTableRowProps) => {
-  const { isLoading, isFetching, data } = useFindThisWeekServicesCountQuery<
+const AttendanceCountTableRow = ({
+  recentSunday,
+}: AttendanceCountTableRowProps) => {
+  const {isLoading, isFetching, data} = useFindThisWeekServicesCountQuery<
     FindThisWeekServicesCountQuery,
     FindThisWeekServicesCountQueryVariables
   >(
     graphlqlRequestClient,
     {
-      attendanceDate: recentSunday.format('YYYY-MM-DD'),
+      attendanceDate: recentSunday.format("YYYY-MM-DD"),
     },
     {
       staleTime: 5 * 60 * 1000,
@@ -27,7 +33,10 @@ const AttendanceCountTableRow = ({ recentSunday }: AttendanceCountTableRowProps)
         <tbody>
           <tr className="grid grid-cols-24 items-center text-center divide-x">
             {Array.from({length: 8}).map((_, index) => (
-              <td key={index} className="h-full col-span-3 flex items-center justify-center py-3">
+              <td
+                key={index}
+                className="h-full col-span-3 flex items-center justify-center py-3"
+              >
                 <span className="animate-pulse inline-block w-8 h-2 rounded-2xl bg-slate-200"></span>
               </td>
             ))}
@@ -37,37 +46,110 @@ const AttendanceCountTableRow = ({ recentSunday }: AttendanceCountTableRowProps)
         <>
           {data ? (
             <tbody className="divide-y divide-gray-200">
-              <tr className="grid grid-cols-24 items-center text-center divide-x">
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '2' && !item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '2' && !item.isOnline)?.totalCount : '0'}
+              <tr className="grid grid-cols-10 items-center text-center divide-x">
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "1" && !item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) =>
+                          item.churchService.id === "1" && !item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '2' && item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '2' && item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "1" && item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) => item.churchService.id === "1" && item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '3' && !item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '3' && !item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "2" && !item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) =>
+                          item.churchService.id === "2" && !item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '3' && item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '3' && item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "2" && item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) => item.churchService.id === "2" && item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '4' && !item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '4' && !item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "3" && !item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) =>
+                          item.churchService.id === "3" && !item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '4' && item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '4' && item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "3" && item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) => item.churchService.id === "3" && item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '5' && !item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '5' && !item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "4" && !item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) =>
+                          item.churchService.id === "4" && !item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
-                <td className="h-full col-span-3 flex items-center justify-center text-sm py-2">
-                  {data.churchServiceAttendanceStats.find(item => item.churchService.id === '5' && item.isOnline) ? data.churchServiceAttendanceStats.find(item => item.churchService.id === '5' && item.isOnline)?.totalCount : '0'}
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "4" && item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) => item.churchService.id === "4" && item.isOnline
+                      )?.totalCount
+                    : "0"}
+                </td>
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "5" && !item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) =>
+                          item.churchService.id === "5" && !item.isOnline
+                      )?.totalCount
+                    : "0"}
+                </td>
+                <td className="h-full col-span-1 flex items-center justify-center text-sm py-2">
+                  {data.churchServiceAttendanceStats.find(
+                    (item) => item.churchService.id === "5" && item.isOnline
+                  )
+                    ? data.churchServiceAttendanceStats.find(
+                        (item) => item.churchService.id === "5" && item.isOnline
+                      )?.totalCount
+                    : "0"}
                 </td>
               </tr>
             </tbody>
           ) : (
             <tbody className="divide-y divide-gray-200">
               <tr className="grid grid-cols-1 items-center text-center divide-x">
-                <td className="h-full col-span-1 flex items-center justify-center text-base font-bold py-4">요청하신 데이터가 존재하지 않습니다</td>
+                <td className="h-full col-span-1 flex items-center justify-center text-base font-bold py-4">
+                  요청하신 데이터가 존재하지 않습니다
+                </td>
               </tr>
             </tbody>
           )}

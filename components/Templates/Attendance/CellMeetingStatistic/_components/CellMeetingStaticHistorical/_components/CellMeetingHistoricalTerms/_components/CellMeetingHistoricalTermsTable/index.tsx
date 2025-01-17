@@ -65,7 +65,7 @@ const CellMeetingHistoricalTermsTable = ({data, info}: Props) => {
                 {term.absentAvg}명
               </TableCell>
               <TableCell className="text-sm text-center">
-                {term.attendanceRateAvg}%
+                {String(term.attendanceRateAvg.toFixed(2)).padEnd(2, "0")}%
               </TableCell>
               <TableCell className="text-sm text-center">
                 {term.highRate}%<br />

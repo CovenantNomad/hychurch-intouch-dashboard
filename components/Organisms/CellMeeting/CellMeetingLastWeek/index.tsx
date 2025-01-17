@@ -40,7 +40,7 @@ const CellMeetingLastWeek = ({}: Props) => {
               <dd className="text-xs text-gray-500">
                 {data
                   ? `${
-                      data.recentTotal - data.previousTotal >= 0 ? "+" : "-"
+                      data.recentTotal - data.firstWeekTotal >= 0 ? "+" : ""
                     }` +
                     `${data.recentTotal - data.previousTotal}` +
                     "명" +
@@ -82,7 +82,14 @@ const CellMeetingLastWeek = ({}: Props) => {
               </dd>
               <dd className="text-xs text-gray-500">
                 {data
-                  ? `${(
+                  ? `${
+                      Number(data.recentAttendanceRate) -
+                        Number(data.previousAttendanceRate) >=
+                      0
+                        ? "+"
+                        : ""
+                    }` +
+                    `${(
                       Number(data.recentAttendanceRate) -
                       Number(data.previousAttendanceRate)
                     ).toFixed(2)}` +
