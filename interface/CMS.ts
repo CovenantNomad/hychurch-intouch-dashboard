@@ -39,6 +39,10 @@ export type TTERMCellMeetingInput = {
 };
 
 export type TWeeklyServiceInput = {
+  firstOff: number;
+  firstOnline: number;
+  secondOff: number;
+  secondOnline: number;
   thirdOff: number;
   thirdOnline: number;
   fourthOff: number;
@@ -47,12 +51,14 @@ export type TWeeklyServiceInput = {
   fifthOnline: number;
   totalOff: number;
   totalOnline: number;
+  nonCellMember: number;
   total: number;
   date: Date;
   dateString: string;
   month: string;
   year: string;
   term: string;
+  termYear: string;
   weekOfMonth: number;
   weekOfYear: number;
   weekOfTerm: number;

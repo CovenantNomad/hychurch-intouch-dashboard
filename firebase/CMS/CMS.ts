@@ -254,7 +254,12 @@ export async function insertWeeklyServiceValue(
       inputValue.dateString
     );
 
-    await setDoc(weeklyRef, {
+    // Convert all relevant fields to numbers once to avoid repetitive conversions
+    const numericValues = {
+      firstOff: Number(inputValue.firstOff),
+      firstOnline: Number(inputValue.firstOnline),
+      secondOff: Number(inputValue.secondOff),
+      secondOnline: Number(inputValue.secondOnline),
       thirdOff: Number(inputValue.thirdOff),
       thirdOnline: Number(inputValue.thirdOnline),
       fourthOff: Number(inputValue.fourthOff),
@@ -263,18 +268,38 @@ export async function insertWeeklyServiceValue(
       fifthOnline: Number(inputValue.fifthOnline),
       totalOff: Number(inputValue.totalOff),
       totalOnline: Number(inputValue.totalOnline),
+      nonCellMember: Number(inputValue.nonCellMember),
       total: Number(inputValue.total),
+      weekOfMonth: Number(inputValue.weekOfMonth),
+      weekOfYear: Number(inputValue.weekOfYear),
+      weekOfTerm: Number(inputValue.weekOfTerm),
+    };
+
+    // Calculate total values once
+    const totals = {
+      firstTotal: numericValues.firstOff + numericValues.firstOnline,
+      secondTotal: numericValues.secondOff + numericValues.secondOnline,
+      thirdTotal: numericValues.thirdOff + numericValues.thirdOnline,
+      fourthTotal: numericValues.fourthOff + numericValues.fourthOnline,
+      fifthTotal: numericValues.fifthOff + numericValues.fifthOnline,
+    };
+
+    // Combine all values into a single payload
+    const payload = {
+      ...numericValues,
+      ...totals,
       date: inputValue.date,
       dateString: inputValue.dateString,
       month: inputValue.month,
       year: inputValue.year,
       term: inputValue.term,
-      weekOfMonth: Number(inputValue.weekOfMonth),
-      weekOfYear: Number(inputValue.weekOfYear),
-      weekOfTerm: Number(inputValue.weekOfTerm),
-    });
+      termYear: inputValue.termYear,
+    };
+
+    // Save the document
+    await setDoc(weeklyRef, payload);
   } catch (error: any) {
-    console.log("@createTotalServiceAttendance Error: ", error);
+    console.log("@insertWeeklyServiceValue Error: ", error);
     throw new Error("Failed to insert or update term cell meeting value.");
   }
 }

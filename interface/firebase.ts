@@ -42,6 +42,7 @@ export enum SERVICE_COLLCTION {
   MONTHLY = "MONTHLY",
   TERM = "TERM",
   YEAR = "YEAR",
+  MA4WEEK = "MA4WEEK",
 }
 
 export enum EVALUATIONFORM_COLLCTION {

@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import toast from "react-hot-toast";
-import {useMutation} from "react-query";
-import {term} from "../../../../../../constants/constant";
+import {useMutation, useQuery} from "react-query";
+import {getTermInfomation} from "../../../../../../firebase/CellMeeting/CellMeetingStatic";
 import {insertWeeklyServiceValue} from "../../../../../../firebase/CMS/CMS";
 import {TWeeklyServiceInput} from "../../../../../../interface/CMS";
 
@@ -18,7 +18,20 @@ const ServiceWeeklyCMS = ({}: Props) => {
     formState: {errors},
   } = useForm<TWeeklyServiceInput>();
 
+  const {isLoading, isFetching, data} = useQuery(
+    ["getTermInfomation"],
+    () => getTermInfomation(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+
   const selectedDate = watch("date");
+  const firstOff = watch("firstOff");
+  const firstOnline = watch("firstOnline");
+  const secondOff = watch("secondOff");
+  const secondOnline = watch("secondOnline");
   const thirdOff = watch("thirdOff");
   const fourthOff = watch("fourthOff");
   const fifthOff = watch("fifthOff");
@@ -30,6 +43,10 @@ const ServiceWeeklyCMS = ({}: Props) => {
     onSuccess: () => {
       toast.success("성공적으로 입력되었습니다.");
       reset();
+      if (data) {
+        setValue("term", data.term);
+        setValue("termYear", data.termYear);
+      }
     },
     onError: (error) => {
       console.error("Error inserting data:", error);
@@ -52,19 +69,27 @@ const ServiceWeeklyCMS = ({}: Props) => {
       const year = date.getFullYear().toString();
       setValue("month", month);
       setValue("year", year);
-
-      // Term 설정
-      setValue("term", term);
     }
   }, [selectedDate, setValue]);
 
   useEffect(() => {
+    if (data) {
+      setValue("term", data.term);
+      setValue("termYear", data.termYear);
+    }
+  }, [data, setValue]);
+
+  useEffect(() => {
     const totalOff =
+      (Number(firstOff) || 0) +
+      (Number(secondOff) || 0) +
       (Number(thirdOff) || 0) +
       (Number(fourthOff) || 0) +
       (Number(fifthOff) || 0);
 
     const totalOnline =
+      (Number(firstOnline) || 0) +
+      (Number(secondOnline) || 0) +
       (Number(thirdOnline) || 0) +
       (Number(fourthOnline) || 0) +
       (Number(fifthOnline) || 0);
@@ -76,9 +101,13 @@ const ServiceWeeklyCMS = ({}: Props) => {
     setValue("totalOnline", totalOnline);
     setValue("total", total);
   }, [
+    firstOff,
+    secondOff,
     thirdOff,
     fourthOff,
     fifthOff,
+    firstOnline,
+    secondOnline,
     thirdOnline,
     fourthOnline,
     fifthOnline,
@@ -95,6 +124,52 @@ const ServiceWeeklyCMS = ({}: Props) => {
               <div></div>
               <div className="text-center">성전</div>
               <div className="text-center">온라인</div>
+            </div>
+            <div className="grid grid-cols-3 items-center gap-x-4 mb-5">
+              <div>1부</div>
+              <div>
+                <input
+                  type="text"
+                  {...register("firstOff", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
+              {errors.thirdOff && (
+                <span className="block mt-1 text-red-600">입력해주세요</span>
+              )}
+              <div>
+                <input
+                  type="text"
+                  {...register("firstOnline", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
+              {errors.thirdOnline && (
+                <span className="block mt-1 text-red-600">입력해주세요</span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 items-center gap-x-4 mb-5">
+              <div>2부</div>
+              <div>
+                <input
+                  type="text"
+                  {...register("secondOff", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
+              {errors.thirdOff && (
+                <span className="block mt-1 text-red-600">입력해주세요</span>
+              )}
+              <div>
+                <input
+                  type="text"
+                  {...register("secondOnline", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
+              {errors.thirdOnline && (
+                <span className="block mt-1 text-red-600">입력해주세요</span>
+              )}
             </div>
             <div className="grid grid-cols-3 items-center gap-x-4 mb-5">
               <div>3부</div>
@@ -162,6 +237,19 @@ const ServiceWeeklyCMS = ({}: Props) => {
                 />
               </div>
               {errors.fifthOnline && (
+                <span className="block mt-1 text-red-600">입력해주세요</span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 items-center gap-x-4 mb-3">
+              <div>미편성청년</div>
+              <div className="col-span-2">
+                <input
+                  type="text"
+                  {...register("nonCellMember", {required: true})}
+                  className="w-full px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                />
+              </div>
+              {errors.nonCellMember && (
                 <span className="block mt-1 text-red-600">입력해주세요</span>
               )}
             </div>
@@ -256,6 +344,15 @@ const ServiceWeeklyCMS = ({}: Props) => {
               <input
                 type="text"
                 {...register("term", {required: true})}
+                disabled
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">TermYear</label>
+              <input
+                type="text"
+                {...register("termYear", {required: true})}
                 disabled
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
