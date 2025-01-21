@@ -25,7 +25,7 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
     min: getTodayString(dayjs(now.set("year", -1))),
     max: getTodayString(now),
   });
-  const {isLoading, data} = useFindNewFamilyCellWithTransferQuery<
+  const {isLoading, isFetching, data} = useFindNewFamilyCellWithTransferQuery<
     FindNewFamilyCellWithTransferQuery,
     FindNewFamilyCellWithTransferQueryVariables
   >(
@@ -73,7 +73,7 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className="w-full h-screen flex justify-center">
           <Spinner />
         </div>
