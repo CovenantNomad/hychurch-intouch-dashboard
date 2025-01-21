@@ -1,6 +1,7 @@
 import {collection, getDocs, limit, orderBy, query} from "firebase/firestore";
 import toast from "react-hot-toast";
 import {db} from "../../client/firebaseConfig";
+import {TServiceAttendanceWeekly} from "../../interface/attendance";
 import {SERVICE_COLLCTION} from "../../interface/firebase";
 
 // 가장 최근 예배 통계
@@ -126,6 +127,162 @@ export const getServiceTotalCountStatics = async () => {
   } catch (error: any) {
     console.log("@getServiceTotalCountStatics Error: ", error);
     toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
+    return null;
+  }
+};
+
+// 인터치예배 셀편성/미편성 인원 비율
+export const getServiceRatioStatics = async (): Promise<
+  {date: string; fifthOff?: number; nonCellMember?: number}[] | null
+> => {
+  try {
+    // SERVICE_ATTENDANCE 컬렉션 참조
+    const serviceRef = collection(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.SERVICEATTENDANCE
+    );
+
+    // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
+    const serviceAttendanceQuery = query(
+      serviceRef,
+      orderBy("date", "desc"),
+      limit(20)
+    );
+    const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
+
+    const serviceAttendanceData = serviceAttendanceSnapshot.docs
+      .reverse()
+      .map((doc) => {
+        const data = doc.data();
+        return {
+          date: doc.data().dateString,
+          fifthOff: data.fifthOff,
+          nonCellMember: data.nonCellMember,
+        };
+      });
+
+    // 결과 반환
+    return serviceAttendanceData;
+  } catch (error: any) {
+    console.log("@getServiceRatioStatics Error: ", error);
+
+    const errorMessage = error.message || "알 수 없는 에러가 발생했습니다.";
+    toast.error(`에러가 발생하였습니다\n${errorMessage}`);
+    return null;
+  }
+};
+
+// 인터치예배 온라인/오프라인 인원 비율
+export const getServiceOnOffRatioStatics = async (): Promise<
+  {date: string; online?: number; offline?: number; total?: number}[] | null
+> => {
+  try {
+    // SERVICE_ATTENDANCE 컬렉션 참조
+    const serviceRef = collection(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.SERVICEATTENDANCE
+    );
+
+    // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
+    const serviceAttendanceQuery = query(
+      serviceRef,
+      orderBy("date", "desc"),
+      limit(20)
+    );
+    const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
+
+    const serviceAttendanceData = serviceAttendanceSnapshot.docs
+      .reverse()
+      .map((doc) => {
+        const data = doc.data();
+        return {
+          date: doc.data().dateString,
+          offline: data.fifthOff,
+          online: data.fifthOnline,
+          total: data.fifthTotal,
+        };
+      });
+
+    // 결과 반환
+    return serviceAttendanceData;
+  } catch (error: any) {
+    console.log("@getServiceRatioStatics Error: ", error);
+
+    const errorMessage = error.message || "알 수 없는 에러가 발생했습니다.";
+    toast.error(`에러가 발생하였습니다\n${errorMessage}`);
+    return null;
+  }
+};
+
+// 인터치예배 온라인/오프라인 인원 비율
+export const getServiceAttendnaceWeekly = async (): Promise<
+  TServiceAttendanceWeekly[] | null
+> => {
+  try {
+    // SERVICE_ATTENDANCE 컬렉션 참조
+    const serviceRef = collection(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.SERVICEATTENDANCE
+    );
+
+    // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
+    const serviceAttendanceQuery = query(
+      serviceRef,
+      orderBy("date", "desc"),
+      limit(20)
+    );
+    const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
+
+    const serviceAttendanceData = serviceAttendanceSnapshot.docs
+      .reverse()
+      .map((doc) => {
+        const data = doc.data();
+        const formattedData: TServiceAttendanceWeekly = {
+          firstOff: data.firstOff,
+          firstOnline: data.firstOnline,
+          firstTotal: data.firstTotal,
+          secondOff: data.secondOff,
+          secondOnline: data.secondOnline,
+          secondTotal: data.secondTotal,
+          thirdOff: data.thirdOff,
+          thirdOnline: data.thirdOnline,
+          thirdTotal: data.thirdTotal,
+          fourthOff: data.fourthOff,
+          fourthOnline: data.fourthOnline,
+          fourthTotal: data.fourthTotal,
+          fifthOff: data.fifthOff,
+          fifthOnline: data.fifthOnline,
+          fifthTotal: data.fifthTotal,
+          totalOff: data.totalOff,
+          totalOnline: data.totalOnline,
+          nonCellMember: data.nonCellMember,
+          total: data.total,
+          date: data.date,
+          dateString: data.dateString,
+          month: data.month,
+          year: data.year,
+          term: data.term,
+          termYear: data.termYear,
+          weekOfMonth: data.weekOfMonth,
+          weekOfYear: data.weekOfYear,
+          weekOfTerm: data.weekOfTerm,
+        };
+        return formattedData;
+      });
+
+    // 결과 반환
+    return serviceAttendanceData;
+  } catch (error: any) {
+    console.log("@getServiceRatioStatics Error: ", error);
+
+    const errorMessage = error.message || "알 수 없는 에러가 발생했습니다.";
+    toast.error(`에러가 발생하였습니다\n${errorMessage}`);
     return null;
   }
 };
