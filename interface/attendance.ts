@@ -1,16 +1,16 @@
-import { CellLeaderAttendanceSubmissionStatus } from "../graphql/generated"
+import {CellLeaderAttendanceSubmissionStatus} from "../graphql/generated";
 
 export enum AttendanceStatus {
-  NOT_SUBMITTED = 'NOT_SUBMITTED',
-  TEMPORARY_SAVE = 'TEMPORARY_SAVE',
-  COMPLETE = 'COMPLETE',
+  NOT_SUBMITTED = "NOT_SUBMITTED",
+  TEMPORARY_SAVE = "TEMPORARY_SAVE",
+  COMPLETE = "COMPLETE",
 }
 
 export interface AttendanceSubmissionType {
   cellId: string;
   cellName: string;
   cellCommunity: string;
-  submissionStatus: CellLeaderAttendanceSubmissionStatus
+  submissionStatus: CellLeaderAttendanceSubmissionStatus;
 }
 
 export interface AttendanceMemberType {
@@ -31,32 +31,63 @@ export interface AttendanceHistoryType {
 }
 
 export interface TempSavedAttendanceHistory {
-  userId: string
-  userName: string
-  churchServiceId: string
-  attendedAt: string
-  isOnline: boolean
-  description?: string | null | undefined
+  userId: string;
+  userName: string;
+  churchServiceId: string;
+  attendedAt: string;
+  isOnline: boolean;
+  description?: string | null | undefined;
 }
 
 export interface AttendanceHistory {
-  id: string
-  attendedAt: string
+  id: string;
+  attendedAt: string;
   user: {
-    id: string
-    name: string
-  }
+    id: string;
+    name: string;
+  };
   churchService: {
-    id: string
-    name: string
-  }
-  isOnline: boolean
-  description?: string | null | undefined
+    id: string;
+    name: string;
+  };
+  isOnline: boolean;
+  description?: string | null | undefined;
 }
 
 export interface AttendanceGlobalState {
-  status: AttendanceStatus
-  attendanceDate: string
-  tempAttendanceList: TempSavedAttendanceHistory[] | null
-  attendanceList: AttendanceHistory[] | null
+  status: AttendanceStatus;
+  attendanceDate: string;
+  tempAttendanceList: TempSavedAttendanceHistory[] | null;
+  attendanceList: AttendanceHistory[] | null;
 }
+
+export type TServiceAttendanceWeekly = {
+  firstOff: number;
+  firstOnline: number;
+  firstTotal: number;
+  secondOff: number;
+  secondOnline: number;
+  secondTotal: number;
+  thirdOff: number;
+  thirdOnline: number;
+  thirdTotal: number;
+  fourthOff: number;
+  fourthOnline: number;
+  fourthTotal: number;
+  fifthOff: number;
+  fifthOnline: number;
+  fifthTotal: number;
+  totalOff: number;
+  totalOnline: number;
+  nonCellMember: number;
+  total: number;
+  date: Date;
+  dateString: string;
+  month: string;
+  year: string;
+  term: string;
+  termYear: string;
+  weekOfMonth: number;
+  weekOfYear: number;
+  weekOfTerm: number;
+};
