@@ -1,8 +1,11 @@
-import React, { Dispatch, Fragment, SetStateAction } from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MemberWithTransferOut, SimpleMemberWithRole } from "../../../interface/user";
+import {Combobox, Dialog, Transition} from "@headlessui/react";
+import {MagnifyingGlassIcon} from "@heroicons/react/20/solid";
 import Link from "next/link";
+import {Dispatch, Fragment, SetStateAction} from "react";
+import {
+  MemberWithTransferOut,
+  SimpleMemberWithRole,
+} from "../../../interface/user";
 
 interface SearchModalProps {
   people: MemberWithTransferOut[] | SimpleMemberWithRole[];
@@ -56,7 +59,7 @@ const SearchModal = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100  bg-white shadow-2xl transition-all focus:ring-0 focus:border-0">
               <Combobox>
                 <div className="relative">
                   <MagnifyingGlassIcon
@@ -64,7 +67,7 @@ const SearchModal = ({
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 ring-0 sm:text-sm"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 ring-0 text-sm focus:ring-0 focus:border-0"
                     placeholder="Search..."
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -80,7 +83,7 @@ const SearchModal = ({
                         <Combobox.Option
                           value={person}
                           className={
-                            "cursor-pointer select-none px-4 py-2 hover:bg-indigo-600 hover:text-white"
+                            "cursor-pointer select-none px-4 py-2 hover:bg-sky-500 hover:text-white"
                           }
                         >
                           {person.name}

@@ -13,6 +13,7 @@ import {
   transferedUser,
 } from "../interface/cell";
 import {CommunityFilter} from "../stores/cellState";
+import {MemberWithTransferOut} from "./../interface/user";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -263,4 +264,115 @@ export const convertTerm = (input: string): string => {
 
   // 논리적으로 여기에 도달하지 않음
   throw new Error("Unexpected error in term conversion.");
+};
+
+export const groupMembersByWeek = (
+  filteredMembers: MemberWithTransferOut[],
+  year: number,
+  month: number
+) => {
+  // 1. 주의 시작일(월요일)과 끝일(일요일)을 계산하는 함수
+  const getWeekRange = (date: Date) => {
+    const startOfWeek = new Date(date);
+    startOfWeek.setDate(date.getDate() - ((date.getDay() + 6) % 7)); // 월요일
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
+    return {startOfWeek, endOfWeek};
+  };
+
+  // 2. 해당 월의 모든 주 계산
+  const getAllWeeksInMonth = (year: number, month: number) => {
+    const weeks: {start: Date; end: Date}[] = [];
+    let currentDate = new Date(year, month - 1, 1); // 월은 0부터 시작
+    while (currentDate.getMonth() === month - 1) {
+      const {startOfWeek, endOfWeek} = getWeekRange(currentDate);
+      weeks.push({start: startOfWeek, end: endOfWeek});
+      currentDate.setDate(currentDate.getDate() + 7); // 다음 주로 이동
+    }
+    return weeks;
+  };
+
+  const weeksInMonth = getAllWeeksInMonth(year, month);
+
+  // 3. 주별로 멤버를 그룹화
+  const groupedMembers: {[key: string]: MemberWithTransferOut[]} = {};
+
+  weeksInMonth.forEach(({start, end}) => {
+    const weekKey = `${start.toISOString().split("T")[0]} ~ ${
+      end.toISOString().split("T")[0]
+    }`;
+    groupedMembers[weekKey] = [];
+  });
+
+  filteredMembers.forEach((member) => {
+    if (!member.registrationDate) return;
+
+    const registrationDate = new Date(member.registrationDate);
+    if (isNaN(registrationDate.getTime())) return;
+
+    // 해당 멤버가 속하는 주를 찾음
+    const matchingWeek = weeksInMonth.find(
+      ({start, end}) => registrationDate >= start && registrationDate <= end
+    );
+
+    if (matchingWeek) {
+      const weekKey = `${matchingWeek.start.toISOString().split("T")[0]} ~ ${
+        matchingWeek.end.toISOString().split("T")[0]
+      }`;
+      groupedMembers[weekKey].push(member);
+    }
+  });
+
+  return groupedMembers;
+};
+
+// 생년월일 -> 나이(년생) 변환 함수
+export const calculateAge = (birthday: string | null | undefined): string => {
+  if (!birthday) return "알 수 없음";
+
+  const birthDate = new Date(birthday);
+  if (isNaN(birthDate.getTime())) return "알 수 없음"; // 유효하지 않은 날짜 처리
+
+  const currentYear = new Date().getFullYear();
+  const birthYear = birthDate.getFullYear();
+  const age = currentYear - birthYear;
+
+  const shortYear = String(birthYear).slice(-2); // YY 형식 추출
+  return `${age}세 (${shortYear}년생)`;
+};
+
+// 성별에 따라 색깔표시
+export const getGenderColor = (gender: string): string => {
+  return gender === "MAN" ? "text-blue-500" : "text-rose-500";
+};
+
+// 주일날짜 넣으면 해당월 몇째주인지
+export const getWeekNumber = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return "유효하지 않은 날짜"; // 날짜 유효성 검사
+  }
+
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  // 월 첫 번째 날과 첫 번째 일요일 계산
+  const firstDayOfMonth = new Date(year, month, 1);
+  const firstSunday = new Date(
+    firstDayOfMonth.getTime() +
+      ((7 - firstDayOfMonth.getDay()) % 7) * 24 * 60 * 60 * 1000
+  );
+
+  // 주 번호 계산
+  if (date < firstSunday) {
+    return `1주 (${dateString})`; // 첫 번째 일요일 이전은 1주
+  }
+
+  const diffInDays = Math.floor(
+    (date.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  const weekNumber = Math.floor(diffInDays / 7) + 1; // 주 번호 계산 (첫 주 포함)
+
+  return `${weekNumber}주 (${dateString})`;
 };
