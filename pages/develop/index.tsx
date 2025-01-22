@@ -6,6 +6,7 @@ import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
 import CellMeetingCMS from "../../components/Templates/DevelopCMS/CellMeetingCMS";
+import NewFamilyCMS from "../../components/Templates/DevelopCMS/NewFamilyCMS";
 import ServiceCMS from "../../components/Templates/DevelopCMS/ServiceCMS";
 import {stateSetting} from "../../stores/stateSetting";
 
@@ -19,6 +20,11 @@ const categories = [
     id: 1,
     name: "셀모임데이터",
     component: <CellMeetingCMS />,
+  },
+  {
+    id: 2,
+    name: "새가족데이터",
+    component: <NewFamilyCMS />,
   },
 ];
 

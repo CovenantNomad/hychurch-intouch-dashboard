@@ -63,3 +63,35 @@ export type TWeeklyServiceInput = {
   weekOfYear: number;
   weekOfTerm: number;
 };
+
+export type TNewFamilyWeeklyInput = {
+  total: number;
+  male: number;
+  female: number;
+  group1: number;
+  group2: number;
+  group3: number;
+  group4: number;
+  group5: number;
+  date: Date;
+  dateString: string;
+  month: string;
+  year: string;
+  weekOfMonth: number;
+  weekOfYear: number;
+};
+
+export type TNewFamilyBirthDataInput = {
+  [key: string]: string | number; // 인덱스 시그니처를 유니언 타입으로 변경
+  dateString: string;
+  month: string;
+  year: string;
+  weekOfMonth: number;
+  weekOfYear: number;
+};
+
+export type TRegionDataInput = {
+  seoul: {district: string; count: number}[]; // 서울의 구별 데이터
+  gyeonggi: {city: string; count: number}[]; // 경기도의 데이터
+  local: number; // 지방 데이터
+};

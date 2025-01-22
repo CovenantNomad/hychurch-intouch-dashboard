@@ -1,22 +1,21 @@
-import { useCallback, useState } from "react";
-import type { NextPage } from "next";
+import type {NextPage} from "next";
 import Head from "next/head";
+import {useCallback, useState} from "react";
 // stats
-import { useRecoilState } from "recoil";
-import { stateSetting } from "../../stores/stateSetting";
+import {useRecoilState} from "recoil";
+import {stateSetting} from "../../stores/stateSetting";
 // components
-import Layout from "../../components/Layout/Layout";
-import NewFamilyRegister from "../../components/Templates/NewFamily/NewFamilyRegister";
-import NewFamilyManagement from "../../components/Templates/NewFamily/NewFamilyManagement";
-import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
+import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
+import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
-import NewFamiltyAttendance from "../../components/Templates/NewFamily/NewFamiltyAttendance";
+import NewFamilyAttendance from "../../components/Templates/NewFamily/NewFamilyAttendance";
+import NewFamilyManagement from "../../components/Templates/NewFamily/NewFamilyManagement";
+import NewFamilyRegister from "../../components/Templates/NewFamily/NewFamilyRegister";
+import NewFamilyStats from "../../components/Templates/NewFamily/NewFamilyStats";
 
 const categories = [
-  { id: 0, 
-    name: "새가족 등록카드", 
-    component: <NewFamilyRegister /> },
+  {id: 0, name: "새가족 등록카드", component: <NewFamilyRegister />},
   {
     id: 1,
     name: "새가족 명단관리",
@@ -25,7 +24,12 @@ const categories = [
   {
     id: 2,
     name: "새가족 출석체크",
-    component: <NewFamiltyAttendance />,
+    component: <NewFamilyAttendance />,
+  },
+  {
+    id: 3,
+    name: "새가족 통계",
+    component: <NewFamilyStats />,
   },
 ];
 
