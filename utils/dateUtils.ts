@@ -1,6 +1,5 @@
-import { eachDayOfInterval, format, getISOWeek, isSunday } from "date-fns";
+import {eachDayOfInterval, format, isSunday} from "date-fns";
 import dayjs from "dayjs";
-
 
 export const getTodayString = (date: dayjs.Dayjs) => {
   //yyyy-MM-dd
@@ -72,8 +71,8 @@ export const makeWeekAndDate = (dateString: string) => {
 };
 
 export const convertSecondToDate = (seconds: number) => {
-  return dayjs(seconds * 1000)
-}
+  return dayjs(seconds * 1000);
+};
 
 //가장 최근 주일 구하기
 export function getMostRecentSunday() {
@@ -85,67 +84,85 @@ export function getMostRecentSunday() {
   }
 
   // 현재 요일을 뺌으로써 이번 주 일요일까지의 날짜를 구함
-  const mostRecentSunday = today.subtract(currentDayOfWeek, 'day');
+  const mostRecentSunday = today.subtract(currentDayOfWeek, "day");
 
   return mostRecentSunday;
-
 }
 
 // 현재일로부터 과거 몇주간의 일요일을 찾어서 String으로 리턴하는 함수
-export function getSearchSundayRange (desiredWeeks: number) {
-
+export function getSearchSundayRange(desiredWeeks: number) {
   // 현재 날짜
   const currentDate = dayjs();
 
   // 현재 날짜를 기준으로 과거의 일요일을 찾는 함수
   function findLastSunday(date: dayjs.Dayjs, weeks: number) {
     const lastSundays = [];
-    
+
     for (let i = 0; i < weeks; i++) {
-      const lastSunday = date.subtract(i * 7, 'day').startOf('week');
-      lastSundays.push(lastSunday.format('YYYY-MM-DD'));
+      const lastSunday = date.subtract(i * 7, "day").startOf("week");
+      lastSundays.push(lastSunday.format("YYYY-MM-DD"));
     }
-    
+
     return lastSundays;
   }
-  
+
   // 과거 일요일 날짜 찾기
   const sundayRange = findLastSunday(currentDate, desiredWeeks);
 
   // 과거 일요일 날짜 찾기
-  const minDate = sundayRange[sundayRange.length - 1]
+  const minDate = sundayRange[sundayRange.length - 1];
 
-  const maxDate = getMostRecentSunday().format('YYYY-MM-DD')
+  const maxDate = getMostRecentSunday().format("YYYY-MM-DD");
 
   return {
-    minDate, 
+    minDate,
     maxDate,
-    sundayRange
-  }
-
+    sundayRange,
+  };
 }
 
 // 특정한 날짜구간동안에 주일을 찾아서 String[]로 반환하는 함수
-export const getSundayRangeByPeriods = ({startDate, endDate}: {startDate: Date, endDate: Date}) => {
-  const allDates = eachDayOfInterval({ start: startDate, end: endDate });
-  const sundayDates = allDates.filter(date => isSunday(date));
+export const getSundayRangeByPeriods = ({
+  startDate,
+  endDate,
+}: {
+  startDate: Date;
+  endDate: Date;
+}) => {
+  const allDates = eachDayOfInterval({start: startDate, end: endDate});
+  const sundayDates = allDates.filter((date) => isSunday(date));
 
-  let resultList: string[] = []
+  let resultList: string[] = [];
 
-  sundayDates.forEach(date => {
-    resultList.push(format(date, 'yyyy-MM-dd'));
+  sundayDates.forEach((date) => {
+    resultList.push(format(date, "yyyy-MM-dd"));
   });
 
-  return resultList
-}
+  return resultList;
+};
 
 //해당 월의 몇번째 주인지 알려줌
+export function getWeekOfMonth(date: Date): number {
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const dayOffset = (7 - firstDayOfMonth.getDay()) % 7; // Offset to the first Sunday
+  const firstSunday = new Date(firstDayOfMonth);
+  firstSunday.setDate(firstDayOfMonth.getDate() + dayOffset);
 
-export const getWeekOfMonth = (date: Date) => {
-  const weekNumber = getISOWeek(date); // 해당 연도에서 현재 날짜의 주차를 가져옵니다.
+  const diff = Math.floor(
+    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000)
+  );
+  return diff + 1; // Weeks start from 1
+}
 
-  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1); // 현재 월의 시작일을 가져옵니다.
-  const monthWeekNumber = weekNumber - getISOWeek(monthStart) + 1; // 해당 월에서 현재 날짜의 주차를 가져옵니다.
+// Helper function: Calculate the week of the year
+export function getWeekOfYear(date: Date): number {
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const dayOffset = (7 - firstDayOfYear.getDay()) % 7; // Offset to the first Sunday
+  const firstSunday = new Date(firstDayOfYear);
+  firstSunday.setDate(firstDayOfYear.getDate() + dayOffset);
 
-  return monthWeekNumber
+  const diff = Math.floor(
+    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000)
+  );
+  return diff + 1; // Weeks start from 1
 }
