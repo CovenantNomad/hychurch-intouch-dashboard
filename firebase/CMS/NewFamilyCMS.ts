@@ -231,7 +231,10 @@ export async function saveRegionData(inputData: TRegionDataInput) {
       NEWMEMBER_COLLECTION.MONTHLY,
       monthKey
     );
-    await updateRegionStats(monthlyRef, seoul, gyeonggi, local);
+    await updateRegionStats(monthlyRef, seoul, gyeonggi, local, {
+      month: monthKey,
+      year: yearKey,
+    });
 
     // 연간 데이터 저장
     const yearlyRef = doc(
@@ -241,7 +244,9 @@ export async function saveRegionData(inputData: TRegionDataInput) {
       NEWMEMBER_COLLECTION.YEARLY,
       yearKey
     );
-    await updateRegionStats(yearlyRef, seoul, gyeonggi, local);
+    await updateRegionStats(yearlyRef, seoul, gyeonggi, local, {
+      year: yearKey,
+    });
 
     console.log("Data saved successfully!");
   } catch (error) {
@@ -255,7 +260,8 @@ async function updateRegionStats(
   ref: any,
   seoul: {district: string; count: number | string}[],
   gyeonggi: {city: string; count: number | string}[],
-  local: number | string
+  local: number | string,
+  additionalData: {month?: string; year?: string} // 추가 필드
 ) {
   await runTransaction(db, async (transaction) => {
     const docSnapshot = await transaction.get(ref);
@@ -270,27 +276,30 @@ async function updateRegionStats(
       : {};
 
     // 서울 데이터 누적
-    const updatedSeoul = seoul.reduce((acc, curr) => {
-      const existingCount = existingData.seoul?.[curr.district] || 0;
-      acc[curr.district] = Number(existingCount) + Number(curr.count || 0);
-      return acc;
-    }, {} as Record<string, number>);
+    const updatedSeoul = {...existingData.seoul};
+    seoul.forEach((curr) => {
+      const existingCount = updatedSeoul[curr.district] || 0;
+      updatedSeoul[curr.district] =
+        Number(existingCount) + Number(curr.count || 0);
+    });
 
-    // 경기도 데이터 누적
-    const updatedGyeonggi = gyeonggi.reduce((acc, curr) => {
-      const existingCount = existingData.gyeonggi?.[curr.city] || 0;
-      acc[curr.city] = Number(existingCount) + Number(curr.count || 0);
-      return acc;
-    }, {} as Record<string, number>);
+    const updatedGyeonggi = {...existingData.gyeonggi};
+    gyeonggi.forEach((curr) => {
+      const existingCount = updatedGyeonggi[curr.city] || 0;
+      updatedGyeonggi[curr.city] =
+        Number(existingCount) + Number(curr.count || 0);
+    });
 
     // 지방 데이터 누적
     const updatedLocal = Number(existingData.local || 0) + Number(local || 0);
 
     // 트랜잭션으로 데이터 저장
     transaction.set(ref, {
+      ...existingData, // 기존 데이터 유지
       seoul: updatedSeoul,
       gyeonggi: updatedGyeonggi,
       local: updatedLocal,
+      ...additionalData, // 추가 필드 삽입
     });
   });
 }
