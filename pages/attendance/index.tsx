@@ -38,14 +38,14 @@ const categories = [
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.blessingSelectedCategoryId
+    setting.attendanceSelectedCategoryId
   );
 
   const setSettingHandler = useCallback(
     (id: number) => {
       setSetting({
         ...setting,
-        blessingSelectedCategoryId: id,
+        attendanceSelectedCategoryId: id,
       });
     },
     [setting, setSetting]

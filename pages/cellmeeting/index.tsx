@@ -32,14 +32,14 @@ const CellMeetingPage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
 
   const [categoryId, setCategoryId] = useState<number>(
-    setting.blessingSelectedCategoryId
+    setting.cellMeetingSelectedCategoryId
   );
 
   const setSettingHandler = useCallback(
     (id: number) => {
       setSetting({
         ...setting,
-        blessingSelectedCategoryId: id,
+        cellMeetingSelectedCategoryId: id,
       });
     },
     [setting, setSetting]

@@ -37,14 +37,14 @@ const categories = [
 const BlessingPage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.renewSelectedCategoryId
+    setting.blessingSelectedCategoryId
   );
 
   const setSettingHandler = useCallback(
     (id: number) => {
       setSetting({
         ...setting,
-        renewSelectedCategoryId: id,
+        blessingSelectedCategoryId: id,
       });
     },
     [setting, setSetting]
