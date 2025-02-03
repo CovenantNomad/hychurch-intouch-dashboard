@@ -8,9 +8,10 @@ import SectionContainer from "../../components/Atoms/Container/SectionContainer"
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
-import EnrollmentMember from "../../components/Templates/Renew/EnrollmentMember";
-import FreeAgencyMember from "../../components/Templates/Renew/FreeAgencyMember";
-import InactiveMember from "../../components/Templates/Renew/InactiveMember";
+import GradeDMember from "../../components/Templates/Renew/GradeDMember";
+import GradeEMember from "../../components/Templates/Renew/GradeEMember";
+import GradeFMember from "../../components/Templates/Renew/GradeFMember";
+import GradeGMember from "../../components/Templates/Renew/GradeGMember";
 import RenewAttendance from "../../components/Templates/Renew/RenewAttendance";
 import RenewTransfer from "../../components/Templates/Renew/RenewTransfer";
 import {
@@ -31,11 +32,10 @@ const ReNewPage: NextPage = () => {
   const [categoryId, setCategoryId] = useState<number>(
     setting.blessingSelectedCategoryId
   );
-  const [activeList, setActiveList] = useState<MemberWithTransferOut[]>([]);
-  const [inActiveList, setInActiveList] = useState<MemberWithTransferOut[]>([]);
-  const [enrollmentList, setEnrollmentList] = useState<MemberWithTransferOut[]>(
-    []
-  );
+  const [gradeDList, setGradeDList] = useState<MemberWithTransferOut[]>([]);
+  const [gradeEList, setGradeEList] = useState<MemberWithTransferOut[]>([]);
+  const [gradeFList, setGradeFList] = useState<MemberWithTransferOut[]>([]);
+  const [gradeGList, setGradeGList] = useState<MemberWithTransferOut[]>([]);
   const [datafilter, setDatafilter] = useState({
     min: getTodayString(now.subtract(1, "year")),
     max: getTodayString(now),
@@ -44,21 +44,26 @@ const ReNewPage: NextPage = () => {
   const categories = [
     {
       id: 0,
-      name: "셀 미편성 청년",
-      component: <FreeAgencyMember memberList={activeList} />,
+      name: "D등급",
+      component: <GradeDMember memberList={gradeDList} />,
     },
     {
       id: 1,
-      name: "비활동 청년",
-      component: <InactiveMember memberList={inActiveList} />,
+      name: "E등급",
+      component: <GradeEMember memberList={gradeEList} />,
     },
     {
       id: 2,
-      name: "재적 청년",
-      component: <EnrollmentMember memberList={enrollmentList} />,
+      name: "F등급",
+      component: <GradeFMember memberList={gradeFList} />,
     },
-    {id: 3, name: "새싹셀 편성", component: <RenewTransfer />},
-    {id: 4, name: "새싹셀 출석체크", component: <RenewAttendance />},
+    {
+      id: 3,
+      name: "G등급",
+      component: <GradeGMember memberList={gradeGList} />,
+    },
+    {id: 4, name: "새싹셀 편성", component: <RenewTransfer />},
+    {id: 5, name: "새싹셀 출석체크", component: <RenewAttendance />},
   ];
 
   const {isLoading, data} = useFindRenewCellQuery<
@@ -104,13 +109,17 @@ const ReNewPage: NextPage = () => {
           : member;
       });
 
-      setActiveList(
+      setGradeDList(
+        blessingWithTransfer.filter((member) => member.grade === UserGrade.D)
+      );
+
+      setGradeEList(
         blessingWithTransfer.filter((member) => member.grade === UserGrade.E)
       );
-      setInActiveList(
+      setGradeFList(
         blessingWithTransfer.filter((member) => member.grade === UserGrade.F)
       );
-      setEnrollmentList(
+      setGradeGList(
         blessingWithTransfer.filter((member) => member.grade === UserGrade.G)
       );
     }

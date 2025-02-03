@@ -1,5 +1,11 @@
 import {eachDayOfInterval, format, isSunday} from "date-fns";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
+
+export const getDateString = (date: Date) => {
+  return `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+};
 
 export const getTodayString = (date: dayjs.Dayjs) => {
   //yyyy-MM-dd
@@ -85,6 +91,20 @@ export function getMostRecentSunday() {
 
   // 현재 요일을 뺌으로써 이번 주 일요일까지의 날짜를 구함
   const mostRecentSunday = today.subtract(currentDayOfWeek, "day");
+
+  return mostRecentSunday;
+}
+
+//입력한 날짜로부터 가장 최근 주일 구하기
+export function getMostRecentSundayFromDate(date: Dayjs) {
+  const dayOfWeek = date.day(); // 0: 일요일, 1: 월요일, ..., 6: 토요일
+
+  if (dayOfWeek === 0) {
+    return date; // 입력받은 날짜가 일요일이면 그대로 반환
+  }
+
+  // 입력받은 날짜에서 요일 수만큼 빼서 가장 최근 일요일 구하기
+  const mostRecentSunday = date.subtract(dayOfWeek, "day");
 
   return mostRecentSunday;
 }
