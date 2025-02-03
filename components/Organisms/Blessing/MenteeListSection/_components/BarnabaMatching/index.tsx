@@ -211,11 +211,14 @@ const BarnabaMatching = ({members}: Props) => {
                     className="w-full max-w-sm"
                   >
                     {menteeMember && menteeMember.length > 0 ? (
-                      menteeMember.map((mentee) => (
-                        <SelectItem key={mentee.id} value={mentee.id}>
-                          {mentee.name}
-                        </SelectItem>
-                      ))
+                      menteeMember
+                        .slice() // 원본 배열을 복사하여 안전하게 정렬
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((mentee) => (
+                          <SelectItem key={mentee.id} value={mentee.id}>
+                            {mentee.name}
+                          </SelectItem>
+                        ))
                     ) : (
                       <SelectItem value="">대기중인 멘티가 없습니다</SelectItem>
                     )}
@@ -229,11 +232,14 @@ const BarnabaMatching = ({members}: Props) => {
                     className="mt-2 w-full max-w-sm"
                   >
                     {barnabaMember && barnabaMember.length > 0 ? (
-                      barnabaMember.map((barnaba: any) => (
-                        <SelectItem key={barnaba.id} value={barnaba.id}>
-                          {barnaba.name}
-                        </SelectItem>
-                      ))
+                      barnabaMember
+                        .slice() // 원본 배열을 복사하여 안전하게 정렬
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((barnaba: any) => (
+                          <SelectItem key={barnaba.id} value={barnaba.id}>
+                            {barnaba.name}
+                          </SelectItem>
+                        ))
                     ) : (
                       <SelectItem value="">가능한 바나바가 없습니다</SelectItem>
                     )}

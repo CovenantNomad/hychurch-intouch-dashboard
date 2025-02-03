@@ -23,7 +23,7 @@ const CohortList = ({data}: Props) => {
                 <Link key={member.id} href={`/blessing/barnabas/${member.id}`}>
                   <div
                     className={`col-span-1 py-2 text-center cursor-pointer ${
-                      index < 9 && members.length > 10 && "border-b"
+                      index < 10 && members.length > 10 && "border-b"
                     } ${
                       index === members.length - 1 &&
                       index !== 9 &&

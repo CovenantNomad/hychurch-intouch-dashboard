@@ -30,7 +30,7 @@ const ReNewPage: NextPage = () => {
   const now = dayjs();
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.blessingSelectedCategoryId
+    setting.renewSelectedCategoryId
   );
   const [gradeDList, setGradeDList] = useState<MemberWithTransferOut[]>([]);
   const [gradeEList, setGradeEList] = useState<MemberWithTransferOut[]>([]);
@@ -129,7 +129,7 @@ const ReNewPage: NextPage = () => {
     (id: number) => {
       setSetting({
         ...setting,
-        blessingSelectedCategoryId: id,
+        renewSelectedCategoryId: id,
       });
     },
     [setting, setSetting]
