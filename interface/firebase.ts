@@ -64,3 +64,15 @@ export enum NEWMEMBER_COLLECTION {
   SEOUL = "SEOUL",
   LOCAL = "LOCAL",
 }
+
+export enum BARNABAS_COLLCTION {
+  BARNABAS = "Barnabas",
+  DATA = "DATA",
+  STATS = "STATS",
+  BARNABAPROFILE = "BarnabaProfile",
+  MENTEEPROFILE = "MenteeProfile",
+  BARNABAMENTORSHIPS = "BarnabaMentorships",
+  AMAZINGMENTORSHIPS = "AmazingMentorships",
+  MEETINGSCHEDULES = "MeetingSchedules",
+  ATTENDANCES = "Attendances",
+}

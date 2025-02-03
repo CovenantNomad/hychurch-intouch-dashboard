@@ -1,24 +1,37 @@
 import Head from "next/head";
-import { useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import {useCallback, useState} from "react";
+import {useRecoilState} from "recoil";
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
+import AmazingManagement from "../../components/Templates/Blessing/AmazingManagement";
+import BarnabaManagement from "../../components/Templates/Blessing/BarnabaManagement";
+import BarnabaMemberManagement from "../../components/Templates/Blessing/BarnabaMemberManagement";
+import BlessingAttendance from "../../components/Templates/Blessing/BlessingAttendance";
 import BlessingTransfer from "../../components/Templates/Blessing/BlessingTransfer";
 import MenteeManagement from "../../components/Templates/Blessing/MenteeManagement";
-import { stateSetting } from "../../stores/stateSetting";
-import BlessingAttendance from "../../components/Templates/Blessing/BlessingAttendance";
+import {stateSetting} from "../../stores/stateSetting";
 
 const categories = [
+  {id: 0, name: "바나바 명단", component: <BarnabaMemberManagement />},
   {
-    id: 0,
-    name: "멘티 리스트",
+    id: 1,
+    name: "멘티 명단",
     component: <MenteeManagement />,
   },
-  // { id: 1, name: "바나바 관리", component: <MentorManagement /> },
-  { id: 1, name: "블레싱 편성", component: <BlessingTransfer /> },
-  { id: 2, name: "블레싱 출석체크", component: <BlessingAttendance /> },
+  {
+    id: 2,
+    name: "바나바 과정",
+    component: <BarnabaManagement />,
+  },
+  {
+    id: 3,
+    name: "어메이징 과정",
+    component: <AmazingManagement />,
+  },
+  {id: 4, name: "블레싱셀 관리", component: <BlessingTransfer />},
+  {id: 5, name: "블레싱 출석체크", component: <BlessingAttendance />},
 ];
 
 const BlessingPage = () => {

@@ -1,21 +1,23 @@
-import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
-import { AttendanceCheckStatus, FindAttendanceCheckQuery, FindAttendanceCheckQueryVariables, useFindAttendanceCheckQuery } from "../../../../graphql/generated";
-import { getMostRecentSunday } from "../../../../utils/dateUtils";
+import {getMostRecentSunday} from "../../../../utils/dateUtils";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
-import Spinner from "../../../Atoms/Spinner";
 import AttendnaceTable from "../../../Organisms/Attendance/AttendanceByCell/AttendnaceTable";
 import AttendanceCountTable from "../../../Organisms/Attendance/AttendanceCountTable/AttendanceCountTable";
-import NotCompleteAttendance from "../../../Organisms/Attendance/NotCompleteAttendance/NotCompleteAttendance";
 
-type AttendanceOverviewProps = {}
+type AttendanceOverviewProps = {};
 
 const AttendanceOverview = ({}: AttendanceOverviewProps) => {
   const recentSunday = getMostRecentSunday();
 
   return (
     <BlockContainer firstBlock>
+      <div className="flex space-x-2 items-baseline mb-6">
+        <h4 className="text-xl font-bold">이번주 예배 출석 명단</h4>
+        <span className="text-sm">
+          (기준일: {recentSunday.format("YYYY-MM-DD")})
+        </span>
+      </div>
       <AttendnaceTable recentSunday={recentSunday} />
-      <AttendanceCountTable recentSunday={recentSunday}/>
+      <AttendanceCountTable recentSunday={recentSunday} />
     </BlockContainer>
   );
 };
