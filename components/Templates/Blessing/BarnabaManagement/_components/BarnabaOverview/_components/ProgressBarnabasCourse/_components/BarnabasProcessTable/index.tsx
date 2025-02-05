@@ -47,9 +47,12 @@ const BarnabasProcessTable = ({data}: Props) => {
 
       {/* Body */}
       <div className="divide-y divide-gray-300">
-        {data.map((barnabas, index) => (
-          <BarnabasProcessTableBody key={index} barnabas={barnabas} />
-        ))}
+        {data
+          .slice()
+          .sort((a, b) => a.matchingDate.localeCompare(b.matchingDate))
+          .map((barnabas, index) => (
+            <BarnabasProcessTableBody key={index} barnabas={barnabas} />
+          ))}
       </div>
     </div>
   );
