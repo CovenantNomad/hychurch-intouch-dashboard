@@ -9,7 +9,7 @@ const BarnabasProcessTable = ({data}: Props) => {
   return (
     <div className="w-full rounded-lg overflow-hidden border border-gray-300">
       {/* Header */}
-      <div className="grid grid-cols-10 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
+      <div className="grid grid-cols-11 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
         <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
           매칭일
         </div>
@@ -24,6 +24,9 @@ const BarnabasProcessTable = ({data}: Props) => {
         </div>
         <div className="h-12 col-span-1 flex items-center justify-center cursor-pointer border-r border-gray-300">
           진행주차
+        </div>
+        <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+          마지막 만남일
         </div>
         <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
           다음 만남일
