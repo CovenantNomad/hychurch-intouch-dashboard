@@ -30,7 +30,7 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
   );
 
   return (
-    <div className="grid grid-cols-10 text-sm text-center items-center hover:bg-gray-50">
+    <div className="grid grid-cols-11 text-sm text-center items-center hover:bg-gray-50">
       <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.matchingDate}
       </div>
@@ -58,6 +58,9 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
       <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.completedMeetingCount}주차 / {barnabas.scheduledMeetingCount}
         주차
+      </div>
+      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+        {barnabas.lastMeetingDate || "일정없음"}
       </div>
       <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
         {isLoading || isFetching
