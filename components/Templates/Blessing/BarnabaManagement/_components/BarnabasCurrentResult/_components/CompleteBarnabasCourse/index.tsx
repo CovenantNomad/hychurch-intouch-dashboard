@@ -43,45 +43,56 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
 
           {/* Body */}
           <div className="divide-y divide-gray-300">
-            {barnabasCourseList.map((barnabas) => (
-              <div
-                key={barnabas.id}
-                className="grid grid-cols-6 text-sm text-center items-center hover:bg-gray-50"
-              >
-                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {barnabas.matchingDate}
+            {barnabasCourseList
+              .slice()
+              .sort((a, b) => {
+                const dateA = a.completedDate
+                  ? new Date(a.completedDate).getTime()
+                  : Infinity;
+                const dateB = b.completedDate
+                  ? new Date(b.completedDate).getTime()
+                  : Infinity;
+                return dateA - dateB; // 오래된 날짜가 먼저 오도록 정렬
+              })
+              .map((barnabas) => (
+                <div
+                  key={barnabas.id}
+                  className="grid grid-cols-6 text-sm text-center items-center hover:bg-gray-50"
+                >
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                    {barnabas.matchingDate}
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                    {barnabas.completedDate}
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                    {barnabas.barnabaName}
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                    {barnabas.menteeName}
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                    <span
+                      className={`text-white px-2 py-1 rounded-full ${
+                        barnabas.status === TMatchingStatus.COMPLETED
+                          ? "bg-blue-500"
+                          : barnabas.status === TMatchingStatus.PROGRESS
+                          ? "bg-teal-500"
+                          : barnabas.status === TMatchingStatus.PENDING
+                          ? "bg-gray-600"
+                          : "bg-amber-500"
+                      }`}
+                    >
+                      {convertMatchingMessage(barnabas.status)}
+                    </span>
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center">
+                    {barnabas.completedMeetingCount}주차 /{" "}
+                    {barnabas.scheduledMeetingCount}
+                    주차
+                  </div>
                 </div>
-                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {barnabas.completedDate}
-                </div>
-                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {barnabas.barnabaName}
-                </div>
-                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {barnabas.menteeName}
-                </div>
-                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  <span
-                    className={`text-white px-2 py-1 rounded-full ${
-                      barnabas.status === TMatchingStatus.COMPLETED
-                        ? "bg-blue-500"
-                        : barnabas.status === TMatchingStatus.PROGRESS
-                        ? "bg-teal-500"
-                        : barnabas.status === TMatchingStatus.PENDING
-                        ? "bg-gray-600"
-                        : "bg-amber-500"
-                    }`}
-                  >
-                    {convertMatchingMessage(barnabas.status)}
-                  </span>
-                </div>
-                <div className="h-10 col-span-1 flex items-center justify-center">
-                  {barnabas.completedMeetingCount}주차 /{" "}
-                  {barnabas.scheduledMeetingCount}
-                  주차
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       ) : (
