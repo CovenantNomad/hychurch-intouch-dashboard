@@ -48,8 +48,31 @@ export type TMenteeStatus = {
   amazingStatus: string | null;
 };
 
+export type TAppointment = {
+  appointmentId: string;
+  matchingId: string; // 매칭 ID
+  barnabaId: string; // 바나바 ID
+  menteeId: string; // 멘티 ID
+  barnabaName: string;
+  menteeName: string;
+  date: string;
+  hour: string;
+  minute: string;
+  place: string;
+  week: string;
+  scheduledMeetingCount: string;
+  review: string;
+  status: TAppointmentStatus;
+};
+
 export enum TAmazingMatchingStatus {
   PENDING = "pending",
   PROGRESS = "progress",
   COMPLETED = "completed",
+}
+
+export enum TAppointmentStatus {
+  SCHEDULED = "scheduled", // 약속 잡은 상태
+  COMPLETED = "completed", // 완료
+  CANCELED = "canceled", // 약속 취소
 }
