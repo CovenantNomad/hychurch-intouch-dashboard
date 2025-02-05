@@ -28,7 +28,7 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
 
   return (
     <div className="grid grid-cols-10 text-sm text-center items-center hover:bg-gray-50">
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300 cursor-pointer">
+      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.matchingDate}
       </div>
       <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
