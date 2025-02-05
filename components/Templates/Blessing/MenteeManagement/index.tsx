@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import {
   FindBlessingCellQuery,
@@ -7,9 +7,9 @@ import {
   useFindBlessingCellQuery,
   UserCellTransferStatus,
 } from "../../../../graphql/generated";
-import { SpecialCellIdType } from "../../../../interface/cell";
-import { Member, MemberWithTransferOut } from "../../../../interface/user";
-import { getTodayString } from "../../../../utils/dateUtils";
+import {SpecialCellIdType} from "../../../../interface/cell";
+import {MemberWithTransferOut} from "../../../../interface/user";
+import {getTodayString} from "../../../../utils/dateUtils";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import MenteeListSection from "../../../Organisms/Blessing/MenteeListSection";
 
@@ -19,10 +19,10 @@ const MenteeManagement = ({}: MenteeManagementProps) => {
   const now = dayjs();
   const [blessingList, setBlessingList] = useState<MemberWithTransferOut[]>([]);
   const [datafilter, setDatafilter] = useState({
-    min: getTodayString(dayjs(now.set("year", -1))),
+    min: getTodayString(dayjs(now.set("year", -2))),
     max: getTodayString(now),
   });
-  const { isLoading, data } = useFindBlessingCellQuery<
+  const {isLoading, data} = useFindBlessingCellQuery<
     FindBlessingCellQuery,
     FindBlessingCellQueryVariables
   >(

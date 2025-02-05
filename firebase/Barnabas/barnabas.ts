@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
+  TAppointment,
   TBarnabaProfile,
   TMatching,
   TMatchingStatus,
@@ -363,7 +364,20 @@ export const saveMenteeProfile = async (menteeData: MemberWithTransferOut) => {
       menteeData.id // 멘티 ID를 문서 ID로 사용
     );
 
-    await setDoc(menteeRef, {...menteeData, description: ""}, {merge: true});
+    await setDoc(
+      menteeRef,
+      {
+        id: menteeData.id,
+        name: menteeData.name,
+        birthday: menteeData.birthday,
+        gender: menteeData.gender,
+        phone: menteeData.phone,
+        address: menteeData.address,
+        registrationDate: menteeData.registrationDate,
+        description: "",
+      },
+      {merge: true}
+    );
   } catch (error) {
     console.error("멘티 프로필 저장 중 오류 발생:", error);
     throw new Error("멘티 프로필 저장 중 오류가 발생했습니다.");
@@ -440,6 +454,10 @@ export const updateSingleMemberStatus = async (memberId: string) => {
   };
 };
 
+{
+  /* 멘티 디테일 페이지 */
+}
+
 // 멘티 개인 바나바 데이터 호출
 export const fetchIndividualBarnabaMentorship = async (
   menteeId: string
@@ -490,5 +508,218 @@ export const fetchIndividualBarnabaMentorship = async (
   } catch (error) {
     console.error("Error fetching Barnaba mentorship:", error);
     throw new Error("바나바 멘토십 데이터를 가져오는 중 오류가 발생했습니다.");
+  }
+};
+
+//바나바 세부만남 일정 전체 불러오기
+export const getAllMeetingsByMatchingId = async (
+  matchingId: string
+): Promise<TAppointment[]> => {
+  try {
+    // Firestore 컬렉션 참조
+    const meetingRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES
+    );
+
+    const meetingQuery = query(
+      meetingRef,
+      where("matchingId", "==", matchingId)
+    );
+
+    const querySnapshot = await getDocs(meetingQuery);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const meetings: TAppointment[] = querySnapshot.docs.map(
+      (doc) => doc.data() as TAppointment
+    );
+
+    return meetings;
+  } catch (error) {
+    console.error("@getAppointmentByMatchingId: ", error);
+    throw new Error("이번주 만남일정을 가져오는 중 에러가 발생했습니다.");
+  }
+};
+
+{
+  /* 탭3 - 바나바과정 */
+}
+
+//현재진행상태 멘토십 가져오기
+export const getBarnabasCourseByStatus = async (
+  status: TMatchingStatus
+): Promise<TMatching[]> => {
+  try {
+    // Firestore 컬렉션 참조
+    const barnabasRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+    );
+
+    const barnabasQuery = query(barnabasRef, where("status", "==", status));
+
+    const querySnapshot = await getDocs(barnabasQuery);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const mentorships: TMatching[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as TMatching)
+    );
+
+    return mentorships;
+  } catch (error) {
+    console.error("@getProgressBarnabasCourse: ", error);
+    throw new Error(
+      "현재 진행중인 바나바 과정을 가져오는 중 에러가 발생했습니다."
+    );
+  }
+};
+
+//바나바일정 현재주차 약속정보 가져오기
+export const getAppointmentByMatchingId = async (
+  matchingId: string
+): Promise<TAppointment | null> => {
+  try {
+    // Firestore 컬렉션 참조
+    const meetingRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES
+    );
+
+    const meetingQuery = query(
+      meetingRef,
+      where("matchingId", "==", matchingId),
+      orderBy("week", "desc"),
+      limit(1)
+    );
+
+    const querySnapshot = await getDocs(meetingQuery);
+
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    const doc = querySnapshot.docs[0];
+
+    return doc.data() as TAppointment;
+  } catch (error) {
+    console.error("@getAppointmentByMatchingId: ", error);
+    throw new Error("이번주 만남일정을 가져오는 중 에러가 발생했습니다.");
+  }
+};
+
+export const updateBarnabaMentorship = async ({
+  matchingId,
+  status,
+  description,
+}: {
+  matchingId: string;
+  status: TMatchingStatus;
+  description?: string;
+}) => {
+  try {
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
+      matchingId
+    );
+
+    const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+    await updateDoc(mentorshipRef, {
+      status,
+      description,
+      completedDate: today,
+    });
+  } catch (error) {
+    console.error("바나바 멘토십 업데이트 실패:", error);
+    throw new Error("멘토십 상태를 업데이트하는 중 오류가 발생했습니다.");
+  }
+};
+
+//현재 멘티 중 바나바 완료한 현황 불러오기
+export const getCompletedOrFailedMentorships = async (
+  menteeIds: string[]
+): Promise<{
+  completedMap: Map<string, TMatching>;
+  failedMap: Map<string, TMatching>;
+}> => {
+  const completedMap = new Map<string, TMatching>();
+  const failedMap = new Map<string, TMatching>();
+
+  if (!menteeIds.length) return {completedMap, failedMap};
+
+  const mentorshipRef = collection(
+    db,
+    BARNABAS_COLLCTION.BARNABAS,
+    BARNABAS_COLLCTION.DATA,
+    BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+  );
+
+  // 🔥 최대 10개씩 Firestore에서 "in" 조건으로 조회 (Firestore의 제한 사항 고려)
+  const chunkSize = 10;
+  const promises = [];
+
+  for (let i = 0; i < menteeIds.length; i += chunkSize) {
+    const chunk = menteeIds.slice(i, i + chunkSize);
+    const mentorshipQuery = query(
+      mentorshipRef,
+      where("menteeId", "in", chunk) // ✅ `in` 필터는 하나만 사용
+    );
+    promises.push(getDocs(mentorshipQuery));
+  }
+
+  const querySnapshots = await Promise.all(promises);
+
+  querySnapshots.forEach((querySnapshot) => {
+    querySnapshot.docs.forEach((doc) => {
+      const data = doc.data() as TMatching;
+
+      // ✅ Firestore에서 가져온 후 `status`를 필터링
+      if (data.status === TMatchingStatus.COMPLETED) {
+        completedMap.set(data.menteeId, data);
+      } else if (data.status === TMatchingStatus.FAILED) {
+        failedMap.set(data.menteeId, data);
+      }
+    });
+  });
+
+  return {completedMap, failedMap};
+};
+
+export const reStartBarnabaMentorship = async (matchingId: string) => {
+  try {
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
+      matchingId
+    );
+
+    await updateDoc(mentorshipRef, {
+      status: TMatchingStatus.PROGRESS,
+      completedDate: "",
+    });
+  } catch (error) {
+    console.error("바나바 멘토십 업데이트 실패:", error);
+    throw new Error("멘토십 상태를 업데이트하는 중 오류가 발생했습니다.");
   }
 };

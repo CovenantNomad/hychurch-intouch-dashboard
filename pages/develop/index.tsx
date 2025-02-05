@@ -5,6 +5,7 @@ import SectionContainer from "../../components/Atoms/Container/SectionContainer"
 import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import Layout from "../../components/Layout/Layout";
 import PageLayout from "../../components/Layout/PageLayout";
+import BarnabasCMS from "../../components/Templates/DevelopCMS/BarnabasCMS";
 import CellMeetingCMS from "../../components/Templates/DevelopCMS/CellMeetingCMS";
 import NewFamilyCMS from "../../components/Templates/DevelopCMS/NewFamilyCMS";
 import ServiceCMS from "../../components/Templates/DevelopCMS/ServiceCMS";
@@ -25,6 +26,11 @@ const categories = [
     id: 2,
     name: "새가족데이터",
     component: <NewFamilyCMS />,
+  },
+  {
+    id: 3,
+    name: "바나바데이터",
+    component: <BarnabasCMS />,
   },
 ];
 

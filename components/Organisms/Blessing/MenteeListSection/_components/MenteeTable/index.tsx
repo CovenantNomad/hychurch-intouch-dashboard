@@ -225,6 +225,24 @@ const MenteeTable = ({members}: Props) => {
                       <span
                         className={`${
                           menteeStatuses?.[member.id]?.barnabaStatus ===
+                            TMatchingStatus.FAILED && "text-amber-500"
+                        }`}
+                      >
+                        보류
+                      </span>
+                      <span className="text-gray-600">|</span>
+                      <span
+                        className={`${
+                          menteeStatuses?.[member.id]?.barnabaStatus ===
+                            TMatchingStatus.PENDING && "text-gray-800"
+                        }`}
+                      >
+                        지연중
+                      </span>
+                      <span className="text-gray-600">|</span>
+                      <span
+                        className={`${
+                          menteeStatuses?.[member.id]?.barnabaStatus ===
                             TMatchingStatus.PROGRESS && "text-emerald-500"
                         }`}
                       >
@@ -237,16 +255,7 @@ const MenteeTable = ({members}: Props) => {
                             TMatchingStatus.COMPLETED && "text-blue-500"
                         }`}
                       >
-                        완료
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TMatchingStatus.FAILED && "text-rose-500"
-                        }`}
-                      >
-                        미이수
+                        수료
                       </span>
                     </>
                   )}
@@ -255,7 +264,17 @@ const MenteeTable = ({members}: Props) => {
                       <span
                         className={`${
                           menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TAmazingMatchingStatus.PROGRESS && "text-amber-500"
+                            TAmazingMatchingStatus.PENDING && "text-gray-600"
+                        }`}
+                      >
+                        지연중
+                      </span>
+                      <span className="text-gray-600">|</span>
+                      <span
+                        className={`${
+                          menteeStatuses?.[member.id]?.barnabaStatus ===
+                            TAmazingMatchingStatus.PROGRESS &&
+                          "text-emerald-500"
                         }`}
                       >
                         참여중

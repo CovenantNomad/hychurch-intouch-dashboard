@@ -6,6 +6,7 @@ import {
   AttendanceHistory,
   TempSavedAttendanceHistory,
 } from "../interface/attendance";
+import {TAppointmentStatus, TMatchingStatus} from "../interface/barnabas";
 import {
   CellListType,
   MinimumCellType,
@@ -401,3 +402,31 @@ export const getWeekNumber = (dateString: string): string => {
 
   return `${weekNumber}주 (${dateString})`;
 };
+
+export function convertAppointmentMessage(status: TAppointmentStatus): string {
+  switch (status) {
+    case TAppointmentStatus.SCHEDULED:
+      return "만남예정";
+    case TAppointmentStatus.COMPLETED:
+      return "만남완료";
+    case TAppointmentStatus.CANCELED:
+      return "약속취소";
+    default:
+      return "상태를 확인할 수 없습니다.";
+  }
+}
+
+export function convertMatchingMessage(status: TMatchingStatus): string {
+  switch (status) {
+    case TMatchingStatus.PROGRESS:
+      return "진행중";
+    case TMatchingStatus.COMPLETED:
+      return "수료";
+    case TMatchingStatus.FAILED:
+      return "보류";
+    case TMatchingStatus.PENDING:
+      return "지연중";
+    default:
+      return "상태를 확인할 수 없습니다.";
+  }
+}

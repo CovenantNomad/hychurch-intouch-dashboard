@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../../../../ui/Accordion";
+import MenteeBarnabasMeetings from "./_components/MenteeBarnabasMeetings";
 
 type Props = {
   userId: string;
@@ -51,6 +52,11 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
             </div>
             <div className="text-sm space-x-2">
               <span>진행상태</span>
+              {data.mentorship.status === TMatchingStatus.PENDING && (
+                <span className="text-white bg-gray-600 px-2 py-1 rounded-full">
+                  지연중
+                </span>
+              )}
               {data.mentorship.status === TMatchingStatus.PROGRESS && (
                 <span className="text-white bg-emerald-500 px-2 py-1 rounded-full">
                   진행중
@@ -58,12 +64,12 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
               )}
               {data.mentorship.status === TMatchingStatus.COMPLETED && (
                 <span className="text-white bg-blue-500 px-2 py-1 rounded-full">
-                  과정수료
+                  수료
                 </span>
               )}
               {data.mentorship.status === TMatchingStatus.FAILED && (
-                <span className="text-white bg-gray-500 px-2 py-1 rounded-full">
-                  미이수
+                <span className="text-white bg-amber-500 px-2 py-1 rounded-full">
+                  보류
                 </span>
               )}
             </div>
@@ -103,7 +109,7 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
           <div className="mt-6">
             <h4 className="text-base font-medium">세부일정</h4>
             <Accordion type="multiple" className="mt-1">
-              <AccordionItem value="item-1">
+              <AccordionItem value="item-1" className="border-b-0">
                 <AccordionTrigger>
                   <div className="flex items-center space-x-3">
                     <span>
@@ -116,13 +122,10 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div></div>
+                  <MenteeBarnabasMeetings matchingId={data.mentorship.id} />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
-          <div className="mt-6">
-            <h4 className="text-base font-medium">SMT일정</h4>
           </div>
         </div>
       ) : (

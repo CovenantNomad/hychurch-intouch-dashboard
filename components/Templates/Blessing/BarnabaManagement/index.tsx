@@ -2,20 +2,23 @@ import {useState} from "react";
 import BarnabaHistory from "./_components/BarnabaHistory";
 import BarnabaOverview from "./_components/BarnabaOverview";
 import BarnabaSchedule from "./_components/BarnabaSchedule";
+import BarnabasCurrentResult from "./_components/BarnabasCurrentResult";
 
 enum SubTab {
-  OVERVIEW = "Overview",
+  PROGRESS = "Progress",
+  RESULTS = "Results",
   SCHEDULE = "Schedule",
   HISTORY = "History",
 }
 
 const BarnabaManagement = () => {
-  const [subTab, setSubTab] = useState(SubTab.OVERVIEW);
+  const [subTab, setSubTab] = useState(SubTab.PROGRESS);
 
   const tabs = [
-    {index: 0, label: "진행현황", value: SubTab.OVERVIEW},
-    {index: 1, label: "일정관리", value: SubTab.SCHEDULE},
-    {index: 2, label: "과거데이터", value: SubTab.HISTORY},
+    {index: 0, label: "진행현황", value: SubTab.PROGRESS},
+    {index: 1, label: "완료/보류현황", value: SubTab.RESULTS},
+    {index: 2, label: "일정관리", value: SubTab.SCHEDULE},
+    {index: 3, label: "과거데이터", value: SubTab.HISTORY},
   ];
 
   return (
@@ -36,7 +39,8 @@ const BarnabaManagement = () => {
             </div>
           ))}
         </div>
-        {subTab === SubTab.OVERVIEW && <BarnabaOverview />}
+        {subTab === SubTab.PROGRESS && <BarnabaOverview />}
+        {subTab === SubTab.RESULTS && <BarnabasCurrentResult />}
         {subTab === SubTab.SCHEDULE && <BarnabaSchedule />}
         {subTab === SubTab.HISTORY && <BarnabaHistory />}
       </div>
