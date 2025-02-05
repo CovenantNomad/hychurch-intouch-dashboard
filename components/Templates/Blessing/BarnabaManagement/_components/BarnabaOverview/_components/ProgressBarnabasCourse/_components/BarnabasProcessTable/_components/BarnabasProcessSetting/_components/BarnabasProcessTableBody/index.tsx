@@ -18,11 +18,14 @@ type Props = {
 const BarnabasProcessTableBody = ({barnabas}: Props) => {
   const {isLoading, isFetching, data} = useQuery(
     ["getAppointmentByMatchingId", barnabas.id],
-    () => getAppointmentByMatchingId(barnabas.id),
+    () =>
+      getAppointmentByMatchingId(barnabas.id, barnabas.completedMeetingCount),
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-      enabled: !!barnabas.id,
+      enabled:
+        !!barnabas.id &&
+        barnabas.completedMeetingCount !== barnabas.scheduledMeetingCount,
     }
   );
 

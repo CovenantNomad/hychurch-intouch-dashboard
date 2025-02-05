@@ -590,7 +590,8 @@ export const getBarnabasCourseByStatus = async (
 
 //바나바일정 현재주차 약속정보 가져오기
 export const getAppointmentByMatchingId = async (
-  matchingId: string
+  matchingId: string,
+  completedMeetingCount: string
 ): Promise<TAppointment | null> => {
   try {
     // Firestore 컬렉션 참조
@@ -601,10 +602,12 @@ export const getAppointmentByMatchingId = async (
       BARNABAS_COLLCTION.MEETINGSCHEDULES
     );
 
+    const queryWeek = (Number(completedMeetingCount) + 1).toString();
+
     const meetingQuery = query(
       meetingRef,
       where("matchingId", "==", matchingId),
-      orderBy("week", "desc"),
+      where("week", "==", queryWeek),
       limit(1)
     );
 
