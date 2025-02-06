@@ -1,8 +1,10 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 import {
   TMatching,
   TMatchingStatus,
 } from "../../../../../../../../interface/barnabas";
+import {getWeeksBetweenDates} from "../../../../../../../../utils/dateUtils";
 import {convertMatchingMessage} from "../../../../../../../../utils/utils";
 import SkeletonTable from "../../../../../../../Atoms/Skeleton/SkeletonTable";
 
@@ -20,7 +22,7 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
       ) : barnabasCourseList.length !== 0 ? (
         <div className="w-full rounded-lg overflow-hidden border border-gray-300">
           {/* Header */}
-          <div className="grid grid-cols-6 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
+          <div className="grid grid-cols-7 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
             <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
               매칭일
             </div>
@@ -36,8 +38,11 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
             <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
               전체과정 진행상태
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center">
+            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
               진행주차
+            </div>
+            <div className="h-12 col-span-1 flex items-center justify-center">
+              교육기간
             </div>
           </div>
 
@@ -57,7 +62,7 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
               .map((barnabas) => (
                 <div
                   key={barnabas.id}
-                  className="grid grid-cols-6 text-sm text-center items-center hover:bg-gray-50"
+                  className="grid grid-cols-7 text-sm text-center items-center hover:bg-gray-50"
                 >
                   <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.matchingDate}
@@ -86,10 +91,17 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                       {convertMatchingMessage(barnabas.status)}
                     </span>
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center">
+                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.completedMeetingCount}주차 /{" "}
                     {barnabas.scheduledMeetingCount}
                     주차
+                  </div>
+                  <div className="h-10 col-span-1 flex items-center justify-center">
+                    {getWeeksBetweenDates(
+                      barnabas.matchingDate,
+                      barnabas.completedDate || dayjs().format("YYYY-MM-DD")
+                    )}
+                    주
                   </div>
                 </div>
               ))}

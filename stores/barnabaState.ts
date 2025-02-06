@@ -15,6 +15,17 @@ export const barnabaSortState = atom<{
   },
 });
 
+export const barnabasTrainingHistorySortState = atom<{
+  sortKey: "name" | "total" | "pass";
+  sortOrder: "asc" | "desc";
+}>({
+  key: "BARNABA/BARNABA_TRAINING_HISTORY", // 고유한 키값
+  default: {
+    sortKey: "name",
+    sortOrder: "asc",
+  },
+});
+
 export const menteeSortState = atom<{
   currentPage: number;
   itemsPerPage: number;

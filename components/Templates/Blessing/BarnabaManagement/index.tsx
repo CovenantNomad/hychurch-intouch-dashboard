@@ -1,8 +1,8 @@
 import {useState} from "react";
-import BarnabaHistory from "./_components/BarnabaHistory";
 import BarnabaOverview from "./_components/BarnabaOverview";
 import BarnabaSchedule from "./_components/BarnabaSchedule";
 import BarnabasCurrentResult from "./_components/BarnabasCurrentResult";
+import BarnabasDetailHistory from "./_components/BarnabasDetailHistory";
 
 enum SubTab {
   PROGRESS = "Progress",
@@ -42,7 +42,7 @@ const BarnabaManagement = () => {
         {subTab === SubTab.PROGRESS && <BarnabaOverview />}
         {subTab === SubTab.RESULTS && <BarnabasCurrentResult />}
         {subTab === SubTab.SCHEDULE && <BarnabaSchedule />}
-        {subTab === SubTab.HISTORY && <BarnabaHistory />}
+        {subTab === SubTab.HISTORY && <BarnabasDetailHistory />}
       </div>
     </>
   );

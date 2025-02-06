@@ -12,6 +12,7 @@ import {TMatchingStatus} from "../../../../../../interface/barnabas";
 import {MemberWithTransferOut} from "../../../../../../interface/user";
 import {getDateString} from "../../../../../../utils/dateUtils";
 import {calculateAge} from "../../../../../../utils/utils";
+import Skeleton from "../../../../../Atoms/Skeleton/Skeleton";
 import {
   Dialog,
   DialogClose,
@@ -41,8 +42,8 @@ const BarnabaMatching = ({members}: Props) => {
   const {mutate, isLoading: isSubmitLoading} = useBarnabaMatching();
 
   const {
-    isLoading,
-    isFetching,
+    isLoading: isBarnabasLoading,
+    isFetching: isBarnabasFetching,
     data: barnabaMember,
   } = useQuery(
     ["fetchBarnabaWithoutActiveMentorship"],
@@ -148,37 +149,6 @@ const BarnabaMatching = ({members}: Props) => {
                 <div className="relative flex justify-center items-center space-x-2 bg-gray-50 p-6 rounded-lg shadow-md mx-auto">
                   {/* Left Card */}
                   <div className="bg-white rounded-lg shadow p-4 w-1/2">
-                    {selectedMenteeData ? (
-                      <div className="flex flex-col items-center">
-                        <div className="w-20 h-20 flex flex-col justify-center items-center bg-gray-50 rounded-full overflow-hidden ">
-                          <p className="mt-1 font-bold text-gray-800">
-                            {selectedMenteeData.name}
-                          </p>
-                          <p className="mt-1 font-bold text-gray-800">
-                            {selectedMenteeData.gender === "MAN"
-                              ? "형제"
-                              : "자매"}
-                          </p>
-                        </div>
-                        <p className="mt-2 text-gray-500 text-sm">
-                          {calculateAge(selectedMenteeData.birthday)}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-center">멘티를 선택해주세요</p>
-                    )}
-                  </div>
-
-                  {/* VS Section */}
-                  <div className="absolute flex items-center justify-center left-1/2 top-1/2 transform -translate-x-[70%] -translate-y-1/2">
-                    {/* 연결 선 */}
-                    <span className="bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-bold z-10">
-                      <LinkIcon className="h-4 w-4" />
-                    </span>
-                  </div>
-
-                  {/* Right Card */}
-                  <div className="bg-white rounded-lg shadow p-4 w-1/2">
                     {selectedBarnabaData ? (
                       <div className="flex flex-col items-center">
                         <div className="w-20 h-20 flex flex-col justify-center items-center bg-gray-50 rounded-full overflow-hidden ">
@@ -199,51 +169,96 @@ const BarnabaMatching = ({members}: Props) => {
                       <p className="text-center">바나바를 선택해주세요</p>
                     )}
                   </div>
+
+                  {/* VS Section */}
+                  <div className="absolute flex items-center justify-center left-1/2 top-1/2 transform -translate-x-[70%] -translate-y-1/2">
+                    {/* 연결 선 */}
+                    <span className="bg-blue-500 text-white rounded-full px-3 py-1 text-sm font-bold z-10">
+                      <LinkIcon className="h-4 w-4" />
+                    </span>
+                  </div>
+
+                  {/* Right Card */}
+                  <div className="bg-white rounded-lg shadow p-4 w-1/2">
+                    {selectedMenteeData ? (
+                      <div className="flex flex-col items-center">
+                        <div className="w-20 h-20 flex flex-col justify-center items-center bg-gray-50 rounded-full overflow-hidden ">
+                          <p className="mt-1 font-bold text-gray-800">
+                            {selectedMenteeData.name}
+                          </p>
+                          <p className="mt-1 font-bold text-gray-800">
+                            {selectedMenteeData.gender === "MAN"
+                              ? "형제"
+                              : "자매"}
+                          </p>
+                        </div>
+                        <p className="mt-2 text-gray-500 text-sm">
+                          {calculateAge(selectedMenteeData.birthday)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-center">멘티를 선택해주세요</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="flex justify-between mt-6 space-x-4">
-                <div className="flex-1">
-                  <p className="text-gray-700 mb-2 font-medium">멘티선택</p>
-                  <Select
-                    value={selectedMentee || ""}
-                    onValueChange={handleMenteeChange}
-                    className="w-full max-w-sm"
-                  >
-                    {menteeMember && menteeMember.length > 0 ? (
-                      menteeMember
-                        .slice() // 원본 배열을 복사하여 안전하게 정렬
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((mentee) => (
-                          <SelectItem key={mentee.id} value={mentee.id}>
-                            {mentee.name}
-                          </SelectItem>
-                        ))
-                    ) : (
-                      <SelectItem value="">대기중인 멘티가 없습니다</SelectItem>
-                    )}
-                  </Select>
-                </div>
+                {/* 바나바선택 */}
                 <div className="flex-1">
                   <p className="text-gray-700 mb-2 font-medium">바나바선택</p>
-                  <Select
-                    value={selectedBarnaba || ""}
-                    onValueChange={handleBarnabaChange}
-                    className="mt-2 w-full max-w-sm"
-                  >
-                    {barnabaMember && barnabaMember.length > 0 ? (
-                      barnabaMember
-                        .slice() // 원본 배열을 복사하여 안전하게 정렬
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((barnaba: any) => (
-                          <SelectItem key={barnaba.id} value={barnaba.id}>
-                            {barnaba.name}
-                          </SelectItem>
-                        ))
-                    ) : (
-                      <SelectItem value="">가능한 바나바가 없습니다</SelectItem>
-                    )}
-                  </Select>
+                  {isBarnabasLoading || isBarnabasFetching ? (
+                    <Skeleton className="h-[42px] w-[220px]" />
+                  ) : (
+                    <Select
+                      value={selectedBarnaba || ""}
+                      onValueChange={handleBarnabaChange}
+                      className="mt-2 w-full max-w-sm"
+                    >
+                      {barnabaMember && barnabaMember.length > 0 ? (
+                        barnabaMember
+                          .slice() // 원본 배열을 복사하여 안전하게 정렬
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((barnaba: any) => (
+                            <SelectItem key={barnaba.id} value={barnaba.id}>
+                              {barnaba.name}
+                            </SelectItem>
+                          ))
+                      ) : (
+                        <SelectItem value="">
+                          가능한 바나바가 없습니다
+                        </SelectItem>
+                      )}
+                    </Select>
+                  )}
+                </div>
+                {/* 멘티선택 */}
+                <div className="flex-1">
+                  <p className="text-gray-700 mb-2 font-medium">멘티선택</p>
+                  {isMenteeLoading || isMenteeFetching ? (
+                    <Skeleton className="h-[42px] w-[220px]" />
+                  ) : (
+                    <Select
+                      value={selectedMentee || ""}
+                      onValueChange={handleMenteeChange}
+                      className="w-full max-w-sm"
+                    >
+                      {menteeMember && menteeMember.length > 0 ? (
+                        menteeMember
+                          .slice() // 원본 배열을 복사하여 안전하게 정렬
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((mentee) => (
+                            <SelectItem key={mentee.id} value={mentee.id}>
+                              {mentee.name}
+                            </SelectItem>
+                          ))
+                      ) : (
+                        <SelectItem value="">
+                          대기중인 멘티가 없습니다
+                        </SelectItem>
+                      )}
+                    </Select>
+                  )}
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">

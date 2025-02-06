@@ -131,10 +131,10 @@ const BarnabasHistoryRegistration = ({}: Props) => {
                 {...register("status")}
                 className="px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               >
-                <option value={TMatchingStatus.PENDING}>중지</option>
-                <option value={TMatchingStatus.PROGRESS}>진행</option>
-                <option value={TMatchingStatus.FAILED}>실패</option>
-                <option value={TMatchingStatus.COMPLETED}>완료</option>
+                <option value={TMatchingStatus.PROGRESS}>진행중</option>
+                <option value={TMatchingStatus.PENDING}>지연중</option>
+                <option value={TMatchingStatus.FAILED}>보류</option>
+                <option value={TMatchingStatus.COMPLETED}>이수</option>
               </select>
             </div>
           </div>

@@ -19,7 +19,8 @@ import {
 
 type Props = {
   matchingId: string;
-  barnabasName: string;
+  barnabaId: string;
+  barnabaName: string;
   menteeName: string;
   menteeId: string;
   status: TMatchingStatus;
@@ -28,7 +29,8 @@ type Props = {
 
 const BarnabasProcessSetting = ({
   matchingId,
-  barnabasName,
+  barnabaId,
+  barnabaName,
   menteeName,
   menteeId,
   status,
@@ -37,20 +39,20 @@ const BarnabasProcessSetting = ({
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [description, setDescription] = useState<string>("");
-  const [changedStatus, setChangedStatus] = useState<TMatchingStatus | null>(
-    null
-  );
+  const [changedStatus, setChangedStatus] = useState<TMatchingStatus>(status);
 
   const mutation = useMutation(
     ({
       matchingId,
+      barnabaId,
       status,
       description,
     }: {
+      barnabaId: string;
       matchingId: string;
       status: TMatchingStatus;
       description?: string;
-    }) => updateBarnabaMentorship({matchingId, status, description}),
+    }) => updateBarnabaMentorship({matchingId, barnabaId, status, description}),
     {
       onSuccess: async (_, variables) => {
         toast.success("바나바과정 업데이트 성공");
@@ -66,6 +68,8 @@ const BarnabasProcessSetting = ({
         ]);
         queryClient.invalidateQueries(["fetchMenteeStatuses"]);
         queryClient.invalidateQueries(["fetchBarnabaMentorship", menteeId]);
+        queryClient.invalidateQueries(["getCompletedOrFailedMentorships"]);
+        queryClient.invalidateQueries(["fetchLatestMentorship"]);
       },
       onError: (error) => {
         console.error("바나바과정 업데이트 실패", error);
@@ -78,6 +82,7 @@ const BarnabasProcessSetting = ({
     if (changedStatus !== null) {
       mutation.mutate({
         matchingId,
+        barnabaId,
         status: changedStatus,
         description,
       });
@@ -92,7 +97,7 @@ const BarnabasProcessSetting = ({
       <DialogContent className="sm:max-w-lg overflow-visible">
         <DialogHeader>
           <DialogTitle>
-            {barnabasName}-{menteeName} 바나바 과정
+            {barnabaName}-{menteeName} 바나바 과정
           </DialogTitle>
           <DialogDescription className="text-sm text-black">
             현재 바나바 과정은{" "}
@@ -101,7 +106,7 @@ const BarnabasProcessSetting = ({
                 status === TMatchingStatus.PROGRESS
                   ? "text-teal-500"
                   : status === TMatchingStatus.PENDING
-                  ? "text-gray-500"
+                  ? "text-amber-500"
                   : ""
               }`}
             >
@@ -117,23 +122,45 @@ const BarnabasProcessSetting = ({
               className={`flex-1 py-5 text-sm font-semibold text-center text-white border-r border-white cursor-pointer transition 
                 ${
                   changedStatus === TMatchingStatus.FAILED
-                    ? "bg-amber-500"
-                    : "bg-gray-300 hover:bg-amber-400"
+                    ? "bg-gray-600"
+                    : "bg-gray-200 hover:bg-gray-400"
                 }`}
               onClick={() => setChangedStatus(TMatchingStatus.FAILED)}
             >
-              미이수
+              보류
+            </div>
+            <div
+              className={`flex-1 py-5 text-sm font-semibold text-center text-white border-r border-white cursor-pointer transition 
+                ${
+                  changedStatus === TMatchingStatus.PENDING
+                    ? "bg-amber-500"
+                    : "bg-gray-200 hover:bg-amber-400"
+                }`}
+              onClick={() => setChangedStatus(TMatchingStatus.PENDING)}
+            >
+              지연중
+            </div>
+            <div
+              className={`flex-1 py-5 text-sm font-semibold text-center text-white border-r border-white cursor-pointer transition 
+                ${
+                  changedStatus === TMatchingStatus.PROGRESS
+                    ? "bg-emerald-500"
+                    : "bg-gray-200 hover:bg-emerald-400"
+                }`}
+              onClick={() => setChangedStatus(TMatchingStatus.PROGRESS)}
+            >
+              진행중
             </div>
             <div
               className={`flex-1 py-5 text-sm font-semibold text-center text-white cursor-pointer transition 
                 ${
                   changedStatus === TMatchingStatus.COMPLETED
                     ? "bg-blue-500"
-                    : "bg-gray-300 hover:bg-blue-400"
+                    : "bg-gray-200 hover:bg-blue-400"
                 }`}
               onClick={() => setChangedStatus(TMatchingStatus.COMPLETED)}
             >
-              과정수료
+              수료
             </div>
           </div>
           <div className="mt-6 flex flex-col">

@@ -8,14 +8,15 @@ import {
   limit,
   orderBy,
   query,
+  runTransaction,
   setDoc,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
   TAppointment,
   TBarnabaProfile,
+  TBarnabasHistory,
   TMatching,
   TMatchingStatus,
   TMenteeStatus,
@@ -233,22 +234,25 @@ export const fetchBarnabaWithoutActiveMentorship = async (): Promise<
       cohort: doc.data().cohort,
     }));
 
-    // 2. mentorshipStatus가 in-progress인 멤버 가져오기
-    const mentorshipQuery = query(
-      mentorshipRef,
-      where("status", "==", TMatchingStatus.PROGRESS)
-    );
-    const mentorshipSnapshot = await getDocs(mentorshipQuery);
-    const activeMentorshipIds = mentorshipSnapshot.docs.map(
-      (doc) => doc.data().barnabaId
-    );
+    {
+      /* 중복도 가능한것 같아서 우선 보류 */
+    }
+    // // 2. mentorshipStatus가 in-progress인 멤버 가져오기
+    // const mentorshipQuery = query(
+    //   mentorshipRef,
+    //   where("status", "==", TMatchingStatus.PROGRESS)
+    // );
+    // const mentorshipSnapshot = await getDocs(mentorshipQuery);
+    // const activeMentorshipIds = mentorshipSnapshot.docs.map(
+    //   (doc) => doc.data().barnabaId
+    // );
 
-    // 3. Mentorship이 in-progress가 아닌 멤버 필터링
-    const filteredBarnabas = activeBarnabas.filter(
-      (barnaba) => !activeMentorshipIds.includes(barnaba.id)
-    );
+    // // 3. Mentorship이 in-progress가 아닌 멤버 필터링
+    // const filteredBarnabas = activeBarnabas.filter(
+    //   (barnaba) => !activeMentorshipIds.includes(barnaba.id)
+    // );
 
-    return filteredBarnabas;
+    return activeBarnabas;
   } catch (error) {
     console.error(
       "Error fetching Barnaba members without active mentorship: ",
@@ -328,22 +332,65 @@ export const createBarnabaMatching = async (
       BARNABAS_COLLCTION.BARNABAMENTORSHIPS
     );
 
-    // 1. 문서 추가 및 ID 자동 생성
-    const docRef = await addDoc(mentorshipRef, {...matchingData});
-
-    // 2. 생성된 ID를 필드에 포함시켜 업데이트
-    await updateDoc(
-      doc(
-        db,
-        BARNABAS_COLLCTION.BARNABAS,
-        BARNABAS_COLLCTION.DATA,
-        BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
-        docRef.id
-      ),
-      {
-        id: docRef.id, // 자동 생성된 문서 ID 저장
-      }
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      matchingData.barnabaId
     );
+
+    // Firestore 트랜잭션 사용
+    await runTransaction(db, async (transaction) => {
+      // 1️⃣ 바나바 히스토리 문서 읽기
+      const historySnapshot = await transaction.get(historyRef);
+
+      const name = historySnapshot.exists()
+        ? historySnapshot.data()?.name ?? "알 수 없음"
+        : matchingData.barnabaName;
+
+      const newTotal =
+        (historySnapshot.exists() ? historySnapshot.data().total : 0) + 1;
+      const passCount = historySnapshot.exists()
+        ? historySnapshot.data()?.pass ?? 0
+        : 0;
+      const failCount = historySnapshot.exists()
+        ? historySnapshot.data()?.fail ?? 0
+        : 0;
+      const isActiveStatus = historySnapshot.exists()
+        ? historySnapshot.data()?.isActive ?? true
+        : true;
+
+      // 2️⃣ 새로운 매칭 문서 추가 및 ID 생성
+      const docRef = await addDoc(mentorshipRef, {...matchingData});
+      const newMatchingId = docRef.id;
+
+      // 3️⃣ 생성된 ID를 포함하여 매칭 문서 업데이트
+      transaction.update(docRef, {id: newMatchingId});
+
+      // 4️⃣ `total`, `pass`, `fail` 값이 항상 존재하도록 보장
+      transaction.set(historyRef, {
+        barnabaName: name,
+        total: newTotal,
+        pass: passCount, // ✅ `undefined` 방지
+        fail: failCount, // ✅ `undefined` 방지
+        isActive: isActiveStatus,
+      });
+
+      // 5️⃣ barnabasDetails 컬렉션에 새로운 문서 추가
+      const detailsRef = doc(
+        collection(historyRef, "barnabasDetails"),
+        newMatchingId
+      );
+      transaction.set(detailsRef, {
+        matchingId: newMatchingId,
+        menteeId: matchingData.menteeId,
+        menteeName: matchingData.menteeName || "알 수 없음",
+        matchingDate: matchingData.matchingDate,
+        scheduledMeetingCount: matchingData.scheduledMeetingCount,
+        status: matchingData.status,
+      });
+    });
   } catch (error) {
     console.error("Error saving matching data:", error);
     throw new Error("매칭 데이터를 저장하는 중 에러가 발생했습니다.");
@@ -628,10 +675,12 @@ export const getAppointmentByMatchingId = async (
 
 export const updateBarnabaMentorship = async ({
   matchingId,
+  barnabaId,
   status,
   description,
 }: {
   matchingId: string;
+  barnabaId: string;
   status: TMatchingStatus;
   description?: string;
 }) => {
@@ -644,12 +693,57 @@ export const updateBarnabaMentorship = async ({
       matchingId
     );
 
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      barnabaId
+    );
+
+    const detailsRef = doc(
+      collection(historyRef, "barnabasDetails"),
+      matchingId
+    );
+
     const today = dayjs(new Date()).format("YYYY-MM-DD");
 
-    await updateDoc(mentorshipRef, {
-      status,
-      description,
-      completedDate: today,
+    await runTransaction(db, async (transaction) => {
+      const historySnap = await transaction.get(historyRef);
+      const currentHistory = historySnap.exists()
+        ? historySnap.data()
+        : {total: 0, pass: 0, fail: 0};
+
+      let passCount = currentHistory.pass ?? 0;
+      let failCount = currentHistory.fail ?? 0;
+
+      // ✅ 상태가 "completed"이면 pass +1 증가
+      if (status === TMatchingStatus.COMPLETED) {
+        passCount += 1;
+      }
+      // ✅ 상태가 "failed"이면 fail +1 증가
+      if (status === TMatchingStatus.FAILED) {
+        failCount += 1;
+      }
+
+      // 🔹 히스토리 업데이트 (pass/fail 증가)
+      transaction.update(historyRef, {
+        pass: passCount,
+        fail: failCount,
+      });
+
+      // 🔹 멘토십 상태 업데이트
+      transaction.update(mentorshipRef, {
+        status,
+        description,
+        completedDate: today,
+      });
+
+      // 🔹 barnabasDetails 컬렉션 업데이트
+      transaction.update(detailsRef, {
+        status,
+        completedDate: today,
+      });
     });
   } catch (error) {
     console.error("바나바 멘토십 업데이트 실패:", error);
@@ -707,7 +801,10 @@ export const getCompletedOrFailedMentorships = async (
   return {completedMap, failedMap};
 };
 
-export const reStartBarnabaMentorship = async (matchingId: string) => {
+export const reStartBarnabaMentorship = async (
+  matchingId: string,
+  barnabaId: string
+) => {
   try {
     const mentorshipRef = doc(
       db,
@@ -717,12 +814,79 @@ export const reStartBarnabaMentorship = async (matchingId: string) => {
       matchingId
     );
 
-    await updateDoc(mentorshipRef, {
-      status: TMatchingStatus.PROGRESS,
-      completedDate: "",
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      barnabaId
+    );
+
+    const detailsRef = doc(
+      collection(historyRef, "barnabasDetails"),
+      matchingId
+    );
+
+    await runTransaction(db, async (transaction) => {
+      // 🔹 히스토리 문서 조회
+      const historySnap = await transaction.get(historyRef);
+      const currentHistory = historySnap.exists()
+        ? historySnap.data()
+        : {total: 0, pass: 0, fail: 0};
+
+      let failCount = currentHistory.fail ?? 0;
+
+      // ✅ fail -1 감소 (최소 0 이상)
+      if (failCount > 0) {
+        failCount -= 1;
+      }
+
+      // 🔹 히스토리 업데이트
+      transaction.update(historyRef, {
+        fail: failCount,
+      });
+
+      // 🔹 멘토십 상태 변경
+      transaction.update(mentorshipRef, {
+        status: TMatchingStatus.PROGRESS,
+        completedDate: "",
+      });
+
+      // 🔹 barnabasDetails 업데이트
+      transaction.update(detailsRef, {
+        status: TMatchingStatus.PROGRESS,
+        completedDate: "",
+      });
     });
   } catch (error) {
     console.error("바나바 멘토십 업데이트 실패:", error);
     throw new Error("멘토십 상태를 업데이트하는 중 오류가 발생했습니다.");
+  }
+};
+
+//바나바 양육 이력 가져오기
+export const getBarnabasHistory = async (): Promise<
+  Omit<TBarnabasHistory, "barnabasDetails">[]
+> => {
+  try {
+    const historyRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY
+    );
+
+    const querySnapshot = await getDocs(historyRef);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    return querySnapshot.docs.map(
+      (doc) => doc.data() as Omit<TBarnabasHistory, "barnabasDetails">
+    );
+  } catch (error) {
+    console.error("@getBarnabasHistory: ", error);
+    throw new Error("바나바 양육 이력을 가져오는 중 에러가 발생했습니다.");
   }
 };

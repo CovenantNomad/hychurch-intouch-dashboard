@@ -1,5 +1,24 @@
 import {Gender} from "../graphql/generated";
 
+export enum TMatchingStatus {
+  PENDING = "pending",
+  FAILED = "failed",
+  PROGRESS = "progress",
+  COMPLETED = "completed",
+}
+
+export enum TAmazingMatchingStatus {
+  PENDING = "pending",
+  PROGRESS = "progress",
+  COMPLETED = "completed",
+}
+
+export enum TAppointmentStatus {
+  SCHEDULED = "scheduled", // 약속 잡은 상태
+  COMPLETED = "completed", // 완료
+  CANCELED = "canceled", // 약속 취소
+}
+
 export type TBarnabaProfile = {
   id: string; // 고유 ID
   name: string; // 이름
@@ -9,19 +28,6 @@ export type TBarnabaProfile = {
   cohort: string;
   uid?: string;
   email?: string;
-};
-
-export enum TMatchingStatus {
-  PENDING = "pending",
-  FAILED = "failed",
-  PROGRESS = "progress",
-  COMPLETED = "completed",
-}
-
-// SMT 타입
-export type TSMT = {
-  isDone: boolean; // SMT(특별한 1회성 만남) 완료 여부
-  date?: string;
 };
 
 // Matching 타입
@@ -41,13 +47,6 @@ export type TMatching = {
   description: string;
 };
 
-export type TMenteeStatus = {
-  isInBarnaba: boolean;
-  barnabaStatus: string | null;
-  isInAmazing: boolean;
-  amazingStatus: string | null;
-};
-
 export type TAppointment = {
   appointmentId: string;
   matchingId: string; // 매칭 ID
@@ -65,14 +64,28 @@ export type TAppointment = {
   status: TAppointmentStatus;
 };
 
-export enum TAmazingMatchingStatus {
-  PENDING = "pending",
-  PROGRESS = "progress",
-  COMPLETED = "completed",
-}
+export type TMenteeStatus = {
+  isInBarnaba: boolean;
+  barnabaStatus: string | null;
+  isInAmazing: boolean;
+  amazingStatus: string | null;
+};
 
-export enum TAppointmentStatus {
-  SCHEDULED = "scheduled", // 약속 잡은 상태
-  COMPLETED = "completed", // 완료
-  CANCELED = "canceled", // 약속 취소
-}
+export type TBarnabasHistory = {
+  barnabaName: string;
+  total: number;
+  pass: number;
+  fail: number;
+  isActive: boolean;
+  barnabasDetails: TBarnabasDetail[];
+};
+
+export type TBarnabasDetail = {
+  matchingId: string;
+  menteeId: string;
+  menteeName: string;
+  matchingDate: string;
+  completedDate?: string;
+  scheduledMeetingCount: string;
+  status: TMatchingStatus;
+};
