@@ -346,7 +346,7 @@ export const createBarnabaMatching = async (
       const historySnapshot = await transaction.get(historyRef);
 
       const name = historySnapshot.exists()
-        ? historySnapshot.data()?.name ?? "알 수 없음"
+        ? historySnapshot.data()?.barnabaName ?? "알 수 없음"
         : matchingData.barnabaName;
 
       const newTotal =
