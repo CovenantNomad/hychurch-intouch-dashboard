@@ -107,7 +107,8 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
       <div className="h-10 col-span-1 flex items-center justify-center">
         <BarnabasProcessSetting
           matchingId={barnabas.id}
-          barnabasName={barnabas.barnabaName}
+          barnabaId={barnabas.barnabaId}
+          barnabaName={barnabas.barnabaName}
           menteeName={barnabas.menteeName}
           menteeId={barnabas.menteeId}
           status={barnabas.status}

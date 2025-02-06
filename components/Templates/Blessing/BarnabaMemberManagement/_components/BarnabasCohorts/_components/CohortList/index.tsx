@@ -30,7 +30,7 @@ const CohortList = ({data}: Props) => {
                       index !== 19 &&
                       "border-r"
                     } border-l border-collapse ${
-                      member.isActive === false && "bg-gray-400 text-gray-700"
+                      member.isActive === false && "bg-gray-300 text-gray-700"
                     }`}
                   >
                     {member.name}

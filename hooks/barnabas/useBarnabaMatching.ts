@@ -38,7 +38,8 @@ export const useBarnabaMatching = () => {
           "fetchMenteeStatuses",
           `menteeTable_${sortState.itemsPerPage}_${sortState.currentPage}`,
         ]);
-        queryClient.refetchQueries(["fetchBarnabaWithoutActiveMentorship"]);
+        queryClient.invalidateQueries(["fetchLatestMentorship"]);
+        queryClient.refetchQueries(["getBarnabasCourseByStatus"]);
         queryClient.refetchQueries(["fetchAvailableMentees"]);
       },
       onError: (error) => {

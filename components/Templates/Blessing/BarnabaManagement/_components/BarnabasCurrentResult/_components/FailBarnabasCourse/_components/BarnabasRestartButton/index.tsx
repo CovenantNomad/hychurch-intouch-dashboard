@@ -5,13 +5,14 @@ import {TMatchingStatus} from "../../../../../../../../../../interface/barnabas"
 
 type Props = {
   matchingId: string;
+  barnabaId: string;
   menteeId: string;
 };
 
-const BarnabasRestartButton = ({matchingId, menteeId}: Props) => {
+const BarnabasRestartButton = ({matchingId, barnabaId, menteeId}: Props) => {
   const queryClient = useQueryClient();
   const mutation = useMutation(
-    (matchingId: string) => reStartBarnabaMentorship(matchingId),
+    (matchingId: string) => reStartBarnabaMentorship(matchingId, barnabaId),
     {
       onSuccess: async (_, variables) => {
         toast.success("바나바과정 재시작");
@@ -24,6 +25,7 @@ const BarnabasRestartButton = ({matchingId, menteeId}: Props) => {
         queryClient.invalidateQueries(["getCompletedOrFailedMentorships"]);
         queryClient.invalidateQueries(["fetchMenteeStatuses"]);
         queryClient.invalidateQueries(["fetchBarnabaMentorship", menteeId]);
+        queryClient.invalidateQueries(["fetchLatestMentorship"]);
       },
       onError: (error) => {
         console.error("바나바과정 재시작 실패:", error);

@@ -1,9 +1,12 @@
-import React from 'react';
-import { classNames } from '../../../utils/utils';
+import {cx} from "../../../utils/utils";
 
-const Skeleton = ({...props}) => {
+type Props = {
+  className?: string;
+};
+
+const Skeleton = ({className}: Props) => {
   return (
-    <div className={classNames('animate-pulse bg-gray-100 rounded-lg', props.className)}/>
+    <div className={cx("animate-pulse bg-gray-100 rounded-lg", className)} />
   );
 };
 

@@ -5,6 +5,7 @@ import {
   TMatchingStatus,
 } from "../../../../../../../../../../interface/barnabas";
 import {getGender} from "../../../../../../../../../../utils/utils";
+import Skeleton from "../../../../../../../../../Atoms/Skeleton/Skeleton";
 
 type Props = {
   member: TBarnabaProfile;
@@ -29,7 +30,7 @@ const BarnabasProgressCard = ({member}: Props) => {
       </div>
       <div>
         {isLoading || isFetching ? (
-          <div>로딩중...</div>
+          <Skeleton className="w-[110px] h-[80px]" />
         ) : data ? (
           <div
             className={`px-5 py-2 ${
@@ -44,7 +45,7 @@ const BarnabasProgressCard = ({member}: Props) => {
               {data.status === TMatchingStatus.PROGRESS
                 ? "과정진행중"
                 : data.status === TMatchingStatus.PENDING
-                ? "과정지연"
+                ? "과정지연중"
                 : "진행가능"}
             </div>
             <div className="mt-1">

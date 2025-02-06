@@ -98,6 +98,7 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                   <div className="h-10 col-span-1 flex items-center justify-center">
                     <BarnabasRestartButton
                       matchingId={barnabas.id}
+                      barnabaId={barnabas.barnabaId}
                       menteeId={barnabas.menteeId}
                     />
                   </div>

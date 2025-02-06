@@ -186,3 +186,14 @@ export function getWeekOfYear(date: Date): number {
   );
   return diff + 1; // Weeks start from 1
 }
+
+// 바나바 소요 기간 계산 (주간단위)
+export const getWeeksBetweenDates = (
+  startDate: string,
+  endDate: string
+): number => {
+  const start = dayjs(startDate);
+  const end = dayjs(endDate);
+
+  return end.diff(start, "week"); // 주 단위 차이 계산
+};
