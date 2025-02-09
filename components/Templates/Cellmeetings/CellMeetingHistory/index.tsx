@@ -16,6 +16,7 @@ const CellMeetingHistory = () => {
   return (
     <BlockContainer firstBlock>
       <HeaderWithCalendar
+        title="과거 셀모임출석 조회"
         recentSunday={recentSunday.format("YYYY-MM-DD")}
         selectedDate={selectedDate}
         currentDate={currentDate}

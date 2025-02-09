@@ -18,6 +18,7 @@ const AttendanceHistory = ({}: AttendanceOverviewProps) => {
   return (
     <BlockContainer firstBlock>
       <HeaderWithCalendar
+        title="과거 예배출석 조회"
         recentSunday={recentSunday.format("YYYY-MM-DD")}
         selectedDate={selectedDate}
         currentDate={currentDate}

@@ -19,6 +19,7 @@ import {
   TBarnabasHistory,
   TMatching,
   TMatchingStatus,
+  TMenteeAttendance,
   TMenteeStatus,
 } from "../../interface/barnabas";
 import {BARNABAS_COLLCTION} from "../../interface/firebase";
@@ -888,5 +889,123 @@ export const getBarnabasHistory = async (): Promise<
   } catch (error) {
     console.error("@getBarnabasHistory: ", error);
     throw new Error("바나바 양육 이력을 가져오는 중 에러가 발생했습니다.");
+  }
+};
+
+export async function fetchMonthlyAppointments(year: number, month: number) {
+  const startDate = new Date(year, month - 1, 1); // 해당 달의 시작일
+  const endDate = new Date(year, month, 0); // 해당 달의 마지막일
+
+  const barnabasRef = collection(
+    db,
+    BARNABAS_COLLCTION.BARNABAS,
+    BARNABAS_COLLCTION.DATA,
+    BARNABAS_COLLCTION.MEETINGSCHEDULES
+  );
+
+  const q = query(
+    barnabasRef,
+    where("date", ">=", startDate.toISOString().split("T")[0]),
+    where("date", "<=", endDate.toISOString().split("T")[0])
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  const appointments: TAppointment[] = querySnapshot.docs.map(
+    (doc) => doc.data() as TAppointment
+  );
+
+  return appointments;
+}
+
+export const getBarnabasYearlyRecords = async (
+  year: number
+): Promise<Omit<TBarnabasHistory, "barnabasDetails">[]> => {
+  try {
+    const historyRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY
+    );
+
+    const historySnapshot = await getDocs(historyRef);
+
+    const barnabasYearlyHistory = await Promise.all(
+      historySnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+
+        const detailRef = collection(
+          historyRef,
+          doc.id,
+          BARNABAS_COLLCTION.BARNABASDETAILS
+        );
+
+        const q = query(
+          detailRef,
+          where("status", "in", [
+            TMatchingStatus.COMPLETED,
+            TMatchingStatus.FAILED,
+          ]),
+          where("completedDate", ">=", `${year}-01-01`),
+          where("completedDate", "<=", `${year}-12-31`)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        let total = querySnapshot.size;
+        let pass = 0;
+        let fail = 0;
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.status === TMatchingStatus.COMPLETED) pass += 1;
+          if (data.status === TMatchingStatus.FAILED) fail += 1;
+        });
+
+        return {
+          barnabaName: data.barnabaName || "Unknown",
+          total: total || 0,
+          pass: pass || 0,
+          fail: fail || 0,
+          isActive: data.isActive || false,
+        };
+      })
+    );
+
+    return barnabasYearlyHistory;
+  } catch (error) {
+    console.error("@getBarnabasYearlyRecords:", error);
+    throw new Error("데이터를 가져오는 데 실패했습니다.");
+  }
+};
+
+export const getMenteeAttendanceByDate = async (
+  date: string
+): Promise<TMenteeAttendance[]> => {
+  try {
+    const attendanceRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.ATTENDANCES,
+      BARNABAS_COLLCTION.DATE,
+      date
+    );
+
+    const querySnapshot = await getDocs(attendanceRef);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const menteeAttendances: TMenteeAttendance[] = querySnapshot.docs.map(
+      (doc) => doc.data() as TMenteeAttendance
+    );
+
+    return menteeAttendances;
+  } catch (error) {
+    console.error("@checkAttendanceSubmit:", error);
+    throw new Error("멘티 예배출석 제출 여부를 조회하는데 실패했습니다.");
   }
 };

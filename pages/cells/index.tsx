@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import type { NextPage } from "next";
+import {AnimatePresence, motion} from "framer-motion";
+import type {NextPage} from "next";
 import Head from "next/head";
-import { AnimatePresence, motion } from "framer-motion";
+import {useEffect, useState} from "react";
 // hooks
 import useModal from "../../hooks/useModal";
 // graphql
@@ -12,27 +12,27 @@ import {
   useFindCellsQuery,
 } from "../../graphql/generated";
 // components
-import Layout from "../../components/Layout/Layout";
-import CellCard from "../../components/Organisms/Cells/CellCard/CellCard";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import Container from "../../components/Atoms/Container/Container";
+import Footer from "../../components/Atoms/Footer";
 import Header from "../../components/Atoms/Header";
 import Spacer from "../../components/Atoms/Spacer";
-import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { createCellState } from "../../stores/createCellState";
-import { FIND_CELL_LIMIT } from "../../constants/constant";
-import Footer from "../../components/Atoms/Footer";
-import { CellType, SpecialCellIdType } from "../../interface/cell";
-import { CommunityFilter, communityFilterState } from "../../stores/cellState";
-import { communityTabs } from "../../constants/tabs";
 import UnderlineBoxTabs from "../../components/Atoms/Tabs/UnderlineBoxTabs";
+import Layout from "../../components/Layout/Layout";
+import CellCard from "../../components/Organisms/Cells/CellCard/CellCard";
+import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
+import {FIND_CELL_LIMIT} from "../../constants/constant";
+import {communityTabs} from "../../constants/tabs";
+import {CellType, SpecialCellIdType} from "../../interface/cell";
+import {CommunityFilter, communityFilterState} from "../../stores/cellState";
+import {createCellState} from "../../stores/createCellState";
 
 const Cell: NextPage = () => {
   const setCreateCellInfo = useSetRecoilState(createCellState);
   const [filter, setFilter] = useRecoilState(communityFilterState);
   const [filterdList, setFilterdList] = useState<CellType[]>([]);
-  const { modalOpen, onModalOpenHandler, onModalClosehandler } = useModal();
-  const { isLoading, data } = useFindCellsQuery<
+  const {modalOpen, onModalOpenHandler, onModalClosehandler} = useModal();
+  const {isLoading, data} = useFindCellsQuery<
     FindCellsQuery,
     FindCellsQueryVariables
   >(
@@ -61,20 +61,12 @@ const Cell: NextPage = () => {
               !cell.id.includes(SpecialCellIdType.Blessing) &&
               !cell.id.includes(SpecialCellIdType.Renew)
           )
-          .sort((a, b) => {
-            if (a.name > b.name) return 1;
-            else if (b.name > a.name) return -1;
-            else return 0;
-          });
+          .sort((a, b) => a.name.localeCompare(b.name));
         setFilterdList(filterList);
       } else {
         const filterList = data?.findCells.nodes
           .filter((cell) => cell.community === filter)
-          .sort((a, b) => {
-            if (a.name > b.name) return 1;
-            else if (b.name > a.name) return -1;
-            else return 0;
-          });
+          .sort((a, b) => a.name.localeCompare(b.name));
         setFilterdList(filterList);
       }
     }
@@ -95,8 +87,8 @@ const Cell: NextPage = () => {
           }: ${filterdList ? filterdList.length : 0}셀)`}
         >
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{scale: 1.1}}
+            whileTap={{scale: 0.9}}
             onClick={onModalOpenHandler}
             className="px-4 py-2 bg-BLUE text-white text-sm rounded-md lg:text-base"
           >
@@ -107,7 +99,7 @@ const Cell: NextPage = () => {
         <div>
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-              {Array.from({ length: 6 }, (_, index) => index).map((item) => (
+              {Array.from({length: 6}, (_, index) => index).map((item) => (
                 <div
                   key={item}
                   className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"
