@@ -89,3 +89,17 @@ export type TBarnabasDetail = {
   scheduledMeetingCount: string;
   status: TMatchingStatus;
 };
+
+export type TGroupedAppointments = {
+  [date: string]: TAppointment[];
+};
+
+export type TMenteeAttendance = {
+  date: string;
+  barnabaId: string;
+  barnabaName: string;
+  menteeId: string;
+  menteeName: string;
+  service: string;
+  description?: string;
+};

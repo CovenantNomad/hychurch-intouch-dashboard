@@ -3,12 +3,14 @@ import BarnabaOverview from "./_components/BarnabaOverview";
 import BarnabaSchedule from "./_components/BarnabaSchedule";
 import BarnabasCurrentResult from "./_components/BarnabasCurrentResult";
 import BarnabasDetailHistory from "./_components/BarnabasDetailHistory";
+import MenteeAttendance from "./_components/MenteeAttendance";
 
 enum SubTab {
   PROGRESS = "Progress",
   RESULTS = "Results",
   SCHEDULE = "Schedule",
   HISTORY = "History",
+  ATTENDANCE = "Attendance",
 }
 
 const BarnabaManagement = () => {
@@ -19,6 +21,7 @@ const BarnabaManagement = () => {
     {index: 1, label: "완료/보류현황", value: SubTab.RESULTS},
     {index: 2, label: "일정관리", value: SubTab.SCHEDULE},
     {index: 3, label: "과거데이터", value: SubTab.HISTORY},
+    {index: 4, label: "예배출석체크", value: SubTab.ATTENDANCE},
   ];
 
   return (
@@ -43,6 +46,7 @@ const BarnabaManagement = () => {
         {subTab === SubTab.RESULTS && <BarnabasCurrentResult />}
         {subTab === SubTab.SCHEDULE && <BarnabaSchedule />}
         {subTab === SubTab.HISTORY && <BarnabasDetailHistory />}
+        {subTab === SubTab.ATTENDANCE && <MenteeAttendance />}
       </div>
     </>
   );

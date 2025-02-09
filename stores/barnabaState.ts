@@ -21,8 +21,8 @@ export const barnabasTrainingHistorySortState = atom<{
 }>({
   key: "BARNABA/BARNABA_TRAINING_HISTORY", // 고유한 키값
   default: {
-    sortKey: "name",
-    sortOrder: "asc",
+    sortKey: "pass",
+    sortOrder: "desc",
   },
 });
 

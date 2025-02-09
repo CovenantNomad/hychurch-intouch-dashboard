@@ -49,8 +49,18 @@ const BarnabasProgressCard = ({member}: Props) => {
                 : "진행가능"}
             </div>
             <div className="mt-1">
-              <span className="block text-xs">(마지막매칭일)</span>
-              <span className="block text-sm">{data.matchingDate}</span>
+              <span className="block text-xs">
+                {data.status === TMatchingStatus.PROGRESS ||
+                data.status === TMatchingStatus.PENDING
+                  ? "(마지막매칭일)"
+                  : "(마지막완료일)"}
+              </span>
+              <span className="block text-sm">
+                {data.status === TMatchingStatus.PROGRESS ||
+                data.status === TMatchingStatus.PENDING
+                  ? data.matchingDate
+                  : data.completedDate || data.matchingDate}
+              </span>
             </div>
           </div>
         ) : (

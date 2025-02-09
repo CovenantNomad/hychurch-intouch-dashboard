@@ -1,12 +1,14 @@
 import {useState} from "react";
 import BarnabasActiveAge from "./_components/BarnabasActiveAge";
 import BarnabasCohorts from "./_components/BarnabasCohorts";
-import BarnabasHistory from "./_components/BarnabasHistory/BarnabasHistory";
+import BarnabasHistory from "./_components/BarnabasHistory";
+import BarnabasYearlyHistory from "./_components/BarnabasYearlyHistory";
 
 enum SubTab {
   COHORT = "cohort",
   AGE = "age",
   HISTORY = "history",
+  YEARLY = "yearly",
 }
 
 const BarnabaMemberManagement = () => {
@@ -15,7 +17,8 @@ const BarnabaMemberManagement = () => {
   const tabs = [
     {index: 0, label: "바나바 기수", value: SubTab.COHORT},
     {index: 1, label: "연령별 명단", value: SubTab.AGE},
-    {index: 2, label: "바나바 양육 이력", value: SubTab.HISTORY},
+    {index: 2, label: "바나바양육 전체기록", value: SubTab.HISTORY},
+    {index: 3, label: "바나바양육 연간기록", value: SubTab.YEARLY},
   ];
 
   return (
@@ -39,6 +42,7 @@ const BarnabaMemberManagement = () => {
         {subTab === SubTab.COHORT && <BarnabasCohorts />}
         {subTab === SubTab.AGE && <BarnabasActiveAge />}
         {subTab === SubTab.HISTORY && <BarnabasHistory />}
+        {subTab === SubTab.YEARLY && <BarnabasYearlyHistory />}
       </div>
     </>
   );

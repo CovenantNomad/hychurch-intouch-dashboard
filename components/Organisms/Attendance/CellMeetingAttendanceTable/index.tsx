@@ -15,13 +15,17 @@ const CellMeetingAttendanceTable = ({
 
   return (
     <>
-      <div className="pt-3 pb-1 lg:hidden">
+      <div className="pt-3 pb-1 lg:hidden lg:pt-0 lg:pb-0">
         <p className="font-bold leading-[1.5]">
           이번주 셀모임 출석명단은 PC전용 화면입니다
           <br />
           모바일에서는 셀모임 출석인원만 보여줍니다.
         </p>
       </div>
+      <p className="mt-2 mb-4 text-sm">
+        (주의) 셀모임출석 데이터는 현재셀을 기준으로 조회합니다. 상/하반기 등
+        현재 셀과 변동이 있는 기간은 데이터조회를 피해주세요.
+      </p>
       <table className="hidden relative min-w-full border border-gray-200 lg:table">
         <CellMeetingAttendanceHeader />
         {isLoading ? (

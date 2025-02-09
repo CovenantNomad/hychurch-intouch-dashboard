@@ -46,79 +46,75 @@ const BarnabasHistoryTable = ({data}: Props) => {
       setSortState((prevState) => ({
         ...prevState,
         sortKey: key,
-        sortOrder: "asc",
+        sortOrder: key === "name" ? "asc" : "desc",
       }));
     }
   };
 
   return (
-    <div className="w-full rounded-lg overflow-hidden border border-gray-300">
-      {/* Header */}
-      <div className="grid grid-cols-7 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
-        <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-          순번
-        </div>
-        <div
-          onClick={() => handleSort("name")}
-          className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300 cursor-pointer"
-        >
-          바나바 <ArrowsUpDownIcon className="inline-block h-4 w-4" />
-        </div>
-        <div
-          onClick={() => handleSort("total")}
-          className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300 cursor-pointer"
-        >
-          양육기회 <ArrowsUpDownIcon className="inline-block h-4 w-4" />
-        </div>
-        <div
-          onClick={() => handleSort("pass")}
-          className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300 cursor-pointer"
-        >
-          양육수료 <ArrowsUpDownIcon className="inline-block h-4 w-4" />
-        </div>
-        <div className="h-12 col-span-1 flex items-center justify-center cursor-pointer border-r border-gray-300">
-          양육보류
-        </div>
-        <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-          양육진행중
-        </div>
-        <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-          양육수료비율
-        </div>
+    <>
+      <div className="flex justify-start text-sm mb-2">
+        <span>
+          정렬기준:{" "}
+          {sortState.sortKey === "name"
+            ? "바나바 이름"
+            : sortState.sortKey === "pass"
+            ? "수료한 멘티"
+            : "양육한 멘티"}
+        </span>
       </div>
 
-      {/* Body */}
-      <div className="divide-y divide-gray-300">
-        {sortedMembers.map((barnabas, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-7 text-sm text-center items-center hover:bg-gray-50"
-          >
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {index + 1}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {barnabas.barnabaName}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {barnabas.total}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {barnabas.pass}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {barnabas.fail}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              {barnabas.total - barnabas.pass - barnabas.fail}
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center ">
-              {Math.round((barnabas.pass / barnabas.total) * 100) + "%"}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+      <table className="w-full">
+        {/* Table Head */}
+        <thead className="bg-gray-100 border border-gray-300 text-sm text-gray-600">
+          <tr className="text-center divide-x divide-gray-300">
+            <th className="h-12 w-[5%]">순번</th>
+            <th
+              className="h-12  w-[19%] cursor-pointer"
+              onClick={() => handleSort("name")}
+            >
+              바나바 이름
+              <ArrowsUpDownIcon className="inline-block h-4 w-4 ml-2" />
+            </th>
+            <th
+              className="h-12  w-[19%] cursor-pointer"
+              onClick={() => handleSort("total")}
+            >
+              양육한 멘티
+              <ArrowsUpDownIcon className="inline-block h-4 w-4 ml-2" />
+            </th>
+            <th
+              className="h-12  w-[19%] cursor-pointer"
+              onClick={() => handleSort("pass")}
+            >
+              수료한 멘티
+              <ArrowsUpDownIcon className="inline-block h-4 w-4 ml-2" />
+            </th>
+            <th className="h-12 w-[19%] ">보류한 멘티</th>
+            <th className="h-12 w-[19%] ">진행중인 멘티</th>
+          </tr>
+        </thead>
+
+        {/* Table Body */}
+        <tbody className="divide-y divide-gray-300 border-b border-x border-gray-300">
+          {sortedMembers.map((barnabas, index) => (
+            <tr
+              key={index}
+              className="text-center divide-x divide-gray-300 hover:bg-gray-50"
+            >
+              <td className="h-10">{index + 1}</td>
+              <td className="h-10">{barnabas.barnabaName}</td>
+              <td className="h-10">{barnabas.total}</td>
+              <td className="h-10">{barnabas.pass}</td>
+              <td className="h-10">{barnabas.fail}</td>
+              <td className="h-10">
+                {barnabas.total - barnabas.pass - barnabas.fail}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 };
 

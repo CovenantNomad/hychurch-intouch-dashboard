@@ -14,7 +14,7 @@ const BarnabasDetailPage = ({}: Props) => {
       </Head>
 
       <PageLayout>
-        <div>개발중...</div>
+        <div>해당 페이지는 개발 예정입니다.</div>
       </PageLayout>
     </Layout>
   );

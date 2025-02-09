@@ -1,4 +1,5 @@
 import {clsx, type ClassValue} from "clsx";
+import dayjs from "dayjs";
 import {twMerge} from "tailwind-merge";
 import {cellOrderByAge} from "../constants/cellOrder";
 import {Gender, RoleType, UserCellTransferStatus} from "../graphql/generated";
@@ -6,7 +7,11 @@ import {
   AttendanceHistory,
   TempSavedAttendanceHistory,
 } from "../interface/attendance";
-import {TAppointmentStatus, TMatchingStatus} from "../interface/barnabas";
+import {
+  TAppointment,
+  TAppointmentStatus,
+  TMatchingStatus,
+} from "../interface/barnabas";
 import {
   CellListType,
   MinimumCellType,
@@ -14,7 +19,7 @@ import {
   transferedUser,
 } from "../interface/cell";
 import {CommunityFilter} from "../stores/cellState";
-import {MemberWithTransferOut} from "./../interface/user";
+import {Member, MemberWithTransferOut} from "./../interface/user";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -430,3 +435,78 @@ export function convertMatchingMessage(status: TMatchingStatus): string {
       return "상태를 확인할 수 없습니다.";
   }
 }
+
+export const groupAndSortDailyAppointments = (appointments: TAppointment[]) => {
+  // 1️⃣ 상태별 그룹화
+  const grouped = {
+    scheduled: [] as TAppointment[],
+    completed: [] as TAppointment[],
+    canceled: [] as TAppointment[],
+  };
+
+  appointments.forEach((appointment) => {
+    if (appointment.status === TAppointmentStatus.SCHEDULED) {
+      grouped.scheduled.push(appointment);
+    } else if (appointment.status === TAppointmentStatus.COMPLETED) {
+      grouped.completed.push(appointment);
+    } else {
+      grouped.canceled.push(appointment);
+    }
+  });
+
+  // 2️⃣ 그룹 내에서 hour → minute → name 순으로 정렬
+  const sortAppointments = (appointments: TAppointment[]) => {
+    return appointments.sort((a, b) => {
+      // 날짜 정렬 (오름차순)
+      if (a.date !== b.date) {
+        return a.date.localeCompare(b.date);
+      }
+      // 시간 정렬 (오름차순)
+      if (Number(a.hour) !== Number(b.hour)) {
+        return Number(a.hour) - Number(b.hour);
+      }
+      // 분 정렬 (오름차순)
+      if (Number(a.minute) !== Number(b.minute)) {
+        return Number(a.minute) - Number(b.minute);
+      }
+      // 이름 정렬 (가나다 순)
+      return a.barnabaName.localeCompare(b.barnabaName);
+    });
+  };
+
+  return {
+    scheduled: sortAppointments(grouped.scheduled),
+    completed: sortAppointments(grouped.completed),
+    canceled: sortAppointments(grouped.canceled),
+  };
+};
+
+//셀원들 생년별 숫자 카운트
+type YearlyData = {
+  year: string;
+  count: number;
+};
+
+export const processMembersByYear = (members: Member[]): YearlyData[] => {
+  const yearCountMap: Record<string, number> = {};
+
+  members.forEach((member) => {
+    if (member.birthday) {
+      const year = dayjs(member.birthday).year().toString(); // 생년 추출
+      yearCountMap[year] = (yearCountMap[year] || 0) + 1; // 연도별 인원수 계산
+    }
+  });
+
+  // 객체를 배열로 변환
+  const yearlyData: YearlyData[] = Object.entries(yearCountMap).map(
+    ([year, count]) => ({
+      year,
+      count,
+    })
+  );
+
+  // 연도 오름차순 정렬
+  yearlyData.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+  return yearlyData;
+};

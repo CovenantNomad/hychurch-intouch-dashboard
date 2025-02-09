@@ -11,6 +11,7 @@ import {
 } from "../../../../../ui/Dialog";
 
 type Props = {
+  title: string;
   recentSunday: string;
   selectedDate: Dayjs;
   currentDate: Dayjs;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const HeaderWithCalendar = ({
+  title,
   recentSunday,
   currentDate,
   selectedDate,
@@ -33,9 +35,9 @@ const HeaderWithCalendar = ({
   };
 
   return (
-    <div className="flex justify-between items-center mb-6 border-b pb-3">
+    <div className="flex justify-between items-center border-b pb-3">
       <div className="flex space-x-2 items-baseline">
-        <h4 className="text-xl font-bold">과거 예배출석 조회</h4>
+        <h4 className="text-xl font-bold">{title}</h4>
         <span className="text-sm">(조회일자: {recentSunday})</span>
       </div>
       <div className="flex items-center space-x-4">

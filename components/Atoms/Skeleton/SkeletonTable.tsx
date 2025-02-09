@@ -1,12 +1,11 @@
-import React from 'react';
-
 interface SkeletonTableProps {}
 
 const SkeletonTable = ({}: SkeletonTableProps) => {
   return (
-    <div className='relative bg-white w-full h-[320px] flex flex-col items-center justify-center'>
-      <div className="bg-slate-200 w-[95%] h-[15%] mb-4 rounded-lg shadow-sm animate-pulse" />
-      <div className="bg-slate-200 w-[95%] h-[60%] rounded-lg shadow-sm animate-pulse" />
+    <div className="relative bg-white w-full flex flex-col items-center justify-center">
+      <div className="bg-slate-200 w-full h-[48px] mb-2 rounded-lg shadow-sm animate-pulse" />
+      <div className="bg-slate-200 w-full h-[40px] mb-1 rounded-lg shadow-sm animate-pulse" />
+      <div className="bg-slate-200 w-full h-[40px] rounded-lg shadow-sm animate-pulse" />
     </div>
   );
 };
