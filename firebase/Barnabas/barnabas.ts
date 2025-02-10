@@ -10,12 +10,14 @@ import {
   query,
   runTransaction,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
   TAppointment,
   TBarnabaProfile,
+  TBarnabasDetail,
   TBarnabasHistory,
   TMatching,
   TMatchingStatus,
@@ -1007,5 +1009,182 @@ export const getMenteeAttendanceByDate = async (
   } catch (error) {
     console.error("@checkAttendanceSubmit:", error);
     throw new Error("멘티 예배출석 제출 여부를 조회하는데 실패했습니다.");
+  }
+};
+
+export const updateBarnabaActiveStatus = async (
+  barnabaId: string,
+  isActive: boolean
+): Promise<{success: boolean}> => {
+  try {
+    const barnabaRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAPROFILE,
+      barnabaId
+    );
+
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      barnabaId
+    );
+
+    await updateDoc(barnabaRef, {isActive});
+
+    await updateDoc(historyRef, {isActive});
+
+    return {success: true};
+  } catch (error) {
+    console.error("❌ 바나바 isActive 상태 변경 실패:", error);
+    throw new Error("바나바의 활성 상태를 변경하는 중 오류가 발생했습니다.");
+  }
+};
+
+export const getBarnabasProfileById = async (
+  barnabaId: string
+): Promise<TBarnabaProfile | null> => {
+  try {
+    // Firestore 컬렉션 참조
+    const barnabasRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAPROFILE,
+      barnabaId
+    );
+
+    const docSnapshot = await getDoc(barnabasRef);
+
+    if (!docSnapshot.exists()) {
+      throw new Error("바나바 프로필이 등록되어 있지 않습니다.");
+    }
+
+    // 데이터 매핑
+    return docSnapshot.data() as TBarnabaProfile;
+  } catch (error) {
+    console.error("Error fetching barnaba members: ", error);
+    throw new Error("바나바 프로필을 가져오는 중 에러가 발생했습니다.");
+  }
+};
+
+export const getBarnabasRecords = async (profileId: string) => {
+  try {
+    const currentYear = dayjs().year();
+
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      profileId
+    );
+
+    const thisYearHistoryRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      profileId,
+      BARNABAS_COLLCTION.BARNABASDETAILS
+    );
+
+    // 🎯 Firestore에서 status 필터링 먼저
+    const q = query(
+      thisYearHistoryRef,
+      where("status", "in", [TMatchingStatus.COMPLETED, TMatchingStatus.FAILED])
+    );
+
+    const [docSnap, querySnapshot] = await Promise.all([
+      getDoc(historyRef),
+      getDocs(q),
+    ]);
+
+    // 🎯 JavaScript에서 completedDate 필터링 수행
+    const filteredDocs = querySnapshot.docs.filter((doc) => {
+      const data = doc.data();
+      return (
+        data.completedDate >= `${currentYear}-01-01` &&
+        data.completedDate <= `${currentYear}-12-31`
+      );
+    });
+
+    // pass와 fail 분류
+    let thisYearpass = 0;
+    filteredDocs.forEach((doc) => {
+      const data = doc.data();
+      if (data.status === TMatchingStatus.COMPLETED) {
+        thisYearpass++;
+      }
+    });
+
+    if (docSnap.exists()) {
+      const {total, pass, fail} = docSnap.data();
+      return {total, pass, fail, thisYearpass};
+    } else {
+      console.warn("⚠️ 해당 프로필의 기록을 찾을 수 없습니다.");
+      return {
+        total: 0,
+        pass: 0,
+        fail: 0,
+        thisYearpass: 0,
+      };
+    }
+  } catch (error) {
+    console.error("@getBarnabasRecords:", error);
+    throw new Error("데이터를 가져오는 데 실패했습니다.");
+  }
+};
+
+export const getBarnabasYearlyRecordsById = async (
+  profileId: string,
+  year: number
+): Promise<TBarnabasDetail[]> => {
+  try {
+    const historyRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      profileId,
+      BARNABAS_COLLCTION.BARNABASDETAILS
+    );
+
+    const q = query(
+      historyRef,
+      where("status", "in", [
+        TMatchingStatus.COMPLETED,
+        TMatchingStatus.FAILED,
+      ]),
+      where("completedDate", ">=", `${year}-01-01`),
+      where("completedDate", "<=", `${year}-12-31`)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const yearlyRecords: TBarnabasDetail[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        matchingId: doc.id, // Firestore 문서 ID
+        completedDate: data.completedDate,
+        matchingDate: data.matchingDate,
+        menteeId: data.menteeId,
+        menteeName: data.menteeName,
+        scheduledMeetingCount: data.scheduledMeetingCount,
+        status: data.status,
+      } as TBarnabasDetail;
+    });
+
+    return yearlyRecords;
+  } catch (error) {
+    console.error("@getBarnabasYearlyRecords:", error);
+    throw new Error("데이터를 가져오는 데 실패했습니다.");
   }
 };

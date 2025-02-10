@@ -6,10 +6,12 @@ import CellMeetingAttendanceTableRowSkeleton from "./CellMeetingAttendanceTableR
 
 type CellMeetingAttendanceTableProps = {
   recentSunday: Dayjs;
+  hasDescription?: boolean;
 };
 
 const CellMeetingAttendanceTable = ({
   recentSunday,
+  hasDescription,
 }: CellMeetingAttendanceTableProps) => {
   const {isLoading, orderedCellList} = useOrderedCellList();
 
@@ -22,10 +24,12 @@ const CellMeetingAttendanceTable = ({
           모바일에서는 셀모임 출석인원만 보여줍니다.
         </p>
       </div>
-      <p className="mt-2 mb-4 text-sm">
-        (주의) 셀모임출석 데이터는 현재셀을 기준으로 조회합니다. 상/하반기 등
-        현재 셀과 변동이 있는 기간은 데이터조회를 피해주세요.
-      </p>
+      {hasDescription && (
+        <p className="mt-2 mb-4 text-sm">
+          (주의) 셀모임출석 데이터는 현재셀을 기준으로 조회합니다. 상/하반기 등
+          현재 셀과 변동이 있는 기간은 데이터조회를 피해주세요.
+        </p>
+      )}
       <table className="hidden relative min-w-full border border-gray-200 lg:table">
         <CellMeetingAttendanceHeader />
         {isLoading ? (

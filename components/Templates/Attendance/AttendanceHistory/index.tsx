@@ -25,7 +25,7 @@ const AttendanceHistory = ({}: AttendanceOverviewProps) => {
         setCurrentDate={setCurrentDate}
         setSelectedDate={setSelectedDate}
       />
-      <AttendnaceTable recentSunday={recentSunday} />
+      <AttendnaceTable recentSunday={recentSunday} hasDescription />
       <AttendanceCountTable recentSunday={recentSunday} />
     </BlockContainer>
   );

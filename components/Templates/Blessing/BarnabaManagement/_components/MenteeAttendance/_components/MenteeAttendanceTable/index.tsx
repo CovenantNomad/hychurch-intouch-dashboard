@@ -3,8 +3,7 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
-import {useQuery} from "react-query";
-import {getMenteeAttendanceByDate} from "../../../../../../../../firebase/Barnabas/barnabas";
+import {useBarnabasCourseWithAttendance} from "../../../../../../../../hooks/barnabas/useBarnabasCourseWithAttendance";
 import SkeletonTable from "../../../../../../../Atoms/Skeleton/SkeletonTable";
 
 type Props = {
@@ -12,18 +11,17 @@ type Props = {
 };
 
 const MenteeAttendanceTable = ({recentSunday}: Props) => {
-  const {isLoading, isFetching, data, refetch} = useQuery(
-    ["getMenteeAttendanceByDate", dayjs(recentSunday).format("YYYY-MM-DD")],
-    () => getMenteeAttendanceByDate(dayjs(recentSunday).format("YYYY-MM-DD")),
-    {
-      staleTime: 10 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000,
-    }
-  );
+  const {isLoading, isFetching, data, refetch} =
+    useBarnabasCourseWithAttendance({
+      recentSunday,
+    });
 
   return (
     <>
-      <div className="mt-3 mb-1 flex justify-end">
+      <div className="flex justify-end items-center mt-3 mb-1">
+        {isFetching && (
+          <span className="animate-pulse text-sm mr-4">새로고침 중..</span>
+        )}
         <button
           onClick={() => refetch()}
           className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
@@ -32,7 +30,7 @@ const MenteeAttendanceTable = ({recentSunday}: Props) => {
         </button>
       </div>
       <div>
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <SkeletonTable />
         ) : data && data.length !== 0 ? (
           <table className="w-full">
@@ -60,7 +58,13 @@ const MenteeAttendanceTable = ({recentSunday}: Props) => {
                     <td className="h-10">{index + 1}</td>
                     <td className="h-10">{attendance.barnabaName}</td>
                     <td className="h-10">{attendance.menteeName}</td>
-                    <td className="h-10">{attendance.service}</td>
+                    <td
+                      className={`h-10 ${
+                        attendance.service === "미제출" && "text-rose-500"
+                      }`}
+                    >
+                      {attendance.service}
+                    </td>
                     <td className="h-10">{attendance.description}</td>
                   </tr>
                 ))}

@@ -20,7 +20,18 @@ const CohortList = ({data}: Props) => {
               .slice() // 원본 배열을 복사하여 안전하게 정렬
               .sort((a, b) => a.name.localeCompare(b.name))
               .map((member, index) => (
-                <Link key={member.id} href={`/blessing/barnabas/${member.id}`}>
+                <Link
+                  key={member.id}
+                  href={{
+                    pathname: `/blessing/barnabas/${member.id}`,
+                    query: {
+                      id: member.id,
+                      name: member.name,
+                      cohort: member.cohort,
+                    },
+                  }}
+                  as={`/blessing/barnabas/${member.id}`}
+                >
                   <div
                     className={`col-span-1 py-2 text-center cursor-pointer ${
                       index < 10 && members.length > 10 && "border-b"

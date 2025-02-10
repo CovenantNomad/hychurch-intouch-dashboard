@@ -27,7 +27,7 @@ const CellMeetingLastWeek = ({}: Props) => {
           <dt className="tracking-tight text-sm font-normal pb-2">
             셀편성인원
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-2/5 h-[32px]" />
               <Skeleton className="w-3/5 h-[14px] mt-1" />

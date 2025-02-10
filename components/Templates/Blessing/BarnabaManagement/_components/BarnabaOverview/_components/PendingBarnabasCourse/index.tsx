@@ -24,7 +24,10 @@ const PendingBarnabasCourse = ({}: Props) => {
         현재 <span className="text-amber-500">지연중인</span> 바나바과정
       </h4>
       <div className="mt-6">
-        <div className="flex justify-end mb-1">
+        <div className="flex justify-end items-center mb-1">
+          {isFetching && (
+            <span className="animate-pulse text-sm mr-4">새로고침 중..</span>
+          )}
           <button
             onClick={() => refetch()}
             className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
@@ -33,7 +36,7 @@ const PendingBarnabasCourse = ({}: Props) => {
           </button>
         </div>
         <div>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <SkeletonTable />
           ) : data ? (
             <BarnabasProcessTable data={data} />

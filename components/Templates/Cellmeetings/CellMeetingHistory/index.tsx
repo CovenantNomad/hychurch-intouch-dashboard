@@ -23,7 +23,7 @@ const CellMeetingHistory = () => {
         setCurrentDate={setCurrentDate}
         setSelectedDate={setSelectedDate}
       />
-      <CellMeetingAttendanceTable recentSunday={recentSunday} />
+      <CellMeetingAttendanceTable recentSunday={recentSunday} hasDescription />
       <CellMeetingAttendanceCountTable recentSunday={recentSunday} />
     </BlockContainer>
   );

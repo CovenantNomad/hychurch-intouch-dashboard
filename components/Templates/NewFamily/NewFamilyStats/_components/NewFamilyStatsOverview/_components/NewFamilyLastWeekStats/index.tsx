@@ -59,7 +59,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
             이번주 새가족 등록자 수
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-2/5 h-[32px]" />
               <Skeleton className="w-3/5 h-[14px] mt-1" />

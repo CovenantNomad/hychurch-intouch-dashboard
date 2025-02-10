@@ -57,7 +57,7 @@ const CellMeetingHistoricalTerms = ({}: Props) => {
           viewOptions={viewOptions}
         />
       </div>
-      {isLoading || isFetching || isInfoLoading || isInfoFetching ? (
+      {isLoading || isInfoLoading ? (
         <div>
           <Skeleton className="w-full h-32" />
         </div>

@@ -74,7 +74,7 @@ const IntouchServiceLastWeek = ({}: Props) => {
               }
             />
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-4/5 h-[32px]" />
             </>

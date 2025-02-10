@@ -1,3 +1,4 @@
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import {useRecoilValue} from "recoil";
 import {TAppointment} from "../../../../../../../../interface/barnabas";
@@ -19,14 +20,23 @@ const AppointmentList = ({isLoading, isFetching, appointments}: Props) => {
 
   return (
     <div className="pt-6 pb-32">
-      <h4 className="px-6 pb-4">
-        {dayjs(selectedDate)?.format("YYYY. MM. DD.")}{" "}
-        <span className="inline-block ml-2 text-sm tracking-wide">
-          {appointments.length !== 0 && `(전체일정: ${appointments.length}개)`}
-        </span>
-      </h4>
+      <div className="flex justify-between px-6 pb-4">
+        <h4>
+          {dayjs(selectedDate)?.format("YYYY. MM. DD.")}{" "}
+          <span className="inline-block ml-2 text-sm tracking-wide">
+            {appointments.length !== 0 &&
+              `(전체일정: ${appointments.length}개)`}
+          </span>
+        </h4>
+        {isFetching && (
+          <div className="animate-pulse flex items-center">
+            <ArrowPathIcon className="h-5 w-5 mr-2" />
+            <span className="text-sm">새로고침 중</span>
+          </div>
+        )}
+      </div>
       <div>
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <div className="px-6">
             <SkeletonListItem />
           </div>

@@ -42,7 +42,7 @@ const CellMeetingMonthlyStatic = ({}: CellMeetingMonthlyStaticProps) => {
       <h3 className="font-semibold text-tremor-content px-4 py-3.5">
         월간 셀모임 출석률 통계
       </h3>
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="px-4">
           <Skeleton className="w-full h-[318px]" />
         </div>

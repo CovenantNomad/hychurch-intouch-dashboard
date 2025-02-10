@@ -45,12 +45,17 @@ const BarnabasYearlyHistory = ({}: Props) => {
       >
         <div className="flex justify-between items-center py-3 mb-4">
           <h6 className="text-lg font-medium">바나바양육 연간기록</h6>
-          <button
-            onClick={() => refetch()}
-            className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
-          >
-            새로고침 <ArrowPathIcon className="h-5 w-5 ml-2" />
-          </button>
+          <div className="flex items-center">
+            {isFetching && (
+              <span className="animate-pulse text-sm mr-4">새로고침 중..</span>
+            )}
+            <button
+              onClick={() => refetch()}
+              className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
+            >
+              새로고침 <ArrowPathIcon className="h-5 w-5 ml-2" />
+            </button>
+          </div>
         </div>
         <div className="flex items-center justify-center mb-3">
           <button
@@ -70,7 +75,7 @@ const BarnabasYearlyHistory = ({}: Props) => {
           </button>
         </div>
         <div>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <SkeletonTable />
           ) : data && data.length !== 0 ? (
             <BarnabasHistoryTable data={data} />

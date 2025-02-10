@@ -19,7 +19,7 @@ const CellMeetingSeasonOverviewTable =
 
     return (
       <div>
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <div className="grid grid-cols-12 gap-x-6">
             <div className="col-span-4 border">
               <Skeleton className="w-[240px] h-[18px]" />
