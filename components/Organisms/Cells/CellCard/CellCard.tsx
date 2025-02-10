@@ -1,3 +1,4 @@
+import {DocumentTextIcon} from "@heroicons/react/24/solid";
 import Link from "next/link";
 import {useRecoilState} from "recoil";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
@@ -33,7 +34,7 @@ const CellCard = ({
 }: CellCardProps) => {
   const [selectedStatus, setSelectedStatus] = useRecoilState(selectedState);
 
-  const {isLoading, isFetching, data} = useFindCellQuery<
+  const {isLoading, data} = useFindCellQuery<
     FindCellQuery,
     FindCellQueryVariables
   >(
@@ -83,7 +84,7 @@ const CellCard = ({
             </div>
           </div>
           <div className="mt-8">
-            {isLoading || isFetching ? (
+            {isLoading ? (
               <div className="flex justify-between">
                 <Skeleton className="h-[84px] w-[146px]" />
                 <Skeleton className="h-[84px] w-[112px]" />
@@ -173,7 +174,10 @@ const CellCard = ({
                 </div>
               </div>
             ) : (
-              <div>데이터 조회 실패</div>
+              <div className="h-[84px] flex flex-col justify-center items-center space-y-1 text-sm">
+                <DocumentTextIcon className="h-5 w-5 text-gray-500" />
+                <p className="text-gray-500">데이터 조회 실패</p>
+              </div>
             )}
           </div>
         </div>

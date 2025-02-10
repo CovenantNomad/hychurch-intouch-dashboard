@@ -20,7 +20,7 @@ const CellMeetingSeasonOverviewChart = ({}: CellMeetingOverviewChartProps) => {
   return (
     <div>
       <div className="border rounded-md p-4">
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <div>
             <Skeleton className="w-[240px] h-[18px]" />
             <Skeleton className="w-full h-[288px] mt-5" />

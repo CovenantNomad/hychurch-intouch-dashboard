@@ -41,7 +41,7 @@ const CellMeetingHistoricalMonthly = ({}: Props) => {
           viewOptions={viewOptions}
         />
       </div>
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div>
           <Skeleton className="w-full h-32" />
         </div>

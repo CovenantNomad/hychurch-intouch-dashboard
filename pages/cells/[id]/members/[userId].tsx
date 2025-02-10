@@ -65,7 +65,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
 
       <Container>
         <SectionBackground>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <SkeletonMemberInfo />
           ) : (
             <SectionContainer>

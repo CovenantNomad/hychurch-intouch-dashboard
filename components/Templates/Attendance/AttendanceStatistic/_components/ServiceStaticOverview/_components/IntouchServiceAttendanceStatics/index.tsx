@@ -25,7 +25,7 @@ const IntouchServiceAttendanceStatics = ({}: Props) => {
           </h3>
         </div>
       </div>
-      {isLoading && isFetching ? (
+      {isLoading ? (
         <div>
           <Skeleton className="w-full h-32" />
         </div>
