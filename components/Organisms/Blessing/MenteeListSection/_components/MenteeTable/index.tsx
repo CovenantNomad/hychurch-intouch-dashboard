@@ -4,20 +4,22 @@ import {useQuery} from "react-query";
 import {useRecoilState} from "recoil";
 import {fetchMenteeStatuses} from "../../../../../../firebase/Barnabas/barnabas";
 import {
-  TAmazingMatchingStatus,
+  TAmazingMentorshipStatus,
   TMatchingStatus,
 } from "../../../../../../interface/barnabas";
 import {MemberWithTransferOut} from "../../../../../../interface/user";
 import {menteeSortState} from "../../../../../../stores/barnabaState";
 import {calculateAge} from "../../../../../../utils/utils";
+import SkeletonTable from "../../../../../Atoms/Skeleton/SkeletonTable";
 
 type Props = {
   members: MemberWithTransferOut[];
+  isLoading: boolean;
 };
 
 const ITEMS_PER_PAGE_OPTIONS = [5, 10, 20, 50];
 
-const MenteeTable = ({members}: Props) => {
+const MenteeTable = ({members, isLoading}: Props) => {
   const [sortState, setSortState] = useRecoilState(menteeSortState);
 
   const sortedMembers = [...members].sort((a, b) => {
@@ -92,7 +94,7 @@ const MenteeTable = ({members}: Props) => {
 
   const {
     data: menteeStatuses,
-    isLoading,
+    isLoading: isMenteeStatsLoading,
     error,
   } = useQuery(
     [
@@ -151,157 +153,174 @@ const MenteeTable = ({members}: Props) => {
         </div>
 
         {/* Body */}
-        <div className="divide-y divide-gray-300">
-          {paginatedMembers.map((member, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-12 text-sm text-center items-center hover:bg-gray-50"
-            >
-              <Link
-                href={{
-                  pathname: `/blessing/${member.id}`,
-                  query: {
-                    transferStatus: member.transferStatus,
-                    toCellName: member.toCellName,
-                  },
-                }}
-                as={`/blessing/${member.id}`}
+        {isLoading ? (
+          <SkeletonTable />
+        ) : (
+          <div className="divide-y divide-gray-300">
+            {paginatedMembers.map((member, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-12 text-sm text-center items-center hover:bg-gray-50"
               >
-                <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300 cursor-pointer">
-                  {member.name}
+                <Link
+                  href={{
+                    pathname: `/blessing/${member.id}`,
+                    query: {
+                      transferStatus: member.transferStatus,
+                      toCellName: member.toCellName,
+                    },
+                  }}
+                  as={`/blessing/${member.id}`}
+                >
+                  <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300 cursor-pointer">
+                    {member.name}
+                  </div>
+                </Link>
+                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  {member.gender === "MAN" ? "형제" : "자매"}
                 </div>
-              </Link>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                {member.gender === "MAN" ? "형제" : "자매"}
-              </div>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                {calculateAge(member.birthday)}
-              </div>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                {member.phone}
-              </div>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                {member.registrationDate}
-              </div>
-              <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300">
-                <div className="flex items-center space-x-2 text-gray-300">
-                  {/* 웰컴 (바나바도 아니고 어메이징도 아닐 때) */}
-                  {
+                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  {calculateAge(member.birthday)}
+                </div>
+                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  {member.phone}
+                </div>
+                <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  {member.registrationDate}
+                </div>
+                <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300">
+                  <div className="flex items-center space-x-2 text-gray-300">
+                    {/* 웰컴 (바나바도 아니고 어메이징도 아닐 때) */}
+                    {
+                      <span
+                        className={`${
+                          !menteeStatuses?.[member.id]?.isInBarnaba &&
+                          !menteeStatuses?.[member.id]?.isInAmazing &&
+                          "text-rose-500"
+                        }`}
+                      >
+                        웰컴
+                      </span>
+                    }
+                    <span className="text-gray-600">|</span>
+                    {/* 바나바 과정 */}
                     <span
                       className={`${
-                        !menteeStatuses?.[member.id]?.isInBarnaba &&
-                        !menteeStatuses?.[member.id]?.isInAmazing &&
-                        "text-rose-500"
+                        menteeStatuses?.[member.id]?.isInBarnaba &&
+                        "text-emerald-500"
                       }`}
                     >
-                      웰컴
+                      바나바
                     </span>
-                  }
-                  <span className="text-gray-600">|</span>
-                  {/* 바나바 과정 */}
-                  <span
-                    className={`${
-                      menteeStatuses?.[member.id]?.isInBarnaba &&
-                      "text-emerald-500"
-                    }`}
-                  >
-                    바나바
-                  </span>
-                  <span className="text-gray-600">|</span>
-                  {/* 어메이징 과정 */}
-                  <span
-                    className={`${
-                      menteeStatuses?.[member.id]?.isInAmazing && "text-sky-500"
-                    }`}
-                  >
-                    어메이징
-                  </span>
+                    <span className="text-gray-600">|</span>
+                    {/* 어메이징 과정 */}
+                    <span
+                      className={`${
+                        menteeStatuses?.[member.id]?.isInAmazing &&
+                        "text-sky-500"
+                      }`}
+                    >
+                      어메이징
+                    </span>
+                  </div>
+                </div>
+                <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300">
+                  <div className="flex items-center space-x-2 text-gray-300">
+                    {menteeStatuses?.[member.id]?.isInBarnaba && (
+                      <>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.barnabaStatus ===
+                              TMatchingStatus.FAILED && "text-gray-600"
+                          }`}
+                        >
+                          보류
+                        </span>
+                        <span className="text-gray-500">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.barnabaStatus ===
+                              TMatchingStatus.PENDING && "text-amber-500"
+                          }`}
+                        >
+                          지연중
+                        </span>
+                        <span className="text-gray-600">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.barnabaStatus ===
+                              TMatchingStatus.PROGRESS && "text-emerald-500"
+                          }`}
+                        >
+                          진행중
+                        </span>
+                        <span className="text-gray-600">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.barnabaStatus ===
+                              TMatchingStatus.COMPLETED && "text-blue-500"
+                          }`}
+                        >
+                          수료
+                        </span>
+                      </>
+                    )}
+                    {menteeStatuses?.[member.id]?.isInAmazing && (
+                      <>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.amazingStatus ===
+                              TAmazingMentorshipStatus.PENDING &&
+                            "text-gray-600"
+                          }`}
+                        >
+                          보류
+                        </span>
+                        <span className="text-gray-600">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.amazingStatus ===
+                              TAmazingMentorshipStatus.WAITING &&
+                            "text-amber-500"
+                          }`}
+                        >
+                          대기중
+                        </span>
+                        <span className="text-gray-600">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.amazingStatus ===
+                              TAmazingMentorshipStatus.PROGRESS &&
+                            "text-emerald-500"
+                          }`}
+                        >
+                          참여중
+                        </span>
+                        <span className="text-gray-600">|</span>
+                        <span
+                          className={`${
+                            menteeStatuses?.[member.id]?.amazingStatus ===
+                              TAmazingMentorshipStatus.COMPLETED &&
+                            "text-blue-500"
+                          }`}
+                        >
+                          완료
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="h-10 col-span-2 flex items-center justify-center">
+                  {member.transferStatus && (
+                    <span className="text-white bg-emerald-500 px-2 py-1 rounded-full text-xs">
+                      셀편성중
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="h-10 col-span-2 flex items-center justify-center border-r border-gray-300">
-                <div className="flex items-center space-x-2 text-gray-300">
-                  {menteeStatuses?.[member.id]?.isInBarnaba && (
-                    <>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TMatchingStatus.FAILED && "text-amber-500"
-                        }`}
-                      >
-                        보류
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TMatchingStatus.PENDING && "text-gray-800"
-                        }`}
-                      >
-                        지연중
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TMatchingStatus.PROGRESS && "text-emerald-500"
-                        }`}
-                      >
-                        진행중
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TMatchingStatus.COMPLETED && "text-blue-500"
-                        }`}
-                      >
-                        수료
-                      </span>
-                    </>
-                  )}
-                  {menteeStatuses?.[member.id]?.isInAmazing && (
-                    <>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TAmazingMatchingStatus.PENDING && "text-gray-600"
-                        }`}
-                      >
-                        지연중
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TAmazingMatchingStatus.PROGRESS &&
-                          "text-emerald-500"
-                        }`}
-                      >
-                        참여중
-                      </span>
-                      <span className="text-gray-600">|</span>
-                      <span
-                        className={`${
-                          menteeStatuses?.[member.id]?.barnabaStatus ===
-                            TAmazingMatchingStatus.COMPLETED && "text-blue-500"
-                        }`}
-                      >
-                        완료
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="h-10 col-span-2 flex items-center justify-center">
-                {member.transferStatus && (
-                  <span className="text-white bg-emerald-500 px-2 py-1 rounded-full text-xs">
-                    셀편성중
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 페이지네이션 */}

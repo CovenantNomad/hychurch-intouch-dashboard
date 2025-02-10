@@ -47,12 +47,24 @@ const BarnabasProcessSetting = ({
       barnabaId,
       status,
       description,
+      menteeId,
+      menteeName,
     }: {
       barnabaId: string;
       matchingId: string;
       status: TMatchingStatus;
       description?: string;
-    }) => updateBarnabaMentorship({matchingId, barnabaId, status, description}),
+      menteeId: string;
+      menteeName: string;
+    }) =>
+      updateBarnabaMentorship({
+        matchingId,
+        barnabaId,
+        status,
+        description,
+        menteeId,
+        menteeName,
+      }),
     {
       onSuccess: async (_, variables) => {
         toast.success("바나바과정 업데이트 성공");
@@ -70,6 +82,7 @@ const BarnabasProcessSetting = ({
         queryClient.invalidateQueries(["fetchBarnabaMentorship", menteeId]);
         queryClient.invalidateQueries(["getCompletedOrFailedMentorships"]);
         queryClient.invalidateQueries(["fetchLatestMentorship"]);
+        queryClient.invalidateQueries(["getAmazingWaitingList"]);
       },
       onError: (error) => {
         console.error("바나바과정 업데이트 실패", error);
@@ -85,6 +98,8 @@ const BarnabasProcessSetting = ({
         barnabaId,
         status: changedStatus,
         description,
+        menteeId,
+        menteeName,
       });
     }
   };

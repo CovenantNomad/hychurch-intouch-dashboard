@@ -7,16 +7,22 @@ export enum TMatchingStatus {
   COMPLETED = "completed",
 }
 
-export enum TAmazingMatchingStatus {
-  PENDING = "pending",
-  PROGRESS = "progress",
-  COMPLETED = "completed",
-}
-
 export enum TAppointmentStatus {
   SCHEDULED = "scheduled", // 약속 잡은 상태
   COMPLETED = "completed", // 완료
   CANCELED = "canceled", // 약속 취소
+}
+
+export enum TAmazingCourseStatus {
+  OPEN = "open", // 약속 잡은 상태
+  CLOSED = "closed", // 완료
+}
+
+export enum TAmazingMentorshipStatus {
+  PENDING = "pending",
+  WAITING = "waiting",
+  PROGRESS = "progress",
+  COMPLETED = "completed",
 }
 
 export type TBarnabaProfile = {
@@ -102,4 +108,18 @@ export type TMenteeAttendance = {
   menteeName: string;
   service: string;
   description?: string;
+};
+
+export type TAmazingCourse = {
+  cohort: string;
+  date: string;
+  status: TAmazingCourseStatus;
+  members?: TAmazingMember[];
+};
+
+export type TAmazingMember = {
+  amazingCohort?: string;
+  menteeId: string;
+  menteeName: string;
+  status: TAmazingMentorshipStatus;
 };
