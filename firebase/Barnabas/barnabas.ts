@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   addDoc,
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -15,6 +16,10 @@ import {
 } from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
+  TAmazingCourse,
+  TAmazingCourseStatus,
+  TAmazingMember,
+  TAmazingMentorshipStatus,
   TAppointment,
   TBarnabaProfile,
   TBarnabasDetail,
@@ -465,15 +470,16 @@ export const fetchMenteeStatuses = async (members: MemberWithTransferOut[]) => {
 
       // 상태 저장
       statuses[member.id] = {
-        isInBarnaba: !barnabaSnapshot.empty,
-        barnabaStatus: barnabaSnapshot.empty
-          ? null
-          : barnabaSnapshot.docs[0]?.data().status || null,
+        isInBarnaba: !barnabaSnapshot.empty && amazingSnapshot.empty, // 어메이징이 있으면 false
+        barnabaStatus:
+          !barnabaSnapshot.empty && amazingSnapshot.empty
+            ? barnabaSnapshot.docs[0]?.data().status || null
+            : null,
 
         isInAmazing: !amazingSnapshot.empty,
-        amazingStatus: amazingSnapshot.empty
-          ? null
-          : amazingSnapshot.docs[0]?.data().status || null,
+        amazingStatus: !amazingSnapshot.empty
+          ? amazingSnapshot.docs[0]?.data().status || null
+          : null,
       };
     })
   );
@@ -529,7 +535,7 @@ export const fetchIndividualBarnabaMentorship = async (
 
     // 문서가 없는 경우 null 반환
     if (querySnapshot.empty) {
-      console.warn(`No mentorship found for menteeId: ${menteeId}`);
+      console.log(`No mentorship found for menteeId: ${menteeId}`);
       return null;
     }
 
@@ -681,11 +687,15 @@ export const updateBarnabaMentorship = async ({
   barnabaId,
   status,
   description,
+  menteeId,
+  menteeName,
 }: {
   matchingId: string;
   barnabaId: string;
   status: TMatchingStatus;
   description?: string;
+  menteeId: string;
+  menteeName: string;
 }) => {
   try {
     const mentorshipRef = doc(
@@ -709,6 +719,15 @@ export const updateBarnabaMentorship = async ({
       matchingId
     );
 
+    const amazingMentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
+      menteeId
+    );
+
+    const mentorshipDoc = await getDoc(amazingMentorshipRef);
     const today = dayjs(new Date()).format("YYYY-MM-DD");
 
     await runTransaction(db, async (transaction) => {
@@ -747,6 +766,18 @@ export const updateBarnabaMentorship = async ({
         status,
         completedDate: today,
       });
+
+      if (status === TMatchingStatus.COMPLETED) {
+        transaction.set(
+          amazingMentorshipRef,
+          {
+            menteeId,
+            menteeName,
+            status: TAmazingMentorshipStatus.WAITING,
+          },
+          {merge: true}
+        );
+      }
     });
   } catch (error) {
     console.error("바나바 멘토십 업데이트 실패:", error);
@@ -1125,7 +1156,7 @@ export const getBarnabasRecords = async (profileId: string) => {
       const {total, pass, fail} = docSnap.data();
       return {total, pass, fail, thisYearpass};
     } else {
-      console.warn("⚠️ 해당 프로필의 기록을 찾을 수 없습니다.");
+      console.log("해당 프로필의 기록을 찾을 수 없습니다.");
       return {
         total: 0,
         pass: 0,
@@ -1186,5 +1217,378 @@ export const getBarnabasYearlyRecordsById = async (
   } catch (error) {
     console.error("@getBarnabasYearlyRecords:", error);
     throw new Error("데이터를 가져오는 데 실패했습니다.");
+  }
+};
+
+export const openAmazingCourse = async (
+  courseData: Omit<TAmazingCourse, "members">
+) => {
+  try {
+    const coursesRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING,
+      courseData.cohort
+    );
+
+    const existingCourse = await getDoc(coursesRef);
+
+    if (existingCourse.exists()) {
+      return {
+        success: false,
+        message: "이미 존재하는 기수입니다.",
+      };
+    }
+
+    const newCourse = {
+      ...courseData,
+      members: [], // 초기에는 멤버 없음
+    };
+
+    await setDoc(coursesRef, newCourse);
+
+    return {
+      success: true,
+      message: `어메이징 ${courseData.cohort}기가 개설 되었습니다. `,
+    };
+  } catch (error) {
+    console.error("@openAmazingCourse", error);
+    throw new Error("어메이징 과정을 생성하는 중 오류가 발생했습니다.");
+  }
+};
+
+export const getAmazingCourse = async (): Promise<TAmazingCourse[]> => {
+  try {
+    const coursesRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING
+    );
+
+    const q = query(
+      coursesRef,
+      where("status", "==", TAmazingCourseStatus.OPEN)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const amazingCourses: TAmazingCourse[] = querySnapshot.docs.map((doc) => {
+      return doc.data() as TAmazingCourse;
+    });
+
+    return amazingCourses;
+  } catch (error) {
+    console.error("@getAmazingCourse", error);
+    throw new Error("어메이징 과정을 불러오는 중 오류가 발생했습니다.");
+  }
+};
+
+export const updateAmazingCourseDate = async (
+  cohort: string,
+  date: string
+): Promise<{success: boolean; message: string}> => {
+  try {
+    const courseRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING,
+      cohort
+    );
+
+    // 🔹 해당 기수가 존재하는지 확인
+    const courseSnap = await getDoc(courseRef);
+    if (!courseSnap.exists()) {
+      return {
+        success: false,
+        message: `${cohort}기 과정을 찾을 수 없습니다.`,
+      };
+    }
+
+    // 🔹 날짜 포맷 검증 및 업데이트
+    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    await updateDoc(courseRef, {date: formattedDate});
+
+    return {
+      success: true,
+      message: `${cohort}기의 시작일이 ${formattedDate}로 업데이트되었습니다.`,
+    };
+  } catch (error) {
+    console.error("@updateAmazingCourseDate:", error);
+    throw new Error("어메이징 과정 날짜 업데이트 중 오류가 발생했습니다.");
+  }
+};
+
+export const closeAmazingCourse = async (
+  cohort: string
+): Promise<{success: boolean; message: string}> => {
+  try {
+    const courseRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING,
+      cohort
+    );
+
+    // 🔹 해당 기수가 존재하는지 확인
+    const courseSnap = await getDoc(courseRef);
+    if (!courseSnap.exists()) {
+      return {
+        success: false,
+        message: `${cohort}기 과정을 찾을 수 없습니다.`,
+      };
+    }
+
+    const courseData = courseSnap.data();
+    if (!courseData || !Array.isArray(courseData.members)) {
+      return {
+        success: false,
+        message: `${cohort}기수에 참여자 데이터가 존재하지 않습니다.`,
+      };
+    }
+
+    await runTransaction(db, async (transaction) => {
+      // 🔹 과정 상태를 `CLOSED`로 업데이트
+      transaction.update(courseRef, {status: TAmazingCourseStatus.CLOSED});
+
+      // 🔹 모든 멘티의 상태를 `COMPLETED`로 업데이트
+      courseData.members.forEach((member: {menteeId: string}) => {
+        const mentorshipRef = doc(
+          db,
+          BARNABAS_COLLCTION.BARNABAS,
+          BARNABAS_COLLCTION.DATA,
+          BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
+          member.menteeId
+        );
+        transaction.update(mentorshipRef, {
+          status: TAmazingMentorshipStatus.COMPLETED,
+        });
+      });
+    });
+
+    return {
+      success: true,
+      message: `${cohort}기가 성공적으로 종료되었습니다.`,
+    };
+  } catch (error) {
+    console.error("@closeAmazingCourse:", error);
+    throw new Error("어메이징 과정을 종료하는 중 오류가 발생했습니다.");
+  }
+};
+
+export const registerAmazingCourse = async (
+  cohort: string,
+  registerData: TAmazingMember
+): Promise<{success: boolean; message: string}> => {
+  try {
+    const coursesRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING,
+      cohort
+    );
+
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
+      registerData.menteeId
+    );
+
+    const courseDoc = await getDoc(coursesRef);
+    if (!courseDoc.exists()) {
+      console.log(
+        `해당 기수(${registerData.amazingCohort})가 존재하지 않습니다.`
+      );
+      return {
+        success: false,
+        message: `해당 기수(${registerData.amazingCohort})가 존재하지 않습니다.`,
+      };
+    }
+
+    await updateDoc(coursesRef, {
+      members: arrayUnion({
+        menteeId: registerData.menteeId,
+        menteeName: registerData.menteeName,
+        status: registerData.status,
+      }),
+    });
+
+    const mentorshipDoc = await getDoc(mentorshipRef);
+    if (!mentorshipDoc.exists()) {
+      // 문서가 없으면 새로 생성
+      await setDoc(mentorshipRef, registerData);
+    } else {
+      // 문서가 있으면 기존 데이터 업데이트
+      await updateDoc(mentorshipRef, registerData);
+    }
+
+    return {
+      success: true,
+      message: `${registerData.menteeName}, ${registerData.amazingCohort}기에 등록되었습니다.`,
+    };
+  } catch (error) {
+    console.error("@registerAmazingCourse:", error);
+    throw new Error("바나바의 활성 상태를 변경하는 중 오류가 발생했습니다.");
+  }
+};
+
+export const getAmazingWaitingList = async (): Promise<TAmazingMember[]> => {
+  try {
+    const mentorshipRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS
+    );
+
+    const q = query(
+      mentorshipRef,
+      where("status", "==", TAmazingMentorshipStatus.WAITING)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const waitingList: TAmazingMember[] = querySnapshot.docs.map((doc) => {
+      return doc.data() as TAmazingMember;
+    });
+
+    return waitingList;
+  } catch (error) {
+    console.error("@getAmazingWaitingList:", error);
+    throw new Error("어메이징 대기자 명단을 가져오는 중 오류가 발생했습니다.");
+  }
+};
+
+export const getAmazingHoldingList = async (): Promise<TAmazingMember[]> => {
+  try {
+    const mentorshipRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS
+    );
+
+    const q = query(
+      mentorshipRef,
+      where("status", "==", TAmazingMentorshipStatus.PENDING)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const holdingList: TAmazingMember[] = querySnapshot.docs.map((doc) => {
+      return doc.data() as TAmazingMember;
+    });
+
+    return holdingList;
+  } catch (error) {
+    console.error("@getAmazingWaitingList:", error);
+    throw new Error("어메이징 대기자 명단을 가져오는 중 오류가 발생했습니다.");
+  }
+};
+
+export const getAmazingMentorshipByMenteeId = async (
+  menteeId: string
+): Promise<TAmazingMember | null> => {
+  try {
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
+      menteeId
+    );
+
+    const docSnap = await getDoc(mentorshipRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    return docSnap.data() as TAmazingMember;
+  } catch (error) {
+    console.error("@getAmazingMentorshipByMenteeId:", error);
+    throw new Error("어메이징 멘토십 정보를 가져오는 중 오류가 발생했습니다.");
+  }
+};
+
+export const updateAmazingMenteeStatus = async (
+  cohort: string,
+  menteeId: string,
+  status: TAmazingMentorshipStatus
+): Promise<{success: boolean; message: string}> => {
+  try {
+    const courseRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZING,
+      cohort
+    );
+
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
+      menteeId
+    );
+
+    // 🔹 해당 기수가 존재하는지 확인
+    const courseSnap = await getDoc(courseRef);
+    if (!courseSnap.exists()) {
+      return {
+        success: false,
+        message: `${cohort}기 과정을 찾을 수 없습니다.`,
+      };
+    }
+
+    // 🔹 Firestore 트랜잭션 사용
+    await runTransaction(db, async (transaction) => {
+      const courseData = (await transaction.get(courseRef)).data();
+
+      if (!courseData || !Array.isArray(courseData.members)) {
+        return {
+          success: false,
+          message: `${cohort}기 과정에서 해당 멤버를 찾을 수 없습니다.`,
+        };
+      }
+
+      // 🔹 members 배열에서 해당 멘티 제거
+      const updatedMembers = courseData.members.filter(
+        (member: {menteeId: string}) => member.menteeId !== menteeId
+      );
+
+      // 🔹 courseRef의 members 업데이트
+      transaction.update(courseRef, {members: updatedMembers});
+
+      // 🔹 mentorshipRef의 상태 변경
+      transaction.update(mentorshipRef, {status});
+    });
+
+    return {
+      success: true,
+      message: `멘티의 상태가 업데이트되었습니다.`,
+    };
+  } catch (error) {
+    console.error("@updateAmazingCourseDate:", error);
+    throw new Error("어메이징 과정 날짜 업데이트 중 오류가 발생했습니다.");
   }
 };

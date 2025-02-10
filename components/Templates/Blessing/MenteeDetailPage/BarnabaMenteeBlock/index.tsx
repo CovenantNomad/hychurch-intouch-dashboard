@@ -1,8 +1,9 @@
+import {ExclamationTriangleIcon} from "@heroicons/react/24/solid";
 import {useQuery} from "react-query";
 import {fetchIndividualBarnabaMentorship} from "../../../../../firebase/Barnabas/barnabas";
 import {TMatchingStatus} from "../../../../../interface/barnabas";
 import {getGender} from "../../../../../utils/utils";
-import EmptyState from "../../../../Atoms/EmptyStates/EmptyState";
+import Skeleton from "../../../../Atoms/Skeleton/Skeleton";
 import {
   Accordion,
   AccordionContent,
@@ -16,7 +17,7 @@ type Props = {
 };
 
 const BarnabaMenteeBlock = ({userId}: Props) => {
-  const {data, isLoading, isFetching, error} = useQuery(
+  const {data, isLoading, error} = useQuery(
     ["fetchBarnabaMentorship", userId],
     () => fetchIndividualBarnabaMentorship(userId),
     {
@@ -37,11 +38,11 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
 
   return (
     <div className="border px-4 py-4 rounded-md">
-      {isLoading || isFetching ? (
-        <div className="py-4">로딩중...</div>
+      <h3 className="text-base font-medium">바나바 과정</h3>
+      {isLoading ? (
+        <Skeleton className="h-[200px] mt-4" />
       ) : data ? (
         <div>
-          <h3 className="text-base font-medium">바나바 과정</h3>
           <div className="flex justify-between mt-4">
             <div className="text-sm space-x-2">
               <span>담당 바나바:</span>
@@ -129,7 +130,12 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
           </div>
         </div>
       ) : (
-        <EmptyState text="바나바 과정에 대한 데이터가 존재하지 않습니다." />
+        <div className="h-[340px] flex flex-col justify-center items-center">
+          <ExclamationTriangleIcon className="h-6 w-6" />
+          <span className="block text-sm text-gray-600 mt-1">
+            바나바 과정에 대한 데이터가 존재하지 않습니다.
+          </span>
+        </div>
       )}
     </div>
   );

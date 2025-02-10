@@ -1,15 +1,23 @@
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
+import AmazaingHoldList from "./_components/AmazaingHoldList";
+import AmazingCourse from "./_components/AmazingCourse";
+import AmazingWaitingList from "./_components/AmazingWaitingList";
 
 type Props = {};
 
 const AmazingManagement = ({}: Props) => {
   return (
-    <BlockContainer firstBlock>
-      <div>
-        어메이징 과정은 개발 예정입니다. <br />
-        (필요한 방식이 있으면 알려주세요)
-      </div>
-    </BlockContainer>
+    <>
+      <BlockContainer firstBlock>
+        <AmazingCourse />
+      </BlockContainer>
+      <BlockContainer>
+        <AmazingWaitingList />
+      </BlockContainer>
+      <BlockContainer>
+        <AmazaingHoldList />
+      </BlockContainer>
+    </>
   );
 };
 

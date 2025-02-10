@@ -7,9 +7,10 @@ import MenteeTable from "./_components/MenteeTable";
 
 interface MenteeListSectionProps {
   memberList: MemberWithTransferOut[];
+  isLoading: boolean;
 }
 
-const MenteeListSection = ({memberList}: MenteeListSectionProps) => {
+const MenteeListSection = ({memberList, isLoading}: MenteeListSectionProps) => {
   //Search State
   const [query, setQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
@@ -26,7 +27,7 @@ const MenteeListSection = ({memberList}: MenteeListSectionProps) => {
           <BarnabaMatching members={memberList} />
         </div>
       </div>
-      <MenteeTable members={memberList} />
+      <MenteeTable members={memberList} isLoading={isLoading} />
       <SearchModal
         people={memberList}
         open={open}

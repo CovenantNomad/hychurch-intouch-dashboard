@@ -72,6 +72,7 @@ export enum BARNABAS_COLLCTION {
   HISTORY = "HISTORY",
   BARNABAPROFILE = "BarnabaProfile",
   MENTEEPROFILE = "MenteeProfile",
+  AMAZING = "Amazing",
   BARNABAMENTORSHIPS = "BarnabaMentorships",
   AMAZINGMENTORSHIPS = "AmazingMentorships",
   MEETINGSCHEDULES = "MeetingSchedules",

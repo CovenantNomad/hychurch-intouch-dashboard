@@ -71,7 +71,7 @@ const MenteeManagement = ({}: MenteeManagementProps) => {
   return (
     <>
       <BlockContainer firstBlock>
-        <MenteeListSection memberList={blessingList} />
+        <MenteeListSection memberList={blessingList} isLoading={isLoading} />
       </BlockContainer>
     </>
   );
