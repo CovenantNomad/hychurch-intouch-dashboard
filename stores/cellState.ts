@@ -1,15 +1,16 @@
-import { atom, selector } from "recoil";
+import {atom, selector} from "recoil";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
-import { FIND_CELL_LIMIT } from "../constants/constant";
-import { FindCellsDocument } from "../graphql/generated";
-import { CellType, SpecialCellIdType } from "../interface/cell";
+import {FIND_CELL_LIMIT} from "../constants/constant";
+import {FindCellsDocument} from "../graphql/generated";
+import {CellType, SpecialCellIdType} from "../interface/cell";
 
 export enum CommunityFilter {
   SHOW_ALL = "전체",
-  TRUTH = "진리",
-  LIFE = "생명",
-  WAY = "길",
-  LIGHT = "빛",
+  LIGHTONE = "빛1",
+  LIGHTTWO = "빛2",
+  LIGHTTHREE = "빛3",
+  LIGHTFOUR = "빛4",
+  LIGHTFIVE = "빛5",
 }
 
 export const communityFilterState = atom<string>({
@@ -22,7 +23,7 @@ export const cellListState = selector<{
   totalNum: number;
 }>({
   key: "CELL/CELL_LIST",
-  get: async ({ get }) => {
+  get: async ({get}) => {
     const filter = get(communityFilterState);
     const result = await graphlqlRequestClient.request(FindCellsDocument, {
       limit: FIND_CELL_LIMIT,
@@ -36,53 +37,75 @@ export const cellListState = selector<{
     );
 
     switch (filter) {
-      case CommunityFilter.LIFE:
-        let lifetCommunity: CellType[] = commonCell
-          .filter((cell: CellType) => cell.community === CommunityFilter.LIFE)
+      case CommunityFilter.LIGHTONE:
+        let lightOneCommnuty: CellType[] = commonCell
+          .filter(
+            (cell: CellType) => cell.community === CommunityFilter.LIGHTONE
+          )
           .sort((a, b) => {
             if (a.name > b.name) return 1;
             else if (b.name > a.name) return -1;
             else return 1;
           });
         return {
-          cellList: lifetCommunity,
-          totalNum: lifetCommunity.length,
+          cellList: lightOneCommnuty,
+          totalNum: lightOneCommnuty.length,
         };
-      case CommunityFilter.LIGHT:
-        let LightCommnuty: CellType[] = commonCell
-          .filter((cell: CellType) => cell.community === CommunityFilter.LIFE)
+      case CommunityFilter.LIGHTTWO:
+        let lightTwoCommnuty: CellType[] = commonCell
+          .filter(
+            (cell: CellType) => cell.community === CommunityFilter.LIGHTTWO
+          )
           .sort((a, b) => {
             if (a.name > b.name) return 1;
             else if (b.name > a.name) return -1;
             else return 1;
           });
         return {
-          cellList: LightCommnuty,
-          totalNum: LightCommnuty.length,
+          cellList: lightTwoCommnuty,
+          totalNum: lightTwoCommnuty.length,
         };
-      case CommunityFilter.TRUTH:
-        let truthCommnuty: CellType[] = commonCell
-          .filter((cell: CellType) => cell.community === CommunityFilter.TRUTH)
+      case CommunityFilter.LIGHTTHREE:
+        let lightThreeCommnuty: CellType[] = commonCell
+          .filter(
+            (cell: CellType) => cell.community === CommunityFilter.LIGHTTHREE
+          )
           .sort((a, b) => {
             if (a.name > b.name) return 1;
             else if (b.name > a.name) return -1;
             else return 1;
           });
         return {
-          cellList: truthCommnuty,
-          totalNum: truthCommnuty.length,
+          cellList: lightThreeCommnuty,
+          totalNum: lightThreeCommnuty.length,
         };
-      case CommunityFilter.WAY:
-        let wayCommnuty: CellType[] = commonCell
-          .filter((cell: CellType) => cell.community === CommunityFilter.WAY)
+      case CommunityFilter.LIGHTFOUR:
+        let lightFourCommnuty: CellType[] = commonCell
+          .filter(
+            (cell: CellType) => cell.community === CommunityFilter.LIGHTFOUR
+          )
           .sort((a, b) => {
             if (a.name > b.name) return 1;
             else if (b.name > a.name) return -1;
             else return 1;
           });
         return {
-          cellList: wayCommnuty,
-          totalNum: wayCommnuty.length,
+          cellList: lightFourCommnuty,
+          totalNum: lightFourCommnuty.length,
+        };
+      case CommunityFilter.LIGHTFIVE:
+        let lightFiveCommnuty: CellType[] = commonCell
+          .filter(
+            (cell: CellType) => cell.community === CommunityFilter.LIGHTFIVE
+          )
+          .sort((a, b) => {
+            if (a.name > b.name) return 1;
+            else if (b.name > a.name) return -1;
+            else return 1;
+          });
+        return {
+          cellList: lightFiveCommnuty,
+          totalNum: lightFiveCommnuty.length,
         };
       default:
         return {

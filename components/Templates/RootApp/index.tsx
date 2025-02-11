@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import SplashScreen from "../SplashScreen";
 
 interface RootAppProps {
   children: React.ReactNode;
 }
 
-const RootApp = ({ children }: RootAppProps) => {
+const RootApp = ({children}: RootAppProps) => {
   const [initialized, setInitialized] = useState(false);
 
   if (!initialized) {

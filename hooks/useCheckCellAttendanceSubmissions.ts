@@ -14,16 +14,19 @@ import {CommunityFilter} from "../stores/cellState";
 const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [attendanceStatus, setAttendanceStatus] = useState<boolean>(false);
-  const [communityWay, setCommunityWay] = useState<
+  const [communityOne, setCommunityOne] = useState<
     AttendanceSubmissionType[] | null
   >(null);
-  const [communityLife, setCommunityLife] = useState<
+  const [communityTwo, setCommunityTwo] = useState<
     AttendanceSubmissionType[] | null
   >(null);
-  const [communityTruth, setCommunityTruth] = useState<
+  const [communityThree, setCommunityThree] = useState<
     AttendanceSubmissionType[] | null
   >(null);
-  const [communityLight, setCommunityLight] = useState<
+  const [communityFour, setCommunityFour] = useState<
+    AttendanceSubmissionType[] | null
+  >(null);
+  const [communityFive, setCommunityFive] = useState<
     AttendanceSubmissionType[] | null
   >(null);
   const [specialCells, setSpecialCells] = useState<
@@ -69,36 +72,45 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
           )
         );
 
-        setCommunityWay(
+        setCommunityOne(
           commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.WAY)
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTONE)
             .sort((a, b) => {
               if (a.cellName > b.cellName) return 1;
               else if (b.cellName > a.cellName) return -1;
               else return 0;
             })
         );
-        setCommunityLife(
+        setCommunityTwo(
           commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIFE)
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTTWO)
             .sort((a, b) => {
               if (a.cellName > b.cellName) return 1;
               else if (b.cellName > a.cellName) return -1;
               else return 0;
             })
         );
-        setCommunityTruth(
+        setCommunityThree(
           commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.TRUTH)
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTTHREE)
             .sort((a, b) => {
               if (a.cellName > b.cellName) return 1;
               else if (b.cellName > a.cellName) return -1;
               else return 0;
             })
         );
-        setCommunityLight(
+        setCommunityFour(
           commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHT)
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFOUR)
+            .sort((a, b) => {
+              if (a.cellName > b.cellName) return 1;
+              else if (b.cellName > a.cellName) return -1;
+              else return 0;
+            })
+        );
+        setCommunityFive(
+          commonCell
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFOUR)
             .sort((a, b) => {
               if (a.cellName > b.cellName) return 1;
               else if (b.cellName > a.cellName) return -1;
@@ -118,10 +130,11 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
           setAttendanceStatus(false);
         }
       } else {
-        setCommunityWay(null);
-        setCommunityLife(null);
-        setCommunityTruth(null);
-        setCommunityLight(null);
+        setCommunityOne(null);
+        setCommunityTwo(null);
+        setCommunityThree(null);
+        setCommunityFour(null);
+        setCommunityFive(null);
       }
 
       setIsLoading(false);
@@ -133,10 +146,11 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
   return {
     isLoading,
     attendanceStatus,
-    communityWay,
-    communityLife,
-    communityTruth,
-    communityLight,
+    communityOne,
+    communityTwo,
+    communityThree,
+    communityFour,
+    communityFive,
     specialCells,
   };
 };
