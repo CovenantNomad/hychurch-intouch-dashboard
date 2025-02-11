@@ -1,14 +1,16 @@
-import React from 'react';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { AttendanceMemberType } from '../../../../../interface/attendance';
+import {CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {AttendanceMemberType} from "../../../../../interface/attendance";
 
 interface MemberAttendanceListItemProps {
-  member: AttendanceMemberType
+  member: AttendanceMemberType;
   onSelectHandler: (id: string, name: string) => void;
 }
 
-const MemberAttendanceListItem = ({ member, onSelectHandler }: MemberAttendanceListItemProps) => {
-  const cellMeeting = true
+const MemberAttendanceListItem = ({
+  member,
+  onSelectHandler,
+}: MemberAttendanceListItemProps) => {
+  const cellMeeting = true;
 
   return (
     <div>
@@ -19,36 +21,28 @@ const MemberAttendanceListItem = ({ member, onSelectHandler }: MemberAttendanceL
       >
         <span className="flex min-w-0 flex-1 items-center space-x-3">
           <span className="block min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium text-gray-900">{member.name}</span>
+            <span className="block truncate text-sm font-medium text-gray-900">
+              {member.name}
+            </span>
           </span>
         </span>
-        <div className='flex gap-x-5'>
-          <div className='w-10'>
-            <p className='text-xs text-center'>예배</p>
+        <div className="flex gap-x-5">
+          <div className="w-10">
+            <p className="text-xs text-center">예배</p>
             <span className="flex items-center justify-center pt-1">
               {!member.attendance ? (
-                <XMarkIcon className='h-5 w-5 text-rose-700'/>
+                <XMarkIcon className="h-5 w-5 text-rose-700" />
               ) : (
                 <>
-                {!member.isOnline ? (
-                  <CheckIcon className='h-5 w-5 text-teal-700'/>
-                ) : (
-                  <CheckIcon className='h-5 w-5 text-yellow-500'/>
-                )}
+                  {!member.isOnline ? (
+                    <CheckIcon className="h-5 w-5 text-teal-700" />
+                  ) : (
+                    <CheckIcon className="h-5 w-5 text-yellow-500" />
+                  )}
                 </>
               )}
             </span>
           </div>
-          {/* <div className='w-10'>
-            <p className='text-xs text-center'>셀모임</p>
-            <span className="flex items-center justify-center pt-1">
-              {cellMeeting ? (
-                <CheckIcon className='h-5 w-5 text-teal-700'/>
-              ) : (
-                <XMarkIcon className='h-5 w-5 text-rose-700'/>
-              )}
-            </span>
-          </div> */}
         </div>
       </button>
     </div>

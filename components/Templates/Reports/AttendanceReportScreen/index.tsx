@@ -1,18 +1,25 @@
-import React from "react";
 //components
-import Spinner from "../../../Atoms/Spinner";
-import BlockContainer from "../../../Atoms/Container/BlockContainer";
-import BlockCardContainer from "../../../Atoms/Container/BlockCardContainer";
-import AttendanceHeader from "../../../Organisms/Reports/AttendanceHeader/AttendanceHeader";
-import { getMostRecentSunday } from "../../../../utils/dateUtils";
 import useCheckCellAttendanceSubmissions from "../../../../hooks/useCheckCellAttendanceSubmissions";
+import {getMostRecentSunday} from "../../../../utils/dateUtils";
+import BlockCardContainer from "../../../Atoms/Container/BlockCardContainer";
+import BlockContainer from "../../../Atoms/Container/BlockContainer";
+import Spinner from "../../../Atoms/Spinner";
 import AttendanceCommunitySection from "../../../Organisms/Reports/AttendanceCommunitySection/AttendanceCommunitySection";
+import AttendanceHeader from "../../../Organisms/Reports/AttendanceHeader/AttendanceHeader";
 
 interface AttendanceReportScreenProps {}
 
 const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
   const recentSunday = getMostRecentSunday();
-  const { isLoading, attendanceStatus, communityWay, communityTruth, communityLife, communityLight } = useCheckCellAttendanceSubmissions(recentSunday.format('YYYY-MM-DD'))
+  const {
+    isLoading,
+    attendanceStatus,
+    communityOne,
+    communityTwo,
+    communityThree,
+    communityFour,
+    communityFive,
+  } = useCheckCellAttendanceSubmissions(recentSunday.format("YYYY-MM-DD"));
 
   return (
     <>
@@ -23,31 +30,40 @@ const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
       ) : (
         <>
           <BlockContainer firstBlock>
-            <AttendanceHeader attendanceDate={recentSunday.format('YYYY-MM-DD')} attendanceStatus={attendanceStatus} />
+            <AttendanceHeader
+              attendanceDate={recentSunday.format("YYYY-MM-DD")}
+              attendanceStatus={attendanceStatus}
+            />
           </BlockContainer>
-          <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-4 lg:gap-x-2 ">
+          <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-5 lg:gap-x-2 ">
             <BlockCardContainer>
-              <AttendanceCommunitySection 
-                communityName="길"
-                communityCells={communityWay}
+              <AttendanceCommunitySection
+                communityName="빛1"
+                communityCells={communityOne}
               />
             </BlockCardContainer>
             <BlockCardContainer>
-              <AttendanceCommunitySection 
-                communityName="진리"
-                communityCells={communityTruth}
+              <AttendanceCommunitySection
+                communityName="빛2"
+                communityCells={communityTwo}
               />
             </BlockCardContainer>
             <BlockCardContainer>
-              <AttendanceCommunitySection 
-                communityName="생명"
-                communityCells={communityLife}
+              <AttendanceCommunitySection
+                communityName="빛3"
+                communityCells={communityThree}
               />
             </BlockCardContainer>
             <BlockCardContainer>
-              <AttendanceCommunitySection 
-                communityName="빛"
-                communityCells={communityLight}
+              <AttendanceCommunitySection
+                communityName="빛4"
+                communityCells={communityFour}
+              />
+            </BlockCardContainer>
+            <BlockCardContainer>
+              <AttendanceCommunitySection
+                communityName="빛5"
+                communityCells={communityFive}
               />
             </BlockCardContainer>
           </div>

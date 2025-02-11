@@ -1,17 +1,16 @@
-import React from "react";
+import {useForm} from "react-hook-form";
+import {toast} from "react-hot-toast";
+import {useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
-  useUpdateCellFieldsMutation,
   UpdateCellFieldsMutation,
   UpdateCellFieldsMutationVariables,
+  useUpdateCellFieldsMutation,
 } from "../../../graphql/generated";
-import { updateCellForm } from "../../../interface/cell";
+import {updateCellForm} from "../../../interface/cell";
+import BlockContainer from "../../Atoms/Container/BlockContainer";
 import SectionContainer from "../../Atoms/Container/SectionContainer";
 import SectionTitle from "../../Atoms/Typography/SectionTitle";
-import { useQueryClient } from "react-query";
-import { toast } from "react-hot-toast";
-import { useForm } from "react-hook-form";
-import BlockContainer from "../../Atoms/Container/BlockContainer";
 
 interface CellEditScreenProps {
   id: string;
@@ -19,21 +18,21 @@ interface CellEditScreenProps {
   community: string;
 }
 
-const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
+const CellEditScreen = ({id, name, community}: CellEditScreenProps) => {
   const queryClient = useQueryClient();
   const {
     handleSubmit,
     register,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm<updateCellForm>({
     defaultValues: {
       name,
-      community
-    }
+      community,
+    },
   });
 
-  const { mutate } = useUpdateCellFieldsMutation<
+  const {mutate} = useUpdateCellFieldsMutation<
     UpdateCellFieldsMutation,
     UpdateCellFieldsMutationVariables
   >(graphlqlRequestClient, {
@@ -43,9 +42,9 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
     },
     onSuccess(data) {
       queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(id) }],
+        queryKey: ["findCell", {id: Number(id)}],
       });
-      queryClient.invalidateQueries({ queryKey: ["findCells"] });
+      queryClient.invalidateQueries({queryKey: ["findCells"]});
       toast.success(
         `${data?.updateCellFields.cell.name}이 성공적으로 업데이트 되었습니다`
       );
@@ -111,10 +110,6 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
                   defaultValue={community}
                   placeholder="공동체를 입력해주세요"
                   {...register("community", {
-                    pattern: {
-                      value: /^[가-힣a-zA-Z]+$/g,
-                      message: "글자만 입력해주세요",
-                    },
                     setValueAs: (v) => v.replace(/\s/g, ""),
                   })}
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm outline-none appearance-none focus:border-navy-blue sm:text-sm"
@@ -130,7 +125,9 @@ const CellEditScreen = ({ id, name, community }: CellEditScreenProps) => {
           <div className="py-3 bg-white text-right">
             <button
               type="submit"
-              disabled={name === watch('name') && community === watch('community')}
+              disabled={
+                name === watch("name") && community === watch("community")
+              }
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-BLUE disabled:bg-gray-500 disabled:cursor-not-allowed"
             >
               수정하기

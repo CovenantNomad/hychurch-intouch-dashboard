@@ -1,16 +1,30 @@
-import { collection, doc, getDoc, getDocs, query, runTransaction, where } from "firebase/firestore";
-import { db } from "../../client/firebaseConfig";
-import { EVALUATIONFORM_COLLCTION } from "../../interface/firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import toast from "react-hot-toast";
-import { IndividualEvaluationDataType, TCellEvaluationFrom, TEvaluationSubmission } from "../../interface/EvaluationFormTypes";
+import {db} from "../../client/firebaseConfig";
+import {
+  IndividualEvaluationDataType,
+  TCellEvaluationFrom,
+  TEvaluationSubmission,
+} from "../../interface/EvaluationFormTypes";
+import {EVALUATIONFORM_COLLCTION} from "../../interface/firebase";
 
-
-export const getEvaluationSubmissionCheck = async ( seasonName: string, communityName: string ) => {
+export const getEvaluationSubmissionCheck = async (seasonName: string) => {
   try {
-    const submissionRef = collection(db, EVALUATIONFORM_COLLCTION.EVALUATIONFORM, seasonName, EVALUATIONFORM_COLLCTION.SUBMISSION);
-    // const communityQuery = query(submissionRef, where("community", "==", communityName));
+    const submissionRef = collection(
+      db,
+      EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
+      seasonName,
+      EVALUATIONFORM_COLLCTION.SUBMISSION
+    );
 
-    let tempList: TEvaluationSubmission[] = []
+    let tempList: TEvaluationSubmission[] = [];
 
     const querySnapshot = await getDocs(submissionRef);
     querySnapshot.forEach((doc) => {
@@ -19,27 +33,30 @@ export const getEvaluationSubmissionCheck = async ( seasonName: string, communit
         cellName: doc.data().cellName,
         submissionStatus: doc.data().submissionStatus,
         submissionDate: doc.data().submissionDate,
-      }
-      tempList.push(data)
+      };
+      tempList.push(data);
     });
 
-    return tempList
-    
+    return tempList;
   } catch (error: any) {
     console.log("@getEvaluationSubmissionByComm Error: ", error);
-    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`)
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
     return null;
   }
-}
+};
 
-export const getCellEvaluationFormByCellId = async ( cellId: string ) => {
+export const getCellEvaluationFormByCellId = async (cellId: string) => {
   try {
-    const settingRef = doc(db, EVALUATIONFORM_COLLCTION.EVALUATIONFORM, EVALUATIONFORM_COLLCTION.SETTINGS)
+    const settingRef = doc(
+      db,
+      EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
+      EVALUATIONFORM_COLLCTION.SETTINGS
+    );
     const settingDoc = await getDoc(settingRef);
 
     if (settingDoc.exists()) {
       if (settingDoc.data().isActive) {
-        const seasonName = settingDoc.data().seasonName
+        const seasonName = settingDoc.data().seasonName;
 
         // 제출정보 가져오기
         const submissionRef = doc(
@@ -48,9 +65,11 @@ export const getCellEvaluationFormByCellId = async ( cellId: string ) => {
           seasonName,
           EVALUATIONFORM_COLLCTION.SUBMISSION,
           cellId
-        )
+        );
 
-        const submissionDoc = (await getDoc(submissionRef)).data() as TEvaluationSubmission
+        const submissionDoc = (
+          await getDoc(submissionRef)
+        ).data() as TEvaluationSubmission;
 
         // 작성내용 가져오기
 
@@ -58,46 +77,50 @@ export const getCellEvaluationFormByCellId = async ( cellId: string ) => {
           db,
           EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
           seasonName,
-          EVALUATIONFORM_COLLCTION.MEMBERLIST,
-        )
+          EVALUATIONFORM_COLLCTION.MEMBERLIST
+        );
 
-        const memberQuery = query(membersCollecionRef, where('previousCellId', '==', cellId))
+        const memberQuery = query(
+          membersCollecionRef,
+          where("previousCellId", "==", cellId)
+        );
         const querySnapshot = await getDocs(memberQuery);
 
-        let tempList: IndividualEvaluationDataType[] = []
+        let tempList: IndividualEvaluationDataType[] = [];
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          tempList.push(doc.data() as IndividualEvaluationDataType)
+          tempList.push(doc.data() as IndividualEvaluationDataType);
         });
 
         // return 값 작성하기
         const resultData: TCellEvaluationFrom = {
           ...submissionDoc,
-          memberList: tempList
-        }
+          memberList: tempList,
+        };
 
-        return resultData
-
+        return resultData;
       } else {
-        return null
+        return null;
       }
     }
-
   } catch (error: any) {
-    console.log('@getCellMeeting Error: ', error)
-    return null
+    console.log("@getCellMeeting Error: ", error);
+    return null;
   }
-}
+};
 
-
-export const getEvaluationFormByUserId = async ( userId: string ) => {
+export const getEvaluationFormByUserId = async (userId: string) => {
   try {
-    const settingRef = doc(db, EVALUATIONFORM_COLLCTION.EVALUATIONFORM, EVALUATIONFORM_COLLCTION.SETTINGS)
+    const settingRef = doc(
+      db,
+      EVALUATIONFORM_COLLCTION.EVALUATIONFORM,
+      EVALUATIONFORM_COLLCTION.SETTINGS
+    );
     const settingDoc = await getDoc(settingRef);
 
     if (settingDoc.exists()) {
       if (settingDoc.data().isActive) {
-        const seasonName = settingDoc.data().seasonName
+        const seasonName = settingDoc.data().seasonName;
 
         const memberDocRef = doc(
           db,
@@ -105,26 +128,22 @@ export const getEvaluationFormByUserId = async ( userId: string ) => {
           seasonName,
           EVALUATIONFORM_COLLCTION.MEMBERLIST,
           userId
-        )
+        );
 
-        const memberDoc = await getDoc(memberDocRef)
+        const memberDoc = await getDoc(memberDocRef);
 
         if (memberDoc.exists()) {
-
-          console.log(memberDoc.exists())
-          return memberDoc.data() as IndividualEvaluationDataType
+          console.log(memberDoc.exists());
+          return memberDoc.data() as IndividualEvaluationDataType;
         } else {
-          return null
+          return null;
         }
-
       } else {
-        return null
+        return null;
       }
     }
-
   } catch (error: any) {
-    console.log('@getCellMeeting Error: ', error)
-    return null
+    console.log("@getCellMeeting Error: ", error);
+    return null;
   }
-}
-
+};

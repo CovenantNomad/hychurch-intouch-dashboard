@@ -1,7 +1,8 @@
 export const communityTabs = [
-  { id: 0, name: "전체" },
-  { id: 1, name: "길" },
-  { id: 2, name: "진리" },
-  { id: 3, name: "생명" },
-  { id: 4, name: "빛" },
+  {id: 0, name: "전체"},
+  {id: 1, name: "빛1"},
+  {id: 2, name: "빛2"},
+  {id: 3, name: "빛3"},
+  {id: 4, name: "빛4"},
+  {id: 5, name: "빛5"},
 ];

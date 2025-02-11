@@ -1,21 +1,16 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import graphlqlRequestClient from "../../client/graphqlRequestClient";
-import { INTOUCH_DASHBOARD_USER } from "../../constants/constant";
-import { useMeQuery } from "../../graphql/generated";
-import { userState } from "../../stores/userState";
+import {useRouter} from "next/router";
+import {useState} from "react";
+import {useRecoilState} from "recoil";
+import {userState} from "../../stores/userState";
 
 interface ApploadingProps {
   children: React.ReactNode;
 }
 
-const Apploading = ({ children }: ApploadingProps) => {
+const Apploading = ({children}: ApploadingProps) => {
   const [isLoadingCompleted, setIsLoadingCompleted] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const router = useRouter();
-
-  console.log(user);
 
   // const initialize = () => {
   //   try {

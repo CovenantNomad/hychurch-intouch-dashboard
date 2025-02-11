@@ -1,12 +1,12 @@
-import "../styles/globals.css";
-import React, { Suspense } from "react";
-import type { AppProps } from "next/app";
-import { RecoilRoot } from "recoil";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { Toaster } from "react-hot-toast";
-import RootApp from "../components/Templates/RootApp";
-import ErrorBoundary from "../components/Templates/ErrorBoundary";
+import type {AppProps} from "next/app";
+import {Suspense} from "react";
+import {Toaster} from "react-hot-toast";
+import {QueryClient, QueryClientProvider} from "react-query";
+import {RecoilRoot} from "recoil";
 import Custom404 from "../components/Templates/Custom404";
+import ErrorBoundary from "../components/Templates/ErrorBoundary";
+import RootApp from "../components/Templates/RootApp";
+import "../styles/globals.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
   },
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({Component, pageProps}: AppProps) {
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>

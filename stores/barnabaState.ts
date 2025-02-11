@@ -1,5 +1,10 @@
 import {atom} from "recoil";
 
+export const barnabasViewState = atom({
+  key: "BARNABA/COHORT_VIEW",
+  default: false,
+});
+
 export const barnabaSortState = atom<{
   currentPage: number;
   itemsPerPage: number;

@@ -136,17 +136,20 @@ export const getFirstName = (cellName: string) => {
 };
 
 export const getCommunityName = (communityName: string) => {
-  if (communityName === CommunityFilter.LIFE) {
-    return "life";
+  if (communityName === CommunityFilter.LIGHTONE) {
+    return "lightOne";
   }
-  if (communityName === CommunityFilter.LIGHT) {
-    return "light";
+  if (communityName === CommunityFilter.LIGHTTWO) {
+    return "lightTwo";
   }
-  if (communityName === CommunityFilter.WAY) {
-    return "way";
+  if (communityName === CommunityFilter.LIGHTTHREE) {
+    return "lightThree";
   }
-  if (communityName === CommunityFilter.TRUTH) {
-    return "truth";
+  if (communityName === CommunityFilter.LIGHTFOUR) {
+    return "lightFour";
+  }
+  if (communityName === CommunityFilter.LIGHTFIVE) {
+    return "lightFive";
   }
 };
 

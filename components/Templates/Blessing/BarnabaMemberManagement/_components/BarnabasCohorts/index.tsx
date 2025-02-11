@@ -22,12 +22,12 @@ const BarnabasCohorts = ({}: Props) => {
       <div
         className={`py-5 px-3 bg-white border-l border-b border-r border-slate-200 rounded-bl-md rounded-br-md lg:px-5`}
       >
-        <div className="flex justify-between items-center py-3 mb-8">
+        <div className="flex justify-between items-end py-3 border-b mb-8">
           <h6 className="text-lg font-medium">바나바 기수별 명단</h6>
           <AddBarnabas />
         </div>
         <div>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <SkeletonTable />
           ) : data ? (
             <CohortList data={data} />
