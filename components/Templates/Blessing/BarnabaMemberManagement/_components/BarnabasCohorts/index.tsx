@@ -8,7 +8,7 @@ import CohortList from "./_components/CohortList";
 type Props = {};
 
 const BarnabasCohorts = ({}: Props) => {
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, isFetching, data, refetch} = useQuery(
     ["getGroupedDataByCohort"],
     () => getGroupedDataByCohort(),
     {
@@ -30,7 +30,7 @@ const BarnabasCohorts = ({}: Props) => {
           {isLoading ? (
             <SkeletonTable />
           ) : data ? (
-            <CohortList data={data} />
+            <CohortList data={data} isFetching={isFetching} refetch={refetch} />
           ) : (
             <div className="h-32 flex flex-col justify-center items-center space-y-1">
               <ExclamationTriangleIcon className="h-6 w-6" />
