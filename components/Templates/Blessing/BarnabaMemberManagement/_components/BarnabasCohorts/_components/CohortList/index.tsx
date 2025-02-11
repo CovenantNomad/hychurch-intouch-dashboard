@@ -1,4 +1,10 @@
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import Link from "next/link";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+} from "react-query";
 import {useRecoilState} from "recoil";
 import {TBarnabaProfile} from "../../../../../../../../interface/barnabas";
 import {barnabasViewState} from "../../../../../../../../stores/barnabaState";
@@ -6,14 +12,27 @@ import {calculateAge, cx} from "../../../../../../../../utils/utils";
 
 type Props = {
   data: Record<string, TBarnabaProfile[]>;
+  isFetching: boolean;
+  refetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<Record<string, any[]>, unknown>>;
 };
 
-const CohortList = ({data}: Props) => {
+const CohortList = ({data, isFetching, refetch}: Props) => {
   const [isViewAll, setIsViewAll] = useRecoilState(barnabasViewState);
 
   return (
     <>
-      <div className="flex justify-end mb-2">
+      <div className="flex justify-end mb-2 space-x-6">
+        {isFetching && (
+          <span className="animate-pulse text-sm mr-4">새로고침 중..</span>
+        )}
+        <button
+          onClick={() => refetch()}
+          className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
+        >
+          새로고침 <ArrowPathIcon className="h-5 w-5 ml-2" />
+        </button>
         <div className="h-9 grid grid-cols-2 justify-center items-center p-1 bg-zinc-100 rounded-lg outline-none">
           <button
             onClick={() => setIsViewAll(false)}
