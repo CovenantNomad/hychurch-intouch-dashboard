@@ -44,7 +44,12 @@ const BarnabasYearlyHistory = ({}: Props) => {
         className={`py-5 px-3 bg-white border-l border-b border-r border-slate-200 rounded-bl-md rounded-br-md lg:px-5`}
       >
         <div className="flex justify-between items-center py-3 mb-4">
-          <h6 className="text-lg font-medium">바나바양육 연간기록</h6>
+          <h6 className="text-lg font-medium">
+            바나바양육 연간기록{" "}
+            <span className="text-sm font-normal">
+              (기준: 바나바과정 완료일)
+            </span>
+          </h6>
           <div className="flex items-center">
             {isFetching && (
               <span className="animate-pulse text-sm mr-4">새로고침 중..</span>

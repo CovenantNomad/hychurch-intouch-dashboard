@@ -16,7 +16,7 @@ type Props = {
 };
 
 const BarnabasProcessTableBody = ({barnabas}: Props) => {
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, data} = useQuery(
     ["getAppointmentByMatchingId", barnabas.id],
     () =>
       getAppointmentByMatchingId(barnabas.id, barnabas.completedMeetingCount),
@@ -31,16 +31,16 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
 
   return (
     <div className="grid grid-cols-11 text-sm text-center items-center hover:bg-gray-50">
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.matchingDate}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.barnabaName}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.menteeName}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         <span
           className={`text-white px-2 py-1 rounded-full ${
             barnabas.status === TMatchingStatus.COMPLETED
@@ -55,36 +55,28 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
           {convertMatchingMessage(barnabas.status)}
         </span>
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.completedMeetingCount}주차 / {barnabas.scheduledMeetingCount}
         주차
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.lastMeetingDate || "일정없음"}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading || isFetching
-          ? "만남일정 로딩중..."
-          : data
-          ? data.date
-          : "일정없음"}
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+        {isLoading ? "만남일정 로딩중..." : data ? data.date : "일정없음"}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading || isFetching
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+        {isLoading
           ? "만남일정 로딩중..."
           : data
           ? `${data.hour}:${data.minute}`
           : "일정없음"}
       </div>
-      <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading || isFetching
-          ? "만남일정 로딩중..."
-          : data
-          ? data.place
-          : "일정없음"}
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+        {isLoading ? "만남일정 로딩중..." : data ? data.place : "일정없음"}
       </div>
       <div
-        className={`h-10 col-span-1 flex items-center justify-center border-r border-gray-300`}
+        className={`h-12 col-span-1 flex items-center justify-center border-r border-gray-300`}
       >
         <span
           className={`px-2 py-1 rounded-full ${
@@ -97,7 +89,7 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
               : "bg-black text-white"
           }`}
         >
-          {isLoading || isFetching
+          {isLoading
             ? "만남일정 로딩중..."
             : data
             ? convertAppointmentMessage(data.status)

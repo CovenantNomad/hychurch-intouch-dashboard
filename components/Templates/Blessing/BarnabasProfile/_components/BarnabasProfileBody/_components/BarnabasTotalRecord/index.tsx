@@ -21,7 +21,8 @@ const BarnabasTotalRecord = ({id}: Props) => {
     <div className="w-1/3 p-4 border border-gray-200 rounded-md">
       <div>
         <h3 className="border-b pb-1 mb-4 text-lg font-semibold">
-          수료한 멘티 히스토리
+          수료한 멘티 히스토리{" "}
+          <span className="text-sm font-normal">(기준: 바나바과정 완료일)</span>
         </h3>
         <div className="flex justify-between">
           <div className="flex-1 flex flex-col justify-center items-center pt-2 pb-4 shadow-md bg-white border-y border-l border-gray-100 rounded-l-lg">
@@ -52,7 +53,8 @@ const BarnabasTotalRecord = ({id}: Props) => {
       </div>
       <div className="mt-8">
         <h3 className="border-b pb-1 mb-4 text-lg font-semibold">
-          전체기간 히스토리
+          전체기간 히스토리{" "}
+          <span className="text-sm font-normal">(기준: 바나바과정 완료일)</span>
         </h3>
         <div className="flex justify-between">
           <div className="flex-1 flex flex-col justify-center items-center pt-4 pb-2">

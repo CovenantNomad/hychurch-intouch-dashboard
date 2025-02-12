@@ -18,7 +18,7 @@ const BarnabaManagement = () => {
 
   const tabs = [
     {index: 0, label: "진행현황", value: SubTab.PROGRESS},
-    {index: 1, label: "완료/보류현황", value: SubTab.RESULTS},
+    {index: 1, label: "수료/보류현황", value: SubTab.RESULTS},
     {index: 2, label: "일정관리", value: SubTab.SCHEDULE},
     {index: 3, label: "과거데이터", value: SubTab.HISTORY},
     {index: 4, label: "예배출석체크", value: SubTab.ATTENDANCE},
