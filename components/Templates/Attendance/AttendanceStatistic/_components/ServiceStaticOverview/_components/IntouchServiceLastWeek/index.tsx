@@ -1,5 +1,8 @@
 import {useQuery} from "react-query";
-import {getServiceRecentStatics} from "../../../../../../../../firebase/Services/serviceStatic";
+import {
+  getMostHighServiceTotalCount,
+  getServiceRecentStatics,
+} from "../../../../../../../../firebase/Services/serviceStatic";
 import Skeleton from "../../../../../../../Atoms/Skeleton/Skeleton";
 
 type Props = {};
@@ -18,9 +21,18 @@ const StatCardTooltip = ({text}: {text: string}) => {
 };
 
 const IntouchServiceLastWeek = ({}: Props) => {
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, data} = useQuery(
     ["getServiceRecentStatics"],
     () => getServiceRecentStatics(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    }
+  );
+
+  const {isLoading: isTotalCountLoading, data: totalCount} = useQuery(
+    ["getMostHighServiceTotalCount"],
+    () => getMostHighServiceTotalCount(),
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
@@ -38,9 +50,9 @@ const IntouchServiceLastWeek = ({}: Props) => {
       <div className="grid grid-cols-4 gap-x-8 mt-2">
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            인터치예배 참석인원(성전계수){" "}
+            인터치예배 참석인원 (성전계수)
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-2/5 h-[32px]" />
               <Skeleton className="w-3/5 h-[14px] mt-1" />
@@ -67,12 +79,7 @@ const IntouchServiceLastWeek = ({}: Props) => {
         </div>
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            셀편성/미편성 예배자
-            <StatCardTooltip
-              text={
-                "성전계수 인원 중 셀리더가 출석체크한 인원과 그 나머지 인원입니다."
-              }
-            />
+            셀편성/미편성 예배자 (기준: 성전계수)
           </dt>
           {isLoading ? (
             <>
@@ -103,12 +110,9 @@ const IntouchServiceLastWeek = ({}: Props) => {
         </div>
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            성전/온라인 예배자
-            <StatCardTooltip
-              text={`인터치예배에 대한 성전/온라인 예배자 인원입니다. (출처: 셀리더 출석체크)`}
-            />
+            성전/온라인 예배자 (기준: 셀편성인원)
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-2/5 h-[32px]" />
               <Skeleton className="w-4/5 h-[14px] mt-1" />
@@ -140,12 +144,9 @@ const IntouchServiceLastWeek = ({}: Props) => {
         </div>
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            1~5부 예배자 총원
-            <StatCardTooltip
-              text={`셀편성된 인원 중 1~5부까지 성전/온라인 모두 포함한 예배자 수입니다. (출처: 셀리더 출석체크)`}
-            />
+            최대 인터치예배 참석인원 (기준: 성전계수)
           </dt>
-          {isLoading || isFetching ? (
+          {isTotalCountLoading ? (
             <>
               <Skeleton className="w-4/5 h-[32px]" />
               <Skeleton className="w-3/5 h-[14px] mt-1" />
@@ -153,15 +154,10 @@ const IntouchServiceLastWeek = ({}: Props) => {
           ) : (
             <>
               <dd className="text-2xl font-bold text-gray-900">
-                {data ? data.recentTotal + "명" : "데이터 조회 실패"}
+                {totalCount ? totalCount.count + "명" : "데이터 조회 실패"}
               </dd>
               <dd className="text-xs text-gray-500">
-                {data
-                  ? `${data.recentTotal - data.previousTotal >= 0 ? "+" : ""}` +
-                    `${data.recentTotal - data.previousTotal}` +
-                    "명" +
-                    ` (from ${data.previousDate})`
-                  : "데이터 조회 실패"}
+                {totalCount ? ` (at ${totalCount.date})` : "데이터 조회 실패"}
               </dd>
             </>
           )}
