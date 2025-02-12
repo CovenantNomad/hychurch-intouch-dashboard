@@ -14,7 +14,7 @@ type Props = {
 const BarnabasYearlyRecord = ({id}: Props) => {
   const [currentYear, setCurrentYear] = useState(dayjs().year());
 
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, data} = useQuery(
     ["getBarnabasYearlyRecords", id, currentYear],
     () => getBarnabasYearlyRecordsById(id, currentYear),
     {
@@ -41,7 +41,8 @@ const BarnabasYearlyRecord = ({id}: Props) => {
   return (
     <div className="w-2/3 p-4 border border-gray-200 rounded-md">
       <h3 className="border-b pb-1 mb-4 text-lg font-semibold">
-        연도별 히스토리
+        연도별 히스토리{" "}
+        <span className="text-sm font-normal">(기준: 바나바과정 완료일)</span>
       </h3>
       <div>
         <div className="flex items-center justify-center space-x-8 my-8">

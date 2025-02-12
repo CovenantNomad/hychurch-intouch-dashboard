@@ -16,32 +16,35 @@ type Props = {
 const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
   return (
     <div>
-      <h4 className="text-lg font-semibold mb-4">바나바과정 수료한 멘티명단</h4>
+      <h4 className="text-lg font-semibold ">바나바과정 수료한 멘티명단</h4>
+      <p className="text-sm text-gray-500 mb-4">
+        현재 블레싱에 편성된 청년 중 바나바과정을 수료한 명단입니다.
+      </p>
       {isLoading ? (
         <SkeletonTable />
       ) : barnabasCourseList.length !== 0 ? (
         <div className="w-full rounded-lg overflow-hidden border border-gray-300">
           {/* Header */}
           <div className="grid grid-cols-7 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               매칭일
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               종료일
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               바나바
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               멘티
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               전체과정 진행상태
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               진행주차
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center">
+            <div className="h-10 col-span-1 flex items-center justify-center">
               교육기간
             </div>
           </div>
@@ -64,19 +67,19 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                   key={barnabas.id}
                   className="grid grid-cols-7 text-sm text-center items-center hover:bg-gray-50"
                 >
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.matchingDate}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.completedDate}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.barnabaName}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.menteeName}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     <span
                       className={`text-white px-2 py-1 rounded-full ${
                         barnabas.status === TMatchingStatus.COMPLETED
@@ -91,12 +94,12 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                       {convertMatchingMessage(barnabas.status)}
                     </span>
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.completedMeetingCount}주차 /{" "}
                     {barnabas.scheduledMeetingCount}
                     주차
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center">
+                  <div className="h-12 col-span-1 flex items-center justify-center">
                     {getWeeksBetweenDates(
                       barnabas.matchingDate,
                       barnabas.completedDate || dayjs().format("YYYY-MM-DD")
