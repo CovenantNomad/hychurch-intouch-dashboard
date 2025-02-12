@@ -286,3 +286,42 @@ export const getServiceAttendnaceWeekly = async (): Promise<
     return null;
   }
 };
+
+export const getMostHighServiceTotalCount = async (): Promise<{
+  count: number;
+  date: string;
+} | null> => {
+  try {
+    // TOTAL_ATTENDANCE 컬렉션 참조
+    const serviceRef = collection(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.TOTALATTENDANCE
+    );
+
+    // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
+    const highestAttendanceQuery = query(
+      serviceRef,
+      orderBy("count", "desc"),
+      limit(1)
+    );
+    const highestAttendanceSnapshot = await getDocs(highestAttendanceQuery);
+
+    if (highestAttendanceSnapshot.empty) {
+      return null; // 데이터가 없으면 null 반환
+    }
+
+    const highestAttendanceDoc = highestAttendanceSnapshot.docs[0];
+    const highestAttendance = highestAttendanceDoc.data() as {
+      count: number;
+      date: string;
+    };
+
+    return highestAttendance;
+  } catch (error: any) {
+    console.log("@getMostHighServiceTotalCount Error: ", error);
+    toast.error(`에러가 발생하였습니다\n${error.message.split(":")[0]}`);
+    return null;
+  }
+};
