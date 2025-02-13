@@ -88,9 +88,9 @@ const RemoveUserSection = ({id, name, grade}: RemoveUserSectionProps) => {
   return (
     <>
       <SectionTitle>청년 제외</SectionTitle>
-      {grade === UserGrade.G ? (
+      {grade !== UserGrade.G ? (
         <div className="py-1">
-          <p>G등급 청년입니다. 인터치 재적명단에서 이미 제외되었습니다.</p>
+          <p>재적명단으로 넘기기 위해서는 활동등급을 G등급으로 변경해주세요</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmitHandler)}>
@@ -105,9 +105,9 @@ const RemoveUserSection = ({id, name, grade}: RemoveUserSectionProps) => {
                   onValueChange={field.onChange}
                   className="w-full max-w-sm"
                 >
-                  <SelectItem value="이사">이사</SelectItem>
                   <SelectItem value="결혼">결혼</SelectItem>
                   <SelectItem value="진급">진급</SelectItem>
+                  <SelectItem value="이사">이사</SelectItem>
                   <SelectItem value="기타">기타</SelectItem>
                 </Select>
               )}

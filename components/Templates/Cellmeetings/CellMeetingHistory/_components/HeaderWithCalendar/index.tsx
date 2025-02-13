@@ -55,8 +55,8 @@ const HeaderWithCalendar = ({
             </DialogHeader>
             <div className="mt-8">
               <Calendar
-                selectedDate={selectedDate}
                 currentDate={currentDate}
+                selectedDate={selectedDate}
                 setCurrentDate={setCurrentDate}
                 onClickDate={onClickDate}
               />

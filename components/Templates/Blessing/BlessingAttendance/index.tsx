@@ -1,36 +1,51 @@
-import React, { useState } from 'react';
-import useAttendanceSubmit from '../../../../hooks/SpecialCellAttendanceSubmit/useAttendanceSubmit';
-import { SimpleMemberWithRole } from '../../../../interface/user';
-import { FindNewFamilyCellQuery, FindNewFamilyCellQueryVariables, MeQuery, MeQueryVariables, useFindNewFamilyCellQuery, useMeQuery } from '../../../../graphql/generated';
-import graphlqlRequestClient from '../../../../client/graphqlRequestClient';
-import { SpecialCellIdType } from '../../../../interface/cell';
-import BlockContainer from '../../../Atoms/Container/BlockContainer';
-import Spinner from '../../../Atoms/Spinner';
-import AttendanceListSection from '../../../Organisms/SpecialCellsAttendance/AttendanceListSection';
-import SpecialCellAttendanceStatusAlert from '../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceStatusAlert';
-import Spacer from '../../../Atoms/Spacer';
-import { AttendanceStatus } from '../../../../interface/attendance';
-import SpecialCellAttendanceHeader from '../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceHeader';
-import SpecialCellAttendanceUserList from '../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceUserList';
-import AttendanceSubmitListSection from '../../../Organisms/SpecialCellsAttendance/AttendanceSubmitListSection';
+import {useState} from "react";
+import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import {
+  FindNewFamilyCellQuery,
+  FindNewFamilyCellQueryVariables,
+  MeQuery,
+  MeQueryVariables,
+  RoleType,
+  useFindNewFamilyCellQuery,
+  useMeQuery,
+} from "../../../../graphql/generated";
+import useAttendanceSubmit from "../../../../hooks/SpecialCellAttendanceSubmit/useAttendanceSubmit";
+import {AttendanceStatus} from "../../../../interface/attendance";
+import {SpecialCellIdType} from "../../../../interface/cell";
+import {SimpleMemberWithRole} from "../../../../interface/user";
+import BlockContainer from "../../../Atoms/Container/BlockContainer";
+import Spacer from "../../../Atoms/Spacer";
+import Spinner from "../../../Atoms/Spinner";
+import AttendanceListSection from "../../../Organisms/SpecialCellsAttendance/AttendanceListSection";
+import AttendanceSubmitListSection from "../../../Organisms/SpecialCellsAttendance/AttendanceSubmitListSection";
+import SpecialCellAttendanceHeader from "../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceHeader";
+import SpecialCellAttendanceStatusAlert from "../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceStatusAlert";
+import SpecialCellAttendanceUserList from "../../../Organisms/SpecialCellsAttendance/SpecialCellAttendance/SpecialCellAttendanceUserList";
 
-
-type BlessingAttendanceProps = {}
+type BlessingAttendanceProps = {};
 
 const BlessingAttendance = ({}: BlessingAttendanceProps) => {
-  const [ isOpenAttendanceList, setIsOpenAttendanceList ] = useState(false)
-  const [ searchedMember, setSearchedMember ] = useState<SimpleMemberWithRole[] | null>(null)
-  const { attendanceStatus, attendanceSubmitList, attendanceList, onSaveAttendanceList, onRemoveHandler, onTemporarySaveHandler, onSubmitHandler, onResetList } = useAttendanceSubmit()
+  const [isOpenAttendanceList, setIsOpenAttendanceList] = useState(false);
+  const [searchedMember, setSearchedMember] = useState<
+    SimpleMemberWithRole[] | null
+  >(null);
+  const {
+    attendanceStatus,
+    attendanceSubmitList,
+    attendanceList,
+    onSaveAttendanceList,
+    onRemoveHandler,
+    onTemporarySaveHandler,
+    onSubmitHandler,
+    onResetList,
+  } = useAttendanceSubmit();
 
-
-  const { isLoading: isMeLoading, isFetching: isMeFetching, data: meData } = useMeQuery<
-    MeQuery, 
+  const {isLoading: isMeLoading, data: meData} = useMeQuery<
+    MeQuery,
     MeQueryVariables
-  >(
-    graphlqlRequestClient,
-  )
+  >(graphlqlRequestClient);
 
-  const { isLoading, isFetching, data } = useFindNewFamilyCellQuery<
+  const {isLoading, data} = useFindNewFamilyCellQuery<
     FindNewFamilyCellQuery,
     FindNewFamilyCellQueryVariables
   >(
@@ -46,7 +61,7 @@ const BlessingAttendance = ({}: BlessingAttendanceProps) => {
 
   return (
     <BlockContainer firstBlock>
-      {isMeLoading || isMeFetching ? (
+      {isMeLoading ? (
         <div className="py-6">
           <Spinner />
         </div>
@@ -54,9 +69,10 @@ const BlessingAttendance = ({}: BlessingAttendanceProps) => {
         <>
           {meData ? (
             <>
-              {meData.me.cell?.id === SpecialCellIdType.Blessing ? (
+              {meData.me.cell?.id === SpecialCellIdType.Blessing ||
+              meData.me.roles.includes(RoleType.Operator) ? (
                 <div>
-                  {isLoading || isFetching ? (
+                  {isLoading ? (
                     <div className="py-6">
                       <Spinner />
                     </div>
@@ -64,9 +80,9 @@ const BlessingAttendance = ({}: BlessingAttendanceProps) => {
                     <div>
                       {isOpenAttendanceList ? (
                         <AttendanceListSection
-                          attendanceList={attendanceList} 
-                          onRemoveHandler={onRemoveHandler} 
-                          setIsOpenAttendanceList={setIsOpenAttendanceList} 
+                          attendanceList={attendanceList}
+                          onRemoveHandler={onRemoveHandler}
+                          setIsOpenAttendanceList={setIsOpenAttendanceList}
                           onTemporarySaveHandler={onTemporarySaveHandler}
                           onSubmitHandler={onSubmitHandler}
                           onResetList={onResetList}
@@ -75,33 +91,43 @@ const BlessingAttendance = ({}: BlessingAttendanceProps) => {
                         <>
                           {data ? (
                             <div>
-                              <SpecialCellAttendanceStatusAlert attendanceStatus={attendanceStatus} cellName={"블레싱셀"} />
-                              <Spacer size={'h-6 lg:h-8'} />
-                              {attendanceStatus === AttendanceStatus.COMPLETE ? (
+                              <SpecialCellAttendanceStatusAlert
+                                attendanceStatus={attendanceStatus}
+                                cellName={"블레싱셀"}
+                              />
+                              <Spacer size={"h-6 lg:h-8"} />
+                              {attendanceStatus ===
+                              AttendanceStatus.COMPLETE ? (
                                 <div>
-                                  <AttendanceSubmitListSection attendanceSubmitList={attendanceSubmitList} />
+                                  <AttendanceSubmitListSection
+                                    attendanceSubmitList={attendanceSubmitList}
+                                  />
                                 </div>
                               ) : (
                                 <div>
                                   <SpecialCellAttendanceHeader
-                                    memberList={data.findCell.members} 
-                                    attendanceList={attendanceList} 
+                                    memberList={data.findCell.members}
+                                    attendanceList={attendanceList}
                                     setSearchedMember={setSearchedMember}
-                                    setIsOpenAttendanceList={setIsOpenAttendanceList} 
+                                    setIsOpenAttendanceList={
+                                      setIsOpenAttendanceList
+                                    }
                                   />
                                   <SpecialCellAttendanceUserList
-                                    cellName={"블레싱셀"} 
-                                    memberList={data.findCell.members} 
+                                    cellName={"블레싱셀"}
+                                    memberList={data.findCell.members}
                                     searchedMember={searchedMember}
                                     attendanceList={attendanceList}
-                                    setSearchedMember={setSearchedMember} 
-                                    onSaveAttendanceList={onSaveAttendanceList} 
+                                    setSearchedMember={setSearchedMember}
+                                    onSaveAttendanceList={onSaveAttendanceList}
                                   />
                                 </div>
                               )}
                             </div>
                           ) : (
-                            <div className="text-center py-6">요청하신 데이터가 존재하지 않습니다</div>
+                            <div className="text-center py-6">
+                              요청하신 데이터가 존재하지 않습니다
+                            </div>
                           )}
                         </>
                       )}
@@ -111,14 +137,18 @@ const BlessingAttendance = ({}: BlessingAttendanceProps) => {
               ) : (
                 <div className="text-center py-6">
                   <span className="block text-xl font-bold">STOP! 🖐🏻</span>
-                  <span className="block text-xl font-bold mt-1">접근권한이 없습니다</span>
+                  <span className="block text-xl font-bold mt-1">
+                    접근권한이 없습니다
+                  </span>
                 </div>
               )}
             </>
           ) : (
             <div className="text-center py-6">
               <span className="block text-xl font-bold">STOP! 🖐🏻</span>
-              <span className="block text-xl font-bold mt-1">접근권한이 없습니다</span>
+              <span className="block text-xl font-bold mt-1">
+                접근권한이 없습니다
+              </span>
             </div>
           )}
         </>

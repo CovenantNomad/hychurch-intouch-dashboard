@@ -3,7 +3,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   content: [
-    "./pages/**/*.{ts,tsx}", 
+    "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}", // Tremor module
   ],
@@ -13,19 +13,21 @@ module.exports = {
     extend: {
       screens: {
         "3xl": "1920px",
+        "4xl": "2560px",
+        "5xl": "3840px",
       },
       gridTemplateColumns: {
-        '24': 'repeat(24, minmax(0, 1fr))',
+        24: "repeat(24, minmax(0, 1fr))",
       },
       backgroundImage: {
-        dallantBackground: "url('/images/dallant_background.jpeg')"
+        dallantBackground: "url('/images/dallant_background.jpeg')",
       },
       fontFamily: {
         notosans: ["Noto Sans KR", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
         nanumBrush: ["Nanum Brush Script", "cursive"],
         blackHans: ["Black Han Sans", "sans-serif"],
-        jua: ["Jua", "sans-serif"]
+        jua: ["Jua", "sans-serif"],
       },
       colors: {
         BLACK: "#16171a",
@@ -105,12 +107,16 @@ module.exports = {
         boxShadow: {
           // light
           "tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-          "tremor-card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-          "tremor-dropdown": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+          "tremor-card":
+            "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+          "tremor-dropdown":
+            "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
           // dark
           "dark-tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-          "dark-tremor-card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-          "dark-tremor-dropdown": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+          "dark-tremor-card":
+            "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+          "dark-tremor-dropdown":
+            "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
         },
         borderRadius: {
           "tremor-small": "0.375rem",
@@ -119,9 +125,9 @@ module.exports = {
         },
         fontSize: {
           "tremor-label": ["0.75rem"],
-          "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
-          "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
-          "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+          "tremor-default": ["0.875rem", {lineHeight: "1.25rem"}],
+          "tremor-title": ["1.125rem", {lineHeight: "1.75rem"}],
+          "tremor-metric": ["1.875rem", {lineHeight: "2.25rem"}],
         },
       },
     },

@@ -20,25 +20,25 @@ const AmazingWaitingList = ({}: Props) => {
         <div className="w-full rounded-lg overflow-hidden border border-gray-300">
           {/* Header */}
           <div className="grid grid-cols-7 border-b border-gray-300 text-sm text-center text-[#71717A]">
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               매칭일
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               종료일
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               바나바
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               멘티
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               진행주차
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               바나바과정 수료상태
             </div>
-            <div className="h-12 col-span-1 flex items-center justify-center">
+            <div className="h-10 col-span-1 flex items-center justify-center">
               어메이징 등록
             </div>
           </div>
@@ -61,23 +61,23 @@ const AmazingWaitingList = ({}: Props) => {
                   key={mentee.menteeId}
                   className="grid grid-cols-7 text-sm text-center items-center hover:bg-gray-50"
                 >
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {mentee.matchingDate}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {mentee.completedDate}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {mentee.barnabaName}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {mentee.menteeName}
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {mentee.completedMeetingCount}주차 /{" "}
                     {mentee.scheduledMeetingCount}주차
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     <span
                       className={`text-white px-2 py-1 rounded-full ${
                         mentee.barnabasStatus === TMatchingStatus.COMPLETED
@@ -92,7 +92,7 @@ const AmazingWaitingList = ({}: Props) => {
                       {convertMatchingMessage(mentee.barnabasStatus)}
                     </span>
                   </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center">
+                  <div className="h-12 col-span-1 flex items-center justify-center">
                     <RegisterAmazingButton
                       menteeId={mentee.menteeId}
                       menteeName={mentee.menteeName}

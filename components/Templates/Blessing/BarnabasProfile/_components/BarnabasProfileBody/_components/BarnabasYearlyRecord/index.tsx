@@ -45,7 +45,7 @@ const BarnabasYearlyRecord = ({id}: Props) => {
         <span className="text-sm font-normal">(기준: 바나바과정 완료일)</span>
       </h3>
       <div>
-        <div className="flex items-center justify-center space-x-8 my-8">
+        <div className="flex items-center justify-center my-8">
           <button
             onClick={handlePrevYear}
             className="p-0 w-10 h-10"
@@ -53,7 +53,7 @@ const BarnabasYearlyRecord = ({id}: Props) => {
           >
             <ChevronLeft size={24} />
           </button>
-          <div className="text-base font-medium">{currentYear}</div>
+          <div className="text-base font-medium mx-8">{currentYear}</div>
           <button
             onClick={handleNextYear}
             className="p-0 w-10 h-10"

@@ -5,6 +5,7 @@ import {
   FindNewFamilyCellQueryVariables,
   MeQuery,
   MeQueryVariables,
+  RoleType,
   useFindNewFamilyCellQuery,
   useMeQuery,
 } from "../../../../graphql/generated";
@@ -38,13 +39,12 @@ const NewFamilyAttendance = () => {
     onSubmitHandler,
     onResetList,
   } = useAttendanceSubmit();
-  const {
-    isLoading: isMeLoading,
-    isFetching: isMeFetching,
-    data: meData,
-  } = useMeQuery<MeQuery, MeQueryVariables>(graphlqlRequestClient);
+  const {isLoading: isMeLoading, data: meData} = useMeQuery<
+    MeQuery,
+    MeQueryVariables
+  >(graphlqlRequestClient);
 
-  const {isLoading, isFetching, data} = useFindNewFamilyCellQuery<
+  const {isLoading, data} = useFindNewFamilyCellQuery<
     FindNewFamilyCellQuery,
     FindNewFamilyCellQueryVariables
   >(
@@ -60,7 +60,7 @@ const NewFamilyAttendance = () => {
 
   return (
     <BlockContainer firstBlock>
-      {isMeLoading || isMeFetching ? (
+      {isMeLoading ? (
         <div className="py-6">
           <Spinner />
         </div>
@@ -68,9 +68,10 @@ const NewFamilyAttendance = () => {
         <>
           {meData ? (
             <>
-              {meData.me.cell?.id === SpecialCellIdType.NewFamily ? (
+              {meData.me.cell?.id === SpecialCellIdType.NewFamily ||
+              meData.me.roles.includes(RoleType.Operator) ? (
                 <div>
-                  {isLoading || isFetching ? (
+                  {isLoading ? (
                     <div className="py-6">
                       <Spinner />
                     </div>

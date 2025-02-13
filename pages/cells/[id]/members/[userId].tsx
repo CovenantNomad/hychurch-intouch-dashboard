@@ -30,7 +30,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
   const [userId, setUserId] = useState<string>("");
   const [editMode, setEditMode] = useState(false);
 
-  const {isLoading, isFetching, data} = useFindUserQuery<
+  const {isLoading, data} = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(

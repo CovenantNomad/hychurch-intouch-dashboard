@@ -30,7 +30,7 @@ const UserInfomation = ({
 }: UserInfomationProps) => {
   return (
     <>
-      <div className="border px-4 py-4 rounded-md bg-white">
+      <div className="p-6 border rounded-xl shadow-sm bg-white">
         {hasHeader && (
           <div className="flex gap-x-4 items-center mb-6">
             <Avatar name={name} size={AvatarSize.md} inline />
@@ -43,42 +43,34 @@ const UserInfomation = ({
         )}
         <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-700">성별</dt>
-            <dd className="mt-1 text-base text-gray-900">
+            <dt className="text-sm font-medium">성별</dt>
+            <dd className="mt-1.5 text-base">
               {gender === "MAN" ? "형제" : "자매"}
             </dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-700">생년월일</dt>
-            <dd className="mt-1 text-base text-gray-900">
-              {birthday || "미입력"}
-            </dd>
+            <dt className="text-sm font-medium">생년월일</dt>
+            <dd className="mt-1.5 text-base">{birthday || "미입력"}</dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-700">활동등급</dt>
-            <dd className="mt-1 text-base text-gray-900">{grade} 등급</dd>
+            <dt className="text-sm font-medium">활동등급</dt>
+            <dd className="mt-1.5 text-base">{grade} 등급</dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-700">
-              셀보고서 포함 여부
-            </dt>
-            <dd className="mt-1 text-base text-gray-900">
-              {isActive ? "포함" : "비포함"}
-            </dd>
+            <dt className="text-sm font-medium">셀보고서 포함 여부</dt>
+            <dd className="mt-1.5 text-base">{isActive ? "포함" : "비포함"}</dd>
           </div>
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-700">휴대폰번호</dt>
-            <dd className="mt-1 text-base text-gray-900">{phone}</dd>
+            <dt className="text-sm font-medium">휴대폰번호</dt>
+            <dd className="mt-1.5 text-base">{phone}</dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-700">주소</dt>
-            <dd className="mt-1 text-base text-gray-900">
-              {address && address}
-            </dd>
+            <dt className="text-sm font-medium">주소</dt>
+            <dd className="mt-1.5 text-base">{address && address}</dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-700">등록일</dt>
-            <dd className="mt-1 text-base text-gray-900">
+            <dt className="text-sm font-medium">등록일</dt>
+            <dd className="mt-1.5 text-base">
               {registrationDate === null
                 ? "미입력"
                 : registrationDate === "2022-12-31"
@@ -89,12 +81,12 @@ const UserInfomation = ({
         </dl>
       </div>
       <div
-        className={`border px-4 py-4 mt-4 rounded-md bg-white ${
+        className={`p-6 border rounded-xl shadow-sm mt-4 bg-white ${
           !description && "h-20"
         }`}
       >
-        <dt className="text-sm font-medium text-gray-700">비고</dt>
-        <dd className="mt-1 text-base text-gray-900 whitespace-pre-line">
+        <dt className="text-sm font-medium">비고</dt>
+        <dd className="mt-2 text-base text-gray-900 whitespace-pre-line">
           {description}
         </dd>
       </div>

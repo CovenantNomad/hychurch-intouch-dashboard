@@ -29,7 +29,7 @@ const AmazingMenteeBlock = ({userId}: Props) => {
   }
 
   return (
-    <div className="border px-4 py-4 rounded-md">
+    <div className="border p-6 rounded-xl shadow-sm">
       {isLoading ? (
         <Skeleton className="h-5 mt-4" />
       ) : data ? (
