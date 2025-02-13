@@ -1,4 +1,4 @@
-import { Leader, Selected } from "../../../interface/cell";
+import {Selected} from "../../../interface/cell";
 
 interface StepControlProps {
   user: Selected;
@@ -19,7 +19,7 @@ const StepControl = ({
 }: StepControlProps) => {
   return (
     <div
-      className={`w-[80%] flex ${
+      className={`w-full flex ${
         currentStage === 1 ? "justify-end" : "justify-between"
       }`}
     >

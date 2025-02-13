@@ -61,13 +61,13 @@ export function makeErrorMessage(message: string) {
 export const getTransferStatus = (state: UserCellTransferStatus) => {
   switch (state) {
     case UserCellTransferStatus.Ordered:
-      return "승인대기";
+      return "대기";
 
     case UserCellTransferStatus.Canceled:
       return "거절";
 
     case UserCellTransferStatus.Confirmed:
-      return "승인완료";
+      return "완료";
 
     default:
       break;
@@ -513,3 +513,12 @@ export const processMembersByYear = (members: Member[]): YearlyData[] => {
 
   return yearlyData;
 };
+
+export function formatPhoneNumber(phoneNumber: string): string {
+  if (phoneNumber.length === 11) {
+    return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+  } else if (phoneNumber.length === 10) {
+    return phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+  }
+  return phoneNumber; // 길이가 맞지 않으면 그대로 반환
+}

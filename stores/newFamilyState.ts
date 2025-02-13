@@ -21,7 +21,7 @@ export const newFamilyListView = atom<{
   default: {
     isListView: false,
     currentPage: 1,
-    itemsPerPage: 10,
+    itemsPerPage: 20,
     sortKey: "name",
     sortOrder: "asc",
   },

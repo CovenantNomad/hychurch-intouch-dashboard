@@ -14,7 +14,6 @@ import ComboBoxImage from "../../../components/Blocks/Combobox/ComboBoxImage";
 import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
-import Summary from "../../../components/Blocks/Summary/Summary";
 import Layout from "../../../components/Layout/Layout";
 import PageLayout from "../../../components/Layout/PageLayout";
 import AmazingMenteeBlock from "../../../components/Templates/Blessing/MenteeDetailPage/AmazingMenteeBlock";
@@ -59,11 +58,10 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     name: "",
   });
 
-  const {
-    isLoading,
-    isFetching,
-    data: user,
-  } = useFindUserQuery<FindUserQuery, FindUserQueryVariables>(
+  const {isLoading, data: user} = useFindUserQuery<
+    FindUserQuery,
+    FindUserQueryVariables
+  >(
     graphlqlRequestClient,
     {
       id: userId,
@@ -89,23 +87,20 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     }
   );
 
-  const {
-    isLoading: isAttendanceLoading,
-    isFetching: isAttendanceFetching,
-    data: attendanceStatus,
-  } = useFindAttendanceCheckQuery<
-    FindAttendanceCheckQuery,
-    FindAttendanceCheckQueryVariables
-  >(
-    graphlqlRequestClient,
-    {
-      attendanceDate: recentSunday.format("YYYY-MM-DD"),
-    },
-    {
-      staleTime: 15 * 60 * 1000,
-      cacheTime: 30 * 60 * 1000,
-    }
-  );
+  const {isLoading: isAttendanceLoading, data: attendanceStatus} =
+    useFindAttendanceCheckQuery<
+      FindAttendanceCheckQuery,
+      FindAttendanceCheckQueryVariables
+    >(
+      graphlqlRequestClient,
+      {
+        attendanceDate: recentSunday.format("YYYY-MM-DD"),
+      },
+      {
+        staleTime: 15 * 60 * 1000,
+        cacheTime: 30 * 60 * 1000,
+      }
+    );
 
   const {mutate} = useCreateUserCellTransferMutation<
     CreateUserCellTransferMutation,
@@ -205,7 +200,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       </Head>
 
       <PageLayout>
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <SkeletonMemberInfo />
         ) : user ? (
           <>
@@ -240,105 +235,122 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                 </div>
               </BlockContainer>
               <BlockContainer>
-                <div>
-                  {router.query.transferStatus ===
-                  UserCellTransferStatus.Ordered ? (
-                    <div>
-                      <h6 className="pb-5 text-base">
-                        셀편성 상태 :{" "}
-                        <strong className="bg-teal-600 text-white px-1 ml-1">
-                          승인대기중
-                        </strong>
-                      </h6>
-                      <div className="bg-GRAY003 text-center py-3">
-                        <p className="font-bold">
-                          편성셀 :{" "}
-                          <span className="text-BLUE">
-                            {router.query.toCellName}
-                          </span>
-                          <br />
-                          승인대기중
-                        </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="col-span-1">
+                    {router.query.transferStatus ===
+                    UserCellTransferStatus.Ordered ? (
+                      <div>
+                        <h6 className="pb-5 text-base">
+                          셀편성 상태 :{" "}
+                          <strong className="bg-teal-600 text-white px-1 ml-1">
+                            승인대기중
+                          </strong>
+                        </h6>
+                        <div className="bg-GRAY003 text-center py-3">
+                          <p className="font-bold">
+                            편성셀 :{" "}
+                            <span className="text-BLUE">
+                              {router.query.toCellName}
+                            </span>
+                            <br />
+                            승인대기중
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <>
-                      {isAttendanceLoading || isAttendanceFetching ? (
-                        <SkeletonListItem />
-                      ) : (
-                        <>
-                          {attendanceStatus &&
-                          attendanceStatus.attendanceCheck ===
-                            AttendanceCheckStatus.Completed ? (
-                            <>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="md:col-span-1">
-                                  <h6 className="pb-4 text-base">
-                                    기존 셀 편성
-                                  </h6>
-                                  <ComboBoxImage
-                                    showLabel={false}
-                                    label={"셀선택"}
-                                    selected={selectedCell}
-                                    setSelected={setSelectedCell}
-                                    selectList={cellList}
-                                    widthFull
-                                  />
+                    ) : (
+                      <>
+                        {isAttendanceLoading ? (
+                          <SkeletonListItem />
+                        ) : (
+                          <>
+                            {attendanceStatus &&
+                            attendanceStatus.attendanceCheck ===
+                              AttendanceCheckStatus.Completed ? (
+                              <div className="border p-6 rounded-xl shadow-sm">
+                                <div className="grid grid-cols-2 gap-6">
+                                  <div>
+                                    <h6 className="pb-2 font-medium">
+                                      기존 셀 편성
+                                    </h6>
+                                    <ComboBoxImage
+                                      showLabel={false}
+                                      label={"셀선택"}
+                                      selected={selectedCell}
+                                      setSelected={setSelectedCell}
+                                      selectList={cellList}
+                                      widthFull
+                                    />
+                                  </div>
+                                  <div>
+                                    <h6 className="pb-2 font-medium">
+                                      새싹 편성
+                                    </h6>
+                                    <div>
+                                      <button
+                                        onClick={() => {
+                                          setSelectedCell({
+                                            id: SpecialCellIdType.Renew,
+                                            name: "새싹",
+                                          });
+                                        }}
+                                        className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                      >
+                                        새싹셀 편성
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="md:col-span-1">
-                                  <h6 className="pb-5 text-base">
-                                    새싹셀 편성
-                                  </h6>
-                                  <div className="flex-1">
+                                <div className="mt-16">
+                                  <div className="flex justify-end items-center space-x-6">
+                                    <p className="font-medium">
+                                      다음 셀을 선택하셨습니다
+                                    </p>
+                                    <div className="w-[110px] h-[29px] pb-1 text-center border-b border-gray-200">
+                                      {selectedCell.name}
+                                    </div>
+                                  </div>
+                                  <div className="mt-10 flex justify-end space-x-4">
                                     <button
-                                      onClick={() => {
+                                      onClick={() =>
                                         setSelectedCell({
-                                          id: String(44),
-                                          name: "새싹",
-                                        });
-                                      }}
-                                      className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                          id: "",
+                                          name: "",
+                                        })
+                                      }
+                                      className="py-2 px-4 ml-2 rounded-md text-sm text-black focus:outline-none hover:bg-gray-100"
                                     >
-                                      새싹셀 편성
+                                      취소
+                                    </button>
+                                    <button
+                                      onClick={onOpenHandler}
+                                      disabled={
+                                        selectedMember.id === "" ||
+                                        selectedCell.id === "" ||
+                                        router.query.transferStatus ===
+                                          UserCellTransferStatus.Ordered
+                                      }
+                                      className="py-2 px-4 ml-2 text-sm text-white bg-emerald-500 border border-transparent rounded-md  focus:outline-none hover:bg-emerald-400 disabled:bg-gray-500"
+                                    >
+                                      편성
                                     </button>
                                   </div>
                                 </div>
                               </div>
-                              <div className="mt-8">
-                                <Summary
-                                  header="Transfer Summary"
-                                  label="Transfer"
-                                  disabled={
-                                    selectedMember.id === "" ||
-                                    selectedCell.id === "" ||
-                                    router.query.transferStatus ===
-                                      UserCellTransferStatus.Ordered
-                                  }
-                                  onClick={onOpenHandler}
-                                >
-                                  <Summary.Row
-                                    title="새가족 이름"
-                                    value={selectedMember.name}
-                                  />
-                                  <Summary.Row
-                                    title="편성 셀"
-                                    value={selectedCell.name}
-                                  />
-                                </Summary>
+                            ) : (
+                              <div className="border p-6 rounded-xl shadow-sm">
+                                <p className="text-sm text-gray-600 text-center">
+                                  아직 셀리더들이 출석체크 중입니다
+                                  <br />
+                                  출석체크가 마감 된 후 새가족 셀편성을
+                                  진행해주세요
+                                </p>
                               </div>
-                            </>
-                          ) : (
-                            <div className="h-full flex justify-center items-center mt-6 py-6">
-                              <p className="whitespace-pre-line text-center">
-                                {`아직 셀리더들이 출석체크 중입니다.\n`}
-                                {`출석체크가 마감 된 후 새가족 셀편성을 진행해주세요.`}
-                              </p>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </>
-                  )}
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </BlockContainer>
             </SectionContainer>

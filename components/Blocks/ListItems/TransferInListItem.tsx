@@ -1,106 +1,62 @@
-import React from "react";
-import { toast } from "react-hot-toast";
-import { useQueryClient } from "react-query";
+import {GraphQLError} from "graphql-request/dist/types";
+import {toast} from "react-hot-toast";
+import {useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
   UserCellTransferStatus,
   useUpdateUserCellTransferMutation,
 } from "../../../graphql/generated";
-import { GraphQLError } from "graphql-request/dist/types";
-import { SpecialCellIdType, transferedUser } from "../../../interface/cell";
-import { getTransferStatus, makeErrorMessage } from "../../../utils/utils";
+import {SpecialCellIdType, transferedUser} from "../../../interface/cell";
+import {getTransferStatus, makeErrorMessage} from "../../../utils/utils";
 
 interface TransferInListItemProps {
   data: transferedUser;
 }
 
-const TransferInListItem = ({ data }: TransferInListItemProps) => {
+const TransferInListItem = ({data}: TransferInListItemProps) => {
   const queryClient = useQueryClient();
 
-  const { mutate } = useUpdateUserCellTransferMutation(graphlqlRequestClient, {
+  const {mutate} = useUpdateUserCellTransferMutation(graphlqlRequestClient, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["findCells"] });
-      queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
-      if (
-        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
-          SpecialCellIdType.Blessing
-        ) ||
-        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
-          SpecialCellIdType.Renew
-        ) ||
-        !data.updateUserCellTransfer.userCellTransfer.fromCell.id.includes(
-          SpecialCellIdType.NewFamily
-        )
-      ) {
-        queryClient.invalidateQueries({
-          queryKey: [
-            "findCell",
-            {
-              id: Number(
-                data.updateUserCellTransfer.userCellTransfer.fromCell.id
-              ),
-            },
-          ],
-        });
-      }
-      if (
-        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
-          SpecialCellIdType.Blessing
-        ) ||
-        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
-          SpecialCellIdType.Renew
-        ) ||
-        !data.updateUserCellTransfer.userCellTransfer.toCell.id.includes(
-          SpecialCellIdType.NewFamily
-        )
-      ) {
-        queryClient.invalidateQueries({
-          queryKey: [
-            "findCell",
-            {
-              id: Number(
-                data.updateUserCellTransfer.userCellTransfer.toCell.id
-              ),
-            },
-          ],
-        });
-      }
-      if (
-        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
-          SpecialCellIdType.Renew ||
-        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
-          SpecialCellIdType.Renew
-      ) {
-        queryClient.invalidateQueries({ queryKey: ["findRenewCell"] });
-      }
-      if (
-        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
-          SpecialCellIdType.NewFamily ||
-        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
-          SpecialCellIdType.NewFamily
-      ) {
-        queryClient.invalidateQueries({ queryKey: ["findNewFamilyCell"] });
-      }
+      const transferData = data.updateUserCellTransfer.userCellTransfer;
+      const {fromCell, toCell, user, status} = transferData;
 
-      if (
-        data.updateUserCellTransfer.userCellTransfer.fromCell.id ===
-          SpecialCellIdType.Blessing ||
-        data.updateUserCellTransfer.userCellTransfer.toCell.id ===
-          SpecialCellIdType.Blessing
-      ) {
-        queryClient.invalidateQueries({ queryKey: ["findBlessingCell"] });
-      }
+      // 📌 특정한 셀 ID들 (제외해야 하는 SpecialCellIdType 리스트)
+      const specialCellIds = Object.values(SpecialCellIdType) as string[];
 
-      queryClient.invalidateQueries({
-        queryKey: ["findUser", { id: data.updateUserCellTransfer.userCellTransfer.user.id }],
+      // ✅ 기본적으로 항상 무효화할 쿼리
+      queryClient.invalidateQueries(["findCells"]);
+      queryClient.invalidateQueries(["findCellWithTranferData"]);
+
+      // ✅ 특정 셀 ID가 SpecialCellIdType에 속하지 않을 경우만 개별 findCell 무효화
+      [fromCell, toCell].forEach((cell) => {
+        if (!specialCellIds.includes(cell.id)) {
+          queryClient.invalidateQueries({
+            queryKey: ["findCell", {id: Number(cell.id)}],
+          });
+        }
       });
 
-      toast.success(
-        `이동요청이 ${getTransferStatus(
-          data.updateUserCellTransfer.userCellTransfer.status
-        )}되었습니다`
-      );
+      // ✅ 특정 SpecialCellIdType이 변경된 경우만 개별 무효화
+      const affectedSpecialCells = new Set([fromCell.id, toCell.id]);
+
+      if (affectedSpecialCells.has(SpecialCellIdType.Renew)) {
+        queryClient.invalidateQueries({queryKey: ["findRenewCell"]});
+      }
+      if (affectedSpecialCells.has(SpecialCellIdType.NewFamily)) {
+        queryClient.invalidateQueries({queryKey: ["findNewFamilyCell"]});
+      }
+      if (affectedSpecialCells.has(SpecialCellIdType.Blessing)) {
+        queryClient.invalidateQueries({queryKey: ["findBlessingCell"]});
+      }
+
+      // ✅ 사용자 데이터 업데이트
+      queryClient.invalidateQueries({queryKey: ["findUser", {id: user.id}]});
+
+      // ✅ 성공 알림
+      toast.success(`이동요청이 ${getTransferStatus(status)}되었습니다`);
     },
+
     onError(errors: GraphQLError) {
       console.log(errors);
       toast.error(
@@ -128,34 +84,29 @@ const TransferInListItem = ({ data }: TransferInListItemProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 items-center py-6 px-8 rounded-lg shadow-md border bg-white">
-      <div className="col-span-2 flex items-baseline">
-        <h4 className="text-2xl font-bold mr-2">
+    <div className="flex items-center justify-between py-4 px-4 border-b">
+      <div className="flex-1">
+        <p className="text-xl font-semibold">
           {data.user.name}
-        </h4>
-        <span className="inline-block text-gray-500 text-lg">
-          {data.user.gender === "MAN" ? "형제" : "자매"}
-        </span>
-      </div>
-      <div className="col-span-3 flex items-center mt-4 lg:flex-col lg:mt-0">
-        <span className="flex-grow-[1] text-gray-500 text-lg">이동현황</span>
-        <p className="flex-grow-[4] text-lg pl-4 lg:mt-2 lg:pl-0">
-          <span>{data.fromCell.name}</span>
+          <span className="inline-block text-gray-600 font-normal text-sm ml-2">
+            {data.user.gender === "MAN" ? "형제" : "자매"}
+          </span>
+        </p>
+        <p className="">
+          (<span>{data.fromCell.name}</span>
           <span className="inline-block px-2">→</span>
-          <span>{data.toCell.name}</span>
+          <span>{data.toCell.name}</span>)
         </p>
       </div>
-      <div className="col-span-3 flex items-center mt-2 lg:flex-col lg:mt-0">
-        <span className="flex-grow-[1] text-gray-500 text-lg">요청일</span>
-        <p className="flex-grow-[4] text-lg pl-4 lg:mt-2 lg:pl-0">
-          {data.orderDate}
-        </p>
+      <div className="mr-12">
+        <p className="">{data.orderDate}</p>
+        <p className="text-sm text-gray-500 text-center mt-1">요청일</p>
       </div>
-      <div className="col-span-4 mt-6 flex gap-x-4 lg:mt-0">
+      <div className="flex gap-x-4 mt-6 md:mt-0">
         <div className="flex-grow">
           <button
             onClick={() => onCanceledHandler(data.id)}
-            className="w-full border border-blue-600 text-black px-6 py-2 rounded-md hover:bg-blue-700 hover:text-white"
+            className="w-full border border-blue-600 text-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 hover:text-white"
           >
             거절
           </button>

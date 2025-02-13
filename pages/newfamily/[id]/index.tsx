@@ -1,11 +1,22 @@
+import dayjs from "dayjs";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+import {toast} from "react-hot-toast";
+import {useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
+import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
 import EmptyStateSimple from "../../../components/Atoms/EmptyStates/EmptyStateSimple";
-import Spinner from "../../../components/Atoms/Spinner";
+import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
+import ComboBoxImage from "../../../components/Blocks/Combobox/ComboBoxImage";
+import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
+import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
+import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 import Layout from "../../../components/Layout/Layout";
+import PageLayout from "../../../components/Layout/PageLayout";
+import {FIND_CELL_LIMIT} from "../../../constants/constant";
 import {
   AttendanceCheckStatus,
   CreateUserCellTransferMutation,
@@ -22,23 +33,10 @@ import {
   useFindUserQuery,
   UserCellTransferStatus,
 } from "../../../graphql/generated";
-import ComboBoxImage from "../../../components/Blocks/Combobox/ComboBoxImage";
-import { FIND_CELL_LIMIT } from "../../../constants/constant";
-import { SelectType } from "../../../interface/common";
-import { SpecialCellIdType } from "../../../interface/cell";
-import Summary from "../../../components/Blocks/Summary/Summary";
-import { toast } from "react-hot-toast";
-import { useQueryClient } from "react-query";
-import { makeErrorMessage } from "../../../utils/utils";
-import { getMostRecentSunday, getTodayString } from "../../../utils/dateUtils";
-import dayjs from "dayjs";
-import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
-import PageLayout from "../../../components/Layout/PageLayout";
-import BlockContainer from "../../../components/Atoms/Container/BlockContainer";
-import SectionContainer from "../../../components/Atoms/Container/SectionContainer";
-import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
-import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
-import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
+import {SpecialCellIdType} from "../../../interface/cell";
+import {SelectType} from "../../../interface/common";
+import {getMostRecentSunday, getTodayString} from "../../../utils/dateUtils";
+import {makeErrorMessage} from "../../../utils/utils";
 
 interface NewFamilyMemberProps {}
 
@@ -59,7 +57,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     name: "",
   });
 
-  const { isLoading, isFetching, data: user } = useFindUserQuery<
+  const {isLoading, data: user} = useFindUserQuery<
     FindUserQuery,
     FindUserQueryVariables
   >(
@@ -74,7 +72,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     }
   );
 
-  const { data } = useFindCellListsQuery<
+  const {data} = useFindCellListsQuery<
     FindCellListsQuery,
     FindCellListsQueryVariables
   >(
@@ -88,13 +86,13 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     }
   );
 
-  const { data: attendanceStatus } = useFindAttendanceCheckQuery<
+  const {data: attendanceStatus} = useFindAttendanceCheckQuery<
     FindAttendanceCheckQuery,
     FindAttendanceCheckQueryVariables
   >(
     graphlqlRequestClient,
     {
-      attendanceDate: recentSunday.format('YYYY-MM-DD'),
+      attendanceDate: recentSunday.format("YYYY-MM-DD"),
     },
     {
       staleTime: 15 * 60 * 1000,
@@ -102,19 +100,15 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     }
   );
 
-  const { mutate } = useCreateUserCellTransferMutation<
+  const {mutate} = useCreateUserCellTransferMutation<
     CreateUserCellTransferMutation,
     CreateUserCellTransferMutationVariables
   >(graphlqlRequestClient, {
     onSuccess() {
       toast.success("셀에 편성되었습니다.");
-      queryClient.invalidateQueries({ queryKey: ["findCellWithTranferData"] });
-      queryClient.invalidateQueries({
-        queryKey: ["findNewFamilyCell"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["findCell", { id: Number(selectedCell.id) }],
-      });
+      queryClient.invalidateQueries(["findCellWithTranferData"]);
+      queryClient.invalidateQueries(["findNewFamilyCell"]);
+      queryClient.invalidateQueries(["findCell", Number(selectedCell.id)]);
       setSelectedCell({
         id: "",
         name: "",
@@ -199,7 +193,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       </Head>
 
       <PageLayout>
-        {isLoading || isFetching ? (
+        {isLoading ? (
           <SkeletonMemberInfo />
         ) : user ? (
           <>
@@ -230,11 +224,13 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                         hasHeader={false}
                       />
                     </div>
-                    {attendanceStatus && attendanceStatus.attendanceCheck === AttendanceCheckStatus.Completed ? (
+                    {attendanceStatus &&
+                    attendanceStatus.attendanceCheck ===
+                      AttendanceCheckStatus.Completed ? (
                       <div className="md:col-span-1">
                         {router.query.transferStatus ===
                         UserCellTransferStatus.Ordered ? (
-                          <div>
+                          <div className="border p-6 rounded-xl shadow">
                             <h6 className="pb-5 text-base">
                               셀편성 상태 :{" "}
                               <strong className="bg-teal-600 text-white px-1 ml-1">
@@ -254,83 +250,99 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                           </div>
                         ) : (
                           <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div className="md:col-span-1">
-                                <h6 className="pb-5 text-base">
-                                  블레싱/새싹 편성
-                                </h6>
-                                <div className="flex-1">
-                                  <button
-                                    onClick={() => {
-                                      setSelectedCell({
-                                        id: SpecialCellIdType.Blessing,
-                                        name: "블레싱",
-                                      });
-                                    }}
-                                    className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                                  >
-                                    블레싱 편성
-                                  </button>
+                            <div className="border p-6 rounded-xl shadow">
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="">
+                                  <h6 className="pb-2 font-medium">
+                                    블레싱/새싹 편성
+                                  </h6>
+                                  <div className="flex-1">
+                                    <button
+                                      onClick={() => {
+                                        setSelectedCell({
+                                          id: SpecialCellIdType.Blessing,
+                                          name: "블레싱",
+                                        });
+                                      }}
+                                      className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                    >
+                                      블레싱 편성
+                                    </button>
+                                  </div>
+                                  <div className="mt-2">
+                                    <button
+                                      onClick={() => {
+                                        setSelectedCell({
+                                          id: SpecialCellIdType.Renew,
+                                          name: "새싹",
+                                        });
+                                      }}
+                                      className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                    >
+                                      새싹셀 편성
+                                    </button>
+                                  </div>
                                 </div>
-                                <div className="flex-1 mt-4">
+                                <div className="">
+                                  <h6 className="pb-2 font-medium">
+                                    기존 셀 편성
+                                  </h6>
+                                  <ComboBoxImage
+                                    showLabel={false}
+                                    label={"셀선택"}
+                                    selected={selectedCell}
+                                    setSelected={setSelectedCell}
+                                    selectList={cellList}
+                                    widthFull
+                                  />
+                                </div>
+                              </div>
+                              <div className="mt-16">
+                                <div className="flex justify-end items-center space-x-6">
+                                  <p className="font-medium">
+                                    다음 셀을 선택하셨습니다
+                                  </p>
+                                  <div className="w-[110px] h-[29px] pb-1 text-center border-b border-gray-200">
+                                    {selectedCell.name}
+                                  </div>
+                                </div>
+                                <div className="mt-10 flex justify-end space-x-4">
                                   <button
-                                    onClick={() => {
+                                    onClick={() =>
                                       setSelectedCell({
-                                        id: SpecialCellIdType.Renew,
-                                        name: "새싹",
-                                      });
-                                    }}
-                                    className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                        id: "",
+                                        name: "",
+                                      })
+                                    }
+                                    className="py-2 px-4 ml-2 rounded-md text-sm text-black focus:outline-none hover:bg-gray-100"
                                   >
-                                    새싹셀 편성
+                                    취소
+                                  </button>
+                                  <button
+                                    onClick={onOpenHandler}
+                                    disabled={
+                                      selectedMember.id === "" ||
+                                      selectedCell.id === "" ||
+                                      router.query.transferStatus ===
+                                        UserCellTransferStatus.Ordered
+                                    }
+                                    className="py-2 px-4 ml-2 text-sm text-white bg-emerald-500 border border-transparent rounded-md  focus:outline-none hover:bg-emerald-400 disabled:bg-gray-500"
+                                  >
+                                    편성
                                   </button>
                                 </div>
                               </div>
-                              <div className="md:col-span-1">
-                                <h6 className="pb-4 text-base">기존 셀 편성</h6>
-                                <ComboBoxImage
-                                  showLabel={false}
-                                  label={"셀선택"}
-                                  selected={selectedCell}
-                                  setSelected={setSelectedCell}
-                                  selectList={cellList}
-                                  widthFull
-                                />
-                              </div>
-                            </div>
-                            <div className="mt-8">
-                              <Summary
-                                header="Transfer Summary"
-                                label="Transfer"
-                                disabled={
-                                  selectedMember.id === "" ||
-                                  selectedCell.id === "" ||
-                                  router.query.transferStatus ===
-                                    UserCellTransferStatus.Ordered
-                                }
-                                onClick={onOpenHandler}
-                              >
-                                <Summary.Row
-                                  title="새가족 이름"
-                                  value={selectedMember.name}
-                                />
-                                <Summary.Row
-                                  title="편성 셀"
-                                  value={selectedCell.name}
-                                />
-                              </Summary>
                             </div>
                           </>
                         )}
                       </div>
                     ) : (
-                      <div className="md:col-span-1">
-                        <div className="h-full flex justify-center items-center">
-                          <p className="whitespace-pre-line text-center">
-                            {`아직 셀리더들이 출석체크 중입니다.\n`}
-                            {`출석체크가 마감 된 후 새가족 셀편성을 진행해주세요.`}
-                          </p>
-                        </div>
+                      <div className="border p-6 rounded-xl shadow-sm flex justify-center items-center">
+                        <p className="text-sm text-gray-600 text-center">
+                          아직 셀리더들이 출석체크 중입니다
+                          <br />
+                          출석체크가 마감 된 후 새가족 셀편성을 진행해주세요
+                        </p>
                       </div>
                     )}
                   </div>

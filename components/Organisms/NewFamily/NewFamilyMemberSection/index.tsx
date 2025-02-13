@@ -6,6 +6,7 @@ import {useRecoilState} from "recoil";
 import {MemberWithTransferOut} from "../../../../interface/user";
 import {newFamilyListView} from "../../../../stores/newFamilyState";
 import SearchButton from "../../../Atoms/SearchButton";
+import SkeletonTable from "../../../Atoms/Skeleton/SkeletonTable";
 import SearchModal from "../../../Blocks/SearchModal/SearchModal";
 import NewFamilyCalendarView from "./_components/NewFamilyCalendarView";
 import NewFamilyTableView from "./_components/NewFamilyTableView";
@@ -13,10 +14,14 @@ dayjs.extend(weekOfYear);
 dayjs.extend(isoWeek);
 
 interface NewFamilyMemberSectionProps {
+  isLoading: boolean;
   memberList: MemberWithTransferOut[];
 }
 
-const NewFamilyMemberSection = ({memberList}: NewFamilyMemberSectionProps) => {
+const NewFamilyMemberSection = ({
+  isLoading,
+  memberList,
+}: NewFamilyMemberSectionProps) => {
   //Search State
   const [query, setQuery] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
@@ -36,6 +41,7 @@ const NewFamilyMemberSection = ({memberList}: NewFamilyMemberSectionProps) => {
         <div className="flex gap-x-6 items-center">
           <SearchButton
             placeholder={"이름으로 검색하세요"}
+            disabled={isLoading}
             onClickHandler={() => setOpen(true)}
           />
           <div className="flex items-center gap-x-2 border px-1 py-1 rounded-md">
@@ -58,20 +64,28 @@ const NewFamilyMemberSection = ({memberList}: NewFamilyMemberSectionProps) => {
           </div>
         </div>
       </div>
-      <div className="">
-        {listViewState.isListView ? (
-          <NewFamilyTableView memberList={memberList} />
-        ) : (
-          <NewFamilyCalendarView memberList={memberList} />
-        )}
-      </div>
-      <SearchModal
-        people={memberList}
-        open={open}
-        setOpen={setOpen}
-        query={query}
-        setQuery={setQuery}
-      />
+      {isLoading ? (
+        <div className="pt-8">
+          <SkeletonTable />
+        </div>
+      ) : (
+        <div>
+          <div>
+            {listViewState.isListView ? (
+              <NewFamilyTableView memberList={memberList} />
+            ) : (
+              <NewFamilyCalendarView memberList={memberList} />
+            )}
+          </div>
+          <SearchModal
+            people={memberList}
+            open={open}
+            setOpen={setOpen}
+            query={query}
+            setQuery={setQuery}
+          />
+        </div>
+      )}
     </div>
   );
 };

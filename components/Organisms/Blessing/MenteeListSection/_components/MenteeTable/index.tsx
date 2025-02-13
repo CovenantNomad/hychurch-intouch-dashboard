@@ -9,7 +9,7 @@ import {
 } from "../../../../../../interface/barnabas";
 import {MemberWithTransferOut} from "../../../../../../interface/user";
 import {menteeSortState} from "../../../../../../stores/barnabaState";
-import {calculateAge} from "../../../../../../utils/utils";
+import {calculateAge, formatPhoneNumber} from "../../../../../../utils/utils";
 import SkeletonTable from "../../../../../Atoms/Skeleton/SkeletonTable";
 
 type Props = {
@@ -183,7 +183,7 @@ const MenteeTable = ({members, isLoading}: Props) => {
                   {calculateAge(member.birthday)}
                 </div>
                 <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {member.phone}
+                  {formatPhoneNumber(member.phone)}
                 </div>
                 <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                   {member.registrationDate}

@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
+import {Dispatch, SetStateAction} from "react";
+import {cx} from "../../../utils/utils";
 
 interface HorizontalTabsProps {
   tabs: {
@@ -16,22 +17,26 @@ const HorizontalTabs = ({
   setCurrentTab,
 }: HorizontalTabsProps) => {
   return (
-    <div className="py-3 px-4 rounded-md bg-GRAY003">
-      <nav className="flex justify-center items-center gap-x-4">
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            onClick={() => setCurrentTab(tab.id)}
-            className={`relative ${
-              tab.id === currentTab
-                ? "bg-GRAY005 text-white font-medium"
-                : "bg-GRAY002 text-GRAY005"
-            }  min-w-0 overflow-hidden py-2 px-3 cursor-pointer focus:z-10`}
-          >
-            <span className="text-sm text-center uppercase">{tab.name}</span>
-          </div>
-        ))}
-      </nav>
+    <div
+      className={cx(
+        "h-13 grid justify-center items-center p-1 bg-zinc-100 rounded-lg outline-none",
+        `grid-cols-${tabs.length}`
+      )}
+    >
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => setCurrentTab(tab.id)}
+          className={cx(
+            "px-10 py-2 rounded-lg text-sm",
+            tab.id === currentTab
+              ? "bg-white text-[#09090B]"
+              : "bg-transparent text-gray-500"
+          )}
+        >
+          {tab.name}
+        </button>
+      ))}
     </div>
   );
 };

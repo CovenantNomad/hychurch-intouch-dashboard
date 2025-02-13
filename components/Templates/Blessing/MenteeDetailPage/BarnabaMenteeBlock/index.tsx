@@ -37,7 +37,7 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
   }
 
   return (
-    <div className="border px-4 py-4 rounded-md">
+    <div className="border p-6 rounded-xl shadow-sm">
       <h3 className="text-base font-medium">바나바 과정</h3>
       {isLoading ? (
         <Skeleton className="h-[200px] mt-4" />

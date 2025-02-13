@@ -11,7 +11,6 @@ import {SpecialCellIdType} from "../../../interface/cell";
 import {MemberWithTransferOut} from "../../../interface/user";
 import {getTodayString} from "../../../utils/dateUtils";
 import BlockContainer from "../../Atoms/Container/BlockContainer";
-import Spinner from "../../Atoms/Spinner";
 import NewFamilyMemberSection from "../../Organisms/NewFamily/NewFamilyMemberSection";
 
 interface NewFamilyManagementProps {}
@@ -73,17 +72,12 @@ const NewFamilyManagement = ({}: NewFamilyManagementProps) => {
 
   return (
     <>
-      {isLoading || isFetching ? (
-        <div className="w-full h-screen flex justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <BlockContainer firstBlock>
-            <NewFamilyMemberSection memberList={newFamilyList} />
-          </BlockContainer>
-        </>
-      )}
+      <BlockContainer firstBlock>
+        <NewFamilyMemberSection
+          isLoading={isLoading}
+          memberList={newFamilyList}
+        />
+      </BlockContainer>
     </>
   );
 };

@@ -115,3 +115,14 @@ export const cellListState = selector<{
     }
   },
 });
+
+export const cellMemberSortState = atom<{
+  sortKey: "name" | "registrationDate" | "birthday" | "gender" | "grade";
+  sortOrder: "asc" | "desc";
+}>({
+  key: "CELL/CELL_MEMBER_TABLE", // 고유한 키값
+  default: {
+    sortKey: "name",
+    sortOrder: "asc",
+  },
+});

@@ -1,10 +1,10 @@
 import React from "react";
+import SummaryButton from "../../Atoms/Summary/SummaryButton";
 import SummaryHeader from "../../Atoms/Summary/SummaryHeader";
 import SummaryRow from "../../Atoms/Summary/SummaryRow";
-import SummaryButton from "../../Atoms/Summary/SummaryButton";
 
 type CompoundComposition = {
-  Row: React.FC<{ title: string; value: string }>;
+  Row: React.FC<{title: string; value: string}>;
 };
 
 const Summary: React.FC<{
