@@ -20,6 +20,7 @@ query findCell($id: Float!) {
       birthday
       gender
       address
+      registrationDate
       cell {
         id
         name

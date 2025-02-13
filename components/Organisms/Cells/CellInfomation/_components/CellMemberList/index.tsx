@@ -175,7 +175,7 @@ const CellMemberList = ({members}: Props) => {
                   {formatPhoneNumber(member.phone)}
                 </div>
                 <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                  {member.registrationDate}
+                  {member.registrationDate || "미입력"}
                 </div>
                 <div className="h-10 col-span-1 flex items-center justify-center">
                   {member.grade}
