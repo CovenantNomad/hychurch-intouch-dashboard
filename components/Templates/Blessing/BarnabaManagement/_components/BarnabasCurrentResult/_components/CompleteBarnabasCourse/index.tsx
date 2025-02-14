@@ -36,10 +36,10 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
             <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               바나바
             </div>
-            <div className="h-10 col-span-1 flex items-center justify-center">
+            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
               진행기간
             </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+            <div className="h-10 col-span-1 flex items-center justify-center">
               진행주차
             </div>
           </div>
@@ -74,14 +74,14 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                   <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {barnabas.barnabaName}
                   </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center">
+                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                     {getWeeksBetweenDates(
                       barnabas.matchingDate,
                       barnabas.completedDate || dayjs().format("YYYY-MM-DD")
                     )}
                     주
                   </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                  <div className="h-12 col-span-1 flex items-center justify-center">
                     {barnabas.completedMeetingCount}주차 /{" "}
                     {barnabas.scheduledMeetingCount}
                     주차
