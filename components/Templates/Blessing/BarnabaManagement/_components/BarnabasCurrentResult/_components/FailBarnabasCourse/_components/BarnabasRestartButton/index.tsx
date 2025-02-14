@@ -22,7 +22,15 @@ type Props = {
 const BarnabasRestartButton = ({matchingId, barnabaId, menteeId}: Props) => {
   const queryClient = useQueryClient();
   const mutation = useMutation(
-    (matchingId: string) => reStartBarnabaMentorship(matchingId, barnabaId),
+    ({
+      matchingId,
+      barnabaId,
+      reset,
+    }: {
+      matchingId: string;
+      barnabaId: string;
+      reset: boolean;
+    }) => reStartBarnabaMentorship({matchingId, barnabaId, reset}),
     {
       onSuccess: async (_, variables) => {
         toast.success("바나바과정 재시작");
@@ -57,20 +65,36 @@ const BarnabasRestartButton = ({matchingId, barnabaId, menteeId}: Props) => {
             보류 되었던 바나바과정을 다시 시작하시겠습니까?
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="mt-6">
-          <DialogClose asChild>
-            <button className="mt-2 w-full sm:mt-0 sm:w-fit sm:mr-2 border py-2 px-4 rounded-md border-blue-500 text-blue-500">
-              취소
-            </button>
-          </DialogClose>
-          <DialogClose asChild>
-            <button
-              className="w-full sm:w-fit border py-2 px-4 rounded-md bg-blue-500 text-white"
-              onClick={() => mutation.mutate(matchingId)}
-            >
-              재시작
-            </button>
-          </DialogClose>
+        <DialogFooter className="mt-6 items-center">
+          <div className="flex-1 flex justify-start items-center">
+            <DialogClose asChild>
+              <button className="py-2 px-4 hover:bg-gray-100 text-sm">
+                취소
+              </button>
+            </DialogClose>
+          </div>
+          <div className="flex space-x-3">
+            <DialogClose asChild>
+              <button
+                className="border py-2 px-4 rounded-md bg-gray-800 hover:bg-gray-600 text-sm text-white"
+                onClick={() =>
+                  mutation.mutate({matchingId, barnabaId, reset: false})
+                }
+              >
+                이어서 시작
+              </button>
+            </DialogClose>
+            <DialogClose asChild>
+              <button
+                className="border py-2 px-4 rounded-md bg-gray-800 hover:bg-gray-600 text-sm text-white"
+                onClick={() =>
+                  mutation.mutate({matchingId, barnabaId, reset: true})
+                }
+              >
+                새로 시작
+              </button>
+            </DialogClose>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

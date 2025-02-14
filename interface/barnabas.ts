@@ -68,6 +68,7 @@ export type TAppointment = {
   scheduledMeetingCount: string;
   review: string;
   status: TAppointmentStatus;
+  matchingStatus: TMatchingStatus;
 };
 
 export type TMenteeStatus = {

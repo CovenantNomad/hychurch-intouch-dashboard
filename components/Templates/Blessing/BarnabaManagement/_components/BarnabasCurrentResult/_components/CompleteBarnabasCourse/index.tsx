@@ -45,7 +45,7 @@ const CompleteBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
               진행주차
             </div>
             <div className="h-10 col-span-1 flex items-center justify-center">
-              교육기간
+              진행기간
             </div>
           </div>
 

@@ -1,8 +1,10 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 import {
   TMatching,
   TMatchingStatus,
 } from "../../../../../../../../interface/barnabas";
+import {getWeeksBetweenDates} from "../../../../../../../../utils/dateUtils";
 import {convertMatchingMessage} from "../../../../../../../../utils/utils";
 import SkeletonTable from "../../../../../../../Atoms/Skeleton/SkeletonTable";
 import BarnabasRestartButton from "./_components/BarnabasRestartButton";
@@ -22,93 +24,115 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
       {isLoading ? (
         <SkeletonTable />
       ) : barnabasCourseList.length !== 0 ? (
-        <div className="w-full rounded-lg overflow-hidden border border-gray-300">
-          {/* Header */}
-          <div className="grid grid-cols-7 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              매칭일
+        <>
+          <p className="text-right text-sm text-gray-500 mb-1">
+            새로시작: 진행했던 주차를 리셋하고 0주차부터 시작합니다. |
+            이어서시작: 진행했던 주차를 보존하고 이어서 진행합니다.
+          </p>
+          <div className="w-full rounded-lg overflow-hidden border border-gray-300">
+            {/* Header */}
+            <div className="grid grid-cols-12 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                매칭일
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                종료일
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                바나바
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                멘티
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                전체과정 진행상태
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                진행주차
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                진행기간
+              </div>
+              <div className="h-10 col-span-4 flex items-center justify-center border-r border-gray-300">
+                비고
+              </div>
+              <div className="h-10 col-span-1 flex items-center justify-center">
+                재시작
+              </div>
             </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              종료일
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              바나바
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              멘티
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              전체과정 진행상태
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-              진행주차
-            </div>
-            <div className="h-10 col-span-1 flex items-center justify-center">
-              재시작
-            </div>
-          </div>
 
-          {/* Body */}
-          <div className="divide-y divide-gray-300">
-            {barnabasCourseList
-              .slice()
-              .sort((a, b) => {
-                const dateA = a.completedDate
-                  ? new Date(a.completedDate).getTime()
-                  : Infinity;
-                const dateB = b.completedDate
-                  ? new Date(b.completedDate).getTime()
-                  : Infinity;
-                return dateA - dateB; // 오래된 날짜가 먼저 오도록 정렬
-              })
-              .map((barnabas) => (
-                <div
-                  key={barnabas.id}
-                  className="grid grid-cols-7 text-sm text-center items-center hover:bg-gray-50"
-                >
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    {barnabas.matchingDate}
+            {/* Body */}
+            <div className="divide-y divide-gray-300">
+              {barnabasCourseList
+                .slice()
+                .sort((a, b) => {
+                  const dateA = a.completedDate
+                    ? new Date(a.completedDate).getTime()
+                    : Infinity;
+                  const dateB = b.completedDate
+                    ? new Date(b.completedDate).getTime()
+                    : Infinity;
+                  return dateA - dateB; // 오래된 날짜가 먼저 오도록 정렬
+                })
+                .map((barnabas) => (
+                  <div
+                    key={barnabas.id}
+                    className="grid grid-cols-12 text-sm text-center items-center hover:bg-gray-50"
+                  >
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.matchingDate}
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.completedDate}
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.barnabaName}
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.menteeName}
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      <span
+                        className={`text-white px-2 py-1 rounded-full ${
+                          barnabas.status === TMatchingStatus.COMPLETED
+                            ? "bg-blue-500"
+                            : barnabas.status === TMatchingStatus.PROGRESS
+                            ? "bg-teal-500"
+                            : barnabas.status === TMatchingStatus.PENDING
+                            ? "bg-gray-600"
+                            : "bg-amber-500"
+                        }`}
+                      >
+                        {convertMatchingMessage(barnabas.status)}
+                      </span>
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.completedMeetingCount}주차 /{" "}
+                      {barnabas.scheduledMeetingCount}
+                      주차
+                    </div>
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {getWeeksBetweenDates(
+                        barnabas.matchingDate,
+                        barnabas.completedDate || dayjs().format("YYYY-MM-DD")
+                      )}
+                      주
+                    </div>
+                    <div className="h-12 col-span-4 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.description}
+                    </div>
+                    <div className="h-10 col-span-1 flex items-center justify-center">
+                      <BarnabasRestartButton
+                        matchingId={barnabas.id}
+                        barnabaId={barnabas.barnabaId}
+                        menteeId={barnabas.menteeId}
+                      />
+                    </div>
                   </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    {barnabas.completedDate}
-                  </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    {barnabas.barnabaName}
-                  </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    {barnabas.menteeName}
-                  </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    <span
-                      className={`text-white px-2 py-1 rounded-full ${
-                        barnabas.status === TMatchingStatus.COMPLETED
-                          ? "bg-blue-500"
-                          : barnabas.status === TMatchingStatus.PROGRESS
-                          ? "bg-teal-500"
-                          : barnabas.status === TMatchingStatus.PENDING
-                          ? "bg-gray-600"
-                          : "bg-amber-500"
-                      }`}
-                    >
-                      {convertMatchingMessage(barnabas.status)}
-                    </span>
-                  </div>
-                  <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                    {barnabas.completedMeetingCount}주차 /{" "}
-                    {barnabas.scheduledMeetingCount}
-                    주차
-                  </div>
-                  <div className="h-10 col-span-1 flex items-center justify-center">
-                    <BarnabasRestartButton
-                      matchingId={barnabas.id}
-                      barnabaId={barnabas.barnabaId}
-                      menteeId={barnabas.menteeId}
-                    />
-                  </div>
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         <div className="h-32 flex flex-col justify-center items-center space-y-1">
           <ExclamationTriangleIcon className="h-6 w-6" />
