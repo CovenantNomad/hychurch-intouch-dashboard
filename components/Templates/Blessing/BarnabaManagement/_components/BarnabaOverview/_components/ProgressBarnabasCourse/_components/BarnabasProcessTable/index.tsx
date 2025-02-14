@@ -14,10 +14,10 @@ const BarnabasProcessTable = ({data}: Props) => {
           매칭일
         </div>
         <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-          바나바
+          멘티
         </div>
         <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-          멘티
+          바나바
         </div>
         <div className="h-10 col-span-1 flex items-center justify-center cursor-pointer border-r border-gray-300">
           진행 기간
@@ -53,6 +53,7 @@ const BarnabasProcessTable = ({data}: Props) => {
         {data
           .slice()
           .sort((a, b) => a.matchingDate.localeCompare(b.matchingDate))
+          .sort((a, b) => a.menteeName.localeCompare(b.menteeName))
           .map((barnabas, index) => (
             <BarnabasProcessTableBody key={index} barnabas={barnabas} />
           ))}

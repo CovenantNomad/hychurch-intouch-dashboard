@@ -44,10 +44,10 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
         {barnabas.matchingDate}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {barnabas.barnabaName}
+        {barnabas.menteeName}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {barnabas.menteeName}
+        {barnabas.barnabaName}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {getWeeksBetweenDates(
