@@ -37,11 +37,11 @@ const MenteeAttendanceTable = ({recentSunday}: Props) => {
             {/* Table Head */}
             <thead className="bg-gray-100 border border-gray-300 text-sm text-gray-600">
               <tr className="text-center divide-x divide-gray-300">
-                <th className="h-12 w-[5%]">순번</th>
-                <th className="h-12  w-[20%] cursor-pointer">바나바</th>
-                <th className="h-12  w-[20%] cursor-pointer">멘티</th>
-                <th className="h-12  w-[20%] cursor-pointer">예배출석</th>
-                <th className="h-12 w-[35%] ">비고</th>
+                <th className="h-10 w-[5%]">순번</th>
+                <th className="h-10 w-[20%] cursor-pointer">바나바</th>
+                <th className="h-10 w-[20%] cursor-pointer">멘티</th>
+                <th className="h-10 w-[20%] cursor-pointer">예배출석</th>
+                <th className="h-10 w-[35%] ">비고</th>
               </tr>
             </thead>
 
@@ -55,17 +55,19 @@ const MenteeAttendanceTable = ({recentSunday}: Props) => {
                     key={index}
                     className="text-center divide-x divide-gray-300 hover:bg-gray-50"
                   >
-                    <td className="h-10">{index + 1}</td>
-                    <td className="h-10">{attendance.barnabaName}</td>
-                    <td className="h-10">{attendance.menteeName}</td>
+                    <td className="h-12 text-sm">{index + 1}</td>
+                    <td className="h-12 text-sm">{attendance.barnabaName}</td>
+                    <td className="h-12 text-sm">{attendance.menteeName}</td>
                     <td
-                      className={`h-10 ${
+                      className={`h-12 text-sm ${
                         attendance.service === "미제출" && "text-rose-500"
                       }`}
                     >
                       {attendance.service}
                     </td>
-                    <td className="h-10">{attendance.description}</td>
+                    <td className="h-12 text-sm px-4">
+                      {attendance.description}
+                    </td>
                   </tr>
                 ))}
             </tbody>

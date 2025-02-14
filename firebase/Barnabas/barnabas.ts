@@ -21,6 +21,7 @@ import {
   TAmazingMember,
   TAmazingMentorshipStatus,
   TAppointment,
+  TAppointmentStatus,
   TBarnabaProfile,
   TBarnabasDetail,
   TBarnabasHistory,
@@ -719,6 +720,13 @@ export const updateBarnabaMentorship = async ({
       matchingId
     );
 
+    const appointmentsRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES
+    );
+
     const amazingMentorshipRef = doc(
       db,
       BARNABAS_COLLCTION.BARNABAS,
@@ -727,8 +735,13 @@ export const updateBarnabaMentorship = async ({
       menteeId
     );
 
-    const mentorshipDoc = await getDoc(amazingMentorshipRef);
     const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+    const appointmentsQuery = query(
+      appointmentsRef,
+      where("matchingId", "==", matchingId)
+    );
+    const appointmentsSnapshot = await getDocs(appointmentsQuery);
 
     await runTransaction(db, async (transaction) => {
       const historySnap = await transaction.get(historyRef);
@@ -748,25 +761,38 @@ export const updateBarnabaMentorship = async ({
         failCount += 1;
       }
 
-      // 🔹 히스토리 업데이트 (pass/fail 증가)
+      // ✅ 히스토리 업데이트 (pass/fail 증가)
       transaction.update(historyRef, {
         pass: passCount,
         fail: failCount,
       });
 
-      // 🔹 멘토십 상태 업데이트
+      // ✅ 멘토십 상태 업데이트
       transaction.update(mentorshipRef, {
         status,
         description,
         completedDate: today,
       });
 
-      // 🔹 barnabasDetails 컬렉션 업데이트
+      // ✅ barnabasDetails 컬렉션 업데이트
       transaction.update(detailsRef, {
         status,
         completedDate: today,
       });
 
+      // ✅ appointments의 matchingStatus 업데이트
+      appointmentsSnapshot.forEach((appointmentDoc) => {
+        transaction.update(appointmentDoc.ref, {
+          matchingStatus: status,
+          status:
+            status === TMatchingStatus.FAILED &&
+            appointmentDoc.data().status === TAppointmentStatus.SCHEDULED
+              ? TAppointmentStatus.CANCELED
+              : appointmentDoc.data().status,
+        });
+      });
+
+      // ✅ "completed" 상태일 경우, 어메이징 멘토십 등록
       if (status === TMatchingStatus.COMPLETED) {
         transaction.set(
           amazingMentorshipRef,
@@ -835,10 +861,15 @@ export const getCompletedOrFailedMentorships = async (
   return {completedMap, failedMap};
 };
 
-export const reStartBarnabaMentorship = async (
-  matchingId: string,
-  barnabaId: string
-) => {
+export const reStartBarnabaMentorship = async ({
+  matchingId,
+  barnabaId,
+  reset,
+}: {
+  matchingId: string;
+  barnabaId: string;
+  reset: boolean;
+}) => {
   try {
     const mentorshipRef = doc(
       db,
@@ -861,6 +892,21 @@ export const reStartBarnabaMentorship = async (
       matchingId
     );
 
+    const appointmentsRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES
+    );
+
+    const appointmentsQuery = query(
+      appointmentsRef,
+      where("matchingId", "==", matchingId)
+    );
+    const appointmentsSnapshot = await getDocs(appointmentsQuery);
+
+    const today = dayjs(new Date()).format("YYYY-MM-DD");
+
     await runTransaction(db, async (transaction) => {
       // 🔹 히스토리 문서 조회
       const historySnap = await transaction.get(historyRef);
@@ -880,17 +926,41 @@ export const reStartBarnabaMentorship = async (
         fail: failCount,
       });
 
-      // 🔹 멘토십 상태 변경
-      transaction.update(mentorshipRef, {
-        status: TMatchingStatus.PROGRESS,
-        completedDate: "",
-      });
-
       // 🔹 barnabasDetails 업데이트
       transaction.update(detailsRef, {
         status: TMatchingStatus.PROGRESS,
         completedDate: "",
       });
+
+      // ✅ 멘토쉽 상태 변경
+      if (reset) {
+        // ✅ reset = true → appointments 전체 삭제 및 초기화
+        appointmentsSnapshot.forEach((appointmentDoc) => {
+          transaction.delete(appointmentDoc.ref);
+        });
+
+        transaction.update(mentorshipRef, {
+          status: TMatchingStatus.PROGRESS,
+          firstMeetingDate: "",
+          lastMeetingDate: "",
+          matchingDate: today,
+          completedMeetingCount: 0,
+          completedDate: "",
+          description: "",
+        });
+      } else {
+        appointmentsSnapshot.forEach((appointmentDoc) => {
+          transaction.update(appointmentDoc.ref, {
+            matchingStatus: TMatchingStatus.PROGRESS,
+          });
+        });
+        // ✅ reset = false → 상태만 변경
+        transaction.update(mentorshipRef, {
+          status: TMatchingStatus.PROGRESS,
+          completedDate: "",
+          description: "",
+        });
+      }
     });
   } catch (error) {
     console.error("바나바 멘토십 업데이트 실패:", error);
