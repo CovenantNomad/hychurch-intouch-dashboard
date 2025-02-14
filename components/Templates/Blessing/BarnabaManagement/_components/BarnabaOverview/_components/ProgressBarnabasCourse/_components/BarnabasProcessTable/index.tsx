@@ -53,7 +53,6 @@ const BarnabasProcessTable = ({data}: Props) => {
         {data
           .slice()
           .sort((a, b) => a.matchingDate.localeCompare(b.matchingDate))
-          .sort((a, b) => a.menteeName.localeCompare(b.menteeName))
           .map((barnabas, index) => (
             <BarnabasProcessTableBody key={index} barnabas={barnabas} />
           ))}

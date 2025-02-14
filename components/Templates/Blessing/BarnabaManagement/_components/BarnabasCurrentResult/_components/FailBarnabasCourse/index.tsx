@@ -1,11 +1,7 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
-import {
-  TMatching,
-  TMatchingStatus,
-} from "../../../../../../../../interface/barnabas";
+import {TMatching} from "../../../../../../../../interface/barnabas";
 import {getWeeksBetweenDates} from "../../../../../../../../utils/dateUtils";
-import {convertMatchingMessage} from "../../../../../../../../utils/utils";
 import SkeletonTable from "../../../../../../../Atoms/Skeleton/SkeletonTable";
 import BarnabasRestartButton from "./_components/BarnabasRestartButton";
 
@@ -17,7 +13,9 @@ type Props = {
 const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
   return (
     <div>
-      <h4 className="text-lg font-semibold">바나바과정 보류한 멘티명단</h4>
+      <h4 className="text-lg font-semibold">
+        바나바과정 <span className="text-amber-500">보류한</span> 멘티명단
+      </h4>
       <p className="text-sm text-gray-500 mb-4">
         현재 블레싱에 편성된 청년 중 바나바과정이 보류된 명단입니다.
       </p>
@@ -31,7 +29,7 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
           </p>
           <div className="w-full rounded-lg overflow-hidden border border-gray-300">
             {/* Header */}
-            <div className="grid grid-cols-12 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
+            <div className="grid grid-cols-10 border-b border-gray-300 text-sm text-center text-[#71717A] hover:bg-gray-50">
               <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                 매칭일
               </div>
@@ -39,21 +37,18 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                 종료일
               </div>
               <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                바나바
-              </div>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                 멘티
               </div>
               <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                전체과정 진행상태
-              </div>
-              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
-                진행주차
+                바나바
               </div>
               <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
                 진행기간
               </div>
-              <div className="h-10 col-span-4 flex items-center justify-center border-r border-gray-300">
+              <div className="h-10 col-span-1 flex items-center justify-center border-r border-gray-300">
+                진행주차
+              </div>
+              <div className="h-10 col-span-3 flex items-center justify-center border-r border-gray-300">
                 비고
               </div>
               <div className="h-10 col-span-1 flex items-center justify-center">
@@ -77,7 +72,7 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                 .map((barnabas) => (
                   <div
                     key={barnabas.id}
-                    className="grid grid-cols-12 text-sm text-center items-center hover:bg-gray-50"
+                    className="grid grid-cols-10 text-sm text-center items-center hover:bg-gray-50"
                   >
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                       {barnabas.matchingDate}
@@ -86,30 +81,10 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                       {barnabas.completedDate}
                     </div>
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                      {barnabas.barnabaName}
-                    </div>
-                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                       {barnabas.menteeName}
                     </div>
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                      <span
-                        className={`text-white px-2 py-1 rounded-full ${
-                          barnabas.status === TMatchingStatus.COMPLETED
-                            ? "bg-blue-500"
-                            : barnabas.status === TMatchingStatus.PROGRESS
-                            ? "bg-teal-500"
-                            : barnabas.status === TMatchingStatus.PENDING
-                            ? "bg-gray-600"
-                            : "bg-amber-500"
-                        }`}
-                      >
-                        {convertMatchingMessage(barnabas.status)}
-                      </span>
-                    </div>
-                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                      {barnabas.completedMeetingCount}주차 /{" "}
-                      {barnabas.scheduledMeetingCount}
-                      주차
+                      {barnabas.barnabaName}
                     </div>
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                       {getWeeksBetweenDates(
@@ -118,7 +93,12 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                       )}
                       주
                     </div>
-                    <div className="h-12 col-span-4 flex items-center justify-center border-r border-gray-300">
+                    <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+                      {barnabas.completedMeetingCount}주차 /{" "}
+                      {barnabas.scheduledMeetingCount}
+                      주차
+                    </div>
+                    <div className="h-12 col-span-3 flex items-center justify-center border-r border-gray-300">
                       {barnabas.description}
                     </div>
                     <div className="h-10 col-span-1 flex items-center justify-center">
