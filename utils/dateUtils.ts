@@ -195,5 +195,9 @@ export const getWeeksBetweenDates = (
   const start = dayjs(startDate);
   const end = dayjs(endDate);
 
-  return end.diff(start, "week"); // 주 단위 차이 계산
+  // 날짜 차이를 일(day) 단위로 계산
+  const dayDifference = end.diff(start, "day");
+
+  // 7일 미만은 1주차, 이후는 7일 단위로 올림 처리
+  return dayDifference < 7 ? 1 : Math.ceil(dayDifference / 7);
 };
