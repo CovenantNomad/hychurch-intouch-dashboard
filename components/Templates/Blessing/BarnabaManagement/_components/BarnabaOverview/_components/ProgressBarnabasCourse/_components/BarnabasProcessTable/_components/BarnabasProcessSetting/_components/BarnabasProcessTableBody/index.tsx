@@ -1,5 +1,4 @@
 import {ArrowPathIcon} from "@heroicons/react/24/solid";
-import dayjs from "dayjs";
 import {useQuery} from "react-query";
 import BarnabasProcessSetting from "../..";
 import {getAppointmentByMatchingId} from "../../../../../../../../../../../../../../firebase/Barnabas/barnabas";
@@ -7,10 +6,10 @@ import {
   TAppointmentStatus,
   TMatching,
 } from "../../../../../../../../../../../../../../interface/barnabas";
-import {getWeeksBetweenDates} from "../../../../../../../../../../../../../../utils/dateUtils";
 import {
   convertAppointmentMessage,
   getDelayedWeeks,
+  getProgressDuration,
 } from "../../../../../../../../../../../../../../utils/utils";
 
 type Props = {
@@ -50,10 +49,13 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
         {barnabas.barnabaName}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {getWeeksBetweenDates(
-          barnabas.matchingDate,
-          dayjs().format("YYYY-MM-DD")
-        )}
+        {getProgressDuration({
+          matchingDate: barnabas.matchingDate,
+          completedDate: barnabas.completedDate,
+          lastMeetingDate: barnabas.lastMeetingDate,
+          completedMeetingCount: barnabas.completedMeetingCount,
+          scheduledMeetingCount: barnabas.scheduledMeetingCount,
+        })}
         주
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">

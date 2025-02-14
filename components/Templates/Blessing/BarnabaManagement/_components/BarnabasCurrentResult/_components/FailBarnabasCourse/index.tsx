@@ -1,7 +1,6 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/solid";
-import dayjs from "dayjs";
 import {TMatching} from "../../../../../../../../interface/barnabas";
-import {getWeeksBetweenDates} from "../../../../../../../../utils/dateUtils";
+import {getProgressDuration} from "../../../../../../../../utils/utils";
 import SkeletonTable from "../../../../../../../Atoms/Skeleton/SkeletonTable";
 import BarnabasRestartButton from "./_components/BarnabasRestartButton";
 
@@ -87,11 +86,14 @@ const FailBarnabasCourse = ({isLoading, barnabasCourseList}: Props) => {
                       {barnabas.barnabaName}
                     </div>
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-                      {getWeeksBetweenDates(
-                        barnabas.matchingDate,
-                        barnabas.completedDate || dayjs().format("YYYY-MM-DD")
-                      )}
-                      주
+                      {getProgressDuration({
+                        matchingDate: barnabas.matchingDate,
+                        completedDate: barnabas.completedDate,
+                        lastMeetingDate: barnabas.lastMeetingDate,
+                        completedMeetingCount: barnabas.completedMeetingCount,
+                        scheduledMeetingCount: barnabas.scheduledMeetingCount,
+                      })}
+                      주 주
                     </div>
                     <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
                       {barnabas.completedMeetingCount}주차 /{" "}
