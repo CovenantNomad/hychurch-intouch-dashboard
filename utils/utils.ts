@@ -20,6 +20,7 @@ import {
 } from "../interface/cell";
 import {CommunityFilter} from "../stores/cellState";
 import {Member, MemberWithTransferOut} from "./../interface/user";
+import {getWeeksBetweenDates} from "./dateUtils";
 
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -414,11 +415,11 @@ export const getWeekNumber = (dateString: string): string => {
 export function convertAppointmentMessage(status: TAppointmentStatus): string {
   switch (status) {
     case TAppointmentStatus.SCHEDULED:
-      return "만남예정";
+      return "약속";
     case TAppointmentStatus.COMPLETED:
-      return "만남완료";
+      return "만남";
     case TAppointmentStatus.CANCELED:
-      return "약속취소";
+      return "취소";
     default:
       return "상태를 확인할 수 없습니다.";
   }
@@ -522,3 +523,31 @@ export function formatPhoneNumber(phoneNumber: string): string {
   }
   return phoneNumber; // 길이가 맞지 않으면 그대로 반환
 }
+
+export const getDelayedWeeks = ({
+  matchingDate,
+  lastMeetingDate,
+  completedMeetingCount,
+  scheduledMeetingCount,
+}: {
+  matchingDate: string;
+  lastMeetingDate?: string;
+  completedMeetingCount: string;
+  scheduledMeetingCount: string;
+}): number | null => {
+  const completedCount = parseInt(completedMeetingCount, 10);
+  const scheduledCount = parseInt(scheduledMeetingCount, 10);
+
+  if (completedCount >= scheduledCount) return null;
+
+  const referenceDate = completedCount === 0 ? matchingDate : lastMeetingDate;
+
+  if (!referenceDate) return null;
+
+  const weeksSinceLast = getWeeksBetweenDates(
+    referenceDate,
+    dayjs().format("YYYY-MM-DD")
+  );
+
+  return weeksSinceLast > 2 ? weeksSinceLast : null;
+};

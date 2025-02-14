@@ -1,14 +1,16 @@
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 import {useQuery} from "react-query";
 import BarnabasProcessSetting from "../..";
 import {getAppointmentByMatchingId} from "../../../../../../../../../../../../../../firebase/Barnabas/barnabas";
 import {
   TAppointmentStatus,
   TMatching,
-  TMatchingStatus,
 } from "../../../../../../../../../../../../../../interface/barnabas";
+import {getWeeksBetweenDates} from "../../../../../../../../../../../../../../utils/dateUtils";
 import {
   convertAppointmentMessage,
-  convertMatchingMessage,
+  getDelayedWeeks,
 } from "../../../../../../../../../../../../../../utils/utils";
 
 type Props = {
@@ -16,7 +18,7 @@ type Props = {
 };
 
 const BarnabasProcessTableBody = ({barnabas}: Props) => {
-  const {isLoading, data} = useQuery(
+  const {isLoading, data, refetch} = useQuery(
     ["getAppointmentByMatchingId", barnabas.id],
     () =>
       getAppointmentByMatchingId(barnabas.id, barnabas.completedMeetingCount),
@@ -29,8 +31,15 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
     }
   );
 
+  const delayedWeeks = getDelayedWeeks({
+    matchingDate: barnabas.matchingDate,
+    lastMeetingDate: barnabas.lastMeetingDate,
+    completedMeetingCount: barnabas.completedMeetingCount,
+    scheduledMeetingCount: barnabas.scheduledMeetingCount,
+  });
+
   return (
-    <div className="grid grid-cols-11 text-sm text-center items-center hover:bg-gray-50">
+    <div className="grid grid-cols-12 text-sm text-center items-center hover:bg-gray-50">
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.matchingDate}
       </div>
@@ -41,19 +50,11 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
         {barnabas.menteeName}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        <span
-          className={`text-white px-2 py-1 rounded-full ${
-            barnabas.status === TMatchingStatus.COMPLETED
-              ? "bg-blue-500"
-              : barnabas.status === TMatchingStatus.PROGRESS
-              ? "bg-teal-500"
-              : barnabas.status === TMatchingStatus.PENDING
-              ? "bg-gray-600"
-              : "bg-amber-500"
-          }`}
-        >
-          {convertMatchingMessage(barnabas.status)}
-        </span>
+        {getWeeksBetweenDates(
+          barnabas.matchingDate,
+          dayjs().format("YYYY-MM-DD")
+        )}
+        주
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
         {barnabas.completedMeetingCount}주차 / {barnabas.scheduledMeetingCount}
@@ -63,38 +64,72 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
         {barnabas.lastMeetingDate || "일정없음"}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading ? "만남일정 로딩중..." : data ? data.date : "일정없음"}
+        {barnabas.completedMeetingCount ===
+        barnabas.scheduledMeetingCount ? null : (
+          <div className="flex flex-col">
+            <p>{Number(barnabas.completedMeetingCount) + 1}주차</p>
+            {delayedWeeks && (
+              <p className="text-xs text-rose-500 ml-2">
+                (다음약속지연: {delayedWeeks}주)
+              </p>
+            )}
+          </div>
+        )}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading
-          ? "만남일정 로딩중..."
-          : data
-          ? `${data.hour}:${data.minute}`
-          : "일정없음"}
+        {barnabas.completedMeetingCount ===
+        barnabas.scheduledMeetingCount ? null : isLoading ? (
+          <span>만남일정 로딩중...</span>
+        ) : data ? (
+          <p>
+            {data.date} <br />
+            {data.hour}:{data.minute}
+          </p>
+        ) : (
+          <span>일정없음</span>
+        )}
       </div>
       <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
-        {isLoading ? "만남일정 로딩중..." : data ? data.place : "일정없음"}
+        {barnabas.completedMeetingCount ===
+        barnabas.scheduledMeetingCount ? null : isLoading ? (
+          <span>만남일정 로딩중...</span>
+        ) : data ? (
+          <span>{data.place}</span>
+        ) : (
+          <span>일정없음</span>
+        )}
       </div>
       <div
         className={`h-12 col-span-1 flex items-center justify-center border-r border-gray-300`}
       >
-        <span
-          className={`px-2 py-1 rounded-full ${
-            data?.status === TAppointmentStatus.COMPLETED
-              ? "bg-blue-500 text-white"
-              : data?.status === TAppointmentStatus.SCHEDULED
-              ? "bg-teal-500 text-white"
-              : data?.status === TAppointmentStatus.CANCELED
-              ? "bg-amber-500 text-white"
-              : "bg-black text-white"
-          }`}
+        {barnabas.completedMeetingCount ===
+        barnabas.scheduledMeetingCount ? null : (
+          <span
+            className={`px-2 py-1 rounded-full text-xs ${
+              data?.status === TAppointmentStatus.COMPLETED
+                ? "bg-blue-500 text-white"
+                : data?.status === TAppointmentStatus.SCHEDULED
+                ? "bg-teal-500 text-white"
+                : data?.status === TAppointmentStatus.CANCELED
+                ? "bg-amber-500 text-white"
+                : "bg-black text-white"
+            }`}
+          >
+            {isLoading
+              ? "만남일정 로딩중..."
+              : data
+              ? convertAppointmentMessage(data.status)
+              : "일정없음"}
+          </span>
+        )}
+      </div>
+      <div className="h-12 col-span-1 flex items-center justify-center border-r border-gray-300">
+        <button
+          onClick={() => refetch()}
+          className="flex items-center text-sm hover:bg-gray-100 py-2 px-3 rounded-md"
         >
-          {isLoading
-            ? "만남일정 로딩중..."
-            : data
-            ? convertAppointmentMessage(data.status)
-            : "일정없음"}
-        </span>
+          새로고침 <ArrowPathIcon className="h-5 w-5 ml-2" />
+        </button>
       </div>
       <div className="h-10 col-span-1 flex items-center justify-center">
         <BarnabasProcessSetting
