@@ -311,9 +311,9 @@ const MenteeTable = ({members, isLoading}: Props) => {
                   </div>
                 </div>
                 <div className="h-10 col-span-2 flex items-center justify-center">
-                  {member.transferStatus && (
+                  {member.transferStatus && member.toCellName && (
                     <span className="text-white bg-emerald-500 px-2 py-1 rounded-full text-xs">
-                      셀편성중
+                      {`셀편성중 - ${member.toCellName}`}
                     </span>
                   )}
                 </div>

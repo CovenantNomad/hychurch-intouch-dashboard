@@ -1,4 +1,5 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/outline";
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {getNewFamilyRatioStats} from "../../../../../../../../firebase/NewFamilyStats/newFamilyStats";
@@ -24,7 +25,7 @@ const NewFamilyRatioStats = ({}: Props) => {
     }[]
   >([{date: "2025", group1: 0, group2: 0, group3: 0, group4: 0, group5: 0}]);
 
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, isFetching, data, refetch} = useQuery(
     ["getNewFamilyRatioStats"],
     () => getNewFamilyRatioStats(),
     {
@@ -73,12 +74,27 @@ const NewFamilyRatioStats = ({}: Props) => {
             </div>
 
             <div className="col-span-2">
-              <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                새가족 연령별 통계{" "}
-                <span className="text-sm text-gray-600">
-                  (누적, 기준: 2025년)
-                </span>
-              </h3>
+              <div className="flex justify-between mb-3">
+                <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                  새가족 연령별 통계{" "}
+                  <span className="text-sm text-gray-600">
+                    (누적, 기준: 2025년)
+                  </span>
+                </h3>
+                <div className="flex justify-end items-center mb-1">
+                  {isFetching && (
+                    <span className="animate-pulse text-xs mr-4">
+                      새로고침 중..
+                    </span>
+                  )}
+                  <button
+                    onClick={() => refetch()}
+                    className="flex items-center text-xs hover:bg-gray-100 py-2 px-3 rounded-md"
+                  >
+                    새로고침 <ArrowPathIcon className="h-4 w-4 ml-2" />
+                  </button>
+                </div>
+              </div>
               <NewFamilyAgeRatioCart data={ageGroup} />
             </div>
           </div>

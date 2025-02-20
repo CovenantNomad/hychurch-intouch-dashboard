@@ -1,3 +1,4 @@
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {getNewFamilyRecentStats} from "../../../../../../../../firebase/NewFamilyStats/newFamilyStats";
@@ -30,7 +31,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
       group5: number;
     }[]
   >([]);
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, isFetching, data, refetch} = useQuery(
     ["getNewFamilyRecentStats"],
     () => getNewFamilyRecentStats(),
     {
@@ -48,12 +49,25 @@ const NewFamilyLastWeekStats = ({}: Props) => {
 
   return (
     <>
-      <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        가장 최근 새가족등록 정보{" "}
-        <span className="text-sm">
-          ({data ? data.recentDate : "데이터 조회 실패"})
-        </span>
-      </h3>
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+          가장 최근 새가족등록 정보{" "}
+          <span className="text-sm">
+            ({data ? data.recentDate : "데이터 조회 실패"})
+          </span>
+        </h3>
+        <div className="flex justify-end items-center mb-1">
+          {isFetching && (
+            <span className="animate-pulse text-xs mr-4">새로고침 중..</span>
+          )}
+          <button
+            onClick={() => refetch()}
+            className="flex items-center text-xs hover:bg-gray-100 py-2 px-3 rounded-md"
+          >
+            새로고침 <ArrowPathIcon className="h-4 w-4 ml-2" />
+          </button>
+        </div>
+      </div>
       <div className="grid grid-cols-4 gap-x-8 mt-2">
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
@@ -76,7 +90,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
             성별비율 (형제/자매)
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-4/5 h-[32px]" />
             </>
@@ -96,7 +110,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
             연령대별
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-2/5 h-[32px]" />
               <Skeleton className="w-4/5 h-[14px] mt-1" />
@@ -116,11 +130,6 @@ const NewFamilyLastWeekStats = ({}: Props) => {
                     `${data.recentGroup5}명`
                   : "데이터 조회 실패"}
               </dd>
-              {/* <SparkBarChart
-                data={chartData}
-                index="date"
-                categories={["group1", "group2", "group3", "group4", "group5"]}
-              /> */}
             </>
           )}
         </div>
@@ -128,7 +137,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
             올해 누적등록 (총원, 형제/자매)
           </dt>
-          {isLoading || isFetching ? (
+          {isLoading ? (
             <>
               <Skeleton className="w-4/5 h-[32px]" />
               <Skeleton className="w-3/5 h-[14px] mt-1" />

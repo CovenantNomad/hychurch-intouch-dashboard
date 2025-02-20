@@ -25,6 +25,21 @@ export enum TAmazingMentorshipStatus {
   COMPLETED = "completed",
 }
 
+export enum BarnabasMemberSubTab {
+  COHORT = "cohort",
+  AGE = "age",
+  HISTORY = "history",
+  YEARLY = "yearly",
+}
+
+export enum BarnabasCourseSubTab {
+  PROGRESS = "Progress",
+  RESULTS = "Results",
+  SCHEDULE = "Schedule",
+  HISTORY = "History",
+  ATTENDANCE = "Attendance",
+}
+
 export type TBarnabaProfile = {
   id: string; // 고유 ID
   name: string; // 이름
@@ -79,6 +94,7 @@ export type TMenteeStatus = {
 };
 
 export type TBarnabasHistory = {
+  barnabaId: string;
   barnabaName: string;
   total: number;
   pass: number;

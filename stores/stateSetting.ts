@@ -1,4 +1,9 @@
 import {atom} from "recoil";
+
+import {
+  BarnabasCourseSubTab,
+  BarnabasMemberSubTab,
+} from "../interface/barnabas";
 import {Theme} from "../interface/setting";
 
 export const stateSetting = atom({
@@ -14,5 +19,7 @@ export const stateSetting = atom({
     reportSelectedCategoryId: 0,
     talentSelectedCategoryId: 0,
     developSelectedCategoryId: 0,
+    blessingBarnabaMemberTab: BarnabasMemberSubTab.COHORT,
+    blessingCourseTab: BarnabasCourseSubTab.PROGRESS,
   },
 });
