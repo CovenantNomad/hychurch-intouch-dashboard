@@ -32,7 +32,7 @@ const BarnabasInActiveButton = ({barnabaId, isActive}: Props) => {
   );
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <button
           className={cx(
             "text-sm rounded-md px-3 py-2 text-white",

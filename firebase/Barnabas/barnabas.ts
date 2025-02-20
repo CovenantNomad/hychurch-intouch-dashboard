@@ -986,9 +986,17 @@ export const getBarnabasHistory = async (): Promise<
       return [];
     }
 
-    return querySnapshot.docs.map(
-      (doc) => doc.data() as Omit<TBarnabasHistory, "barnabasDetails">
-    );
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        barnabaId: doc.id,
+        barnabaName: data.barnabaName || "Unknown",
+        total: data.total || 0,
+        pass: data.pass || 0,
+        fail: data.fail || 0,
+        isActive: data.isActive || false,
+      } as Omit<TBarnabasHistory, "barnabasDetails">;
+    });
   } catch (error) {
     console.error("@getBarnabasHistory: ", error);
     throw new Error("바나바 양육 이력을 가져오는 중 에러가 발생했습니다.");
@@ -1067,6 +1075,7 @@ export const getBarnabasYearlyRecords = async (
         });
 
         return {
+          barnabaId: doc.id,
           barnabaName: data.barnabaName || "Unknown",
           total: total || 0,
           pass: pass || 0,

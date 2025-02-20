@@ -1,4 +1,5 @@
 import {ExclamationTriangleIcon} from "@heroicons/react/24/outline";
+import {ArrowPathIcon} from "@heroicons/react/24/solid";
 import {useQuery} from "react-query";
 import {getNewFamilyCountStats} from "../../../../../../../../firebase/NewFamilyStats/newFamilyStats";
 import Skeleton from "../../../../../../../Atoms/Skeleton/Skeleton";
@@ -7,7 +8,7 @@ import NewFamilyCountChart from "./_components/NewFamilyCountChart/NewFamilyCoun
 type Props = {};
 
 const NewFamilyRegistrationStats = ({}: Props) => {
-  const {isLoading, isFetching, data} = useQuery(
+  const {isLoading, isFetching, data, refetch} = useQuery(
     ["getNewFamilyCountStats"],
     () => getNewFamilyCountStats(),
     {
@@ -26,10 +27,25 @@ const NewFamilyRegistrationStats = ({}: Props) => {
           </div>
         ) : data ? (
           <>
-            <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              새가족등록 주간 통계{" "}
-              <span className="text-sm text-gray-600">(기간: 최근 20주)</span>
-            </h3>
+            <div className="flex justify-between mb-3">
+              <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                새가족등록 주간 통계{" "}
+                <span className="text-sm text-gray-600">(기간: 최근 20주)</span>
+              </h3>
+              <div className="flex justify-end items-center mb-1">
+                {isFetching && (
+                  <span className="animate-pulse text-xs mr-4">
+                    새로고침 중..
+                  </span>
+                )}
+                <button
+                  onClick={() => refetch()}
+                  className="flex items-center text-xs hover:bg-gray-100 py-2 px-3 rounded-md"
+                >
+                  새로고침 <ArrowPathIcon className="h-4 w-4 ml-2" />
+                </button>
+              </div>
+            </div>
             <NewFamilyCountChart data={data} />
           </>
         ) : (

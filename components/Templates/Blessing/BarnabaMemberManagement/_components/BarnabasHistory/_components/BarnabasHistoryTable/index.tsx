@@ -1,4 +1,5 @@
 import {ArrowsUpDownIcon} from "@heroicons/react/24/outline";
+import Link from "next/link";
 import {useRecoilState} from "recoil";
 import {TBarnabasHistory} from "../../../../../../../../interface/barnabas";
 import {barnabasTrainingHistorySortState} from "../../../../../../../../stores/barnabaState";
@@ -103,7 +104,20 @@ const BarnabasHistoryTable = ({data}: Props) => {
               className="text-center divide-x divide-gray-300 hover:bg-gray-50"
             >
               <td className="h-10">{index + 1}</td>
-              <td className="h-10">{barnabas.barnabaName}</td>
+              <td className="h-10">
+                <Link
+                  href={{
+                    pathname: `/blessing/barnabas/${barnabas.barnabaId}`,
+                    query: {
+                      id: barnabas.barnabaId,
+                      name: barnabas.barnabaName,
+                    },
+                  }}
+                  as={`/blessing/barnabas/${barnabas.barnabaId}`}
+                >
+                  {barnabas.barnabaName}
+                </Link>
+              </td>
               <td className="h-10">{barnabas.total}</td>
               <td className="h-10">{barnabas.pass}</td>
               <td className="h-10">{barnabas.fail}</td>
