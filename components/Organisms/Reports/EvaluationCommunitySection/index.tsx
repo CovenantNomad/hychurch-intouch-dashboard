@@ -25,18 +25,15 @@ const EvaluationCommunitySection = ({
   const [inProgressSubmissionsCount, setInProgressSubmissionsCount] =
     useState<number>(0);
 
-  const {
-    isLoading: isSubmissionCheckLoading,
-    isFetching: isSubmissionCheckFetching,
-    data: submissionCheckData,
-  } = useQuery(
-    ["getEvaluationSubmissionCheck", seasonName],
-    () => getEvaluationSubmissionCheck(seasonName),
-    {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 5 * 60 * 1000,
-    }
-  );
+  const {isLoading: isSubmissionCheckLoading, data: submissionCheckData} =
+    useQuery(
+      ["getEvaluationSubmissionCheck", seasonName],
+      () => getEvaluationSubmissionCheck(seasonName),
+      {
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 5 * 60 * 1000,
+      }
+    );
 
   useEffect(() => {
     if (submissionCheckData && communityCellList) {
@@ -136,8 +133,7 @@ const EvaluationCommunitySection = ({
                         <div
                           className={`flex justify-center items-center rounded-full`}
                         >
-                          {isSubmissionCheckLoading ||
-                          isSubmissionCheckFetching ? (
+                          {isSubmissionCheckLoading ? (
                             <div className="animate-pulse inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                               ...
                             </div>

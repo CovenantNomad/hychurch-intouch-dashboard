@@ -14,11 +14,11 @@ const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
   const {
     isLoading,
     attendanceStatus,
-    communityOne,
-    communityTwo,
-    communityThree,
-    communityFour,
-    communityFive,
+    LIGHTONE,
+    LIGHTTWO,
+    LIGHTTHREE,
+    LIGHTFOUR,
+    LIGHTFIVE,
   } = useCheckCellAttendanceSubmissions(recentSunday.format("YYYY-MM-DD"));
 
   return (
@@ -39,31 +39,31 @@ const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
             <BlockCardContainer>
               <AttendanceCommunitySection
                 communityName="빛1"
-                communityCells={communityOne}
+                communityCells={LIGHTONE}
               />
             </BlockCardContainer>
             <BlockCardContainer>
               <AttendanceCommunitySection
                 communityName="빛2"
-                communityCells={communityTwo}
+                communityCells={LIGHTTWO}
               />
             </BlockCardContainer>
             <BlockCardContainer>
               <AttendanceCommunitySection
                 communityName="빛3"
-                communityCells={communityThree}
+                communityCells={LIGHTTHREE}
               />
             </BlockCardContainer>
             <BlockCardContainer>
               <AttendanceCommunitySection
                 communityName="빛4"
-                communityCells={communityFour}
+                communityCells={LIGHTFOUR}
               />
             </BlockCardContainer>
             <BlockCardContainer>
               <AttendanceCommunitySection
                 communityName="빛5"
-                communityCells={communityFive}
+                communityCells={LIGHTFIVE}
               />
             </BlockCardContainer>
           </div>

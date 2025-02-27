@@ -111,6 +111,14 @@ export enum SpecialCellIdType {
   Renew = "44",
 }
 
+export const COMMUNITY_NAMES = {
+  LIGHTONE: "빛1",
+  LIGHTTWO: "빛2",
+  LIGHTTHREE: "빛3",
+  LIGHTFOUR: "빛4",
+  LIGHTFIVE: "빛5",
+} as const;
+
 export interface CellType {
   id: string;
   name: string;
@@ -147,16 +155,20 @@ export interface CellListWithMemberType {
     name: string;
     roles: RoleType[];
   }[];
-  members: { 
-    __typename?: "User" | undefined; 
-    id: string; 
-    name: string; 
-    roles: RoleType[]; 
-    cell?: { 
-      __typename?: "Cell" | undefined; 
-      id: string; 
-      name: string; 
-    } | null | undefined; }[]
+  members: {
+    __typename?: "User" | undefined;
+    id: string;
+    name: string;
+    roles: RoleType[];
+    cell?:
+      | {
+          __typename?: "Cell" | undefined;
+          id: string;
+          name: string;
+        }
+      | null
+      | undefined;
+  }[];
 }
 
 export interface MinimumCellType {
@@ -167,5 +179,5 @@ export interface MinimumCellType {
 export interface CommunityType {
   id: string;
   communityName: string;
-  cellList: CellListType[] | null
+  cellList: CellListType[] | null;
 }
