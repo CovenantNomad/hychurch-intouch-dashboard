@@ -32,8 +32,6 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
 
   const isLoading = isDataLoading || isFetching;
 
-  console.log("출석데이터: ", data, "@hook 내부");
-
   const {attendanceStatus, communities, specialCells} = useMemo(() => {
     if (!data || !data.cellAttendanceCheckSubmissions) {
       return {attendanceStatus: false, communities: {}, specialCells: []};
