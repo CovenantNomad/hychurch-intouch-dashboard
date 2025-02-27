@@ -110,7 +110,7 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
         );
         setCommunityFive(
           commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFOUR)
+            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFIVE)
             .sort((a, b) => {
               if (a.cellName > b.cellName) return 1;
               else if (b.cellName > a.cellName) return -1;
