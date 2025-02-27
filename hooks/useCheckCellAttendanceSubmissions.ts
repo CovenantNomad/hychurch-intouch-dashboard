@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useMemo} from "react";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 import {
   CellLeaderAttendanceSubmissionStatus,
@@ -8,30 +8,9 @@ import {
 } from "../graphql/generated";
 //types
 import {AttendanceSubmissionType} from "../interface/attendance";
-import {SpecialCellIdType} from "../interface/cell";
-import {CommunityFilter} from "../stores/cellState";
+import {COMMUNITY_NAMES, SpecialCellIdType} from "../interface/cell";
 
 const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [attendanceStatus, setAttendanceStatus] = useState<boolean>(false);
-  const [communityOne, setCommunityOne] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
-  const [communityTwo, setCommunityTwo] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
-  const [communityThree, setCommunityThree] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
-  const [communityFour, setCommunityFour] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
-  const [communityFive, setCommunityFive] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
-  const [specialCells, setSpecialCells] = useState<
-    AttendanceSubmissionType[] | null
-  >(null);
   const {
     isLoading: isDataLoading,
     isFetching,
@@ -51,106 +30,68 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
     }
   );
 
-  useEffect(() => {
-    if (!isDataLoading && !isFetching) {
-      if (data && data.cellAttendanceCheckSubmissions) {
-        const commonCell = data.cellAttendanceCheckSubmissions.filter(
-          (cell) =>
-            !cell.cellId.includes(SpecialCellIdType.NewFamily) &&
-            !cell.cellId.includes(SpecialCellIdType.NewFamilyTwo) &&
-            !cell.cellId.includes(SpecialCellIdType.Blessing) &&
-            !cell.cellId.includes(SpecialCellIdType.Renew)
-        );
+  const isLoading = isDataLoading || isFetching;
 
-        setSpecialCells(
-          data.cellAttendanceCheckSubmissions.filter(
-            (cell) =>
-              cell.cellId.includes(SpecialCellIdType.NewFamily) ||
-              cell.cellId.includes(SpecialCellIdType.NewFamilyTwo) ||
-              cell.cellId.includes(SpecialCellIdType.Blessing) ||
-              cell.cellId.includes(SpecialCellIdType.Renew)
-          )
-        );
+  console.log("출석데이터: ", data, "@hook 내부");
 
-        setCommunityOne(
-          commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTONE)
-            .sort((a, b) => {
-              if (a.cellName > b.cellName) return 1;
-              else if (b.cellName > a.cellName) return -1;
-              else return 0;
-            })
-        );
-        setCommunityTwo(
-          commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTTWO)
-            .sort((a, b) => {
-              if (a.cellName > b.cellName) return 1;
-              else if (b.cellName > a.cellName) return -1;
-              else return 0;
-            })
-        );
-        setCommunityThree(
-          commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTTHREE)
-            .sort((a, b) => {
-              if (a.cellName > b.cellName) return 1;
-              else if (b.cellName > a.cellName) return -1;
-              else return 0;
-            })
-        );
-        setCommunityFour(
-          commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFOUR)
-            .sort((a, b) => {
-              if (a.cellName > b.cellName) return 1;
-              else if (b.cellName > a.cellName) return -1;
-              else return 0;
-            })
-        );
-        setCommunityFive(
-          commonCell
-            .filter((item) => item.cellCommunity === CommunityFilter.LIGHTFIVE)
-            .sort((a, b) => {
-              if (a.cellName > b.cellName) return 1;
-              else if (b.cellName > a.cellName) return -1;
-              else return 0;
-            })
-        );
-
-        if (
-          commonCell.filter(
-            (cell) =>
-              cell.submissionStatus !==
-              CellLeaderAttendanceSubmissionStatus.Complete
-          ).length === 0
-        ) {
-          setAttendanceStatus(true);
-        } else {
-          setAttendanceStatus(false);
-        }
-      } else {
-        setCommunityOne(null);
-        setCommunityTwo(null);
-        setCommunityThree(null);
-        setCommunityFour(null);
-        setCommunityFive(null);
-      }
-
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
+  const {attendanceStatus, communities, specialCells} = useMemo(() => {
+    if (!data || !data.cellAttendanceCheckSubmissions) {
+      return {attendanceStatus: false, communities: {}, specialCells: []};
     }
-  }, [isDataLoading, isFetching, data]);
+
+    const commonCells: AttendanceSubmissionType[] = [];
+    const specialCells: AttendanceSubmissionType[] = [];
+
+    data.cellAttendanceCheckSubmissions.forEach((cell) => {
+      if (
+        cell.cellId.includes(SpecialCellIdType.NewFamily) ||
+        cell.cellId.includes(SpecialCellIdType.Blessing) ||
+        cell.cellId.includes(SpecialCellIdType.Renew)
+      ) {
+        specialCells.push(cell);
+      } else {
+        commonCells.push(cell);
+      }
+    });
+
+    const sortedCommunities = Object.keys(COMMUNITY_NAMES).reduce(
+      (acc, key) => {
+        acc[key as keyof typeof COMMUNITY_NAMES] = [];
+        return acc;
+      },
+      {} as Record<keyof typeof COMMUNITY_NAMES, AttendanceSubmissionType[]>
+    );
+
+    // 공동체 데이터 정리
+    commonCells.forEach((cell) => {
+      const communityKey = Object.entries(COMMUNITY_NAMES).find(
+        ([_, communityName]) => communityName === cell.cellCommunity
+      )?.[0] as keyof typeof COMMUNITY_NAMES | undefined;
+
+      if (communityKey) {
+        sortedCommunities[communityKey].push(cell);
+      }
+    });
+
+    // 각 공동체별 정렬 적용
+    Object.keys(sortedCommunities).forEach((key) => {
+      sortedCommunities[key as keyof typeof COMMUNITY_NAMES].sort((a, b) =>
+        a.cellName.localeCompare(b.cellName, "ko")
+      );
+    });
+
+    const attendanceStatus = commonCells.every(
+      (cell) =>
+        cell.submissionStatus === CellLeaderAttendanceSubmissionStatus.Complete
+    );
+
+    return {attendanceStatus, communities: sortedCommunities, specialCells};
+  }, [data]);
 
   return {
     isLoading,
     attendanceStatus,
-    communityOne,
-    communityTwo,
-    communityThree,
-    communityFour,
-    communityFive,
+    ...communities,
     specialCells,
   };
 };

@@ -9,15 +9,14 @@ import EvaluationFormHeader from "../../../Organisms/Reports/EvaluationFormHeade
 type CellEvaluationFormScreenProps = {};
 
 const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
-  const {
-    isLoading,
-    isFetching,
-    data: setting,
-  } = useQuery("getEvalutationActivation", getEvalutationActivation);
+  const {isLoading, data: setting} = useQuery(
+    "getEvalutationActivation",
+    getEvalutationActivation
+  );
 
   return (
     <>
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="h-screen bg-white pt-8">
           <Spinner />
         </div>

@@ -11,49 +11,49 @@ const AttendanceStatisticsHeader = ({
 }: AttendanceStatisticsHeaderProps) => {
   const recentSunday = getMostRecentSunday();
   const {
-    isLoading: isCheckLoading,
-    communityOne,
-    communityTwo,
-    communityThree,
-    communityFour,
-    communityFive,
+    isLoading,
+    LIGHTONE,
+    LIGHTTWO,
+    LIGHTTHREE,
+    LIGHTFOUR,
+    LIGHTFIVE,
     specialCells,
   } = useCheckCellAttendanceSubmissions(recentSunday.format("YYYY-MM-DD"));
 
   return (
     <div className="space-y-2 mt-2 lg:space-y-0 lg:divide-y lg:divide-gray-300 lg:mt-4">
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"빛1"}
-        checkSubmission={communityOne}
+        checkSubmission={LIGHTONE}
         onSelectHandler={onSelectHandler}
       />
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"빛2"}
-        checkSubmission={communityTwo}
+        checkSubmission={LIGHTTWO}
         onSelectHandler={onSelectHandler}
       />
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"빛3"}
-        checkSubmission={communityThree}
+        checkSubmission={LIGHTTHREE}
         onSelectHandler={onSelectHandler}
       />
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"빛4"}
-        checkSubmission={communityFour}
+        checkSubmission={LIGHTFOUR}
         onSelectHandler={onSelectHandler}
       />
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"빛5"}
-        checkSubmission={communityFive}
+        checkSubmission={LIGHTFIVE}
         onSelectHandler={onSelectHandler}
       />
       <CommunityAccordian
-        isLoading={isCheckLoading}
+        isLoading={isLoading}
         communityName={"특별"}
         checkSubmission={specialCells}
         onSelectHandler={onSelectHandler}
