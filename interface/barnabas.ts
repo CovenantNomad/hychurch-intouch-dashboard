@@ -36,6 +36,7 @@ export enum BarnabasCourseSubTab {
   PROGRESS = "Progress",
   RESULTS = "Results",
   SCHEDULE = "Schedule",
+  REVIEW = "Review",
   HISTORY = "History",
   ATTENDANCE = "Attendance",
 }

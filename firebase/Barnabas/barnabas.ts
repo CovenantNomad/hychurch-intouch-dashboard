@@ -1671,3 +1671,40 @@ export const updateAmazingMenteeStatus = async (
     throw new Error("어메이징 과정 날짜 업데이트 중 오류가 발생했습니다.");
   }
 };
+
+// 탭4 - 만남후기
+export const getAllMeetingReivews = async (): Promise<TAppointment[]> => {
+  try {
+    // Firestore 컬렉션 참조
+    const meetingRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES
+    );
+
+    const meetingQuery = query(
+      meetingRef,
+      where("review", "!=", ""),
+      where("status", "==", "completed"),
+      where("matchingStatus", "==", "progress"),
+      orderBy("review"),
+      orderBy("date", "desc")
+    );
+
+    const querySnapshot = await getDocs(meetingQuery);
+
+    if (querySnapshot.empty) {
+      return [];
+    }
+
+    const meetings: TAppointment[] = querySnapshot.docs.map(
+      (doc) => doc.data() as TAppointment
+    );
+
+    return meetings;
+  } catch (error) {
+    console.error("@getAllMeetingReviews: ", error);
+    throw new Error("만남 리뷰 데이터를 가져오는 중 오류가 발생했습니다.");
+  }
+};
