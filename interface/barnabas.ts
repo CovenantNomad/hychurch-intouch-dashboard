@@ -141,3 +141,7 @@ export type TAmazingMember = {
   menteeName: string;
   status: TAmazingMentorshipStatus;
 };
+
+export type GroupedAppointments = {
+  [matchingId: string]: TAppointment[];
+};

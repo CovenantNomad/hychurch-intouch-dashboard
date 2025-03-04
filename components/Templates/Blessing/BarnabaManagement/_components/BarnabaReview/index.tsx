@@ -2,8 +2,10 @@ import {
   ArrowPathIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
+import {useMemo} from "react";
 import {useQuery} from "react-query";
 import {getAllMeetingReivews} from "../../../../../../firebase/Barnabas/barnabas";
+import {GroupedAppointments} from "../../../../../../interface/barnabas";
 import SkeletonTable from "../../../../../Atoms/Skeleton/SkeletonTable";
 import MeetingReviewTable from "./_components/MeetingReviewTable";
 
@@ -18,6 +20,31 @@ const BarnabaReview = ({}: Props) => {
       cacheTime: 30 * 60 * 1000,
     }
   );
+
+  // matchingId별로 그룹화
+  const groupedAppointments = useMemo(() => {
+    if (!data) return {};
+    return data.reduce((acc, appointment) => {
+      if (!acc[appointment.matchingId]) {
+        acc[appointment.matchingId] = [];
+      }
+      acc[appointment.matchingId].push(appointment);
+      return acc;
+    }, {} as GroupedAppointments);
+  }, [data]); // ✅ data가 변경될 때만 다시 계산
+
+  // 그룹별 최신 week을 찾고, 그룹별도 최신일자 기준으로 정렬
+  const sortedGroupedAppointments = useMemo(() => {
+    return Object.values(groupedAppointments)
+      .map((group) => ({
+        latestDate: Math.max(
+          ...group.map((item) => new Date(item.date).getTime())
+        ), // 가장 최신 날짜
+        appointments: group,
+      }))
+      .sort((a, b) => b.latestDate - a.latestDate) // 최신 날짜 순 정렬
+      .map((group) => group.appointments);
+  }, [groupedAppointments]); // ✅ groupedAppointments가 변경될 때만 실행
 
   return (
     <>
@@ -45,7 +72,9 @@ const BarnabaReview = ({}: Props) => {
             {isLoading ? (
               <SkeletonTable />
             ) : data ? (
-              <MeetingReviewTable appointments={data} />
+              <MeetingReviewTable
+                sortedGroupedAppointments={sortedGroupedAppointments}
+              />
             ) : (
               <div className="h-32 flex flex-col justify-center items-center space-y-1">
                 <ExclamationTriangleIcon className="h-6 w-6" />
