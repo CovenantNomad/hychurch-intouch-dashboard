@@ -31,7 +31,13 @@ const MeetingReviewTableRow = ({sortedGroupedAppointments}: Props) => {
             className="border-b border-gray-200"
           >
             {/* ✅ 최신 후기를 기본 표시 */}
-            <div className="grid grid-cols-12 items-center py-2 text-sm">
+            <div
+              className={`grid grid-cols-12 items-center py-2 text-sm ${
+                expandedGroups[latestReview.matchingId]
+                  ? "bg-blue-100"
+                  : "bg-white"
+              }`}
+            >
               <div className="col-span-1 flex justify-center">
                 {latestReview.date}
               </div>
@@ -63,7 +69,7 @@ const MeetingReviewTableRow = ({sortedGroupedAppointments}: Props) => {
 
             {/* ✅ 이전 후기를 "더 보기" 클릭 시 표시 */}
             {expandedGroups[latestReview.matchingId] && (
-              <div className="bg-gray-50">
+              <div className="bg-blue-100">
                 {group
                   .filter(
                     (appointment) => appointment.week !== latestReview.week
@@ -73,7 +79,7 @@ const MeetingReviewTableRow = ({sortedGroupedAppointments}: Props) => {
                     <div
                       key={appointment.appointmentId}
                       className={classNames(
-                        "grid grid-cols-12 items-center py-2 text-sm border-gray-200",
+                        "grid grid-cols-12 items-center py-2 text-sm border-gray-300",
                         index === 0 ? "border-t" : "",
                         index !== array.length - 1 ? "border-b" : ""
                       )}
