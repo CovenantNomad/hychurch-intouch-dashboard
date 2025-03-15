@@ -29,7 +29,7 @@ const customTooltip = (props: any) => {
 
 const CellMeetingMonthlyStatic = ({}: CellMeetingMonthlyStaticProps) => {
   const {isLoading, isFetching, data} = useQuery(
-    ["getCellMeetingMonthlyStatics", "2024FIRST"],
+    ["getCellMeetingMonthlyStatics"],
     () => getCellMeetingMonthlyStatics(),
     {
       staleTime: 10 * 60 * 1000,

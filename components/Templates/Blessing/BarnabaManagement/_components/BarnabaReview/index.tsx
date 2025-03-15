@@ -21,6 +21,8 @@ const BarnabaReview = ({}: Props) => {
     }
   );
 
+  console.log("리뷰데이터: ", data);
+
   // matchingId별로 그룹화
   const groupedAppointments = useMemo(() => {
     if (!data) return {};
