@@ -16,6 +16,8 @@ import SectionBackground from "../../../../components/Atoms/Container/SectionBac
 import SectionContainer from "../../../../components/Atoms/Container/SectionContainer";
 import Footer from "../../../../components/Atoms/Footer";
 import SkeletonMemberInfo from "../../../../components/Atoms/Skeleton/SkeletonMemberInfo";
+import AmazingMenteeBlock from "../../../../components/Templates/Blessing/MenteeDetailPage/AmazingMenteeBlock";
+import BarnabaMenteeBlock from "../../../../components/Templates/Blessing/MenteeDetailPage/BarnabaMenteeBlock";
 import {
   FindUserQuery,
   FindUserQueryVariables,
@@ -80,8 +82,8 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                   />
                   <BlockContainer>
                     {!editMode ? (
-                      <section className="grid grid-cols-1 md:grid-cols-6 gap-6 py-3 rounded-md bg-white lg:px-4 lg:py-5">
-                        <div className="md:col-span-2">
+                      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-3 rounded-md bg-white lg:px-4 lg:py-5">
+                        <div className="md:col-span-1">
                           <UserInfomation
                             name={data.user.name}
                             gender={data.user.gender}
@@ -96,8 +98,9 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                             hasHeader={false}
                           />
                         </div>
-                        <div className="md:col-span-4">
-                          <UserCellmeetingHistory userId={userId} />
+                        <div className="space-y-4 md:col-span-1">
+                          <BarnabaMenteeBlock userId={userId} />
+                          <AmazingMenteeBlock userId={userId} />
                         </div>
                       </section>
                     ) : (
@@ -126,6 +129,9 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                         />
                       </section>
                     )}
+                  </BlockContainer>
+                  <BlockContainer>
+                    <UserCellmeetingHistory userId={userId} />
                   </BlockContainer>
                 </div>
               ) : (

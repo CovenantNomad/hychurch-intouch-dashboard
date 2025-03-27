@@ -30,12 +30,12 @@ const AmazingMenteeBlock = ({userId}: Props) => {
 
   return (
     <div className="border p-6 rounded-xl shadow-sm">
+      <h3 className="text-base font-medium">어메이징 과정</h3>
       {isLoading ? (
         <Skeleton className="h-5 mt-4" />
       ) : data ? (
         <div>
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-medium">어메이징 과정</h3>
             <div className="text-sm space-x-2">
               {data.status === TAmazingMentorshipStatus.PENDING && (
                 <span className="text-white bg-gray-600 px-2 py-1 rounded-full">
