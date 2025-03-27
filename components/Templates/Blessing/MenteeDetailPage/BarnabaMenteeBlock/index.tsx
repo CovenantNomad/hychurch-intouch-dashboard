@@ -130,7 +130,7 @@ const BarnabaMenteeBlock = ({userId}: Props) => {
           </div>
         </div>
       ) : (
-        <div className="h-[340px] flex flex-col justify-center items-center">
+        <div className="h-[330px] flex flex-col justify-center items-center">
           <ExclamationTriangleIcon className="h-6 w-6" />
           <span className="block text-sm text-gray-600 mt-1">
             바나바 과정에 대한 데이터가 존재하지 않습니다.
