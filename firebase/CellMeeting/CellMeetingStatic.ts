@@ -479,25 +479,27 @@ export const getCellMeetingMonthlyStatics = async () => {
       CELLMEETING_COLLCTION.MONTHLY
     );
 
-    const q = query(cellMeetingRef, orderBy("date", "asc"), limit(12));
+    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
 
     const querySnapshot = await getDocs(q);
 
-    const resultList: TCellmeetingMonthlyStatic[] = [];
+    let resultList: TCellmeetingMonthlyStatic[] = [];
 
     if (!querySnapshot.empty) {
-      querySnapshot.forEach((doc) => {
-        let temp = {
-          year: doc.data().year,
-          month: doc.data().month,
-          dateString: doc.data().year + "." + doc.data().month,
-          attendanceAvg: doc.data().attendanceAvg,
-          absentAvg: doc.data().absentAvg,
-          totalAvg: doc.data().totalAvg,
-          attendanceRate: doc.data().attendanceRate,
+      resultList = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          year: data.year,
+          month: data.month,
+          dateString: `${data.year}.${data.month.toString().padStart(2, "0")}`,
+          attendanceAvg: data.attendanceAvg,
+          absentAvg: data.absentAvg,
+          totalAvg: data.totalAvg,
+          attendanceRate: data.attendanceRate,
         };
-        resultList.push(temp);
       });
+
+      resultList.reverse();
     }
 
     return resultList;
