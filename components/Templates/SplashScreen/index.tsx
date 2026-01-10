@@ -55,7 +55,7 @@ const SplashScreen = ({onFinished}: SplashScreenProps) => {
         <div className="flex flex-col items-center justify-center h-screen">
           <div className="relative w-full max-w-lg aspect-square">
             <Image
-              src={"/images/splashscreen_002.webp"}
+              src={"/images/splashscreen_2026.webp"}
               alt=""
               layout="fill"
               className="rounded-lg"
