@@ -20,7 +20,7 @@ const CalculateAgeWithStyle = ({birthday}: Props): JSX.Element => {
   let textColor = "text-gray-800";
   let badgeText = "";
 
-  if (age < 25) {
+  if (age < 24) {
     bgColor = "bg-[#e0ede2]";
     textColor = "text-[#1f2937]";
     badgeText = "1";
@@ -28,18 +28,30 @@ const CalculateAgeWithStyle = ({birthday}: Props): JSX.Element => {
     bgColor = "bg-[#96ceb0]";
     textColor = "text-[#1f2937]";
     badgeText = "2";
-  } else if (age < 29) {
+  } else if (age == 27) {
     bgColor = "bg-[#5d9d86]";
     textColor = "text-[#1f2937]";
     badgeText = "3";
-  } else if (age < 31) {
-    bgColor = "bg-[#fdded9]";
+  } else if (age == 28) {
+    bgColor = "bg-[#fee685]";
     textColor = "text-[#1f2937]";
     badgeText = "4";
+  } else if (age == 29) {
+    bgColor = "bg-[#ffd230]";
+    textColor = "text-[#1f2937]";
+    badgeText = "5";
+  } else if (age < 32) {
+    bgColor = "bg-[#fd9a00]";
+    textColor = "text-[#1f2937]";
+    badgeText = "6";
+  } else if (age < 34) {
+    bgColor = "bg-[#fdded9]";
+    textColor = "text-[#1f2937]";
+    badgeText = "7";
   } else {
     bgColor = "bg-[#fca5a5]";
     textColor = "text-[#1f2937]";
-    badgeText = "5";
+    badgeText = "8";
   }
 
   return (
