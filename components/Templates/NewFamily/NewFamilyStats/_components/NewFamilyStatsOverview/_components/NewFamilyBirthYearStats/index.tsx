@@ -12,7 +12,7 @@ export type TBirthYearChartData = {
 }[];
 
 const transformBirthYearDataForChart = (
-  data: Record<string, any>
+  data: Record<string, any>,
 ): TBirthYearChartData => {
   return Object.entries(data)
     .filter(([key]) => !["date", "month", "year"].includes(key)) // date, month, year 필드 제외
@@ -30,7 +30,7 @@ const NewFamilyBirthYearStats = () => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const NewFamilyBirthYearStats = () => {
               <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
                 새가족등록 출생년도 통계{" "}
                 <span className="text-sm text-gray-600">
-                  (누적, 기준: 2025년)
+                  {`(누적, 기준: ${data.year}년)`}
                 </span>
               </h3>
               <div className="flex justify-end items-center mb-1">

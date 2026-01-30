@@ -14,7 +14,7 @@ import {NEWMEMBER_COLLECTION} from "../../interface/firebase";
 
 //주간데이터 입력
 export async function insertNewFamilyWeeklyData(
-  inputValue: TNewFamilyWeeklyInput
+  inputValue: TNewFamilyWeeklyInput,
 ) {
   try {
     const weeklyRef = doc(
@@ -22,7 +22,7 @@ export async function insertNewFamilyWeeklyData(
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
       NEWMEMBER_COLLECTION.WEEKLY,
-      inputValue.dateString
+      inputValue.dateString,
     );
 
     // Firebase에 데이터 저장
@@ -33,7 +33,7 @@ export async function insertNewFamilyWeeklyData(
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
       NEWMEMBER_COLLECTION.MONTHLY,
-      `${inputValue.year}-${inputValue.month}`
+      `${inputValue.year}-${inputValue.month}`,
     );
 
     await updateMonthlyData(monthlyRef, inputValue);
@@ -44,7 +44,7 @@ export async function insertNewFamilyWeeklyData(
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
       NEWMEMBER_COLLECTION.YEARLY,
-      inputValue.year
+      inputValue.year,
     );
 
     await updateYearlyData(yearlyRef, inputValue);
@@ -55,7 +55,7 @@ export async function insertNewFamilyWeeklyData(
 
 async function updateMonthlyData(
   monthlyRef: DocumentReference,
-  inputValue: TNewFamilyWeeklyInput
+  inputValue: TNewFamilyWeeklyInput,
 ) {
   try {
     await runTransaction(db, async (transaction) => {
@@ -72,6 +72,9 @@ async function updateMonthlyData(
             group3: 0,
             group4: 0,
             group5: 0,
+            group6: 0,
+            group7: 0,
+            group8: 0,
             date: `${inputValue.year}-${inputValue.month}-01`,
             month: inputValue.month,
             year: inputValue.year,
@@ -87,6 +90,9 @@ async function updateMonthlyData(
         group3: monthlyData.group3 + inputValue.group3,
         group4: monthlyData.group4 + inputValue.group4,
         group5: monthlyData.group5 + inputValue.group5,
+        group6: monthlyData.group6 + inputValue.group6,
+        group7: monthlyData.group7 + inputValue.group7,
+        group8: monthlyData.group8 + inputValue.group8,
       };
 
       transaction.set(monthlyRef, {...monthlyData, ...updatedData});
@@ -98,7 +104,7 @@ async function updateMonthlyData(
 
 async function updateYearlyData(
   yearlyRef: DocumentReference,
-  inputValue: TNewFamilyWeeklyInput
+  inputValue: TNewFamilyWeeklyInput,
 ) {
   try {
     await runTransaction(db, async (transaction) => {
@@ -115,6 +121,9 @@ async function updateYearlyData(
             group3: 0,
             group4: 0,
             group5: 0,
+            group6: 0,
+            group7: 0,
+            group8: 0,
             year: inputValue.year,
           };
 
@@ -128,6 +137,9 @@ async function updateYearlyData(
         group3: yearlyData.group3 + inputValue.group3,
         group4: yearlyData.group4 + inputValue.group4,
         group5: yearlyData.group5 + inputValue.group5,
+        group6: yearlyData.group6 + inputValue.group6,
+        group7: yearlyData.group7 + inputValue.group7,
+        group8: yearlyData.group8 + inputValue.group8,
       };
 
       transaction.set(yearlyRef, {...yearlyData, ...updatedData});
@@ -146,7 +158,7 @@ export async function insertBirthData(inputValue: TNewFamilyBirthDataInput) {
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.BIRTHYEAR,
       NEWMEMBER_COLLECTION.WEEKLY,
-      inputValue.dateString || ""
+      inputValue.dateString || "",
     );
 
     await setDoc(weeklyRef, inputValue);
@@ -157,7 +169,7 @@ export async function insertBirthData(inputValue: TNewFamilyBirthDataInput) {
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.BIRTHYEAR,
       NEWMEMBER_COLLECTION.MONTHLY,
-      `${inputValue.year}-${inputValue.month}`
+      `${inputValue.year}-${inputValue.month}`,
     );
 
     await updateAggregateData(monthlyRef, inputValue);
@@ -168,7 +180,7 @@ export async function insertBirthData(inputValue: TNewFamilyBirthDataInput) {
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.BIRTHYEAR,
       NEWMEMBER_COLLECTION.YEARLY,
-      inputValue.year || ""
+      inputValue.year || "",
     );
 
     await updateAggregateData(yearlyRef, inputValue);
@@ -179,7 +191,7 @@ export async function insertBirthData(inputValue: TNewFamilyBirthDataInput) {
 
 async function updateAggregateData(
   ref: any,
-  inputValue: TNewFamilyBirthDataInput
+  inputValue: TNewFamilyBirthDataInput,
 ) {
   try {
     await runTransaction(db, async (transaction) => {
@@ -191,11 +203,15 @@ async function updateAggregateData(
         : {};
 
       // 누락된 연도 처리 및 누적 로직
-      const years = Array.from({length: 19}, (_, i) => 2006 - i);
-      const updatedData = years.reduce((acc, year) => {
-        acc[year] = (existingData[year] || 0) + (Number(inputValue[year]) || 0);
-        return acc;
-      }, {} as Record<string, number>);
+      const years = Array.from({length: 19}, (_, i) => inputValue.lastYear - i);
+      const updatedData = years.reduce(
+        (acc, year) => {
+          acc[year] =
+            (existingData[year] || 0) + (Number(inputValue[year]) || 0);
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       // 날짜 정보 추가
       const metaData = {
@@ -229,7 +245,7 @@ export async function saveRegionData(inputData: TRegionDataInput) {
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.REGION,
       NEWMEMBER_COLLECTION.MONTHLY,
-      monthKey
+      monthKey,
     );
     await updateRegionStats(monthlyRef, seoul, gyeonggi, local, {
       month: monthKey,
@@ -242,7 +258,7 @@ export async function saveRegionData(inputData: TRegionDataInput) {
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.REGION,
       NEWMEMBER_COLLECTION.YEARLY,
-      yearKey
+      yearKey,
     );
     await updateRegionStats(yearlyRef, seoul, gyeonggi, local, {
       year: yearKey,
@@ -261,7 +277,7 @@ async function updateRegionStats(
   seoul: {district: string; count: number | string}[],
   gyeonggi: {city: string; count: number | string}[],
   local: number | string,
-  additionalData: {month?: string; year?: string} // 추가 필드
+  additionalData: {month?: string; year?: string}, // 추가 필드
 ) {
   await runTransaction(db, async (transaction) => {
     const docSnapshot = await transaction.get(ref);
