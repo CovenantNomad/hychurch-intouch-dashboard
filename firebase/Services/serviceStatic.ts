@@ -237,7 +237,7 @@ export const getServiceAttendnaceWeekly = async (): Promise<
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const serviceAttendanceQuery = query(
       serviceRef,
-      orderBy("date", "asc"),
+      orderBy("date", "desc"),
       limit(20),
     );
     const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
