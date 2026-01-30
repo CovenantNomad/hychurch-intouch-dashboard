@@ -8,6 +8,9 @@ type Props = {
     group3: number;
     group4: number;
     group5: number;
+    group6: number;
+    group7: number;
+    group8: number;
   }[];
 };
 
@@ -26,12 +29,18 @@ const customTooltip = (props: any) => {
             {category.name === "group1"
               ? "1청년"
               : category.name === "group2"
-              ? "2청년"
-              : category.name === "group3"
-              ? "3청년"
-              : category.name === "group4"
-              ? "4청년"
-              : "5청년"}
+                ? "2청년"
+                : category.name === "group3"
+                  ? "3청년"
+                  : category.name === "group4"
+                    ? "4청년"
+                    : category.name === "group5"
+                      ? "5청년"
+                      : category.name === "group6"
+                        ? "6청년"
+                        : category.name === "group7"
+                          ? "7청년"
+                          : "8청년"}
           </p>
           <p className="font-medium text-tremor-content-emphasis">
             {category.value} 명
@@ -43,6 +52,7 @@ const customTooltip = (props: any) => {
 };
 
 const NewFamilyAgeRatioCart = ({data}: Props) => {
+  console.log(data);
   return (
     <div className="px-2">
       <div className="flex justify-end mb-4">
@@ -64,15 +74,36 @@ const NewFamilyAgeRatioCart = ({data}: Props) => {
             <span>4청년</span>
           </div>
           <div className="flex items-center space-x-1">
-            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+            <span className="w-2 h-2 bg-violet-500 rounded-full"></span>
             <span>5청년</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+            <span>6청년</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-fuchsia-500 rounded-full"></span>
+            <span>7청년</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span className="w-2 h-2 bg-zinc-500 rounded-full"></span>
+            <span>8청년</span>
           </div>
         </div>
       </div>
       <BarChart
         data={data}
         index="date"
-        categories={["group1", "group2", "group3", "group4", "group5"]}
+        categories={[
+          "group1",
+          "group2",
+          "group3",
+          "group4",
+          "group5",
+          "group6",
+          "group7",
+          "group8",
+        ]}
         showLegend={false}
         showXAxis={false}
         customTooltip={customTooltip}

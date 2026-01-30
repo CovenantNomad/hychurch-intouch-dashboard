@@ -22,8 +22,23 @@ const NewFamilyRatioStats = ({}: Props) => {
       group3: number;
       group4: number;
       group5: number;
+      group6: number;
+      group7: number;
+      group8: number;
     }[]
-  >([{date: "2025", group1: 0, group2: 0, group3: 0, group4: 0, group5: 0}]);
+  >([
+    {
+      date: "2026",
+      group1: 0,
+      group2: 0,
+      group3: 0,
+      group4: 0,
+      group5: 0,
+      group6: 0,
+      group7: 0,
+      group8: 0,
+    },
+  ]);
 
   const {isLoading, isFetching, data, refetch} = useQuery(
     ["getNewFamilyRatioStats"],
@@ -31,7 +46,7 @@ const NewFamilyRatioStats = ({}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -48,6 +63,9 @@ const NewFamilyRatioStats = ({}: Props) => {
           group3: data.group3,
           group4: data.group4,
           group5: data.group5,
+          group6: data.group6,
+          group7: data.group7,
+          group8: data.group8,
         },
       ]);
     }
@@ -67,7 +85,7 @@ const NewFamilyRatioStats = ({}: Props) => {
               <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
                 새가족 성별 통계{" "}
                 <span className="text-sm text-gray-600">
-                  (누적, 기준: 2025년)
+                  {`(누적, 기준: ${data.date}년)`}
                 </span>
               </h3>
               <NewFamilySexRatioChart data={sexRatio} />
@@ -78,7 +96,7 @@ const NewFamilyRatioStats = ({}: Props) => {
                 <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
                   새가족 연령별 통계{" "}
                   <span className="text-sm text-gray-600">
-                    (누적, 기준: 2025년)
+                    {`(누적, 기준: ${data.date}년)`}
                   </span>
                 </h3>
                 <div className="flex justify-end items-center mb-1">

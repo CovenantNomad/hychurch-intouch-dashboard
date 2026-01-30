@@ -116,7 +116,7 @@ export const getTermInfomation = async () => {
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     const termInfoDocSnap = await getDoc(termInfoRef);
@@ -146,7 +146,7 @@ export const getTermSpecificInfomation = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.INFO,
-      CELLMEETING_COLLCTION.TERM
+      CELLMEETING_COLLCTION.TERM,
     );
 
     const querySnapshot = await getDocs(termInfoRef);
@@ -183,14 +183,14 @@ export const getCellMeetingTermStatics = async () => {
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     const cellMeetingRef = collection(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.WEEKLY
+      CELLMEETING_COLLCTION.WEEKLY,
     );
 
     const termInfoDocSnap = await getDoc(termInfoRef);
@@ -202,7 +202,7 @@ export const getCellMeetingTermStatics = async () => {
       const q = query(
         cellMeetingRef,
         where("term", "==", term),
-        orderBy("weekOfTerm")
+        orderBy("weekOfTerm"),
       );
 
       const querySnapshot = await getDocs(q);
@@ -265,7 +265,7 @@ export const getCellMeetingTermOverviewStatics = async () => {
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     const termInfoDocSnap = await getDoc(termInfoRef);
@@ -281,7 +281,7 @@ export const getCellMeetingTermOverviewStatics = async () => {
         CELLMEETING_COLLCTION.CELLMEETINGS,
         CELLMEETING_COLLCTION.STATISTICS,
         CELLMEETING_COLLCTION.YEAR,
-        termYear
+        termYear,
       );
 
       const cellMeetingFirstTermRef = doc(
@@ -289,7 +289,7 @@ export const getCellMeetingTermOverviewStatics = async () => {
         CELLMEETING_COLLCTION.CELLMEETINGS,
         CELLMEETING_COLLCTION.STATISTICS,
         CELLMEETING_COLLCTION.TERM,
-        firstTerm
+        firstTerm,
       );
 
       const cellMeetingSecondTermRef = doc(
@@ -297,7 +297,7 @@ export const getCellMeetingTermOverviewStatics = async () => {
         CELLMEETING_COLLCTION.CELLMEETINGS,
         CELLMEETING_COLLCTION.STATISTICS,
         CELLMEETING_COLLCTION.TERM,
-        secondTerm
+        secondTerm,
       );
 
       const cellMeetingYearDoc = await getDoc(cellMeetingYearRef);
@@ -347,7 +347,7 @@ export const getCellMeetingRecentStatics = async () => {
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     // `WEEKLY` 컬렉션 참조 생성
@@ -355,7 +355,7 @@ export const getCellMeetingRecentStatics = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.WEEKLY
+      CELLMEETING_COLLCTION.WEEKLY,
     );
 
     // `INFO` 문서 데이터 가져오기
@@ -369,7 +369,7 @@ export const getCellMeetingRecentStatics = async () => {
       const firstWeekQuery = query(
         cellMeetingRef,
         where("term", "==", term),
-        where("weekOfTerm", "==", 1)
+        where("weekOfTerm", "==", 1),
       );
       const firstWeekSnapshot = await getDocs(firstWeekQuery);
 
@@ -382,7 +382,7 @@ export const getCellMeetingRecentStatics = async () => {
       const recentQuery = query(
         cellMeetingRef,
         orderBy("date", "desc"),
-        limit(2)
+        limit(2),
       );
       const recentSnapshot = await getDocs(recentQuery);
 
@@ -406,7 +406,7 @@ export const getCellMeetingRecentStatics = async () => {
         recentAbsent: recentWeekData?.absent || 0,
         recentAttendanceRate: recentWeekData
           ? ((recentWeekData.attendance / recentWeekData.total) * 100).toFixed(
-              2
+              2,
             )
           : null,
         previousAttendanceRate: previousWeekData
@@ -434,7 +434,7 @@ export const getCellMeetingLastFourWeekStatics = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.WEEKLY
+      CELLMEETING_COLLCTION.WEEKLY,
     );
 
     const q = query(cellMeetingRef, orderBy("date", "desc"), limit(5));
@@ -476,10 +476,10 @@ export const getCellMeetingMonthlyStatics = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.MONTHLY
+      CELLMEETING_COLLCTION.MONTHLY,
     );
 
-    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
+    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(13));
 
     const querySnapshot = await getDocs(q);
 
@@ -529,13 +529,13 @@ export const getCellMeetingStatsByPeriod = async ({
     CELLMEETING_COLLCTION.DATA,
     CELLMEETING_COLLCTION.CELLLIST,
     cellId,
-    CELLMEETING_COLLCTION.CELLHISTORY
+    CELLMEETING_COLLCTION.CELLHISTORY,
   );
 
   const q = query(
     cellRef,
     where("baseDate", ">=", from),
-    where("baseDate", "<=", to)
+    where("baseDate", "<=", to),
   );
 
   const querySnapshot = await getDocs(q);
@@ -570,7 +570,7 @@ export const getCellMeetingHistoricalYearly = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.YEAR
+      CELLMEETING_COLLCTION.YEAR,
     );
 
     const q = query(cellMeetingRef, orderBy("termYear", "desc"), limit(12));
@@ -615,7 +615,7 @@ export const getCellMeetingHistoricalTerms = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.TERM
+      CELLMEETING_COLLCTION.TERM,
     );
 
     const q = query(cellMeetingRef, limit(12));
@@ -659,10 +659,10 @@ export const getCellMeetingHistoricalMonthly = async () => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.MONTHLY
+      CELLMEETING_COLLCTION.MONTHLY,
     );
 
-    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
+    const q = query(cellMeetingRef, orderBy("date", "desc"), limit(13));
 
     const querySnapshot = await getDocs(q);
 
@@ -682,7 +682,7 @@ export const getCellMeetingHistoricalMonthly = async () => {
             // year와 month를 2자리 형식으로 보장
             dateString: `${data.year}-${String(data.month).padStart(2, "0")}`,
           };
-        })
+        }),
       );
     }
 
@@ -703,7 +703,7 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
-      CELLMEETING_COLLCTION.WEEKLY
+      CELLMEETING_COLLCTION.WEEKLY,
     );
 
     let q = query(cellMeetingRef, orderBy("date", "desc"), limit(12));
@@ -735,7 +735,7 @@ export const getCellMeetingHistoricalWeekly = async (lastDoc: any = null) => {
             term: data.term,
             weekOfTerm: data.weekOfTerm,
           };
-        })
+        }),
       );
 
       lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];

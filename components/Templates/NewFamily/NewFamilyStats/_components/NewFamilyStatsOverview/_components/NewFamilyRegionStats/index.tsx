@@ -15,7 +15,7 @@ export type TSeoulBarChartData = {
 }[];
 
 const transformSeoulDetailsToBarChartData = (
-  seoulDetails: Record<string, number>
+  seoulDetails: Record<string, number>,
 ): TSeoulBarChartData => {
   return Object.entries(seoulDetails)
     .filter(([_, count]) => count > 0) // 0 값 제외
@@ -41,7 +41,7 @@ const NewFamilyRegionStats = ({}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -55,6 +55,8 @@ const NewFamilyRegionStats = ({}: Props) => {
       setSeoulDistrict(chartData);
     }
   }, [data]);
+
+  console.log(data);
 
   return (
     <div>
@@ -70,7 +72,7 @@ const NewFamilyRegionStats = ({}: Props) => {
               <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
                 새가족 지역별 통계{" "}
                 <span className="text-sm text-gray-600">
-                  (누적, 기준: 2025년)
+                  {`(누적, 기준: ${data.date}년)`}
                 </span>
               </h3>
               <NewFamilyRegionChart data={regionRatio} />
@@ -81,7 +83,7 @@ const NewFamilyRegionStats = ({}: Props) => {
                 <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
                   새가족 서울시 구별 통계{" "}
                   <span className="text-sm text-gray-600">
-                    (누적, 기준: 2025년)
+                    {`(누적, 기준: ${data.date}년)`}
                   </span>
                 </h3>
                 <div className="flex justify-end items-center mb-1">

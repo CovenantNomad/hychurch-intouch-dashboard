@@ -43,6 +43,9 @@ const GeneralDataForm = () => {
       group3: data.group3 ? Number(data.group3) : 0,
       group4: data.group4 ? Number(data.group4) : 0,
       group5: data.group5 ? Number(data.group5) : 0,
+      group6: data.group6 ? Number(data.group6) : 0,
+      group7: data.group7 ? Number(data.group7) : 0,
+      group8: data.group8 ? Number(data.group8) : 0,
       date: new Date(data.date),
       dateString: data.dateString || "",
       month: data.month || "",
@@ -75,7 +78,7 @@ const GeneralDataForm = () => {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-5 gap-x-6 border-b py-4">
+        <div className="grid grid-cols-3 gap-x-6 border-b py-4">
           <div className="col-span-1">
             {/* total */}
             <div className="flex items-center">
@@ -90,7 +93,6 @@ const GeneralDataForm = () => {
             {errors.total && (
               <span className="block mt-1 text-red-600">입력해주세요</span>
             )}
-            {/* attendance */}
             <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">형제</label>
               <input
@@ -103,7 +105,6 @@ const GeneralDataForm = () => {
             {errors.male && (
               <span className="block mt-1 text-red-600">입력해주세요</span>
             )}
-            {/* absent */}
             <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">자매</label>
               <input
@@ -133,8 +134,7 @@ const GeneralDataForm = () => {
               )}
           </div>
 
-          <div className="col-span-2 border-l border-r px-8">
-            {/* term */}
+          <div className="col-span-1 border-l border-r px-8">
             <div className="flex items-center">
               <label className="flex-shrink-0 flex-grow">그룹1</label>
               <input
@@ -143,7 +143,6 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-            {/* termYear */}
             <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">그룹2</label>
               <input
@@ -152,7 +151,6 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-            {/* weekOfMonth */}
             <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">그룹3</label>
               <input
@@ -161,11 +159,6 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-            {errors.weekOfMonth && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
-
-            {/* weekOfYear */}
             <div className="flex items-center mt-5">
               <label className="flex-shrink-0 flex-grow">그룹4</label>
               <input
@@ -174,16 +167,39 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
-            {errors.weekOfYear && (
-              <span className="block mt-1 text-red-600">입력해주세요</span>
-            )}
-
-            {/* weekOfTerm */}
-            <div className="flex items-center mt-5">
+          </div>
+          <div className="col-span-1 px-8">
+            <div className="flex items-center">
               <label className="flex-shrink-0 flex-grow">그룹5</label>
               <input
                 type="text"
                 {...register("group5")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {/* termYear */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">그룹6</label>
+              <input
+                type="text"
+                {...register("group6")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            {/* weekOfMonth */}
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">그룹7</label>
+              <input
+                type="text"
+                {...register("group7")}
+                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+              />
+            </div>
+            <div className="flex items-center mt-5">
+              <label className="flex-shrink-0 flex-grow">그룹8</label>
+              <input
+                type="text"
+                {...register("group8")}
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
@@ -194,7 +210,10 @@ const GeneralDataForm = () => {
                   Number(watch("group2") || 0) +
                   Number(watch("group3") || 0) +
                   Number(watch("group4") || 0) +
-                  Number(watch("group5") || 0)}
+                  Number(watch("group5") || 0) +
+                  Number(watch("group6") || 0) +
+                  Number(watch("group7") || 0) +
+                  Number(watch("group8") || 0)}
               </div>
             </div>
             {isDirty &&
@@ -203,24 +222,33 @@ const GeneralDataForm = () => {
                   Number(watch("group2")) +
                   Number(watch("group3")) +
                   Number(watch("group4")) +
-                  Number(watch("group5")) && (
+                  Number(watch("group5")) +
+                  Number(watch("group6")) +
+                  Number(watch("group7")) +
+                  Number(watch("group8")) && (
                 <span className="block text-right mt-1 text-red-600">
                   입력값이 총원과 같지 않습니다
                 </span>
               )}
           </div>
+        </div>
 
-          <div className="col-span-2 ">
-            {/* date */}
+        <div className="grid grid-cols-3 gap-x-6 border-b py-4">
+          <div className="col-span-1 ">
+            {/* 날짜 입력 */}
             <div className="flex items-center">
-              <label className="flex-shrink-0 flex-grow">날짜</label>
+              <label className="flex-shrink-0 w-1/5">날짜</label>
               <input
                 type="datetime-local"
                 {...register("date", {required: true})}
-                className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
+                className="w-4/5 px-3 py-2 border border-gray-300 rounded-md text-sm"
               />
             </div>
-            {errors.date && <span>This field is required</span>}
+            {errors.date && (
+              <span className="text-red-600 mt-2 block">
+                날짜를 입력해주세요
+              </span>
+            )}
 
             {/* dateString */}
             <div className="flex items-center mt-5">
@@ -232,9 +260,11 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
+          </div>
 
+          <div className="col-span-1 border-l border-r px-8">
             {/* month */}
-            <div className="flex items-center mt-5">
+            <div className="flex items-center">
               <label className="flex-shrink-0 flex-grow">Month</label>
               <input
                 type="text"
@@ -254,9 +284,11 @@ const GeneralDataForm = () => {
                 className="w-2/3 px-3 py-2 mr-2 border border-gray-300 rounded-md text-sm transition duration-150 ease-in-out hover:border-gray-400"
               />
             </div>
+          </div>
 
+          <div className="col-span-1 ">
             {/* weekOfMonth */}
-            <div className="flex items-center mt-5">
+            <div className="flex items-center">
               <label className="flex-shrink-0 flex-grow">Week of Month</label>
               <input
                 type="text"
@@ -282,6 +314,7 @@ const GeneralDataForm = () => {
             )}
           </div>
         </div>
+
         <div className="mt-5 flex justify-end">
           <button
             type="submit"

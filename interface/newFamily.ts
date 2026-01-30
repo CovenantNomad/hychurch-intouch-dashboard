@@ -7,6 +7,9 @@ export type TNewFamilyRatioStats = {
   group3: number;
   group4: number;
   group5: number;
+  group6: number;
+  group7: number;
+  group8: number;
   total: number;
 };
 

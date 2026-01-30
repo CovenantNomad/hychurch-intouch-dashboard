@@ -73,6 +73,9 @@ export type TNewFamilyWeeklyInput = {
   group3: number;
   group4: number;
   group5: number;
+  group6: number;
+  group7: number;
+  group8: number;
   date: Date;
   dateString: string;
   month: string;
@@ -88,6 +91,7 @@ export type TNewFamilyBirthDataInput = {
   year: string;
   weekOfMonth: number;
   weekOfYear: number;
+  lastYear: number;
 };
 
 export type TRegionDataInput = {

@@ -16,6 +16,9 @@ const transformToChartData = (data: any) => {
       group3: Number(data.recentGroup3 || 0),
       group4: Number(data.recentGroup4 || 0),
       group5: Number(data.recentGroup5 || 0),
+      group6: Number(data.recentGroup6 || 0),
+      group7: Number(data.recentGroup7 || 0),
+      group8: Number(data.recentGroup8 || 0),
     },
   ];
 };
@@ -29,6 +32,9 @@ const NewFamilyLastWeekStats = ({}: Props) => {
       group3: number;
       group4: number;
       group5: number;
+      group6: number;
+      group7: number;
+      group8: number;
     }[]
   >([]);
   const {isLoading, isFetching, data, refetch} = useQuery(
@@ -37,7 +43,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -71,70 +77,6 @@ const NewFamilyLastWeekStats = ({}: Props) => {
       <div className="grid grid-cols-4 gap-x-8 mt-2">
         <div className="border rounded-md p-4 col-span-1">
           <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            이번주 새가족 등록자 수
-          </dt>
-          {isLoading ? (
-            <>
-              <Skeleton className="w-2/5 h-[32px]" />
-              <Skeleton className="w-3/5 h-[14px] mt-1" />
-            </>
-          ) : (
-            <>
-              <dd className="text-2xl font-bold text-gray-900">
-                {data ? data.recentTotal + "명" : "데이터 조회 실패"}
-              </dd>
-            </>
-          )}
-        </div>
-        <div className="border rounded-md p-4 col-span-1">
-          <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            성별비율 (형제/자매)
-          </dt>
-          {isLoading ? (
-            <>
-              <Skeleton className="w-4/5 h-[32px]" />
-            </>
-          ) : (
-            <>
-              <dd className="text-2xl font-bold text-gray-900">
-                {data
-                  ? `${data.recentCounMale}` +
-                    "명 / " +
-                    `${data.recentFemale}명`
-                  : "데이터 조회 실패"}
-              </dd>
-            </>
-          )}
-        </div>
-        <div className="border rounded-md p-4 col-span-1">
-          <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
-            연령대별
-          </dt>
-          {isLoading ? (
-            <>
-              <Skeleton className="w-2/5 h-[32px]" />
-              <Skeleton className="w-4/5 h-[14px] mt-1" />
-            </>
-          ) : (
-            <>
-              <dd className="text-[20px] leading-[32px] font-bold text-gray-900">
-                {data
-                  ? `${data.recentGroup1}` +
-                    "명 / " +
-                    `${data.recentGroup2}` +
-                    "명 / " +
-                    `${data.recentGroup3}` +
-                    "명 / " +
-                    `${data.recentGroup4}` +
-                    "명 / " +
-                    `${data.recentGroup5}명`
-                  : "데이터 조회 실패"}
-              </dd>
-            </>
-          )}
-        </div>
-        <div className="border rounded-md p-4 col-span-1">
-          <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
             올해 누적등록 (총원, 형제/자매)
           </dt>
           {isLoading ? (
@@ -148,7 +90,7 @@ const NewFamilyLastWeekStats = ({}: Props) => {
                 {data ? (
                   <>
                     {data.accumulateRegistration}명{" "}
-                    <span className="text-base">
+                    <span className="text-base font-normal">
                       ({data.accumulateMale}명 / {data.accumulateFemale}명)
                     </span>
                   </>
@@ -156,6 +98,96 @@ const NewFamilyLastWeekStats = ({}: Props) => {
                   "데이터 조회 실패"
                 )}
               </dd>
+            </>
+          )}
+        </div>
+        <div className="border rounded-md p-4 col-span-1">
+          <dt className="flex items-center tracking-tight text-sm font-normal pb-2">
+            이번주 새가족 등록자 수 (총원, 형제/자매)
+          </dt>
+          {isLoading ? (
+            <>
+              <Skeleton className="w-2/5 h-[32px]" />
+              <Skeleton className="w-3/5 h-[14px] mt-1" />
+            </>
+          ) : (
+            <>
+              <dd className="text-2xl font-bold text-gray-900">
+                {data ? (
+                  <>
+                    {data.recentTotal}명{" "}
+                    <span className="text-base font-normal">
+                      ({data.recentCounMale}명 / {data.recentFemale}명)
+                    </span>
+                  </>
+                ) : (
+                  "데이터 조회 실패"
+                )}
+              </dd>
+            </>
+          )}
+        </div>
+        <div className="border rounded-md p-4 col-span-2">
+          <dt className="tracking-tight text-sm font-normal pb-2">
+            연령대별 (인원/년생)
+          </dt>
+          {isLoading ? (
+            <>
+              <Skeleton className="w-2/5 h-[32px]" />
+              <Skeleton className="w-4/5 h-[14px] mt-1" />
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-8">
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup1}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(07~03년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup2}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(02~00년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup3}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(99년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup4}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(98년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup5}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(97년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup6}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(96~95년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup7}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(94~93년생)</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold">
+                    {data ? `${data.recentGroup8}명` : "데이터 조회 실패"}
+                  </div>
+                  <div className="text-sm">(92~90년생)</div>
+                </div>
+              </div>
             </>
           )}
         </div>

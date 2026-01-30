@@ -7,6 +7,7 @@ import {insertBirthData} from "../../../../../../firebase/CMS/NewFamilyCMS";
 import {TNewFamilyBirthDataInput} from "../../../../../../interface/CMS";
 
 const BirthDataForm = () => {
+  const lastYear = 2008;
   const {
     register,
     handleSubmit,
@@ -15,7 +16,7 @@ const BirthDataForm = () => {
     reset,
     formState: {errors},
   } = useForm<TNewFamilyBirthDataInput>({
-    defaultValues: Array.from({length: 19}, (_, i) => 2006 - i).reduce(
+    defaultValues: Array.from({length: 19}, (_, i) => lastYear - i).reduce(
       (acc, year) => ({...acc, [year]: 0}),
       {
         date: "",
@@ -24,7 +25,7 @@ const BirthDataForm = () => {
         year: "",
         weekOfMonth: 0,
         weekOfYear: 0,
-      }
+      },
     ),
   });
 
@@ -50,11 +51,14 @@ const BirthDataForm = () => {
 
   const onSubmit = (data: TNewFamilyBirthDataInput) => {
     // 2006년 ~ 1988년까지의 데이터를 확인하고 없는 값은 0으로 처리
-    const years = Array.from({length: 19}, (_, i) => 2006 - i);
-    const cleanedData = years.reduce((acc, year) => {
-      acc[year] = Number(data[year]) || 0; // 입력값이 없으면 0
-      return acc;
-    }, {} as Record<string, number>);
+    const years = Array.from({length: 19}, (_, i) => lastYear - i);
+    const cleanedData = years.reduce(
+      (acc, year) => {
+        acc[year] = Number(data[year]) || 0; // 입력값이 없으면 0
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // 추가적인 날짜 정보 포함
     const firebaseData = {
@@ -65,6 +69,7 @@ const BirthDataForm = () => {
       year: data.year || "",
       weekOfMonth: data.weekOfMonth ? Number(data.weekOfMonth) : 0,
       weekOfYear: data.weekOfYear ? Number(data.weekOfYear) : 0,
+      lastYear,
     };
 
     mutation.mutate(firebaseData);
@@ -82,7 +87,7 @@ const BirthDataForm = () => {
       const weekOfMonth = Math.ceil(date.getDate() / 7);
       const weekOfYear = Math.ceil(
         (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) /
-          (7 * 24 * 60 * 60 * 1000)
+          (7 * 24 * 60 * 60 * 1000),
       );
 
       setValue("month", month);
@@ -97,7 +102,7 @@ const BirthDataForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-4 gap-x-6 border-b py-4">
           {/* 2006년 ~ 1988년 */}
-          {Array.from({length: 19}, (_, i) => 2006 - i).map((birthYear) => (
+          {Array.from({length: 19}, (_, i) => lastYear - i).map((birthYear) => (
             <div key={birthYear} className="col-span-1 flex items-center mt-3">
               <label className="flex-shrink-0 w-1/5">{birthYear}년</label>
               <input

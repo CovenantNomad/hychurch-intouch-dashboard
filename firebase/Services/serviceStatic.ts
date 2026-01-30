@@ -12,7 +12,7 @@ export const getServiceRecentStatics = async () => {
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.SERVICEATTENDANCE
+      SERVICE_COLLCTION.SERVICEATTENDANCE,
     );
 
     // 2. 최근 2개의 데이터 가져오기
@@ -31,7 +31,7 @@ export const getServiceRecentStatics = async () => {
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.TOTALATTENDANCE
+      SERVICE_COLLCTION.TOTALATTENDANCE,
     );
 
     const recentCountQuery = query(countRef, orderBy("date", "desc"), limit(2));
@@ -76,7 +76,7 @@ export const getServiceTotalCountStatics = async () => {
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.TOTALATTENDANCE
+      SERVICE_COLLCTION.TOTALATTENDANCE,
     );
 
     // MA4WEEK 컬렉션 참조
@@ -84,14 +84,14 @@ export const getServiceTotalCountStatics = async () => {
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.STATISTICS,
-      SERVICE_COLLCTION.MA4WEEK
+      SERVICE_COLLCTION.MA4WEEK,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const totalAttendanceQuery = query(
       serviceRef,
       orderBy("date", "desc"),
-      limit(20)
+      limit(20),
     );
     const totalAttendanceSnapshot = await getDocs(totalAttendanceQuery);
 
@@ -107,11 +107,14 @@ export const getServiceTotalCountStatics = async () => {
     const ma4WeekQuery = query(maRef, orderBy("date", "desc"), limit(20));
     const ma4WeekSnapshot = await getDocs(ma4WeekQuery);
 
-    const ma4WeekData = ma4WeekSnapshot.docs.reduce((acc, doc) => {
-      const data = doc.data();
-      acc[data.date] = Math.ceil(data.average);
-      return acc;
-    }, {} as Record<string, number>);
+    const ma4WeekData = ma4WeekSnapshot.docs.reduce(
+      (acc, doc) => {
+        const data = doc.data();
+        acc[data.date] = Math.ceil(data.average);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // TOTAL_ATTENDANCE와 MA4WEEK 데이터를 합치기
     const mergedData = totalAttendanceData.reverse().map((attendance) => {
@@ -141,14 +144,14 @@ export const getServiceRatioStatics = async (): Promise<
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.SERVICEATTENDANCE
+      SERVICE_COLLCTION.SERVICEATTENDANCE,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const serviceAttendanceQuery = query(
       serviceRef,
       orderBy("date", "desc"),
-      limit(20)
+      limit(20),
     );
     const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
 
@@ -184,14 +187,14 @@ export const getServiceOnOffRatioStatics = async (): Promise<
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.SERVICEATTENDANCE
+      SERVICE_COLLCTION.SERVICEATTENDANCE,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const serviceAttendanceQuery = query(
       serviceRef,
       orderBy("date", "desc"),
-      limit(20)
+      limit(20),
     );
     const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
 
@@ -228,14 +231,14 @@ export const getServiceAttendnaceWeekly = async (): Promise<
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.SERVICEATTENDANCE
+      SERVICE_COLLCTION.SERVICEATTENDANCE,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const serviceAttendanceQuery = query(
       serviceRef,
-      orderBy("date", "desc"),
-      limit(20)
+      orderBy("date", "asc"),
+      limit(20),
     );
     const serviceAttendanceSnapshot = await getDocs(serviceAttendanceQuery);
 
@@ -297,14 +300,14 @@ export const getMostHighServiceTotalCount = async (): Promise<{
       db,
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
-      SERVICE_COLLCTION.TOTALATTENDANCE
+      SERVICE_COLLCTION.TOTALATTENDANCE,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
     const highestAttendanceQuery = query(
       serviceRef,
       orderBy("count", "desc"),
-      limit(1)
+      limit(1),
     );
     const highestAttendanceSnapshot = await getDocs(highestAttendanceQuery);
 

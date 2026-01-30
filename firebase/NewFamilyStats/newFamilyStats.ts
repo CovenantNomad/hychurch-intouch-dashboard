@@ -16,7 +16,7 @@ export const getNewFamilyRecentStats = async () => {
       db,
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
-      NEWMEMBER_COLLECTION.WEEKLY
+      NEWMEMBER_COLLECTION.WEEKLY,
     );
 
     // 2. 최근 2개의 데이터 가져오기
@@ -35,13 +35,13 @@ export const getNewFamilyRecentStats = async () => {
       db,
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
-      NEWMEMBER_COLLECTION.YEARLY
+      NEWMEMBER_COLLECTION.YEARLY,
     );
 
     const accumulationQuery = query(
       accumulationRef,
       orderBy("year", "desc"),
-      limit(1)
+      limit(1),
     );
 
     const accumulationSnapshot = await getDocs(accumulationQuery);
@@ -76,6 +76,12 @@ export const getNewFamilyRecentStats = async () => {
       previousGroup4: previousWeekData?.group4 || 0,
       recentGroup5: recentWeekData?.group5 || 0,
       previousGroup5: previousWeekData?.group5 || 0,
+      recentGroup6: recentWeekData?.group6 || 0,
+      previousGroup6: previousWeekData?.group6 || 0,
+      recentGroup7: recentWeekData?.group7 || 0,
+      previousGroup7: previousWeekData?.group7 || 0,
+      recentGroup8: recentWeekData?.group5 || 0,
+      previousGroup8: previousWeekData?.group8 || 0,
       recentTotal: recentWeekData?.total || 0,
       previousTotal: previousWeekData?.total || 0,
       accumulateRegistration: totalValue?.total || 0,
@@ -96,7 +102,7 @@ export const getNewFamilyCountStats = async () => {
       db,
       NEWMEMBER_COLLECTION.NEWMEMBERS,
       NEWMEMBER_COLLECTION.MEMBER,
-      NEWMEMBER_COLLECTION.WEEKLY
+      NEWMEMBER_COLLECTION.WEEKLY,
     );
 
     // TOTAL_ATTENDANCE에서 최근 20개 데이터 가져오기
@@ -136,7 +142,7 @@ export const getNewFamilyRatioStats =
         db,
         NEWMEMBER_COLLECTION.NEWMEMBERS,
         NEWMEMBER_COLLECTION.MEMBER,
-        NEWMEMBER_COLLECTION.YEARLY
+        NEWMEMBER_COLLECTION.YEARLY,
       );
 
       // 가장 최근 데이터 가져오기
@@ -156,6 +162,9 @@ export const getNewFamilyRatioStats =
           group3: Number(data.group3 || 0),
           group4: Number(data.group4 || 0),
           group5: Number(data.group5 || 0),
+          group6: Number(data.group6 || 0),
+          group7: Number(data.group7 || 0),
+          group8: Number(data.group8 || 0),
           total: Number(data.total || 0),
         };
       }
@@ -177,7 +186,7 @@ export const getNewFamilyBirthYearStats =
         db,
         NEWMEMBER_COLLECTION.NEWMEMBERS,
         NEWMEMBER_COLLECTION.BIRTHYEAR,
-        NEWMEMBER_COLLECTION.YEARLY
+        NEWMEMBER_COLLECTION.YEARLY,
       );
 
       // 가장 최근 데이터 가져오기
@@ -216,7 +225,7 @@ export const getNewFamilyRegionStats =
         db,
         NEWMEMBER_COLLECTION.NEWMEMBERS,
         NEWMEMBER_COLLECTION.REGION,
-        NEWMEMBER_COLLECTION.YEARLY
+        NEWMEMBER_COLLECTION.YEARLY,
       );
 
       // 가장 최근 데이터 가져오기
@@ -231,12 +240,12 @@ export const getNewFamilyRegionStats =
         // 서울 합계 계산
         const seoulSum = Object.values(data.seoul || {}).reduce<number>(
           (sum, count) => sum + Number(count), // `count`를 숫자로 변환
-          0 // 초기값
+          0, // 초기값
         );
 
         const gyeonggiSum = Object.values(data.gyeonggi || {}).reduce<number>(
           (sum, count) => sum + Number(count), // `count`를 숫자로 변환
-          0 // 초기값
+          0, // 초기값
         );
 
         // 반환 데이터 구조

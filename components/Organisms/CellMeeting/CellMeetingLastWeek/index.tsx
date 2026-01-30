@@ -11,7 +11,7 @@ const CellMeetingLastWeek = ({}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   return (
@@ -100,7 +100,7 @@ const CellMeetingLastWeek = ({}: Props) => {
         </div>
         <div className="border rounded-md p-4 col-span-1">
           <dt className="tracking-tight text-sm font-normal pb-2">
-            셀편성인원 변화
+            셀편성인원 변화 (반기 첫째주 대비)
           </dt>
           {isLoading || isFetching ? (
             <>
