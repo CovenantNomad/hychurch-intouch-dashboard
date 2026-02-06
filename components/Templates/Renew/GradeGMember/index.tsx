@@ -39,7 +39,7 @@ const GradeGMember = ({memberList}: Props) => {
                 <p className="text-sm mt-1">
                   재적으로만 등록된 청년{" "}
                   <span className="text-red-500">(활동등급: G등급)</span> <br />
-                  이사, 결혼, 진급 등의 사유는 꼭 청년제외에서 제외해주세요.
+                  결혼, 진급 등의 사유는 꼭 청년제외에서 제외해주세요.
                 </p>
               </div>
             </div>

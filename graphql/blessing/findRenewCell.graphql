@@ -49,6 +49,7 @@ query findRenewCell(
         id
         name
         gender
+        grade
       }
       fromCell {
         id

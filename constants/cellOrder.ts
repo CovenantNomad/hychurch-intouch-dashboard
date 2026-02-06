@@ -1,46 +1,3 @@
-const dayCommunityOrder = [
-  { name: "김파비오셀"},
-  { name: "조준원셀"},
-  { name: "남정훈셀"},
-  { name: "박성은셀"},
-  { name: "최현경셀"},
-  { name: "박성연셀"},
-  { name: "김도원셀"},
-  { name: "김별셀"},
-  { name: "신가원셀"},
-  { name: "김영호셀"},
-  { name: "임태영셀"},
-  { name: "류수진셀"},
-]
-
-const onlyCommunityOrder = [
-  { name: "김형석셀"},
-  { name: "김소리셀"},
-  { name: "김유진셀"},
-  { name: "원현지셀"},
-  { name: "주원형셀"},
-  { name: "김한솔셀"},
-  { name: "이찬미셀"},
-  { name: "김민석셀"},
-  { name: "이혜인셀"},
-  { name: "인슬아셀"},
-  { name: "민경수셀"},
-]
-
-const withCommunityOrder = [
-  { name: "김희연셀"},
-  { name: "신다은셀"},
-  { name: "인영광셀"},
-  { name: "이정화셀"},
-  { name: "김혜원셀"},
-  { name: "최현빈셀"},
-  { name: "정승주셀"},
-  { name: "강바다셀"},
-  { name: "민예원셀"},
-  { name: "윤예진셀"},
-  { name: "강소은셀"},
-]
-
 export const cellOrderByAge = [
   "김파비오셀",
   "조준원셀",
@@ -76,4 +33,4 @@ export const cellOrderByAge = [
   "민예원셀",
   "윤예진셀",
   "강소은셀",
-]
+];

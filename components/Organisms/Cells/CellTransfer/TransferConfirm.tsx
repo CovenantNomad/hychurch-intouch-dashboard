@@ -25,15 +25,17 @@ const TransferConfirm = ({
 }: TransferConfirmProps) => {
   const [isInTab, setIsInTab] = useState(true);
 
+  const isAttendanceOk =
+    attendanceStatus &&
+    attendanceStatus.attendanceCheck === AttendanceCheckStatus.Completed;
+
   return (
     <div className="pb-24 mt-10 bg-white">
       {isAttendanceLoading ? (
         <SkeletonListItem />
       ) : (
         <>
-          {attendanceStatus &&
-          attendanceStatus.attendanceCheck ===
-            AttendanceCheckStatus.Completed ? (
+          {isAttendanceOk ? (
             <>
               <div className="flex mb-2">
                 <div className="h-13 grid grid-cols-2 justify-center items-center p-1 bg-zinc-100 rounded-lg outline-none">
@@ -43,7 +45,7 @@ const TransferConfirm = ({
                       "px-10 py-2 rounded-lg text-sm",
                       isInTab
                         ? "bg-white text-[#09090B]"
-                        : "bg-transparent text-gray-500"
+                        : "bg-transparent text-gray-500",
                     )}
                   >
                     IN
@@ -54,7 +56,7 @@ const TransferConfirm = ({
                       "px-10 py-2 rounded-lg text-sm",
                       !isInTab
                         ? "bg-white text-[#09090B]"
-                        : "bg-transparent text-gray-500"
+                        : "bg-transparent text-gray-500",
                     )}
                   >
                     OUT
@@ -73,7 +75,7 @@ const TransferConfirm = ({
                     </div>
                   ) : data &&
                     data.findCell.transfersIn.filter(
-                      (item) => item.status === "ORDERED"
+                      (item) => item.status === "ORDERED",
                     ).length !== 0 ? (
                     <div className="mt-3 grid grid-cols-2 3xl:grid-cols-3 4xl:grid-cols-4 border-t gap-x-8">
                       {data.findCell.transfersIn
@@ -102,7 +104,7 @@ const TransferConfirm = ({
                     </div>
                   ) : data &&
                     data.findCell.transfersOut.filter(
-                      (item) => item.status === "ORDERED"
+                      (item) => item.status === "ORDERED",
                     ).length !== 0 ? (
                     <div className="mt-3 grid grid-cols-2 3xl:grid-cols-3 4xl:grid-cols-4 border-t gap-x-8">
                       {data.findCell.transfersOut

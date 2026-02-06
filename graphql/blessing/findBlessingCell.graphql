@@ -49,6 +49,7 @@ query findBlessingCell(
         id
         name
         gender
+        grade
       }
       fromCell {
         id

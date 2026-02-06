@@ -4,6 +4,7 @@ import {
   RoleType,
   Scalars,
   UserCellTransferStatus,
+  UserGrade,
 } from "../graphql/generated";
 
 export interface CreateCellType {
@@ -91,6 +92,7 @@ export interface transferedUser {
     id: string;
     name: string;
     gender?: Gender | null | undefined;
+    grade: UserGrade;
   };
 }
 

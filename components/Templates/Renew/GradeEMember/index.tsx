@@ -36,9 +36,8 @@ const GradeEMember = ({memberList}: FreeAgencyMemberProps) => {
               <div className="flex items-center text-sm mt-1 space-x-2">
                 <p className="border p-2">등급기준</p>
                 <p>
-                  셀에 편성되어 있지 않는 청년{" "}
+                  인터치 예배만 참석하는 청년{" "}
                   <span className="text-red-500">(활동등급: E등급)</span> <br />
-                  셀에 편성되지 않고 인터치 예배만 참석할 수도 있습니다.
                 </p>
               </div>
             </div>

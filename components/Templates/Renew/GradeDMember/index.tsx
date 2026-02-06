@@ -36,9 +36,8 @@ const GradeDMember = ({memberList}: FreeAgencyMemberProps) => {
               <div className="flex items-center text-sm mt-1 space-x-2">
                 <p className="border p-2">등급기준</p>
                 <p>
-                  기준에 대한 설명을 알려주세요.{" "}
+                  연락이 끊어졌거나 장기결석자{" "}
                   <span className="text-red-500">(활동등급: D등급)</span> <br />
-                  (예시) 셀편성되었으나 연락이 끊어진 청년
                 </p>
               </div>
             </div>
