@@ -36,6 +36,7 @@ query findCellWithTranferData(
         id
         name
         gender
+        grade
       }
       fromCell {
         id
@@ -58,6 +59,7 @@ query findCellWithTranferData(
         id
         name
         gender
+        grade
       }
       fromCell {
         id

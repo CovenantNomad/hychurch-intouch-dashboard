@@ -16,6 +16,7 @@ export const stateSetting = atom({
     newFamilySelectedCategoryId: 0,
     blessingSelectedCategoryId: 0,
     renewSelectedCategoryId: 0,
+    memberSelectedCategoryId: 0,
     reportSelectedCategoryId: 0,
     talentSelectedCategoryId: 0,
     developSelectedCategoryId: 0,

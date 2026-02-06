@@ -26,6 +26,7 @@
     "@types/lodash": "^4.14.191",
     "@types/react-cookies": "^0.1.0",
     "@types/react-paginate": "^7.1.1",
+    "axios": "^1.13.4",
     "chart.js": "^3.9.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",

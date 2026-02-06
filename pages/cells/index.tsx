@@ -43,7 +43,7 @@ const Cell: NextPage = () => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
-    }
+    },
   );
 
   const onCloseHandler = () => {
@@ -59,7 +59,7 @@ const Cell: NextPage = () => {
             (cell) =>
               !cell.id.includes(SpecialCellIdType.NewFamily) &&
               !cell.id.includes(SpecialCellIdType.Blessing) &&
-              !cell.id.includes(SpecialCellIdType.Renew)
+              !cell.id.includes(SpecialCellIdType.Renew),
           )
           .sort((a, b) => a.name.localeCompare(b.name));
         setFilterdList(filterList);
@@ -92,7 +92,7 @@ const Cell: NextPage = () => {
             onClick={onModalOpenHandler}
             className="px-4 py-2 bg-BLUE text-white text-sm rounded-md lg:text-base"
           >
-            Add Cell
+            신규 셀 생성
           </motion.button>
         </Header>
         <Spacer size="h-8" background />

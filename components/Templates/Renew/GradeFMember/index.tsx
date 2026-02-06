@@ -37,7 +37,7 @@ const GradeFMember = ({memberList}: InactiveMemberProps) => {
               <div className="flex items-center text-sm mt-1 space-x-2">
                 <p className="border p-2">등급기준</p>
                 <p className="text-sm mt-1">
-                  군대, 유학 등으로 임시적으로 활동을 하지 않는 청년{" "}
+                  이사 간 청년{" "}
                   <span className="text-red-500">(활동등급: F등급)</span>
                 </p>
               </div>

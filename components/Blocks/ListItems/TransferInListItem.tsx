@@ -60,7 +60,7 @@ const TransferInListItem = ({data}: TransferInListItemProps) => {
     onError(errors: GraphQLError) {
       console.log(errors);
       toast.error(
-        `이동요청이 실패했습니다.\n${makeErrorMessage(errors.message)}`
+        `이동요청이 실패했습니다.\n${makeErrorMessage(errors.message)}`,
       );
     },
   });
@@ -91,6 +91,9 @@ const TransferInListItem = ({data}: TransferInListItemProps) => {
           <span className="inline-block text-gray-600 font-normal text-sm ml-2">
             {data.user.gender === "MAN" ? "형제" : "자매"}
           </span>
+          <span className="inline-block text-gray-900 font-normal text-sm ml-2">
+            ({data.user.grade}등급)
+          </span>
         </p>
         <p className="">
           (<span>{data.fromCell.name}</span>
@@ -106,7 +109,7 @@ const TransferInListItem = ({data}: TransferInListItemProps) => {
         <div className="flex-grow">
           <button
             onClick={() => onCanceledHandler(data.id)}
-            className="w-full border border-blue-600 text-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 hover:text-white"
+            className="w-full border border-red-500 text-red-600 px-6 py-2 rounded-md hover:bg-red-600 hover:text-white"
           >
             거절
           </button>
@@ -114,7 +117,7 @@ const TransferInListItem = ({data}: TransferInListItemProps) => {
         <div className="flex-grow">
           <button
             onClick={() => onConfirmHandler(data.id)}
-            className="w-full border border-blue-600 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+            className="w-full border border-blue-600 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-900"
           >
             승인
           </button>

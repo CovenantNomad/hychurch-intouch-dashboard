@@ -1,6 +1,5 @@
-import React from "react";
-import { SetterOrUpdater } from "recoil";
-import { classNames } from "../../../utils/utils";
+import {SetterOrUpdater} from "recoil";
+import {classNames} from "../../../utils/utils";
 
 interface UnderlineTabsProps {
   tabs: {
@@ -36,7 +35,7 @@ const UnderlineBoxTabs = ({
       </div>
       <div className="hidden sm:block">
         <nav
-          className="isolate flex divide-x divide-gray-200 rounded-lg shadow"
+          className="isolate flex divide-x divide-gray-200 rounded-md border border-gray-200"
           aria-label="Tabs"
         >
           {tabs.map((tab, tabIdx) => (
@@ -49,7 +48,7 @@ const UnderlineBoxTabs = ({
                   : "text-gray-500 hover:text-gray-700",
                 tabIdx === 0 ? "rounded-l-lg" : "",
                 tabIdx === tabs.length - 1 ? "rounded-r-lg" : "",
-                "group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-center text-sm font-medium hover:bg-gray-50 focus:z-10"
+                "group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-center text-sm font-medium hover:bg-gray-50 focus:z-10",
               )}
               aria-current={tab.name === currentTab ? "page" : undefined}
             >
@@ -58,7 +57,7 @@ const UnderlineBoxTabs = ({
                 aria-hidden="true"
                 className={classNames(
                   tab.name === currentTab ? "bg-blue-600" : "bg-transparent",
-                  "absolute inset-x-0 bottom-0 h-0.5"
+                  "absolute inset-x-0 bottom-0 h-0.5",
                 )}
               />
             </div>
