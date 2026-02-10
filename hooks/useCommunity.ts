@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useMemo} from "react";
 import graphlqlRequestClient from "../client/graphqlRequestClient";
 import {
   FindCellListsQuery,
@@ -6,26 +6,23 @@ import {
   useFindCellListsQuery,
 } from "../graphql/generated";
 //types
+import {useQuery} from "react-query";
 import {FIND_CELL_LIMIT} from "../constants/constant";
+import {getIntegratedCommunities} from "../firebase/CMS/CommunityCMS";
 import {
   CellListType,
   CommunityType,
   SpecialCellIdType,
 } from "../interface/cell";
-import {CommunityFilter} from "../stores/cellState";
+import {isSpecialCell, sortByName, sortCommunityNames} from "../utils/utils";
 
 const useCommunity = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<CommunityType[] | null>(null);
-  const [newFamily, setNewFamily] = useState<CellListType | null>(null);
-  const [newFamilyTwo, setNewFamilyTwo] = useState<CellListType | null>(null);
-  const [blessing, setBlessing] = useState<CellListType | null>(null);
-  const [renew, setRenew] = useState<CellListType | null>(null);
-
   const {
-    isLoading: isDataLoading,
-    isFetching: isDataFetching,
+    isLoading: isCellLoading,
+    isFetching: isCellFetching,
     data: cellListData,
+    isError: isCellError,
+    error: cellError,
   } = useFindCellListsQuery<FindCellListsQuery, FindCellListsQueryVariables>(
     graphlqlRequestClient,
     {
@@ -34,8 +31,60 @@ const useCommunity = () => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
-    }
+    },
   );
+
+  const {
+    isLoading: isCommunityLoading,
+    data: communities,
+    isError: isCommunityError,
+    error: communityError,
+  } = useQuery(["getIntegratedCommunities"], () => getIntegratedCommunities(), {
+    staleTime: 10 * 60 * 1000,
+    cacheTime: 30 * 60 * 1000,
+  });
+
+  const isLoading = isCellLoading || isCellFetching || isCommunityLoading;
+  const isError = isCellError || isCommunityError;
+  const error = (cellError ?? communityError) as unknown;
+
+  const nodes = useMemo(
+    () => cellListData?.findCells?.nodes ?? [],
+    [cellListData],
+  );
+
+  const {specialCells, commonCells} = useMemo(() => {
+    const special: CellListType[] = [];
+    const common: CellListType[] = [];
+
+    for (const cell of nodes) {
+      if (isSpecialCell(cell)) special.push(cell);
+      else common.push(cell);
+    }
+
+    special.sort(sortByName);
+    common.sort(sortByName);
+
+    return {specialCells: special, commonCells: common};
+  }, [nodes]);
+
+  // commonCells를 community 이름으로 그룹핑
+  const commonByCommunityName = useMemo(() => {
+    const map = new Map<string, CellListType[]>();
+
+    for (const cell of commonCells) {
+      const key = cell.community ?? ""; // 혹시 null이면 빈값
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(cell);
+    }
+
+    // 각 그룹 내부 정렬
+    map.forEach((arr) => {
+      arr.sort(sortByName);
+    });
+
+    return map;
+  }, [commonCells]);
 
   const filterByCellName = (a: CellListType, b: CellListType) => {
     if (a.name > b.name) return 1;
@@ -43,84 +92,58 @@ const useCommunity = () => {
     else return 0;
   };
 
-  useEffect(() => {
-    if (!isDataLoading && !isDataFetching) {
-      if (cellListData && cellListData.findCells) {
-        const newFamilyCell = cellListData.findCells.nodes.filter((cell) =>
-          cell.id.includes(SpecialCellIdType.NewFamily)
-        )[0];
-        setNewFamily(newFamilyCell);
+  // 커뮤니티 목록(유동)을 기준으로 결과 구성
+  const data: CommunityType[] | null = useMemo(() => {
+    // 셀 데이터를 못 받았으면 null
+    if (!cellListData?.findCells) return null;
 
-        const newFamilyTwoCell = cellListData.findCells.nodes.filter((cell) =>
-          cell.id.includes(SpecialCellIdType.NewFamilyTwo)
-        )[0];
-        setNewFamilyTwo(newFamilyTwoCell);
+    const listFromDb = (communities ?? [])
+      .map((c: any) => ({id: c.id as string, name: c.name as string}))
+      .filter((c) => !!c.name);
 
-        const blessingCell = cellListData.findCells.nodes.filter((cell) =>
-          cell.id.includes(SpecialCellIdType.Blessing)
-        )[0];
-        setBlessing(blessingCell);
+    // "순서"는 DB에 없으니 name 기반 자연정렬로 안정화
+    const orderedCommunities = [...listFromDb].sort(sortCommunityNames);
 
-        const rewewCell = cellListData.findCells.nodes.filter((cell) =>
-          cell.id.includes(SpecialCellIdType.Renew)
-        )[0];
-        setRenew(rewewCell);
+    // 커뮤니티별 cellList 생성 (없으면 빈 배열)
+    const communitySections: CommunityType[] = orderedCommunities.map((c) => ({
+      id: c.id,
+      communityName: c.name,
+      cellList: commonByCommunityName.get(c.name) ?? [],
+    }));
 
-        const commonCell = cellListData.findCells.nodes.filter(
-          (cell) =>
-            !cell.id.includes(SpecialCellIdType.NewFamily) &&
-            !cell.id.includes(SpecialCellIdType.NewFamilyTwo) &&
-            !cell.id.includes(SpecialCellIdType.Blessing) &&
-            !cell.id.includes(SpecialCellIdType.Renew)
-        );
+    // 스페셜은 항상 마지막에 붙임 (원하면 옵션으로)
+    const specialSection: CommunityType = {
+      id: "SPECIAL",
+      communityName: "스페셜",
+      cellList: specialCells,
+    };
 
-        const communityOne = commonCell
-          .filter((item) => item.community === CommunityFilter.LIGHTONE)
-          .sort((a, b) => filterByCellName(a, b));
+    return [...communitySections, specialSection];
+  }, [cellListData, communities, commonByCommunityName, specialCells]);
 
-        const communityTwo = commonCell
-          .filter((item) => item.community === CommunityFilter.LIGHTTWO)
-          .sort((a, b) => filterByCellName(a, b));
-
-        const communityThree = commonCell
-          .filter((item) => item.community === CommunityFilter.LIGHTTHREE)
-          .sort((a, b) => filterByCellName(a, b));
-
-        const communityFour = commonCell
-          .filter((item) => item.community === CommunityFilter.LIGHTFOUR)
-          .sort((a, b) => filterByCellName(a, b));
-
-        const communityFive = commonCell
-          .filter((item) => item.community === CommunityFilter.LIGHTFIVE)
-          .sort((a, b) => filterByCellName(a, b));
-
-        const specialCells = [
-          ...(newFamily ? [newFamily] : []),
-          ...(newFamilyTwo ? [newFamilyTwo] : []),
-          ...(blessing ? [blessing] : []),
-          ...(renew ? [renew] : []),
-        ];
-
-        setData([
-          {id: "0", communityName: "빛1", cellList: communityOne},
-          {id: "1", communityName: "빛2", cellList: communityTwo},
-          {id: "2", communityName: "빛3", cellList: communityThree},
-          {id: "3", communityName: "빛4", cellList: communityFour},
-          {id: "4", communityName: "빛5", cellList: communityFive},
-          {id: "5", communityName: "스페셜", cellList: specialCells},
-        ]);
-      } else {
-        setData(null);
-      }
-
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-    }
-  }, [isDataLoading, isDataFetching, cellListData]);
+  // 기존 반환을 최대한 유지: newFamily/blessing/renew 필요하면 여기서 찾아서 반환
+  const newFamily = useMemo(
+    () =>
+      specialCells.find((c) => c.id.includes(SpecialCellIdType.NewFamily)) ??
+      null,
+    [specialCells],
+  );
+  const blessing = useMemo(
+    () =>
+      specialCells.find((c) => c.id.includes(SpecialCellIdType.Blessing)) ??
+      null,
+    [specialCells],
+  );
+  const renew = useMemo(
+    () =>
+      specialCells.find((c) => c.id.includes(SpecialCellIdType.Renew)) ?? null,
+    [specialCells],
+  );
 
   return {
     isLoading,
+    isError,
+    error,
     data,
     newFamily,
     blessing,

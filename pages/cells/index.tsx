@@ -1,7 +1,7 @@
 import {AnimatePresence, motion} from "framer-motion";
 import type {NextPage} from "next";
 import Head from "next/head";
-import {useEffect, useState} from "react";
+import {useMemo} from "react";
 // hooks
 import useModal from "../../hooks/useModal";
 // graphql
@@ -12,6 +12,8 @@ import {
   useFindCellsQuery,
 } from "../../graphql/generated";
 // components
+import Link from "next/link";
+import {useQuery} from "react-query";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import Container from "../../components/Atoms/Container/Container";
 import Footer from "../../components/Atoms/Footer";
@@ -21,17 +23,27 @@ import UnderlineBoxTabs from "../../components/Atoms/Tabs/UnderlineBoxTabs";
 import Layout from "../../components/Layout/Layout";
 import CellCard from "../../components/Organisms/Cells/CellCard/CellCard";
 import CreateCellModal from "../../components/Organisms/Cells/CreateCellModal";
-import {FIND_CELL_LIMIT} from "../../constants/constant";
-import {communityTabs} from "../../constants/tabs";
-import {CellType, SpecialCellIdType} from "../../interface/cell";
-import {CommunityFilter, communityFilterState} from "../../stores/cellState";
+import {ALL_ID, ALL_OPTION, FIND_CELL_LIMIT} from "../../constants/constant";
+import {getIntegratedCommunities} from "../../firebase/CMS/CommunityCMS";
+import {SpecialCellIdType} from "../../interface/cell";
+import {communityFilterState} from "../../stores/cellState";
 import {createCellState} from "../../stores/createCellState";
+import {sortCommunityNames} from "../../utils/utils";
 
 const Cell: NextPage = () => {
   const setCreateCellInfo = useSetRecoilState(createCellState);
   const [filter, setFilter] = useRecoilState(communityFilterState);
-  const [filterdList, setFilterdList] = useState<CellType[]>([]);
   const {modalOpen, onModalOpenHandler, onModalClosehandler} = useModal();
+
+  const {isLoading: isCommunityLoading, data: communities} = useQuery(
+    ["getIntegratedCommunities"],
+    () => getIntegratedCommunities(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    },
+  );
+
   const {isLoading, data} = useFindCellsQuery<
     FindCellsQuery,
     FindCellsQueryVariables
@@ -46,31 +58,48 @@ const Cell: NextPage = () => {
     },
   );
 
+  // 공동체이름 기준으로 정렬
+  const sortedCommunityOptions = useMemo(() => {
+    return [...(communities ?? [])].sort(sortCommunityNames);
+  }, [communities]);
+
+  // 전체 + 공동체로 탭 구성하기
+  const communityOptions = useMemo(() => {
+    const list = sortedCommunityOptions ?? [];
+    return [ALL_OPTION, ...list];
+  }, [communities]);
+
+  const hasCommunities = (communities?.length ?? 0) > 0;
+
+  const effectiveFilter = hasCommunities ? filter : ALL_OPTION.name;
+
+  const isAllFilter =
+    effectiveFilter === ALL_ID || effectiveFilter === ALL_OPTION.name;
+
+  // 공동체 기준으로 필터링한 셀리스트
+  const filteredList = useMemo(() => {
+    const nodes = data?.findCells.nodes ?? [];
+
+    // 특수 셀 제외
+    const common = nodes.filter(
+      (cell) =>
+        !cell.id.includes(SpecialCellIdType.NewFamily) &&
+        !cell.id.includes(SpecialCellIdType.Blessing) &&
+        !cell.id.includes(SpecialCellIdType.Renew),
+    );
+
+    // 공동체가 없으면 = 필터링하지 않고 전체(common) 보여줌
+    const list = isAllFilter
+      ? common
+      : common.filter((cell) => cell.community === filter);
+
+    return [...list].sort((a, b) => a.name.localeCompare(b.name));
+  }, [data, filter]);
+
   const onCloseHandler = () => {
     setCreateCellInfo(null);
     onModalClosehandler();
   };
-
-  useEffect(() => {
-    if (data) {
-      if (filter === CommunityFilter.SHOW_ALL) {
-        const filterList = data?.findCells.nodes
-          .filter(
-            (cell) =>
-              !cell.id.includes(SpecialCellIdType.NewFamily) &&
-              !cell.id.includes(SpecialCellIdType.Blessing) &&
-              !cell.id.includes(SpecialCellIdType.Renew),
-          )
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setFilterdList(filterList);
-      } else {
-        const filterList = data?.findCells.nodes
-          .filter((cell) => cell.community === filter)
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setFilterdList(filterList);
-      }
-    }
-  }, [data, filter]);
 
   return (
     <Layout>
@@ -83,8 +112,8 @@ const Cell: NextPage = () => {
       <Container>
         <Header
           title={`인터치 셀현황 (${
-            filter === "전체" ? "전체" : `${filter} 공동체`
-          }: ${filterdList ? filterdList.length : 0}셀)`}
+            filter === ALL_ID ? "전체" : `${filter} 공동체`
+          }: ${filteredList ? filteredList.length : 0}셀)`}
         >
           <motion.button
             whileHover={{scale: 1.1}}
@@ -97,6 +126,36 @@ const Cell: NextPage = () => {
         </Header>
         <Spacer size="h-8" background />
         <div>
+          {isCommunityLoading ? (
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+              {Array.from({length: 6}, (_, index) => index).map((item) => (
+                <div
+                  key={item}
+                  className="bg-slate-200 rounded-lg shadow-lg w-30 h-44 lg:h-60 animate-pulse"
+                ></div>
+              ))}
+            </div>
+          ) : hasCommunities ? (
+            <UnderlineBoxTabs
+              tabs={communityOptions}
+              currentTab={filter}
+              setCurrentTab={setFilter}
+            />
+          ) : (
+            <div className="border border-dashed border-gray-300 rounded-md p-4 text-sm text-gray-600">
+              아직 등록된 공동체가 없어요. 먼저 공동체를 등록해주세요.
+              <div className="mt-2">
+                <Link
+                  href="/develop"
+                  className="inline-flex items-center gap-1 text-sm text-blue-600 underline hover:text-blue-700"
+                >
+                  공동체 관리로 이동
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
               {Array.from({length: 6}, (_, index) => index).map((item) => (
@@ -108,14 +167,9 @@ const Cell: NextPage = () => {
             </div>
           ) : (
             <>
-              <UnderlineBoxTabs
-                tabs={communityTabs}
-                currentTab={filter}
-                setCurrentTab={setFilter}
-              />
               <Spacer size="h-8 lg:h-16" />
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-                {filterdList.map((cell) => (
+                {filteredList.map((cell) => (
                   <CellCard
                     key={cell.id}
                     id={cell.id}

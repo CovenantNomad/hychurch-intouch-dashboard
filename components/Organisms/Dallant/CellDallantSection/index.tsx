@@ -1,16 +1,62 @@
 //hooks
+import {useQuery} from "react-query";
+import {getIntegratedCommunities} from "../../../../firebase/CMS/CommunityCMS";
 import useCellDallants from "../../../../hooks/useCellDallants";
-//type
-import {CommunityFilter} from "../../../../stores/cellState";
 //components
+import {useMemo} from "react";
+import {sortCommunityNames} from "../../../../utils/utils";
 import EmptyStateSimple from "../../../Atoms/EmptyStates/EmptyStateSimple";
 import CellDallantList from "../CellDallantList";
 import CellDallantListItem from "../CellDallantListItem";
 
-interface CellDallantSectionProps {}
+type IntegratedCommunity = {id: string; name: string};
 
-const CellDallantSection = ({}: CellDallantSectionProps) => {
+const COMMUNITY_STYLE = [
+  {bgColor: "bg-[#FF808B]/30", titleColor: "text-rose-500"},
+  {bgColor: "bg-orange-100/80", titleColor: "text-orange-500"},
+  {bgColor: "bg-amber-100/80", titleColor: "text-amber-500"},
+  {bgColor: "bg-teal-100/80", titleColor: "text-teal-500"},
+  {bgColor: "bg-sky-100/80", titleColor: "text-sky-500"},
+  {bgColor: "bg-indigo-100/80", titleColor: "text-indigo-500"},
+  {bgColor: "bg-emerald-100/80", titleColor: "text-emerald-500"},
+] as const;
+
+const CellDallantSection = () => {
   const {isLoading, cellDallants} = useCellDallants();
+
+  const {isLoading: isCommunityLoading, data: communities} = useQuery(
+    ["getIntegratedCommunities"],
+    () => getIntegratedCommunities(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    },
+  );
+
+  const orderedCommunities = useMemo(() => {
+    const list = (communities ?? []) as IntegratedCommunity[];
+    return [...list].sort(sortCommunityNames);
+  }, [communities]);
+
+  // cellDallants를 communityName 기준으로 그룹핑
+  const dallantsByCommunity = useMemo(() => {
+    const grouped: Record<string, typeof cellDallants> = {};
+    (cellDallants ?? []).forEach((item) => {
+      const key = item.community?.trim() || "미분류";
+      (grouped[key] ??= []).push(item);
+    });
+
+    // 각 그룹 내부 정렬
+    Object.keys(grouped).forEach((key) => {
+      const arr = grouped[key];
+      if (!arr) return; // TS 안심 + 방어
+      arr.sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    });
+
+    return grouped as Record<string, NonNullable<typeof cellDallants>>;
+  }, [cellDallants]);
+
+  const isPageLoading = isLoading || isCommunityLoading;
 
   return (
     <div>
@@ -18,7 +64,7 @@ const CellDallantSection = ({}: CellDallantSectionProps) => {
         <h2 className="text-lg font-medium leading-6 text-gray-900">
           셀별 달란트 현황
         </h2>
-        {isLoading ? (
+        {isPageLoading ? (
           <div className="grid grid-cols-5 gap-x-4 mt-4">
             {Array.from({length: 4}).map((_, index) => (
               <div
@@ -35,126 +81,29 @@ const CellDallantSection = ({}: CellDallantSectionProps) => {
           <div>
             {cellDallants ? (
               <div className="grid grid-cols-5 gap-x-4 mt-4">
-                <CellDallantList
-                  cellName="빛1"
-                  bgColor="bg-[#FF808B]/30"
-                  titleColor="text-rose-500"
-                >
-                  {cellDallants
-                    .filter(
-                      (item) => item.community === CommunityFilter.LIGHTONE
-                    )
-                    .sort((a, b) => {
-                      if (a.name > b.name) return 1;
-                      else if (b.name > a.name) return -1;
-                      else return 0;
-                    })
-                    .map((item) => (
-                      <CellDallantListItem
-                        key={item.id}
-                        cellId={item.id}
-                        cellName={item.name}
-                        participants={item.participants}
-                        totalAmount={item.totalAmount}
-                      />
-                    ))}
-                </CellDallantList>
-                <CellDallantList
-                  cellName="빛2"
-                  bgColor="bg-orange-100/80"
-                  titleColor="text-orange-500"
-                >
-                  {cellDallants
-                    .filter(
-                      (item) => item.community === CommunityFilter.LIGHTTWO
-                    )
-                    .sort((a, b) => {
-                      if (a.name > b.name) return 1;
-                      else if (b.name > a.name) return -1;
-                      else return 0;
-                    })
-                    .map((item) => (
-                      <CellDallantListItem
-                        key={item.id}
-                        cellId={item.id}
-                        cellName={item.name}
-                        participants={item.participants}
-                        totalAmount={item.totalAmount}
-                      />
-                    ))}
-                </CellDallantList>
-                <CellDallantList
-                  cellName="빛3"
-                  bgColor="bg-amber-100/80"
-                  titleColor="text-amber-500"
-                >
-                  {cellDallants
-                    .filter(
-                      (item) => item.community === CommunityFilter.LIGHTTHREE
-                    )
-                    .sort((a, b) => {
-                      if (a.name > b.name) return 1;
-                      else if (b.name > a.name) return -1;
-                      else return 0;
-                    })
-                    .map((item) => (
-                      <CellDallantListItem
-                        key={item.id}
-                        cellId={item.id}
-                        cellName={item.name}
-                        participants={item.participants}
-                        totalAmount={item.totalAmount}
-                      />
-                    ))}
-                </CellDallantList>
-                <CellDallantList
-                  cellName="빛4"
-                  bgColor="bg-teal-100/80"
-                  titleColor="text-teal-500"
-                >
-                  {cellDallants
-                    .filter(
-                      (item) => item.community === CommunityFilter.LIGHTFOUR
-                    )
-                    .sort((a, b) => {
-                      if (a.name > b.name) return 1;
-                      else if (b.name > a.name) return -1;
-                      else return 0;
-                    })
-                    .map((item) => (
-                      <CellDallantListItem
-                        key={item.id}
-                        cellId={item.id}
-                        cellName={item.name}
-                        participants={item.participants}
-                        totalAmount={item.totalAmount}
-                      />
-                    ))}
-                </CellDallantList>
-                <CellDallantList
-                  cellName="빛5"
-                  bgColor="bg-teal-100/80"
-                  titleColor="text-teal-500"
-                >
-                  {cellDallants
-                    .filter(
-                      (item) => item.community === CommunityFilter.LIGHTFIVE
-                    )
-                    .sort((a, b) => {
-                      if (a.name > b.name) return 1;
-                      else if (b.name > a.name) return -1;
-                      else return 0;
-                    })
-                    .map((item) => (
-                      <CellDallantListItem
-                        key={item.id}
-                        cellId={item.id}
-                        cellName={item.name}
-                        participants={item.participants}
-                        totalAmount={item.totalAmount}
-                      />
-                    ))}
-                </CellDallantList>
+                {orderedCommunities.map((c, idx) => {
+                  const style = COMMUNITY_STYLE[idx % COMMUNITY_STYLE.length];
+                  const communityCells = dallantsByCommunity[c.name] ?? [];
+
+                  return (
+                    <CellDallantList
+                      key={c.id}
+                      cellName={c.name}
+                      bgColor={style.bgColor}
+                      titleColor={style.titleColor}
+                    >
+                      {communityCells.map((item) => (
+                        <CellDallantListItem
+                          key={item.id}
+                          cellId={item.id}
+                          cellName={item.name}
+                          participants={item.participants}
+                          totalAmount={item.totalAmount}
+                        />
+                      ))}
+                    </CellDallantList>
+                  );
+                })}
               </div>
             ) : (
               <div className="py-8">

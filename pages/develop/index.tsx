@@ -7,6 +7,7 @@ import FullScreenLayout from "../../components/Layout/FullScreenLayout";
 import PageLayout from "../../components/Layout/PageLayout";
 import BarnabasCMS from "../../components/Templates/DevelopCMS/BarnabasCMS";
 import CellMeetingCMS from "../../components/Templates/DevelopCMS/CellMeetingCMS";
+import CommunityCMS from "../../components/Templates/DevelopCMS/CommunityCMS";
 import NewFamilyCMS from "../../components/Templates/DevelopCMS/NewFamilyCMS";
 import ServiceCMS from "../../components/Templates/DevelopCMS/ServiceCMS";
 import {stateSetting} from "../../stores/stateSetting";
@@ -31,6 +32,11 @@ const categories = [
     id: 3,
     name: "바나바데이터",
     component: <BarnabasCMS />,
+  },
+  {
+    id: 4,
+    name: "공동체관리",
+    component: <CommunityCMS />,
   },
 ];
 

@@ -32,7 +32,7 @@ const EvaluationCommunitySection = ({
       {
         staleTime: 5 * 60 * 1000,
         cacheTime: 5 * 60 * 1000,
-      }
+      },
     );
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const EvaluationCommunitySection = ({
 
       for (let i = 0; i < submissionCheckData.length; i++) {
         const isInCommunityCellList = communityCellList.some(
-          (cell) => cell.id === submissionCheckData[i].cellId
+          (cell) => cell.id === submissionCheckData[i].cellId,
         );
         if (isInCommunityCellList) {
           if (
@@ -67,7 +67,7 @@ const EvaluationCommunitySection = ({
   useEffect(() => {
     if (data) {
       const communityList = data.filter(
-        (community) => community.communityName === communityName
+        (community) => community.communityName === communityName,
       )[0];
       setCommunityCellList(communityList.cellList);
       communityList.cellList
@@ -103,7 +103,7 @@ const EvaluationCommunitySection = ({
                   {completeSubmissionsCount !== 0 &&
                   communityLength !== 0 &&
                   completeSubmissionsCount === communityLength ? (
-                    <span>모든 셀이 출석체크를 제출하였습니다.</span>
+                    <span>모든 셀이 제출을 완료했습니다.</span>
                   ) : (
                     <div className="flex justify-evenly">
                       <span className="inline-flex items-center  bg-green-50 px-2 py-1 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-600/20 cursor-pointer">
@@ -142,17 +142,17 @@ const EvaluationCommunitySection = ({
                               {submissionCheckData ? (
                                 <>
                                   {submissionCheckData.find(
-                                    (item) => item.cellId === cell.id
+                                    (item) => item.cellId === cell.id,
                                   ) ? (
                                     submissionCheckData.find(
-                                      (item) => item.cellId === cell.id
+                                      (item) => item.cellId === cell.id,
                                     )?.submissionStatus ===
                                     EvaluationSubmissionStatus.INPROGRESS ? (
                                       <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20 cursor-not-allowed">
                                         작성중
                                       </span>
                                     ) : submissionCheckData.find(
-                                        (item) => item.cellId === cell.id
+                                        (item) => item.cellId === cell.id,
                                       )?.submissionStatus ===
                                       EvaluationSubmissionStatus.COMPLETE ? (
                                       <Link

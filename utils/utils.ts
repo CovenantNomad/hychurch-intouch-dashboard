@@ -2,6 +2,7 @@ import {clsx, type ClassValue} from "clsx";
 import dayjs from "dayjs";
 import {twMerge} from "tailwind-merge";
 import {cellOrderByAge} from "../constants/cellOrder";
+import {SPECIAL_KEYS} from "../constants/constant";
 import {Gender, RoleType, UserCellTransferStatus} from "../graphql/generated";
 import {
   AttendanceHistory,
@@ -18,7 +19,6 @@ import {
   SpecialCellIdType,
   transferedUser,
 } from "../interface/cell";
-import {CommunityFilter} from "../stores/cellState";
 import {Member, MemberWithTransferOut} from "./../interface/user";
 import {getWeeksBetweenDates} from "./dateUtils";
 
@@ -123,7 +123,7 @@ export const getServiceName = (id: String) => {
 export const covertPhoneNumber = (number: String) => {
   return number.replace(
     /(^02.{0}|^01.{1}|[0-9]{3})([0-9]+)([0-9]{4})/,
-    "$1-$2-$3"
+    "$1-$2-$3",
   );
 };
 
@@ -133,24 +133,6 @@ export const getFirstName = (cellName: string) => {
     return name.slice(2);
   } else {
     return name.slice(1);
-  }
-};
-
-export const getCommunityName = (communityName: string) => {
-  if (communityName === CommunityFilter.LIGHTONE) {
-    return "lightOne";
-  }
-  if (communityName === CommunityFilter.LIGHTTWO) {
-    return "lightTwo";
-  }
-  if (communityName === CommunityFilter.LIGHTTHREE) {
-    return "lightThree";
-  }
-  if (communityName === CommunityFilter.LIGHTFOUR) {
-    return "lightFour";
-  }
-  if (communityName === CommunityFilter.LIGHTFIVE) {
-    return "lightFive";
   }
 };
 
@@ -198,7 +180,7 @@ export const getSpecialCellName = (cellId: string) => {
 };
 
 export const groupByChurchServiceId = (
-  attendanceList: TempSavedAttendanceHistory[]
+  attendanceList: TempSavedAttendanceHistory[],
 ) => {
   return attendanceList.reduce(
     (acc: {[key: string]: TempSavedAttendanceHistory[]}, item) => {
@@ -215,12 +197,12 @@ export const groupByChurchServiceId = (
 
       return acc;
     },
-    {}
+    {},
   );
 };
 
 export const groupBySubmitListByChurchServiceId = (
-  attendanceList: AttendanceHistory[]
+  attendanceList: AttendanceHistory[],
 ) => {
   return attendanceList.reduce(
     (acc: {[key: string]: AttendanceHistory[]}, item) => {
@@ -237,7 +219,7 @@ export const groupBySubmitListByChurchServiceId = (
 
       return acc;
     },
-    {}
+    {},
   );
 };
 
@@ -284,7 +266,7 @@ export const convertTerm = (input: string): string => {
 
   if (!match) {
     throw new Error(
-      "Invalid input format. Expected format: 'YYYYFIRST' or 'YYYYSECOND'."
+      "Invalid input format. Expected format: 'YYYYFIRST' or 'YYYYSECOND'.",
     );
   }
 
@@ -304,7 +286,7 @@ export const convertTerm = (input: string): string => {
 export const groupMembersByWeek = (
   filteredMembers: MemberWithTransferOut[],
   year: number,
-  month: number
+  month: number,
 ) => {
   // 1. 주의 시작일(월요일)과 끝일(일요일)을 계산하는 함수
   const getWeekRange = (date: Date) => {
@@ -347,7 +329,7 @@ export const groupMembersByWeek = (
 
     // 해당 멤버가 속하는 주를 찾음
     const matchingWeek = weeksInMonth.find(
-      ({start, end}) => registrationDate >= start && registrationDate <= end
+      ({start, end}) => registrationDate >= start && registrationDate <= end,
     );
 
     if (matchingWeek) {
@@ -395,7 +377,7 @@ export const getWeekNumber = (dateString: string): string => {
   const firstDayOfMonth = new Date(year, month, 1);
   const firstSunday = new Date(
     firstDayOfMonth.getTime() +
-      ((7 - firstDayOfMonth.getDay()) % 7) * 24 * 60 * 60 * 1000
+      ((7 - firstDayOfMonth.getDay()) % 7) * 24 * 60 * 60 * 1000,
   );
 
   // 주 번호 계산
@@ -404,7 +386,7 @@ export const getWeekNumber = (dateString: string): string => {
   }
 
   const diffInDays = Math.floor(
-    (date.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24)
+    (date.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   const weekNumber = Math.floor(diffInDays / 7) + 1; // 주 번호 계산 (첫 주 포함)
@@ -506,7 +488,7 @@ export const processMembersByYear = (members: Member[]): YearlyData[] => {
     ([year, count]) => ({
       year,
       count,
-    })
+    }),
   );
 
   // 연도 오름차순 정렬
@@ -547,7 +529,7 @@ export const getDelayedWeeks = ({
 
   const weeksSinceLast = getWeeksBetweenDates(
     referenceDate,
-    dayjs().format("YYYY-MM-DD")
+    dayjs().format("YYYY-MM-DD"),
   );
 
   return weeksSinceLast > 2 ? weeksSinceLast : null;
@@ -579,9 +561,55 @@ export const getProgressDuration = ({
   const endDate =
     validCompletedDate ?? // 1) 완료일이 있으면 그걸 사용
     (completedMeetingCount === scheduledMeetingCount
-      ? validLastMeetingDate ?? dayjs().format("YYYY-MM-DD") // 2) 모든 만남 완료면 마지막 만남일
+      ? (validLastMeetingDate ?? dayjs().format("YYYY-MM-DD")) // 2) 모든 만남 완료면 마지막 만남일
       : dayjs().format("YYYY-MM-DD")); // 3) 진행 중이면 현재일
 
   // 기존 유틸함수 getWeeksBetweenDates 활용
   return getWeeksBetweenDates(matchingDate, endDate);
 };
+
+export function isSpecialCell(cell: CellListType) {
+  return SPECIAL_KEYS.some((k) => cell.id.includes(k));
+}
+
+export function isSpecialCellId(cellId: string) {
+  return SPECIAL_KEYS.some((k) => cellId.includes(k));
+}
+
+export function sortByName(a: CellListType, b: CellListType) {
+  return a.name.localeCompare(b.name);
+}
+
+export function getTrailingNumber(name: string) {
+  const m = name.match(/(\d+)\s*$/);
+  return m ? Number(m[1]) : null;
+}
+
+export function sortCommunityNames(a: {name: string}, b: {name: string}) {
+  // "빛", "청" 같은 prefix
+  const aPrefix = a.name.replace(/\d+\s*$/, "").trim();
+  const bPrefix = b.name.replace(/\d+\s*$/, "").trim();
+
+  if (aPrefix !== bPrefix) return aPrefix.localeCompare(bPrefix);
+
+  const aNum = getTrailingNumber(a.name);
+  const bNum = getTrailingNumber(b.name);
+
+  // 둘 다 숫자 있으면 숫자 기준
+  if (aNum !== null && bNum !== null) return aNum - bNum;
+
+  // 아니면 일반 문자열
+  return a.name.localeCompare(b.name);
+}
+
+export function sortCommunityLabel(a: string, b: string) {
+  const aPrefix = a.replace(/\d+\s*$/, "").trim();
+  const bPrefix = b.replace(/\d+\s*$/, "").trim();
+  if (aPrefix !== bPrefix) return aPrefix.localeCompare(bPrefix, "ko");
+
+  const aNum = getTrailingNumber(a);
+  const bNum = getTrailingNumber(b);
+  if (aNum !== null && bNum !== null) return aNum - bNum;
+
+  return a.localeCompare(b, "ko");
+}

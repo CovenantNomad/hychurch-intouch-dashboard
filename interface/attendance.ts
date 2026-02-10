@@ -1,3 +1,4 @@
+import {Dayjs} from "dayjs";
 import {CellLeaderAttendanceSubmissionStatus} from "../graphql/generated";
 
 export enum AttendanceStatus {
@@ -90,4 +91,12 @@ export type TServiceAttendanceWeekly = {
   weekOfMonth: number;
   weekOfYear: number;
   weekOfTerm: number;
+};
+
+export type SundaysResult = {
+  reference: Dayjs;
+  mostRecentSunday: Dayjs;
+  year: number;
+  month: number; // 1~12
+  sundays: Dayjs[];
 };
