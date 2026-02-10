@@ -58,28 +58,26 @@ const ServiceAttendanceWeeklyTable = ({data}: Props) => {
 
         {/* 하단 헤더 */}
         <tr className="divide-x border-b bg-gray-100">
-          {Array(6)
-            .fill(0)
-            .flatMap(() => [
-              <th
-                key="성전"
-                className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700"
-              >
-                성전
-              </th>,
-              <th
-                key="온라인"
-                className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700"
-              >
-                온라인
-              </th>,
-              <th
-                key="전체"
-                className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700 bg-amber-50"
-              >
-                전체
-              </th>,
-            ])}
+          {Array.from({length: 6}).flatMap((_, idx) => [
+            <th
+              key={`${idx}-성전`}
+              className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700"
+            >
+              성전
+            </th>,
+            <th
+              key={`${idx}-온라인`}
+              className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700"
+            >
+              온라인
+            </th>,
+            <th
+              key={`${idx}-전체`}
+              className="w-20 px-3 py-2 text-center text-xs font-medium text-gray-700 bg-amber-50"
+            >
+              전체
+            </th>,
+          ])}
         </tr>
       </thead>
 

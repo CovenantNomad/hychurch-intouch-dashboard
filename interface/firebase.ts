@@ -80,3 +80,10 @@ export enum BARNABAS_COLLCTION {
   ATTENDANCES = "Attendances",
   DATE = "Date",
 }
+
+export enum COMMUNITY_COLLCTION {
+  COMMUNITY = "Community",
+  INTEGRATED = "INTEGRATED",
+  AGE = "AGE_SEGMENTED",
+  COMMUNITY_LIST = "COMMUNITY_LIST",
+}

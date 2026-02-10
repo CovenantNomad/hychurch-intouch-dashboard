@@ -33,12 +33,17 @@ const categories = [
     name: "예배출석 통계",
     component: <AttendanceStatistic />,
   },
+  // {
+  //   id: 4,
+  //   name: "예배출석 (프린트 버전)",
+  //   component: <AttendancePrint />,
+  // },
 ];
 
 const AttendancePage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.attendanceSelectedCategoryId
+    setting.attendanceSelectedCategoryId,
   );
 
   const setSettingHandler = useCallback(
@@ -48,7 +53,7 @@ const AttendancePage = () => {
         attendanceSelectedCategoryId: id,
       });
     },
-    [setting, setSetting]
+    [setting, setSetting],
   );
 
   return (

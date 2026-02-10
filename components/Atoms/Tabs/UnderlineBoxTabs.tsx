@@ -3,7 +3,7 @@ import {classNames} from "../../../utils/utils";
 
 interface UnderlineTabsProps {
   tabs: {
-    id: number;
+    id: string;
     name: string;
   }[];
   currentTab: string;

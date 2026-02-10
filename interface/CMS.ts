@@ -99,3 +99,8 @@ export type TRegionDataInput = {
   gyeonggi: {city: string; count: number}[]; // 경기도의 데이터
   local: number; // 지방 데이터
 };
+
+export type CommunityItem = {
+  id: string; // Firestore UID
+  name: string;
+};

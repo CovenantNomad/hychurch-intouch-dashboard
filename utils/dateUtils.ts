@@ -1,5 +1,6 @@
 import {eachDayOfInterval, format, isSunday} from "date-fns";
 import dayjs, {Dayjs} from "dayjs";
+import {SundaysResult} from "../interface/attendance";
 
 export const getDateString = (date: Date) => {
   return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -16,7 +17,7 @@ export const getTodayString = (date: dayjs.Dayjs) => {
 
 export const makeObjKeyByWeek = (dateString: string) => {
   return `${dayjs(dateString).year()}-${dayjs(dateString).week()}-${dayjs(
-    dateString
+    dateString,
   ).startOf("isoWeek")}`;
 };
 
@@ -36,7 +37,7 @@ export const getWeek = (dateString: string) => {
   let previousMonthLastWeek = 0;
   if (previousMonthfirstDay === 0) {
     previousMonthLastWeek = Math.ceil(
-      (previousMonthlastDate + previousMonthfirstDay) / 7
+      (previousMonthlastDate + previousMonthfirstDay) / 7,
     );
   } else {
     previousMonthLastWeek =
@@ -47,24 +48,24 @@ export const getWeek = (dateString: string) => {
     if (currentDate + firstDay < 8) {
       // 첫날이 주일인 첫주
       return `${dayjs(dateString).year()}-${String(
-        dayjs(dateString).month() + 1
+        dayjs(dateString).month() + 1,
       ).padStart(2, "0")}-${week}`;
     } else {
       // 첫날이 주일인 다른주
       return `${dayjs(dateString).year()}-${String(
-        dayjs(dateString).month() + 1
+        dayjs(dateString).month() + 1,
       ).padStart(2, "0")}-${week}`;
     }
   } else {
     if (currentDate + firstDay < 8) {
       // 첫날이 주일이 아닌 첫주
       return `${dayjs(dateString).year()}-${String(
-        dayjs(dateString).month()
+        dayjs(dateString).month(),
       ).padStart(2, "0")}-${previousMonthLastWeek}`;
     } else {
       // 첫날이 주일이 아닌 다른주
       return `${dayjs(dateString).year()}-${String(
-        dayjs(dateString).month() + 1
+        dayjs(dateString).month() + 1,
       ).padStart(2, "0")}-${week - 1}`;
     }
   }
@@ -169,7 +170,7 @@ export function getWeekOfMonth(date: Date): number {
   firstSunday.setDate(firstDayOfMonth.getDate() + dayOffset);
 
   const diff = Math.floor(
-    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000),
   );
   return diff + 1; // Weeks start from 1
 }
@@ -182,7 +183,7 @@ export function getWeekOfYear(date: Date): number {
   firstSunday.setDate(firstDayOfYear.getDate() + dayOffset);
 
   const diff = Math.floor(
-    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    (date.getTime() - firstSunday.getTime()) / (7 * 24 * 60 * 60 * 1000),
   );
   return diff + 1; // Weeks start from 1
 }
@@ -190,7 +191,7 @@ export function getWeekOfYear(date: Date): number {
 // 바나바 소요 기간 계산 (주간단위)
 export const getWeeksBetweenDates = (
   startDate: string,
-  endDate: string
+  endDate: string,
 ): number => {
   const start = dayjs(startDate);
   const end = dayjs(endDate);
@@ -201,3 +202,51 @@ export const getWeeksBetweenDates = (
   // 7일 미만은 1주차, 이후는 7일 단위로 올림 처리
   return dayDifference < 7 ? 1 : Math.ceil(dayDifference / 7);
 };
+
+/**
+ * 기준 날짜(ref) 기준
+ * 1) 가장 최근 일요일을 찾고
+ * 2) 그 일요일이 포함된 달의 모든 일요일을 반환
+ */
+export function getSundaysOfMonthContainingMostRecentSunday(
+  ref: Dayjs = dayjs(),
+): SundaysResult {
+  // dayjs: Sunday = 0
+  const offset = ref.day(); // 0이면 일요일
+  const mostRecentSunday = ref.subtract(offset, "day");
+
+  const year = mostRecentSunday.year();
+  const month = mostRecentSunday.month() + 1; // 1~12
+
+  const sundays = getAllSundaysInMonth(mostRecentSunday);
+
+  return {
+    reference: ref,
+    mostRecentSunday,
+    year,
+    month,
+    sundays,
+  };
+}
+
+/* 특정 날짜가 속한 달의 모든 일요일을 반환 */
+function getAllSundaysInMonth(dateInMonth: Dayjs): Dayjs[] {
+  const startOfMonth = dateInMonth.startOf("month");
+  const endOfMonth = dateInMonth.endOf("month");
+
+  // 해당 달의 첫 번째 일요일
+  const firstSunday =
+    startOfMonth.day() === 0
+      ? startOfMonth
+      : startOfMonth.add(7 - startOfMonth.day(), "day");
+
+  const result: Dayjs[] = [];
+  let current = firstSunday;
+
+  while (current.isBefore(endOfMonth) || current.isSame(endOfMonth, "day")) {
+    result.push(current);
+    current = current.add(7, "day");
+  }
+
+  return result;
+}

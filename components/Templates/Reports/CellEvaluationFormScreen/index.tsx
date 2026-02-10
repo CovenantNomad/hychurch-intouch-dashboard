@@ -1,5 +1,8 @@
+import {useMemo} from "react";
 import {useQuery} from "react-query";
+import {getIntegratedCommunities} from "../../../../firebase/CMS/CommunityCMS";
 import {getEvalutationActivation} from "../../../../firebase/EvaluationForm/evaluationFromSetting";
+import {sortCommunityNames} from "../../../../utils/utils";
 import BlockCardContainer from "../../../Atoms/Container/BlockCardContainer";
 import BlockContainer from "../../../Atoms/Container/BlockContainer";
 import Spinner from "../../../Atoms/Spinner";
@@ -9,10 +12,26 @@ import EvaluationFormHeader from "../../../Organisms/Reports/EvaluationFormHeade
 type CellEvaluationFormScreenProps = {};
 
 const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
-  const {isLoading, data: setting} = useQuery(
+  const {isLoading: isSettingLoading, data: setting} = useQuery(
     "getEvalutationActivation",
-    getEvalutationActivation
+    getEvalutationActivation,
   );
+
+  const {isLoading: isCommunityLoading, data: communities} = useQuery(
+    ["getIntegratedCommunities"],
+    () => getIntegratedCommunities(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    },
+  );
+
+  const isLoading = isSettingLoading || isCommunityLoading;
+
+  const orderedCommunities = useMemo(() => {
+    if (!communities) return [];
+    return [...communities].sort(sortCommunityNames);
+  }, [communities]);
 
   return (
     <>
@@ -26,38 +45,16 @@ const CellEvaluationFormScreen = ({}: CellEvaluationFormScreenProps) => {
             <EvaluationFormHeader setting={setting} />
           </BlockContainer>
           <>
-            {setting && setting.isActive ? (
+            {setting && setting.isActive && communities ? (
               <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-5 lg:gap-x-2 ">
-                <BlockCardContainer>
-                  <EvaluationCommunitySection
-                    seasonName={setting.seasonName}
-                    communityName="빛1"
-                  />
-                </BlockCardContainer>
-                <BlockCardContainer>
-                  <EvaluationCommunitySection
-                    seasonName={setting.seasonName}
-                    communityName="빛2"
-                  />
-                </BlockCardContainer>
-                <BlockCardContainer>
-                  <EvaluationCommunitySection
-                    seasonName={setting.seasonName}
-                    communityName="빛3"
-                  />
-                </BlockCardContainer>
-                <BlockCardContainer>
-                  <EvaluationCommunitySection
-                    seasonName={setting.seasonName}
-                    communityName="빛4"
-                  />
-                </BlockCardContainer>
-                <BlockCardContainer>
-                  <EvaluationCommunitySection
-                    seasonName={setting.seasonName}
-                    communityName="빛5"
-                  />
-                </BlockCardContainer>
+                {(orderedCommunities ?? []).map((c) => (
+                  <BlockCardContainer key={c.id}>
+                    <EvaluationCommunitySection
+                      seasonName={setting.seasonName}
+                      communityName={c.name}
+                    />
+                  </BlockCardContainer>
+                ))}
               </div>
             ) : (
               <BlockContainer>

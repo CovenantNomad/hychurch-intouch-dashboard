@@ -8,7 +8,7 @@ import {
 } from "../graphql/generated";
 //types
 import {AttendanceSubmissionType} from "../interface/attendance";
-import {COMMUNITY_NAMES, SpecialCellIdType} from "../interface/cell";
+import {isSpecialCellId, sortCommunityLabel} from "../utils/utils";
 
 const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
   const {
@@ -27,69 +27,66 @@ const useCheckCellAttendanceSubmissions = (attendanceDate: string) => {
       staleTime: 15 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
       enabled: Boolean(attendanceDate),
-    }
+    },
   );
 
   const isLoading = isDataLoading || isFetching;
 
-  const {attendanceStatus, communities, specialCells} = useMemo(() => {
-    if (!data || !data.cellAttendanceCheckSubmissions) {
-      return {attendanceStatus: false, communities: {}, specialCells: []};
-    }
-
-    const commonCells: AttendanceSubmissionType[] = [];
-    const specialCells: AttendanceSubmissionType[] = [];
-
-    data.cellAttendanceCheckSubmissions.forEach((cell) => {
-      if (
-        cell.cellId.includes(SpecialCellIdType.NewFamily) ||
-        cell.cellId.includes(SpecialCellIdType.Blessing) ||
-        cell.cellId.includes(SpecialCellIdType.Renew)
-      ) {
-        specialCells.push(cell);
-      } else {
-        commonCells.push(cell);
+  const {attendanceStatus, communities, communityKeys, specialCells} =
+    useMemo(() => {
+      const submissions = data?.cellAttendanceCheckSubmissions ?? [];
+      if (submissions.length === 0) {
+        return {
+          attendanceStatus: false,
+          communities: {} as Record<string, AttendanceSubmissionType[]>,
+          communityKeys: [] as string[],
+          specialCells: [] as AttendanceSubmissionType[],
+        };
       }
-    });
 
-    const sortedCommunities = Object.keys(COMMUNITY_NAMES).reduce(
-      (acc, key) => {
-        acc[key as keyof typeof COMMUNITY_NAMES] = [];
-        return acc;
-      },
-      {} as Record<keyof typeof COMMUNITY_NAMES, AttendanceSubmissionType[]>
-    );
+      const special: AttendanceSubmissionType[] = [];
+      const common: AttendanceSubmissionType[] = [];
 
-    // 공동체 데이터 정리
-    commonCells.forEach((cell) => {
-      const communityKey = Object.entries(COMMUNITY_NAMES).find(
-        ([_, communityName]) => communityName === cell.cellCommunity
-      )?.[0] as keyof typeof COMMUNITY_NAMES | undefined;
-
-      if (communityKey) {
-        sortedCommunities[communityKey].push(cell);
+      for (const cell of submissions) {
+        if (isSpecialCellId(cell.cellId)) special.push(cell);
+        else common.push(cell);
       }
-    });
 
-    // 각 공동체별 정렬 적용
-    Object.keys(sortedCommunities).forEach((key) => {
-      sortedCommunities[key as keyof typeof COMMUNITY_NAMES].sort((a, b) =>
-        a.cellName.localeCompare(b.cellName, "ko")
+      // community 라벨(예: "빛1") 기준으로 그룹핑
+      const grouped: Record<string, AttendanceSubmissionType[]> = {};
+
+      for (const cell of common) {
+        const key = cell.cellCommunity?.trim() || "미분류";
+        (grouped[key] ??= []).push(cell);
+      }
+
+      // 각 그룹 내부 정렬
+      Object.keys(grouped).forEach((key) => {
+        grouped[key].sort((a, b) => a.cellName.localeCompare(b.cellName, "ko"));
+      });
+
+      // 그룹 키(커뮤니티 라벨) 정렬
+      const keys = Object.keys(grouped).sort(sortCommunityLabel);
+
+      const attendanceStatus = common.every(
+        (cell) =>
+          cell.submissionStatus ===
+          CellLeaderAttendanceSubmissionStatus.Complete,
       );
-    });
 
-    const attendanceStatus = commonCells.every(
-      (cell) =>
-        cell.submissionStatus === CellLeaderAttendanceSubmissionStatus.Complete
-    );
-
-    return {attendanceStatus, communities: sortedCommunities, specialCells};
-  }, [data]);
+      return {
+        attendanceStatus,
+        communities: grouped,
+        communityKeys: keys,
+        specialCells: special,
+      };
+    }, [data]);
 
   return {
     isLoading,
     attendanceStatus,
-    ...communities,
+    communities, // Record<string, AttendanceSubmissionType[]>
+    communityKeys, // 렌더링 순서에 쓰기 좋음
     specialCells,
   };
 };

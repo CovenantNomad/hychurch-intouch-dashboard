@@ -11,15 +11,8 @@ interface AttendanceReportScreenProps {}
 
 const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
   const recentSunday = getMostRecentSunday();
-  const {
-    isLoading,
-    attendanceStatus,
-    LIGHTONE,
-    LIGHTTWO,
-    LIGHTTHREE,
-    LIGHTFOUR,
-    LIGHTFIVE,
-  } = useCheckCellAttendanceSubmissions(recentSunday.format("YYYY-MM-DD"));
+  const {isLoading, attendanceStatus, communities, communityKeys} =
+    useCheckCellAttendanceSubmissions(recentSunday.format("YYYY-MM-DD"));
 
   return (
     <>
@@ -35,37 +28,15 @@ const AttendanceReportScreen = ({}: AttendanceReportScreenProps) => {
               attendanceStatus={attendanceStatus}
             />
           </BlockContainer>
-          <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-5 lg:gap-x-2 ">
-            <BlockCardContainer>
-              <AttendanceCommunitySection
-                communityName="빛1"
-                communityCells={LIGHTONE}
-              />
-            </BlockCardContainer>
-            <BlockCardContainer>
-              <AttendanceCommunitySection
-                communityName="빛2"
-                communityCells={LIGHTTWO}
-              />
-            </BlockCardContainer>
-            <BlockCardContainer>
-              <AttendanceCommunitySection
-                communityName="빛3"
-                communityCells={LIGHTTHREE}
-              />
-            </BlockCardContainer>
-            <BlockCardContainer>
-              <AttendanceCommunitySection
-                communityName="빛4"
-                communityCells={LIGHTFOUR}
-              />
-            </BlockCardContainer>
-            <BlockCardContainer>
-              <AttendanceCommunitySection
-                communityName="빛5"
-                communityCells={LIGHTFIVE}
-              />
-            </BlockCardContainer>
+          <div className="grid grid-cols-1 gap-y-2 lg:grid-cols-5 lg:gap-x-2">
+            {communityKeys.map((communityName) => (
+              <BlockCardContainer key={communityName}>
+                <AttendanceCommunitySection
+                  communityName={communityName}
+                  communityCells={communities[communityName] ?? []}
+                />
+              </BlockCardContainer>
+            ))}
           </div>
         </>
       )}
