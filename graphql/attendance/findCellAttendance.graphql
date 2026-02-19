@@ -1,13 +1,15 @@
-query findCellAttendance($id: Float! $minDate: String! $maxDate: String!) {
+query findCellAttendance($id: Float!, $minDate: String!, $maxDate: String!) {
   findCell(id: $id) {
     id
     name
-    members{
+    members {
       id
       name
-      userChurchServiceHistories(minDate: $minDate maxDate: $maxDate){
+      grade
+      userChurchServiceHistories(minDate: $minDate, maxDate: $maxDate) {
+        attendedAt
         isOnline
-        churchService{
+        churchService {
           id
           name
         }

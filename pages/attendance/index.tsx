@@ -9,6 +9,7 @@ import FullScreenLayout from "../../components/Layout/FullScreenLayout";
 import PageLayout from "../../components/Layout/PageLayout";
 import AttendanceHistory from "../../components/Templates/Attendance/AttendanceHistory";
 import AttendanceOverview from "../../components/Templates/Attendance/AttendanceOverview";
+import AttendancePrint from "../../components/Templates/Attendance/AttendancePrint";
 import AttendanceStatistic from "../../components/Templates/Attendance/AttendanceStatistic";
 import ThisWeekAttendance from "../../components/Templates/Attendance/ThisWeekAttendance";
 
@@ -33,11 +34,11 @@ const categories = [
     name: "예배출석 통계",
     component: <AttendanceStatistic />,
   },
-  // {
-  //   id: 4,
-  //   name: "예배출석 (프린트 버전)",
-  //   component: <AttendancePrint />,
-  // },
+  {
+    id: 4,
+    name: "예배출석 (프린트 버전)",
+    component: <AttendancePrint />,
+  },
 ];
 
 const AttendancePage = () => {
