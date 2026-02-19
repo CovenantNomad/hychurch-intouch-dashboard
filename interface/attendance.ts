@@ -1,5 +1,8 @@
 import {Dayjs} from "dayjs";
-import {CellLeaderAttendanceSubmissionStatus} from "../graphql/generated";
+import {
+  CellLeaderAttendanceSubmissionStatus,
+  UserGrade,
+} from "../graphql/generated";
 
 export enum AttendanceStatus {
   NOT_SUBMITTED = "NOT_SUBMITTED",
@@ -99,4 +102,39 @@ export type SundaysResult = {
   year: number;
   month: number; // 1~12
   sundays: Dayjs[];
+};
+
+// 출석 프린터 버전
+export type AttendanceMember = {
+  id: string;
+  name: string;
+  grade: UserGrade;
+  histories: AttendanceHistoryForPrint[];
+};
+
+export type AttendanceHistoryForPrint = {
+  attendedAt: string; // 서버에서 오는 값(ISO or YYYY-MM-DD)
+  isOnline: boolean;
+  churchService: {id: string; name: string};
+};
+
+export type PersonWithHistories = {
+  histories: AttendanceHistoryForPrint[];
+};
+
+export type AttendanceCell = {
+  cellName: string;
+  leader: AttendanceMember;
+  members: AttendanceMember[];
+};
+
+export type CheongSheetData = {
+  cheongNumber: number;
+  cells: AttendanceCell[];
+};
+
+export type GroupPlan = {
+  cheongNumber: number; // 1~8
+  groupName: string; // "1청"
+  cellIds: number[];
 };
