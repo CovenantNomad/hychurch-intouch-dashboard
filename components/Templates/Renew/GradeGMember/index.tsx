@@ -63,6 +63,7 @@ const GradeGMember = ({memberList}: Props) => {
           />
         </div>
         <SearchModal
+          basePath="renew"
           people={memberList}
           open={open}
           setOpen={setOpen}

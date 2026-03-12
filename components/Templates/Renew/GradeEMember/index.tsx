@@ -61,6 +61,7 @@ const GradeEMember = ({memberList}: FreeAgencyMemberProps) => {
           />
         </div>
         <SearchModal
+          basePath="renew"
           people={memberList}
           open={open}
           setOpen={setOpen}
