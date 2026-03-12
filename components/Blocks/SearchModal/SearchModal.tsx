@@ -11,6 +11,7 @@ interface SearchModalProps {
   people: MemberWithTransferOut[] | SimpleMemberWithRole[];
   open: boolean;
   query: string;
+  basePath: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
   setQuery: Dispatch<SetStateAction<string>>;
 }
@@ -19,6 +20,7 @@ const SearchModal = ({
   people,
   open,
   query,
+  basePath,
   setOpen,
   setQuery,
 }: SearchModalProps) => {
@@ -79,7 +81,7 @@ const SearchModal = ({
                     className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800"
                   >
                     {filteredPeople.map((person) => (
-                      <Link href={`/renew/${person.id}`} key={person.id}>
+                      <Link href={`/${basePath}/${person.id}`} key={person.id}>
                         <Combobox.Option
                           value={person}
                           className={

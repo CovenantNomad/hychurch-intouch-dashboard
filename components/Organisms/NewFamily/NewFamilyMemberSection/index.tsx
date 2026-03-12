@@ -78,6 +78,7 @@ const NewFamilyMemberSection = ({
             )}
           </div>
           <SearchModal
+            basePath="newfamily"
             people={memberList}
             open={open}
             setOpen={setOpen}

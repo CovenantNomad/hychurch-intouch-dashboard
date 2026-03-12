@@ -29,6 +29,7 @@ const MenteeListSection = ({memberList, isLoading}: MenteeListSectionProps) => {
       </div>
       <MenteeTable members={memberList} isLoading={isLoading} />
       <SearchModal
+        basePath="blessing"
         people={memberList}
         open={open}
         setOpen={setOpen}

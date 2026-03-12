@@ -62,6 +62,7 @@ const GradeFMember = ({memberList}: InactiveMemberProps) => {
           />
         </div>
         <SearchModal
+          basePath="renew"
           people={memberList}
           open={open}
           setOpen={setOpen}
