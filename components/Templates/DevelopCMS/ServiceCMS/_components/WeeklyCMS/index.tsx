@@ -3,7 +3,10 @@ import {useForm} from "react-hook-form";
 import toast from "react-hot-toast";
 import {useMutation, useQuery} from "react-query";
 import {getTermInfomation} from "../../../../../../firebase/CellMeeting/CellMeetingStatic";
-import {insertWeeklyServiceValue} from "../../../../../../firebase/CMS/CMS";
+import {
+  getLatestTotalAttendance,
+  insertWeeklyServiceValue,
+} from "../../../../../../firebase/CMS/CMS";
 import {TWeeklyServiceInput} from "../../../../../../interface/CMS";
 
 type Props = {};
@@ -24,7 +27,7 @@ const ServiceWeeklyCMS = ({}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   const selectedDate = watch("date");
@@ -114,9 +117,32 @@ const ServiceWeeklyCMS = ({}: Props) => {
     setValue,
   ]);
 
+  const {isLoading: isTotalAttendanceLoading, data: totalAttendance} = useQuery(
+    ["latestTotalAttendance"],
+    () => getLatestTotalAttendance(),
+    {
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 30 * 60 * 1000,
+    },
+  );
+
   return (
     <div>
-      <h1 className="mb-5 text-lg font-semibold">주간데이터 입력 사항</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <h1 className="text-lg font-semibold">주간데이터 입력 사항</h1>
+
+        <div className="flex items-center gap-2 rounded-md bg-gray-50 px-3 py-1 text-sm text-gray-600">
+          <span>
+            <span className="font-medium">날짜:</span>{" "}
+            {totalAttendance?.date ?? "-"}
+          </span>
+          <span className="text-gray-300">|</span>
+          <span>
+            <span className="font-medium">전체인원:</span>{" "}
+            {totalAttendance?.count ?? "-"}
+          </span>
+        </div>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-x-6 border-b py-4">
           <div className="col-span-1">

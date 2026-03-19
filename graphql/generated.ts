@@ -713,7 +713,11 @@ export enum UserGrade {
   /** 셀미편성 인원 중 예배도 미참석하는 인원의 등급(유령회원) */
   F = 'F',
   /** 결혼, 진급, 이사 등으로 인터치에서 제외된 인원의 등급 */
-  G = 'G'
+  G = 'G',
+  /** 블레싱셀 소속 인원의 등급 */
+  H = 'H',
+  /** 새가족셀 소속 인원의 등급 */
+  I = 'I'
 }
 
 export type FindCellAttendanceQueryVariables = Exact<{

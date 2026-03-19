@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import graphlqlRequestClient from "../../../../../../client/graphqlRequestClient";
 import {FIND_CELL_LIMIT} from "../../../../../../constants/constant";
 import {saveAgeSegmentedAssignments} from "../../../../../../firebase/Community/saveAgeSegmentedAssignments";
@@ -75,7 +75,7 @@ const AgeCommunity = () => {
   // 서버 상태를 “처음 1번만” 로컬 상태에 반영
   const initializedRef = useRef(false);
 
-  const buildInitialFromServer = () => {
+  const buildInitialFromServer = useCallback(() => {
     // groupId -> cellIds[]
     const next: Assignments = Object.fromEntries(
       groups.map((g) => [g.id, [] as string[]]),
@@ -83,11 +83,13 @@ const AgeCommunity = () => {
 
     // 서버에 저장된 group cells를 로컬 상태로
     const assignedSet = new Set<string>();
+
     for (const g of groups) {
       const list = cellsByGroup[g.id] ?? [];
       const ids = list
         .map((x) => String(x.cellId))
         .filter((id) => cellMap.has(id));
+
       next[g.id] = ids;
       ids.forEach((id) => assignedSet.add(id));
     }
@@ -106,7 +108,7 @@ const AgeCommunity = () => {
     setSelectedGroupId(null);
     setDirty(false);
     setEditMode(false);
-  };
+  }, [groups, cellsByGroup, cellMap]);
 
   useEffect(() => {
     // 그룹/셀/목록 로드가 끝났고 아직 초기화 안 했으면 1회 초기화
@@ -122,8 +124,10 @@ const AgeCommunity = () => {
     groupsLoading,
     groupCellsLoading,
     isLoading,
-    groups.length,
-    cellMap.size,
+    groups,
+    cellsByGroup,
+    cellMap,
+    buildInitialFromServer,
   ]);
 
   // --- 4) 로컬 편집 액션 ---

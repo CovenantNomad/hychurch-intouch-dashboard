@@ -6,7 +6,7 @@ import {useRecoilState} from "recoil";
 import {stateSetting} from "../../stores/stateSetting";
 // components
 import SectionContainer from "../../components/Atoms/Container/SectionContainer";
-import TabsWithTwoBlock from "../../components/Atoms/Tabs/TabsWithTwoBlock";
+import TabsWithHeader from "../../components/Atoms/Tabs/TabsWithHeader";
 import FullScreenLayout from "../../components/Layout/FullScreenLayout";
 import PageLayout from "../../components/Layout/PageLayout";
 import AttendanceReportScreen from "../../components/Templates/Reports/AttendanceReportScreen";
@@ -30,7 +30,7 @@ const categories = [
 const Training: NextPage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.reportSelectedCategoryId
+    setting.reportSelectedCategoryId,
   );
   const setSettingHandler = useCallback(
     (id: number) => {
@@ -39,7 +39,7 @@ const Training: NextPage = () => {
         reportSelectedCategoryId: id,
       });
     },
-    [setting, setSetting]
+    [setting, setSetting],
   );
 
   return (
@@ -51,7 +51,7 @@ const Training: NextPage = () => {
       </Head>
 
       <PageLayout>
-        <TabsWithTwoBlock
+        <TabsWithHeader
           title={"출석체크 및 셀보고서"}
           tabs={categories}
           currentTab={categoryId}

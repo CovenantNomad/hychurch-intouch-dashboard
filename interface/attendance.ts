@@ -138,3 +138,16 @@ export type GroupPlan = {
   groupName: string; // "1청"
   cellIds: number[];
 };
+
+export type selectedAttendanceMember = {
+  userId: string;
+  userName: string;
+};
+
+export type AttendnaceCartType = {
+  userId: string;
+  userName: string;
+  churchServiceId: string;
+  isOnline: boolean;
+  attendedAt: string;
+};

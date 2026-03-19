@@ -12,6 +12,7 @@ import SkeletonListItem from "../../../components/Atoms/Skeleton/SkeletonListIte
 import SkeletonMemberInfo from "../../../components/Atoms/Skeleton/SkeletonMemberInfo";
 import ComboBoxImage from "../../../components/Blocks/Combobox/ComboBoxImage";
 import SpecialTypeCellHeader from "../../../components/Blocks/Headers/SpecialTypeCellHeader";
+import EditUserInfomation from "../../../components/Blocks/Infomation/EditUserInfomation";
 import UserInfomation from "../../../components/Blocks/Infomation/UserInfomation";
 import SimpleModal from "../../../components/Blocks/Modals/SimpleModal";
 import Layout from "../../../components/Layout/Layout";
@@ -48,6 +49,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
   const queryClient = useQueryClient();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
+  const [editMode, setEditMode] = useState(false);
   const [cellList, setCellList] = useState<SelectType[]>([]);
   const [selectedCell, setSelectedCell] = useState<SelectType>({
     id: "",
@@ -70,7 +72,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       enabled: userId !== "",
       staleTime: 10 * 60 * 1000,
       cacheTime: 15 * 60 * 1000,
-    }
+    },
   );
 
   const {data} = useFindCellListsQuery<
@@ -84,7 +86,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
-    }
+    },
   );
 
   const {isLoading: isAttendanceLoading, data: attendanceStatus} =
@@ -99,7 +101,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
       {
         staleTime: 15 * 60 * 1000,
         cacheTime: 30 * 60 * 1000,
-      }
+      },
     );
 
   const {mutate} = useCreateUserCellTransferMutation<
@@ -125,7 +127,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
     onError(error) {
       if (error instanceof Error) {
         toast.error(
-          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`
+          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`,
         );
       }
     },
@@ -165,7 +167,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
           (cell) =>
             !cell.id.includes(SpecialCellIdType.NewFamily) &&
             !cell.id.includes(SpecialCellIdType.Blessing) &&
-            !cell.id.includes(SpecialCellIdType.Renew)
+            !cell.id.includes(SpecialCellIdType.Renew),
         )
         .map((cell) => {
           return {
@@ -209,150 +211,173 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
               cellName={"블레싱셀"}
               userName={user.user.name}
               href={"/blessing"}
-              hasActionButton={false}
+              hasActionButton={true}
+              editMode={editMode}
+              setEditMode={setEditMode}
             />
             <SectionContainer>
-              <BlockContainer firstBlock>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-1">
-                    <UserInfomation
-                      name={user.user.name}
-                      gender={user.user.gender}
-                      grade={user.user.grade}
-                      isActive={user.user.isActive}
-                      birthday={user.user.birthday}
-                      registrationDate={user.user.registrationDate}
-                      phone={user.user.phone}
-                      address={user.user.address}
-                      description={user.user.description}
-                      hasHeader={false}
-                    />
-                  </div>
-                  <div className="space-y-4 md:col-span-1">
-                    <BarnabaMenteeBlock userId={userId} />
-                    <AmazingMenteeBlock userId={userId} />
-                  </div>
-                </div>
-              </BlockContainer>
-              <BlockContainer>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="col-span-1">
-                    {router.query.transferStatus ===
-                    UserCellTransferStatus.Ordered ? (
-                      <div>
-                        <h6 className="pb-5 text-base">
-                          셀편성 상태 :{" "}
-                          <strong className="bg-teal-600 text-white px-1 ml-1">
-                            승인대기중
-                          </strong>
-                        </h6>
-                        <div className="bg-GRAY003 text-center py-3">
-                          <p className="font-bold">
-                            편성셀 :{" "}
-                            <span className="text-BLUE">
-                              {router.query.toCellName}
-                            </span>
-                            <br />
-                            승인대기중
-                          </p>
-                        </div>
+              {!editMode ? (
+                <>
+                  <BlockContainer firstBlock>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-1">
+                        <UserInfomation
+                          name={user.user.name}
+                          gender={user.user.gender}
+                          grade={user.user.grade}
+                          isActive={user.user.isActive}
+                          birthday={user.user.birthday}
+                          registrationDate={user.user.registrationDate}
+                          phone={user.user.phone}
+                          address={user.user.address}
+                          description={user.user.description}
+                          hasHeader={false}
+                        />
                       </div>
-                    ) : (
-                      <>
-                        {isAttendanceLoading ? (
-                          <SkeletonListItem />
+                      <div className="space-y-4 md:col-span-1">
+                        <BarnabaMenteeBlock userId={userId} />
+                        <AmazingMenteeBlock userId={userId} />
+                      </div>
+                    </div>
+                  </BlockContainer>
+                  <BlockContainer>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="col-span-1">
+                        {router.query.transferStatus ===
+                        UserCellTransferStatus.Ordered ? (
+                          <div>
+                            <h6 className="pb-5 text-base">
+                              셀편성 상태 :{" "}
+                              <strong className="bg-teal-600 text-white px-1 ml-1">
+                                승인대기중
+                              </strong>
+                            </h6>
+                            <div className="bg-GRAY003 text-center py-3">
+                              <p className="font-bold">
+                                편성셀 :{" "}
+                                <span className="text-BLUE">
+                                  {router.query.toCellName}
+                                </span>
+                                <br />
+                                승인대기중
+                              </p>
+                            </div>
+                          </div>
                         ) : (
                           <>
-                            {attendanceStatus &&
-                            attendanceStatus.attendanceCheck ===
-                              AttendanceCheckStatus.Completed ? (
-                              <div className="border p-6 rounded-xl shadow-sm">
-                                <div className="grid grid-cols-2 gap-6">
-                                  <div>
-                                    <h6 className="pb-2 font-medium">
-                                      기존 셀 편성
-                                    </h6>
-                                    <ComboBoxImage
-                                      showLabel={false}
-                                      label={"셀선택"}
-                                      selected={selectedCell}
-                                      setSelected={setSelectedCell}
-                                      selectList={cellList}
-                                      widthFull
-                                    />
-                                  </div>
-                                  <div>
-                                    <h6 className="pb-2 font-medium">
-                                      새싹 편성
-                                    </h6>
-                                    <div>
-                                      <button
-                                        onClick={() => {
-                                          setSelectedCell({
-                                            id: SpecialCellIdType.Renew,
-                                            name: "새싹",
-                                          });
-                                        }}
-                                        className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
-                                      >
-                                        새싹셀 편성
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="mt-16">
-                                  <div className="flex justify-end items-center space-x-6">
-                                    <p className="font-medium">
-                                      다음 셀을 선택하셨습니다
-                                    </p>
-                                    <div className="w-[110px] h-[29px] pb-1 text-center border-b border-gray-200">
-                                      {selectedCell.name}
-                                    </div>
-                                  </div>
-                                  <div className="mt-10 flex justify-end space-x-4">
-                                    <button
-                                      onClick={() =>
-                                        setSelectedCell({
-                                          id: "",
-                                          name: "",
-                                        })
-                                      }
-                                      className="py-2 px-4 ml-2 rounded-md text-sm text-black focus:outline-none hover:bg-gray-100"
-                                    >
-                                      취소
-                                    </button>
-                                    <button
-                                      onClick={onOpenHandler}
-                                      disabled={
-                                        selectedMember.id === "" ||
-                                        selectedCell.id === "" ||
-                                        router.query.transferStatus ===
-                                          UserCellTransferStatus.Ordered
-                                      }
-                                      className="py-2 px-4 ml-2 text-sm text-white bg-emerald-500 border border-transparent rounded-md  focus:outline-none hover:bg-emerald-400 disabled:bg-gray-500"
-                                    >
-                                      편성
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
+                            {isAttendanceLoading ? (
+                              <SkeletonListItem />
                             ) : (
-                              <div className="border p-6 rounded-xl shadow-sm">
-                                <p className="text-sm text-gray-600 text-center">
-                                  아직 셀리더들이 출석체크 중입니다
-                                  <br />
-                                  출석체크가 마감 된 후 새가족 셀편성을
-                                  진행해주세요
-                                </p>
-                              </div>
+                              <>
+                                {attendanceStatus &&
+                                attendanceStatus.attendanceCheck ===
+                                  AttendanceCheckStatus.Completed ? (
+                                  <div className="border p-6 rounded-xl shadow-sm">
+                                    <div className="grid grid-cols-2 gap-6">
+                                      <div>
+                                        <h6 className="pb-2 font-medium">
+                                          기존 셀 편성
+                                        </h6>
+                                        <ComboBoxImage
+                                          showLabel={false}
+                                          label={"셀선택"}
+                                          selected={selectedCell}
+                                          setSelected={setSelectedCell}
+                                          selectList={cellList}
+                                          widthFull
+                                        />
+                                      </div>
+                                      <div>
+                                        <h6 className="pb-2 font-medium">
+                                          새싹 편성
+                                        </h6>
+                                        <div>
+                                          <button
+                                            onClick={() => {
+                                              setSelectedCell({
+                                                id: SpecialCellIdType.Renew,
+                                                name: "새싹",
+                                              });
+                                            }}
+                                            className="w-full py-2 border rounded-md text-sm hover:bg-GRAY003"
+                                          >
+                                            새싹셀 편성
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="mt-16">
+                                      <div className="flex justify-end items-center space-x-6">
+                                        <p className="font-medium">
+                                          다음 셀을 선택하셨습니다
+                                        </p>
+                                        <div className="w-[110px] h-[29px] pb-1 text-center border-b border-gray-200">
+                                          {selectedCell.name}
+                                        </div>
+                                      </div>
+                                      <div className="mt-10 flex justify-end space-x-4">
+                                        <button
+                                          onClick={() =>
+                                            setSelectedCell({
+                                              id: "",
+                                              name: "",
+                                            })
+                                          }
+                                          className="py-2 px-4 ml-2 rounded-md text-sm text-black focus:outline-none hover:bg-gray-100"
+                                        >
+                                          취소
+                                        </button>
+                                        <button
+                                          onClick={onOpenHandler}
+                                          disabled={
+                                            selectedMember.id === "" ||
+                                            selectedCell.id === "" ||
+                                            router.query.transferStatus ===
+                                              UserCellTransferStatus.Ordered
+                                          }
+                                          className="py-2 px-4 ml-2 text-sm text-white bg-emerald-500 border border-transparent rounded-md  focus:outline-none hover:bg-emerald-400 disabled:bg-gray-500"
+                                        >
+                                          편성
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="border p-6 rounded-xl shadow-sm">
+                                    <p className="text-sm text-gray-600 text-center">
+                                      아직 셀리더들이 출석체크 중입니다
+                                      <br />
+                                      출석체크가 마감 된 후 새가족 셀편성을
+                                      진행해주세요
+                                    </p>
+                                  </div>
+                                )}
+                              </>
                             )}
                           </>
                         )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </BlockContainer>
+                      </div>
+                    </div>
+                  </BlockContainer>
+                </>
+              ) : (
+                <EditUserInfomation
+                  id={user.user.id}
+                  name={user.user.name}
+                  gender={user.user.gender}
+                  grade={user.user.grade}
+                  isActive={user.user.isActive}
+                  birthday={user.user.birthday}
+                  phone={user.user.phone}
+                  address={user.user.address}
+                  description={user.user.description}
+                  cell={user.user.cell}
+                  registrationYear={user.user.registrationDate?.split("-")[0]}
+                  registrationMonth={user.user.registrationDate?.split("-")[1]}
+                  registrationDay={user.user.registrationDate?.split("-")[2]}
+                  editModeHandler={setEditMode}
+                />
+              )}
             </SectionContainer>
           </>
         ) : (
