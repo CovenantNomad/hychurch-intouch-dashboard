@@ -1,26 +1,44 @@
-import { useEffect, useState } from "react"
-import { useQueryClient } from "react-query"
-import { CellLeaderAttendanceSubmissionStatus, FindmyCellAttendanceQuery, FindmyCellAttendanceQueryVariables, SubmitAttendanceMutation, SubmitAttendanceMutationVariables, useFindmyCellAttendanceQuery, useSubmitAttendanceMutation } from "../../graphql/generated"
-import graphlqlRequestClient from "../../client/graphqlRequestClient"
-import { AttendanceHistory, AttendanceStatus, TempSavedAttendanceHistory } from "../../interface/attendance"
-import { getMostRecentSunday } from "../../utils/dateUtils"
-import toast from "react-hot-toast"
+import {useEffect, useState} from "react";
+import toast from "react-hot-toast";
+import {useQueryClient} from "react-query";
+import graphlqlRequestClient from "../../client/graphqlRequestClient";
+import {
+  CellLeaderAttendanceSubmissionStatus,
+  FindmyCellAttendanceQuery,
+  FindmyCellAttendanceQueryVariables,
+  SubmitAttendanceMutation,
+  SubmitAttendanceMutationVariables,
+  useFindmyCellAttendanceQuery,
+  useSubmitAttendanceMutation,
+} from "../../graphql/generated";
+import {
+  AttendanceHistory,
+  AttendanceStatus,
+  TempSavedAttendanceHistory,
+} from "../../interface/attendance";
+import {getMostRecentSunday} from "../../utils/dateUtils";
 
 export type onSaveAttendanceListPrpsType = {
-  churchServiceId: string
-  userId: string
-  userName: string
-  isOnline: boolean
-}
+  churchServiceId: string;
+  userId: string;
+  userName: string;
+  isOnline: boolean;
+};
 
 const useAttendanceSubmit = () => {
-  const queryClient = useQueryClient()
-  const attendanceDate = getMostRecentSunday().format('YYYY-MM-DD')
-  const [ attendanceStatus, setAttendanceStatus ] = useState(AttendanceStatus.NOT_SUBMITTED)
-  const [ attendanceList, setAttendanceList ] = useState<TempSavedAttendanceHistory[] | null>(null)
-  const [ attendanceSubmitList, setAttendanceSubmitList] = useState<AttendanceHistory[] | null>(null)
+  const queryClient = useQueryClient();
+  const attendanceDate = getMostRecentSunday().format("YYYY-MM-DD");
+  const [attendanceStatus, setAttendanceStatus] = useState(
+    AttendanceStatus.NOT_SUBMITTED,
+  );
+  const [attendanceList, setAttendanceList] = useState<
+    TempSavedAttendanceHistory[] | null
+  >(null);
+  const [attendanceSubmitList, setAttendanceSubmitList] = useState<
+    AttendanceHistory[] | null
+  >(null);
 
-  const { isLoading, isFetching, data } = useFindmyCellAttendanceQuery<
+  const {isLoading, isFetching, data} = useFindmyCellAttendanceQuery<
     FindmyCellAttendanceQuery,
     FindmyCellAttendanceQueryVariables
   >(
@@ -32,79 +50,109 @@ const useAttendanceSubmit = () => {
       enabled: Boolean(attendanceDate),
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
-  )
+    },
+  );
 
-  const { mutateAsync } = useSubmitAttendanceMutation<
+  const {mutateAsync} = useSubmitAttendanceMutation<
     SubmitAttendanceMutation,
     SubmitAttendanceMutationVariables
-  >(
-    graphlqlRequestClient, 
-    {
-      onSettled() {
-        queryClient.invalidateQueries({ queryKey: ['findmyCellAttendance'] })
-      },
-  })
-
+  >(graphlqlRequestClient, {
+    onSettled() {
+      queryClient.invalidateQueries({queryKey: ["findmyCellAttendance"]});
+    },
+  });
 
   useEffect(() => {
     if (!isLoading || !isFetching) {
       switch (data?.myCellAttendance.__typename) {
-        case 'CellAttendanceNotSubmitted':
-          setAttendanceStatus(AttendanceStatus.NOT_SUBMITTED)
-          setAttendanceList(null)
-          setAttendanceSubmitList(null)
-          break
-        case 'CellAttendanceTempSaved':
-          setAttendanceStatus(AttendanceStatus.TEMPORARY_SAVE)
-          setAttendanceList(data.myCellAttendance.tempSavedAttendanceHistories)
-          setAttendanceSubmitList(null)
-          break
+        case "CellAttendanceNotSubmitted":
+          setAttendanceStatus(AttendanceStatus.NOT_SUBMITTED);
+          setAttendanceList(null);
+          setAttendanceSubmitList(null);
+          break;
+        case "CellAttendanceTempSaved":
+          setAttendanceStatus(AttendanceStatus.TEMPORARY_SAVE);
+          setAttendanceList(data.myCellAttendance.tempSavedAttendanceHistories);
+          setAttendanceSubmitList(null);
+          break;
 
-        case 'CellAttendanceCompleted':
-          setAttendanceStatus(AttendanceStatus.COMPLETE)
-          setAttendanceList(null)
-          setAttendanceSubmitList(data.myCellAttendance.userChurchServiceHistories)
-          break
+        case "CellAttendanceCompleted":
+          setAttendanceStatus(AttendanceStatus.COMPLETE);
+          setAttendanceList(null);
+          setAttendanceSubmitList(
+            data.myCellAttendance.userChurchServiceHistories,
+          );
+          break;
 
         default:
-          break
+          break;
       }
     }
-  }, [isLoading, isFetching, data])
+  }, [isLoading, isFetching, data]);
 
+  const onSaveAttendanceList = ({
+    userId,
+    userName,
+    churchServiceId,
+    isOnline,
+  }: onSaveAttendanceListPrpsType) => {
+    setAttendanceList((currentList) => {
+      const safeList = currentList ?? [];
 
-  const onSaveAttendanceList = ({ userId, userName, churchServiceId, isOnline }: onSaveAttendanceListPrpsType) => {
-    setAttendanceList(currentList => {
-      const newEntry = {
+      const newEntry: TempSavedAttendanceHistory = {
         userId,
         userName,
         churchServiceId,
         attendedAt: attendanceDate,
         isOnline,
       };
-  
-      // If the currentList is null, return an array with the new entry
-      if (currentList === null) {
-        return [newEntry];
-      }
-  
-      // Otherwise, return a new array with all of the old entries and the new entry
-      return [...currentList, newEntry];
-    });
-  }
 
-  const onResetList = () => setAttendanceList(null)
+      const existing = safeList.find(
+        (item) =>
+          item.userId === userId && item.churchServiceId === churchServiceId,
+      );
+      // 1. 없으면 추가
+      if (!existing) {
+        return [...safeList, newEntry];
+      }
+
+      // 2. 같은 옵션 다시 누르면 제거
+      if (existing.isOnline === isOnline) {
+        const filteredList = safeList.filter(
+          (item) =>
+            !(
+              item.userId === userId && item.churchServiceId === churchServiceId
+            ),
+        );
+
+        return filteredList.length > 0 ? filteredList : null;
+      }
+
+      // 3. 다른 옵션 누르면 교체
+      return safeList.map((item) =>
+        item.userId === userId && item.churchServiceId === churchServiceId
+          ? {
+              ...item,
+              userName,
+              attendedAt: attendanceDate,
+              isOnline,
+            }
+          : item,
+      );
+    });
+  };
+
+  const onResetList = () => setAttendanceList(null);
 
   const onRemoveHandler = (userId: string, churchServiceId: string) => {
     if (attendanceList !== null) {
       const filteredList = attendanceList.filter(
         (item) =>
-          !(item.userId === userId && item.churchServiceId === churchServiceId)
-      )
-      setAttendanceList(filteredList)
+          !(item.userId === userId && item.churchServiceId === churchServiceId),
+      );
+      setAttendanceList(filteredList);
     }
-  }
+  };
 
   const onTemporarySaveHandler = async () => {
     if (attendanceList !== null) {
@@ -116,8 +164,8 @@ const useAttendanceSubmit = () => {
             churchServiceId: item.churchServiceId,
             isOnline: item.isOnline,
             description: item.description,
-          }
-        })
+          };
+        });
         const response = await mutateAsync({
           input: {
             userChurchServiceHistories: submitList,
@@ -125,21 +173,21 @@ const useAttendanceSubmit = () => {
             submissionStatus:
               CellLeaderAttendanceSubmissionStatus.TemporarySave,
           },
-        })
+        });
         if (response.submitCellMemberChurchServiceAttendanceHistories.success) {
-          toast.success("임시저장 되었습니다. 나중에 꼭 제출해주세요")
+          toast.success("임시저장 되었습니다. 나중에 꼭 제출해주세요");
         }
         return {
           result: response,
-        }
+        };
       } catch (error) {
-        console.log(error)
-        throw new Error('임시저장을 할 수 없습니다.')
+        console.log(error);
+        throw new Error("임시저장을 할 수 없습니다.");
       }
     } else {
-      throw new Error('출석체크 인원이 없습니다')
+      throw new Error("출석체크 인원이 없습니다");
     }
-  }
+  };
 
   const onSubmitHandler = async () => {
     if (attendanceList !== null) {
@@ -151,31 +199,31 @@ const useAttendanceSubmit = () => {
             churchServiceId: item.churchServiceId,
             isOnline: item.isOnline,
             description: item.description,
-          }
-        })
+          };
+        });
         const response = await mutateAsync({
           input: {
             userChurchServiceHistories: submitList,
             attendanceDate: attendanceDate,
             submissionStatus: CellLeaderAttendanceSubmissionStatus.Complete,
           },
-        })
+        });
 
         if (response.submitCellMemberChurchServiceAttendanceHistories.success) {
-          toast.success("성공적으로 제출하였습니다")
+          toast.success("성공적으로 제출하였습니다");
         }
 
         return {
           result: response,
-        }
+        };
       } catch (error) {
-        console.log(error)
-        throw new Error('출석체크를 저장 할 수 없습니다.')
+        console.log(error);
+        throw new Error("출석체크를 저장 할 수 없습니다.");
       }
     } else {
-      throw new Error('출석체크 인원이 없습니다')
+      throw new Error("출석체크 인원이 없습니다");
     }
-  }
+  };
 
   return {
     attendanceDate,
@@ -186,8 +234,8 @@ const useAttendanceSubmit = () => {
     onRemoveHandler,
     onTemporarySaveHandler,
     onSubmitHandler,
-    onResetList
-  }
-}
+    onResetList,
+  };
+};
 
-export default useAttendanceSubmit
+export default useAttendanceSubmit;

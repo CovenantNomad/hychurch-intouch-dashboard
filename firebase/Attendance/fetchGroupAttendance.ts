@@ -30,6 +30,8 @@ const gradeOrder: UserGrade[] = [
   UserGrade.E,
   UserGrade.F,
   UserGrade.G,
+  UserGrade.H,
+  UserGrade.I,
 ];
 
 function gradeRank(g?: UserGrade | null) {

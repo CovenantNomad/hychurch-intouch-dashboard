@@ -613,3 +613,8 @@ export function sortCommunityLabel(a: string, b: string) {
 
   return a.localeCompare(b, "ko");
 }
+
+export const normalize = (str: string) => str.replace(/\s/g, "").toLowerCase();
+
+export const escapeRegExp = (str: string) =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

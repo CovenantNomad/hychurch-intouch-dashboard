@@ -38,7 +38,7 @@ const categories = [
 const BlessingPage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.blessingSelectedCategoryId
+    setting.blessingSelectedCategoryId,
   );
 
   const setSettingHandler = useCallback(
@@ -48,7 +48,7 @@ const BlessingPage = () => {
         blessingSelectedCategoryId: id,
       });
     },
-    [setting, setSetting]
+    [setting, setSetting],
   );
 
   return (
@@ -60,7 +60,7 @@ const BlessingPage = () => {
       </Head>
       <PageLayout>
         <TabsWithHeader
-          title={"BLESSING"}
+          title={"블레싱"}
           tabs={categories}
           currentTab={categoryId}
           setCurrentTab={setCategoryId}

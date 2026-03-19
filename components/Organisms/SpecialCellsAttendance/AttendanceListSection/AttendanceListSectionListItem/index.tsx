@@ -1,19 +1,23 @@
-import React from 'react';
-import { getServiceName } from '../../../../../utils/utils';
-import { TempSavedAttendanceHistory } from '../../../../../interface/attendance';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import {XMarkIcon} from "@heroicons/react/24/outline";
+import {TempSavedAttendanceHistory} from "../../../../../interface/attendance";
+import {getServiceName} from "../../../../../utils/utils";
 
 type AttendanceListSectionListItemProps = {
-  item: TempSavedAttendanceHistory
+  item: TempSavedAttendanceHistory;
   onRemoveHandler: (userId: string, churchServiceId: string) => void;
-}
+};
 
-const AttendanceListSectionListItem = ({ item, onRemoveHandler }: AttendanceListSectionListItemProps) => {
+const AttendanceListSectionListItem = ({
+  item,
+  onRemoveHandler,
+}: AttendanceListSectionListItemProps) => {
   return (
-    <div className='flex justify-between p-4 border'>
+    <div className="flex justify-between p-4 border rounded-lg bg-white">
       <div>
         <p>{item.userName}</p>
-        <p className='text-sm'>{`${getServiceName(item.churchServiceId)} / ${item.isOnline === true ? "온라인예배" : "성전예배"}`}</p>
+        <p
+          className={`text-sm ${item.isOnline === true ? "text-blue-500" : ""}`}
+        >{`${getServiceName(item.churchServiceId)} | ${item.isOnline === true ? "온라인" : "성전"}`}</p>
       </div>
       <button
         type="button"

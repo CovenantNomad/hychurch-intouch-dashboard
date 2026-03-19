@@ -1,4 +1,14 @@
-import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import {db} from "../../client/firebaseConfig";
 import {
   TMonthlyCellMeetingInput,
@@ -13,7 +23,7 @@ import {
 
 //주간데이터 입력
 export async function insertWeeklyCellMeetingValue(
-  inputValue: TWeeklyCellMeetingInput
+  inputValue: TWeeklyCellMeetingInput,
 ) {
   try {
     const weeklyRef = doc(
@@ -21,7 +31,7 @@ export async function insertWeeklyCellMeetingValue(
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
       CELLMEETING_COLLCTION.WEEKLY,
-      inputValue.dateString
+      inputValue.dateString,
     );
 
     await setDoc(weeklyRef, {
@@ -45,7 +55,7 @@ export async function insertWeeklyCellMeetingValue(
 
 //월간데이터 입력
 export async function insertMonthlyCellMeetingValue(
-  inputValue: TMonthlyCellMeetingInput
+  inputValue: TMonthlyCellMeetingInput,
 ) {
   try {
     const monthlyRef = doc(
@@ -53,7 +63,7 @@ export async function insertMonthlyCellMeetingValue(
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
       CELLMEETING_COLLCTION.MONTHLY,
-      `${inputValue.year}-${inputValue.month}`
+      `${inputValue.year}-${inputValue.month}`,
     );
 
     await setDoc(monthlyRef, {
@@ -82,7 +92,7 @@ export async function insertTermCellMeetingValue({
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     const termInfoDocSnap = await getDoc(termInfoRef);
@@ -98,7 +108,7 @@ export async function insertTermCellMeetingValue({
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
       CELLMEETING_COLLCTION.TERM,
-      term
+      term,
     );
 
     const docSnapshot = await getDoc(termRef);
@@ -167,7 +177,7 @@ export async function insertYearCellMeetingValue({
     const termInfoRef = doc(
       db,
       CELLMEETING_COLLCTION.CELLMEETINGS,
-      CELLMEETING_COLLCTION.INFO
+      CELLMEETING_COLLCTION.INFO,
     );
 
     const termInfoDocSnap = await getDoc(termInfoRef);
@@ -183,7 +193,7 @@ export async function insertYearCellMeetingValue({
       CELLMEETING_COLLCTION.CELLMEETINGS,
       CELLMEETING_COLLCTION.STATISTICS,
       CELLMEETING_COLLCTION.YEAR,
-      termYear
+      termYear,
     );
 
     const docSnapshot = await getDoc(termRef);
@@ -243,7 +253,7 @@ export async function insertYearCellMeetingValue({
 
 //예배출석
 export async function insertWeeklyServiceValue(
-  inputValue: TWeeklyServiceInput
+  inputValue: TWeeklyServiceInput,
 ) {
   try {
     const weeklyRef = doc(
@@ -251,7 +261,7 @@ export async function insertWeeklyServiceValue(
       SERVICE_COLLCTION.SERVICES,
       SERVICE_COLLCTION.DATA,
       SERVICE_COLLCTION.SERVICEATTENDANCE,
-      inputValue.dateString
+      inputValue.dateString,
     );
 
     // Convert all relevant fields to numbers once to avoid repetitive conversions
@@ -303,3 +313,37 @@ export async function insertWeeklyServiceValue(
     throw new Error("Failed to insert or update term cell meeting value.");
   }
 }
+
+//예배참석 (수기데이터) 불러오기
+export const getLatestTotalAttendance = async (): Promise<{
+  count: number;
+  date: string;
+} | null> => {
+  const q = query(
+    collection(
+      db,
+      SERVICE_COLLCTION.SERVICES,
+      SERVICE_COLLCTION.DATA,
+      SERVICE_COLLCTION.TOTALATTENDANCE,
+    ),
+    orderBy("date", "desc"),
+    limit(1),
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const doc = snapshot.docs[0];
+  const data = doc.data() as {
+    count: number;
+    date: string;
+  };
+
+  return {
+    count: data.count,
+    date: data.date,
+  };
+};

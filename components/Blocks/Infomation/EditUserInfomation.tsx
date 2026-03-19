@@ -1,18 +1,18 @@
 import dayjs from "dayjs";
-import { GraphQLError } from "graphql";
-import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
-import { useQueryClient } from "react-query";
+import {GraphQLError} from "graphql";
+import {useForm} from "react-hook-form";
+import toast, {Toaster} from "react-hot-toast";
+import {useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
 import {
   UserGrade,
   useResetUserPasswordMutation,
   useUpdateUserMutation,
 } from "../../../graphql/generated";
-import { SpecialCellIdType } from "../../../interface/cell";
-import { EditForm } from "../../../interface/register";
-import { UpdateUserInfomationProps } from "../../../interface/user";
-import { makeErrorMessage } from "../../../utils/utils";
+import {SpecialCellIdType} from "../../../interface/cell";
+import {EditForm} from "../../../interface/register";
+import {UpdateUserInfomationProps} from "../../../interface/user";
+import {makeErrorMessage} from "../../../utils/utils";
 
 const EditUserInfomation = ({
   id,
@@ -35,9 +35,9 @@ const EditUserInfomation = ({
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: {errors},
   } = useForm<EditForm>();
-  const { mutate, isLoading, isError, isSuccess } = useUpdateUserMutation(
+  const {mutate, isLoading, isError, isSuccess} = useUpdateUserMutation(
     graphlqlRequestClient,
     {
       onSuccess: (data) => {
@@ -59,11 +59,11 @@ const EditUserInfomation = ({
           });
         } else {
           queryClient.invalidateQueries({
-            queryKey: ["findCell", { id: Number(cell?.id) }],
+            queryKey: ["findCell", {id: Number(cell?.id)}],
           });
         }
         queryClient.invalidateQueries({
-          queryKey: ["findUser", { id: data.updateUser.user.id }],
+          queryKey: ["findUser", {id: data.updateUser.user.id}],
         });
         queryClient.invalidateQueries({
           queryKey: ["searchUsers"],
@@ -76,14 +76,14 @@ const EditUserInfomation = ({
       onError: (errors: GraphQLError) => {
         toast.error(
           `해당 청년 정보를 수정 중 오류가 발생하였습니다\n${makeErrorMessage(
-            errors.message
-          )}`
+            errors.message,
+          )}`,
         );
       },
-    }
+    },
   );
 
-  const { mutate: resetMutate } = useResetUserPasswordMutation(
+  const {mutate: resetMutate} = useResetUserPasswordMutation(
     graphlqlRequestClient,
     {
       onSuccess: (data) => {
@@ -92,11 +92,11 @@ const EditUserInfomation = ({
       onError: (errors: GraphQLError) => {
         toast.error(
           `비밀번호 초기화를 할 수 없습니다\n${makeErrorMessage(
-            errors.message
-          )}`
+            errors.message,
+          )}`,
         );
       },
-    }
+    },
   );
 
   const onSubmitHandler = ({
@@ -229,6 +229,8 @@ const EditUserInfomation = ({
                 <option value={UserGrade.E}>E</option>
                 <option value={UserGrade.F}>F</option>
                 <option value={UserGrade.G}>G</option>
+                <option value={UserGrade.H}>H</option>
+                <option value={UserGrade.I}>I</option>
               </select>
               {errors.grade && (
                 <p className="mt-1 px-3 text-sm text-red-600">
@@ -465,7 +467,7 @@ const EditUserInfomation = ({
                   id="year"
                   type="text"
                   placeholder="YYYY"
-                  defaultValue={registrationYear ? registrationYear : '2022'}
+                  defaultValue={registrationYear ? registrationYear : "2022"}
                   {...register("newRegistrationYear", {
                     minLength: {
                       value: 4,
@@ -502,7 +504,7 @@ const EditUserInfomation = ({
                   id="month"
                   type="text"
                   placeholder="MM"
-                  defaultValue={registrationMonth ? registrationMonth : '12'}
+                  defaultValue={registrationMonth ? registrationMonth : "12"}
                   {...register("newRegistrationMonth", {
                     setValueAs: (v: string) => v.padStart(2, "0"),
                     minLength: {
@@ -544,7 +546,7 @@ const EditUserInfomation = ({
                   id="day"
                   type="text"
                   placeholder="DD"
-                  defaultValue={registrationDay ? registrationDay : '31'}
+                  defaultValue={registrationDay ? registrationDay : "31"}
                   {...register("newRegistrationDay", {
                     setValueAs: (v: string) => v.padStart(2, "0"),
                     minLength: {
