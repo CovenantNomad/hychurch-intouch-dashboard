@@ -616,23 +616,37 @@ function buildCheongSheet(params: {ref: Dayjs; sheetData: CheongSheetData}) {
   // ✅ 집계 (시트 전체 리더+멤버)
   const stats = buildSheetStats({sheetData, sundayDates});
 
-  // 박스 시작 위치
   // ✅ 총원 위치 규칙:
-  // - 1~5개: 3번째 셀 아래(= 1번째 row 아래)
-  // - 6개 이상: 6번째 셀 아래(= 2번째 row 아래)
+  // 총원 박스가 들어갈 grid row
+  //
+  // 1~5개   → 2번째 줄
+  // 6~8개   → 3번째 줄
+  // 9~11개  → 4번째 줄
+  // 12~14개 → 5번째 줄
+  //
+  // 예:
+  // 10셀 → Math.floor(10 / 3) = 3
+  //       → 4번째 줄(index 3)
   const cellCount = sheetData.cells.length;
-  const targetRowIndex = cellCount >= 6 ? 1 : 0;
 
-  // rows가 1개뿐인데 targetRowIndex=1이면 0으로 보정
-  const safeRowIndex =
-    rows.length === 0 ? 0 : Math.min(targetRowIndex, rows.length - 1);
+  const summaryGridRowIndex = Math.max(1, Math.floor(cellCount / 3));
 
-  const summaryStartRow =
-    rows.length === 0
-      ? startRow
-      : rowStartRows[safeRowIndex] + rowHeights[safeRowIndex];
+  let summaryStartRow: number;
 
-  const summaryStartCol = groupCols * 2; // ✅ 3번째 묶음(오른쪽) 아래
+  if (rows.length === 0) {
+    summaryStartRow = startRow;
+  } else if (summaryGridRowIndex < rowStartRows.length) {
+    // 해당 줄이 실제 존재하면 그 줄의 시작 위치 사용
+    summaryStartRow = rowStartRows[summaryGridRowIndex];
+  } else {
+    // 해당 줄이 아직 없다면 마지막 줄 바로 다음 위치
+    const lastRowIndex = rowStartRows.length - 1;
+
+    summaryStartRow =
+      rowStartRows[lastRowIndex] + rowHeights[lastRowIndex] + blockGap;
+  }
+
+  const summaryStartCol = groupCols * 2;
 
   // 행 구성
   const sanctuaryRows: Array<{sid: ServiceId; label: string}> = [
