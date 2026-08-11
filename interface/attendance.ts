@@ -108,6 +108,7 @@ export type SundaysResult = {
 export type AttendanceMember = {
   id: string;
   name: string;
+  birthday?: string | null | undefined;
   grade: UserGrade;
   histories: AttendanceHistoryForPrint[];
 };

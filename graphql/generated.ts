@@ -727,7 +727,7 @@ export type FindCellAttendanceQueryVariables = Exact<{
 }>;
 
 
-export type FindCellAttendanceQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, members: Array<{ __typename?: 'User', id: string, name: string, grade: UserGrade, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', attendedAt: string, isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> }> } };
+export type FindCellAttendanceQuery = { __typename?: 'Query', findCell: { __typename?: 'Cell', id: string, name: string, leaders: Array<{ __typename?: 'User', id: string, name: string, birthday?: string | null, roles: Array<RoleType> }>, members: Array<{ __typename?: 'User', id: string, name: string, grade: UserGrade, birthday?: string | null, userChurchServiceHistories: Array<{ __typename?: 'UserChurchServiceHistory', attendedAt: string, isOnline: boolean, churchService: { __typename?: 'ChurchService', id: string, name: string } }> }> } };
 
 export type FindChurchServicesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1001,10 +1001,17 @@ export const FindCellAttendanceDocument = `
   findCell(id: $id) {
     id
     name
+    leaders {
+      id
+      name
+      birthday
+      roles
+    }
     members {
       id
       name
       grade
+      birthday
       userChurchServiceHistories(minDate: $minDate, maxDate: $maxDate) {
         attendedAt
         isOnline
