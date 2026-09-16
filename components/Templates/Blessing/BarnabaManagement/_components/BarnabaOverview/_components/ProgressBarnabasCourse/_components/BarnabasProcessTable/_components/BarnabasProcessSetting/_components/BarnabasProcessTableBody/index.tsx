@@ -27,7 +27,7 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
       enabled:
         !!barnabas.id &&
         barnabas.completedMeetingCount !== barnabas.scheduledMeetingCount,
-    }
+    },
   );
 
   const delayedWeeks = getDelayedWeeks({
@@ -111,17 +111,17 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
               data?.status === TAppointmentStatus.COMPLETED
                 ? "bg-blue-500 text-white"
                 : data?.status === TAppointmentStatus.SCHEDULED
-                ? "bg-teal-500 text-white"
-                : data?.status === TAppointmentStatus.CANCELED
-                ? "bg-amber-500 text-white"
-                : "bg-black text-white"
+                  ? "bg-teal-500 text-white"
+                  : data?.status === TAppointmentStatus.CANCELED
+                    ? "bg-amber-500 text-white"
+                    : "bg-black text-white"
             }`}
           >
             {isLoading
               ? "만남일정 로딩중..."
               : data
-              ? convertAppointmentMessage(data.status)
-              : "일정없음"}
+                ? convertAppointmentMessage(data.status)
+                : "일정없음"}
           </span>
         )}
       </div>
@@ -142,6 +142,7 @@ const BarnabasProcessTableBody = ({barnabas}: Props) => {
           menteeId={barnabas.menteeId}
           status={barnabas.status}
           completedMeetingCount={barnabas.completedMeetingCount}
+          scheduledMeetingCount={barnabas.scheduledMeetingCount}
         />
       </div>
     </div>

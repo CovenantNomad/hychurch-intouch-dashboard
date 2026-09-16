@@ -43,7 +43,7 @@ export const registerBarnaba = async (profiles: TBarnabaProfile[]) => {
         BARNABAS_COLLCTION.BARNABAS,
         BARNABAS_COLLCTION.DATA,
         BARNABAS_COLLCTION.BARNABAPROFILE,
-        profile.id // 각 멤버의 id를 문서 ID로 사용
+        profile.id, // 각 멤버의 id를 문서 ID로 사용
       );
 
       // Firestore에 데이터 저장
@@ -71,7 +71,7 @@ export const fetchBarnabaMembers = async (): Promise<TBarnabaProfile[]> => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAPROFILE
+      BARNABAS_COLLCTION.BARNABAPROFILE,
     );
 
     const querySnapshot = await getDocs(barnabasRef);
@@ -98,29 +98,32 @@ export const getGroupedDataByCohort = async () => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAPROFILE
+      BARNABAS_COLLCTION.BARNABAPROFILE,
     );
 
     const querySnapshot = await getDocs(barnabasRef);
 
-    const groupedData = querySnapshot.docs.reduce((acc, doc) => {
-      const data = {
-        id: doc.id,
-        name: doc.data().name,
-        gender: doc.data().gender || null,
-        birthday: doc.data().birthday || null,
-        isActive: doc.data().isActive,
-        cohort: doc.data().cohort,
-      };
+    const groupedData = querySnapshot.docs.reduce(
+      (acc, doc) => {
+        const data = {
+          id: doc.id,
+          name: doc.data().name,
+          gender: doc.data().gender || null,
+          birthday: doc.data().birthday || null,
+          isActive: doc.data().isActive,
+          cohort: doc.data().cohort,
+        };
 
-      const cohort = data.cohort; // cohort 값을 가져옴
-      if (!acc[cohort]) {
-        acc[cohort] = []; // cohort가 없으면 새 배열 생성
-      }
-      acc[cohort].push(data); // cohort 그룹에 데이터 추가
+        const cohort = data.cohort; // cohort 값을 가져옴
+        if (!acc[cohort]) {
+          acc[cohort] = []; // cohort가 없으면 새 배열 생성
+        }
+        acc[cohort].push(data); // cohort 그룹에 데이터 추가
 
-      return acc;
-    }, {} as Record<string, any[]>);
+        return acc;
+      },
+      {} as Record<string, any[]>,
+    );
 
     return groupedData;
   } catch (error) {
@@ -136,31 +139,34 @@ export const getGroupedBarnabasByAge = async () => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAPROFILE
+      BARNABAS_COLLCTION.BARNABAPROFILE,
     );
 
     const barnabasQuery = query(barnabasRef, where("isActive", "==", true));
 
     const querySnapshot = await getDocs(barnabasQuery);
 
-    const groupedData = querySnapshot.docs.reduce((acc, doc) => {
-      const data = {
-        id: doc.id,
-        name: doc.data().name,
-        gender: doc.data().gender || null,
-        birthday: doc.data().birthday || null,
-        isActive: doc.data().isActive,
-        cohort: doc.data().cohort,
-      };
+    const groupedData = querySnapshot.docs.reduce(
+      (acc, doc) => {
+        const data = {
+          id: doc.id,
+          name: doc.data().name,
+          gender: doc.data().gender || null,
+          birthday: doc.data().birthday || null,
+          isActive: doc.data().isActive,
+          cohort: doc.data().cohort,
+        };
 
-      const age = dayjs(data.birthday).year(); // cohort 값을 가져옴
-      if (!acc[age]) {
-        acc[age] = []; // cohort가 없으면 새 배열 생성
-      }
-      acc[age].push(data); // cohort 그룹에 데이터 추가
+        const age = dayjs(data.birthday).year(); // cohort 값을 가져옴
+        if (!acc[age]) {
+          acc[age] = []; // cohort가 없으면 새 배열 생성
+        }
+        acc[age].push(data); // cohort 그룹에 데이터 추가
 
-      return acc;
-    }, {} as Record<string, TBarnabaProfile[]>);
+        return acc;
+      },
+      {} as Record<string, TBarnabaProfile[]>,
+    );
 
     return groupedData;
   } catch (error) {
@@ -170,7 +176,7 @@ export const getGroupedBarnabasByAge = async () => {
 };
 
 export const fetchLatestMentorship = async (
-  memberId: string
+  memberId: string,
 ): Promise<TMatching | null> => {
   try {
     // Firestore 컬렉션 참조
@@ -178,7 +184,7 @@ export const fetchLatestMentorship = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     // barnabaId가 memberId와 일치하는 문서 쿼리
@@ -186,7 +192,7 @@ export const fetchLatestMentorship = async (
       mentorshipRef,
       where("barnabaId", "==", memberId),
       orderBy("matchingDate", "desc"), // 최신 날짜 순으로 정렬
-      limit(1) // 가장 최근 데이터 1개만 가져오기
+      limit(1), // 가장 최근 데이터 1개만 가져오기
     );
 
     // 쿼리 실행
@@ -204,10 +210,10 @@ export const fetchLatestMentorship = async (
     console.error(
       "Error fetching the latest mentorship for member:",
       memberId,
-      error
+      error,
     );
     throw new Error(
-      "가장 최근 Mentorship 데이터를 가져오는 중 에러가 발생했습니다."
+      "가장 최근 Mentorship 데이터를 가져오는 중 에러가 발생했습니다.",
     );
   }
 };
@@ -221,14 +227,14 @@ export const fetchBarnabaWithoutActiveMentorship = async (): Promise<
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAPROFILE
+      BARNABAS_COLLCTION.BARNABAPROFILE,
     );
 
     const mentorshipRef = collection(
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     // 1. isActive가 true인 바나바 멤버 가져오기
@@ -265,23 +271,23 @@ export const fetchBarnabaWithoutActiveMentorship = async (): Promise<
   } catch (error) {
     console.error(
       "Error fetching Barnaba members without active mentorship: ",
-      error
+      error,
     );
     throw new Error(
-      "Mentorship이 진행 중이 아닌 멤버를 가져오는 중 에러가 발생했습니다."
+      "Mentorship이 진행 중이 아닌 멤버를 가져오는 중 에러가 발생했습니다.",
     );
   }
 };
 
 export const fetchAvailableMentees = async (
-  mentees: MemberWithTransferOut[]
+  mentees: MemberWithTransferOut[],
 ): Promise<MemberWithTransferOut[]> => {
   try {
     const mentorshipRef = collection(
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     // 1. 멘티 ID 추출
@@ -307,14 +313,14 @@ export const fetchAvailableMentees = async (
 
     // 3. 멘티 리스트에서 사용 가능한 ID만 반환
     const availableMentees = mentees.filter((mentee) =>
-      availableMenteeIds.includes(mentee.id)
+      availableMenteeIds.includes(mentee.id),
     );
 
     return availableMentees;
   } catch (error) {
     console.error("Error fetching available mentees: ", error);
     throw new Error(
-      "멘토십이 진행되지 않은 멘티를 가져오는 중 에러가 발생했습니다."
+      "멘토십이 진행되지 않은 멘티를 가져오는 중 에러가 발생했습니다.",
     );
   }
 };
@@ -330,7 +336,7 @@ function chunkArray<T>(array: T[], size: number): T[][] {
 
 // 바나바 매칭 함수
 export const createBarnabaMatching = async (
-  matchingData: Omit<TMatching, "id">
+  matchingData: Omit<TMatching, "id">,
 ): Promise<void> => {
   try {
     // Firestore 컬렉션 참조
@@ -338,7 +344,7 @@ export const createBarnabaMatching = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     const historyRef = doc(
@@ -346,7 +352,7 @@ export const createBarnabaMatching = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
-      matchingData.barnabaId
+      matchingData.barnabaId,
     );
 
     // Firestore 트랜잭션 사용
@@ -355,19 +361,19 @@ export const createBarnabaMatching = async (
       const historySnapshot = await transaction.get(historyRef);
 
       const name = historySnapshot.exists()
-        ? historySnapshot.data()?.barnabaName ?? "알 수 없음"
+        ? (historySnapshot.data()?.barnabaName ?? "알 수 없음")
         : matchingData.barnabaName;
 
       const newTotal =
         (historySnapshot.exists() ? historySnapshot.data().total : 0) + 1;
       const passCount = historySnapshot.exists()
-        ? historySnapshot.data()?.pass ?? 0
+        ? (historySnapshot.data()?.pass ?? 0)
         : 0;
       const failCount = historySnapshot.exists()
-        ? historySnapshot.data()?.fail ?? 0
+        ? (historySnapshot.data()?.fail ?? 0)
         : 0;
       const isActiveStatus = historySnapshot.exists()
-        ? historySnapshot.data()?.isActive ?? true
+        ? (historySnapshot.data()?.isActive ?? true)
         : true;
 
       // 2️⃣ 새로운 매칭 문서 추가 및 ID 생성
@@ -389,7 +395,7 @@ export const createBarnabaMatching = async (
       // 5️⃣ barnabasDetails 컬렉션에 새로운 문서 추가
       const detailsRef = doc(
         collection(historyRef, "barnabasDetails"),
-        newMatchingId
+        newMatchingId,
       );
       transaction.set(detailsRef, {
         matchingId: newMatchingId,
@@ -417,7 +423,7 @@ export const saveMenteeProfile = async (menteeData: MemberWithTransferOut) => {
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.MENTEEPROFILE,
-      menteeData.id // 멘티 ID를 문서 ID로 사용
+      menteeData.id, // 멘티 ID를 문서 ID로 사용
     );
 
     await setDoc(
@@ -432,7 +438,7 @@ export const saveMenteeProfile = async (menteeData: MemberWithTransferOut) => {
         registrationDate: menteeData.registrationDate,
         description: "",
       },
-      {merge: true}
+      {merge: true},
     );
   } catch (error) {
     console.error("멘티 프로필 저장 중 오류 발생:", error);
@@ -450,23 +456,23 @@ export const fetchMenteeStatuses = async (members: MemberWithTransferOut[]) => {
         db,
         BARNABAS_COLLCTION.BARNABAS,
         BARNABAS_COLLCTION.DATA,
-        BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+        BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
       );
       const amazingRef = collection(
         db,
         BARNABAS_COLLCTION.BARNABAS,
         BARNABAS_COLLCTION.DATA,
-        BARNABAS_COLLCTION.AMAZINGMENTORSHIPS
+        BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
       );
 
       // Barnaba 쿼리
       const barnabaSnapshot = await getDocs(
-        query(barnabaRef, where("menteeId", "==", member.id))
+        query(barnabaRef, where("menteeId", "==", member.id)),
       );
 
       // Amazing 쿼리
       const amazingSnapshot = await getDocs(
-        query(amazingRef, where("menteeId", "==", member.id))
+        query(amazingRef, where("menteeId", "==", member.id)),
       );
 
       // 상태 저장
@@ -482,7 +488,7 @@ export const fetchMenteeStatuses = async (members: MemberWithTransferOut[]) => {
           ? amazingSnapshot.docs[0]?.data().status || null
           : null,
       };
-    })
+    }),
   );
 
   return statuses;
@@ -517,7 +523,7 @@ export const updateSingleMemberStatus = async (memberId: string) => {
 
 // 멘티 개인 바나바 데이터 호출
 export const fetchIndividualBarnabaMentorship = async (
-  menteeId: string
+  menteeId: string,
 ): Promise<{
   mentorship: TMatching;
   barnabaProfile: TBarnabaProfile | null;
@@ -527,7 +533,7 @@ export const fetchIndividualBarnabaMentorship = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     // Firestore에서 menteeId가 일치하는 문서 조회
@@ -553,7 +559,7 @@ export const fetchIndividualBarnabaMentorship = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.BARNABAPROFILE,
-      mentorshipData.barnabaId
+      mentorshipData.barnabaId,
     );
 
     const barnabaDoc = await getDoc(barnabaRef);
@@ -570,7 +576,7 @@ export const fetchIndividualBarnabaMentorship = async (
 
 //바나바 세부만남 일정 전체 불러오기
 export const getAllMeetingsByMatchingId = async (
-  matchingId: string
+  matchingId: string,
 ): Promise<TAppointment[]> => {
   try {
     // Firestore 컬렉션 참조
@@ -578,12 +584,12 @@ export const getAllMeetingsByMatchingId = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.MEETINGSCHEDULES
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
     );
 
     const meetingQuery = query(
       meetingRef,
-      where("matchingId", "==", matchingId)
+      where("matchingId", "==", matchingId),
     );
 
     const querySnapshot = await getDocs(meetingQuery);
@@ -593,7 +599,7 @@ export const getAllMeetingsByMatchingId = async (
     }
 
     const meetings: TAppointment[] = querySnapshot.docs.map(
-      (doc) => doc.data() as TAppointment
+      (doc) => doc.data() as TAppointment,
     );
 
     return meetings;
@@ -609,7 +615,7 @@ export const getAllMeetingsByMatchingId = async (
 
 //현재진행상태 멘토십 가져오기
 export const getBarnabasCourseByStatus = async (
-  status: TMatchingStatus
+  status: TMatchingStatus,
 ): Promise<TMatching[]> => {
   try {
     // Firestore 컬렉션 참조
@@ -617,7 +623,7 @@ export const getBarnabasCourseByStatus = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
     );
 
     const barnabasQuery = query(barnabasRef, where("status", "==", status));
@@ -633,14 +639,14 @@ export const getBarnabasCourseByStatus = async (
         ({
           id: doc.id,
           ...doc.data(),
-        } as TMatching)
+        }) as TMatching,
     );
 
     return mentorships;
   } catch (error) {
     console.error("@getProgressBarnabasCourse: ", error);
     throw new Error(
-      "현재 진행중인 바나바 과정을 가져오는 중 에러가 발생했습니다."
+      "현재 진행중인 바나바 과정을 가져오는 중 에러가 발생했습니다.",
     );
   }
 };
@@ -648,7 +654,7 @@ export const getBarnabasCourseByStatus = async (
 //바나바일정 현재주차 약속정보 가져오기
 export const getAppointmentByMatchingId = async (
   matchingId: string,
-  completedMeetingCount: string
+  completedMeetingCount: string,
 ): Promise<TAppointment | null> => {
   try {
     // Firestore 컬렉션 참조
@@ -656,7 +662,7 @@ export const getAppointmentByMatchingId = async (
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.MEETINGSCHEDULES
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
     );
 
     const queryWeek = (Number(completedMeetingCount) + 1).toString();
@@ -665,7 +671,7 @@ export const getAppointmentByMatchingId = async (
       meetingRef,
       where("matchingId", "==", matchingId),
       where("week", "==", queryWeek),
-      limit(1)
+      limit(1),
     );
 
     const querySnapshot = await getDocs(meetingQuery);
@@ -704,7 +710,7 @@ export const updateBarnabaMentorship = async ({
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
-      matchingId
+      matchingId,
     );
 
     const historyRef = doc(
@@ -712,19 +718,19 @@ export const updateBarnabaMentorship = async ({
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
-      barnabaId
+      barnabaId,
     );
 
     const detailsRef = doc(
       collection(historyRef, "barnabasDetails"),
-      matchingId
+      matchingId,
     );
 
     const appointmentsRef = collection(
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.MEETINGSCHEDULES
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
     );
 
     const amazingMentorshipRef = doc(
@@ -732,14 +738,14 @@ export const updateBarnabaMentorship = async ({
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
-      menteeId
+      menteeId,
     );
 
     const today = dayjs(new Date()).format("YYYY-MM-DD");
 
     const appointmentsQuery = query(
       appointmentsRef,
-      where("matchingId", "==", matchingId)
+      where("matchingId", "==", matchingId),
     );
     const appointmentsSnapshot = await getDocs(appointmentsQuery);
 
@@ -801,7 +807,7 @@ export const updateBarnabaMentorship = async ({
             menteeName,
             status: TAmazingMentorshipStatus.WAITING,
           },
-          {merge: true}
+          {merge: true},
         );
       }
     });
@@ -811,9 +817,81 @@ export const updateBarnabaMentorship = async ({
   }
 };
 
+//바나바일정 만남 횟수 업데이트 함수
+export const updateScheduledMeetingCount = async ({
+  matchingId,
+  barnabaId,
+  scheduledMeetingCount,
+}: {
+  matchingId: string;
+  barnabaId: string;
+  scheduledMeetingCount: string;
+}): Promise<{success: boolean}> => {
+  try {
+    const mentorshipRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
+      matchingId,
+    );
+
+    const historyRef = doc(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.STATS,
+      BARNABAS_COLLCTION.HISTORY,
+      barnabaId,
+    );
+
+    const detailsRef = doc(
+      collection(historyRef, "barnabasDetails"),
+      matchingId,
+    );
+
+    const appointmentsRef = collection(
+      db,
+      BARNABAS_COLLCTION.BARNABAS,
+      BARNABAS_COLLCTION.DATA,
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
+    );
+
+    const appointmentsQuery = query(
+      appointmentsRef,
+      where("matchingId", "==", matchingId),
+    );
+
+    const appointmentsSnapshot = await getDocs(appointmentsQuery);
+
+    await runTransaction(db, async (transaction) => {
+      // 바나바 멘토십
+      transaction.update(mentorshipRef, {
+        scheduledMeetingCount,
+      });
+
+      // 바나바 히스토리 상세
+      transaction.update(detailsRef, {
+        scheduledMeetingCount,
+      });
+
+      // 해당 matchingId의 모든 만남 일정
+      appointmentsSnapshot.forEach((appointmentDoc) => {
+        transaction.update(appointmentDoc.ref, {
+          scheduledMeetingCount,
+        });
+      });
+    });
+
+    return {success: true};
+  } catch (error) {
+    console.error("@updateScheduledMeetingCount:", error);
+    throw new Error("예정된 주차를 변경하는 중 오류가 발생했습니다.");
+  }
+};
+
 //현재 멘티 중 바나바 완료한 현황 불러오기
 export const getCompletedOrFailedMentorships = async (
-  menteeIds: string[]
+  menteeIds: string[],
 ): Promise<{
   completedMap: Map<string, TMatching>;
   failedMap: Map<string, TMatching>;
@@ -827,7 +905,7 @@ export const getCompletedOrFailedMentorships = async (
     db,
     BARNABAS_COLLCTION.BARNABAS,
     BARNABAS_COLLCTION.DATA,
-    BARNABAS_COLLCTION.BARNABAMENTORSHIPS
+    BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
   );
 
   // 🔥 최대 10개씩 Firestore에서 "in" 조건으로 조회 (Firestore의 제한 사항 고려)
@@ -838,7 +916,7 @@ export const getCompletedOrFailedMentorships = async (
     const chunk = menteeIds.slice(i, i + chunkSize);
     const mentorshipQuery = query(
       mentorshipRef,
-      where("menteeId", "in", chunk) // ✅ `in` 필터는 하나만 사용
+      where("menteeId", "in", chunk), // ✅ `in` 필터는 하나만 사용
     );
     promises.push(getDocs(mentorshipQuery));
   }
@@ -876,7 +954,7 @@ export const reStartBarnabaMentorship = async ({
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.BARNABAMENTORSHIPS,
-      matchingId
+      matchingId,
     );
 
     const historyRef = doc(
@@ -884,24 +962,24 @@ export const reStartBarnabaMentorship = async ({
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
-      barnabaId
+      barnabaId,
     );
 
     const detailsRef = doc(
       collection(historyRef, "barnabasDetails"),
-      matchingId
+      matchingId,
     );
 
     const appointmentsRef = collection(
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.MEETINGSCHEDULES
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
     );
 
     const appointmentsQuery = query(
       appointmentsRef,
-      where("matchingId", "==", matchingId)
+      where("matchingId", "==", matchingId),
     );
     const appointmentsSnapshot = await getDocs(appointmentsQuery);
 
@@ -977,7 +1055,7 @@ export const getBarnabasHistory = async (): Promise<
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
-      BARNABAS_COLLCTION.HISTORY
+      BARNABAS_COLLCTION.HISTORY,
     );
 
     const querySnapshot = await getDocs(historyRef);
@@ -1011,33 +1089,33 @@ export async function fetchMonthlyAppointments(year: number, month: number) {
     db,
     BARNABAS_COLLCTION.BARNABAS,
     BARNABAS_COLLCTION.DATA,
-    BARNABAS_COLLCTION.MEETINGSCHEDULES
+    BARNABAS_COLLCTION.MEETINGSCHEDULES,
   );
 
   const q = query(
     barnabasRef,
     where("date", ">=", startDate.toISOString().split("T")[0]),
-    where("date", "<=", endDate.toISOString().split("T")[0])
+    where("date", "<=", endDate.toISOString().split("T")[0]),
   );
 
   const querySnapshot = await getDocs(q);
 
   const appointments: TAppointment[] = querySnapshot.docs.map(
-    (doc) => doc.data() as TAppointment
+    (doc) => doc.data() as TAppointment,
   );
 
   return appointments;
 }
 
 export const getBarnabasYearlyRecords = async (
-  year: number
+  year: number,
 ): Promise<Omit<TBarnabasHistory, "barnabasDetails">[]> => {
   try {
     const historyRef = collection(
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
-      BARNABAS_COLLCTION.HISTORY
+      BARNABAS_COLLCTION.HISTORY,
     );
 
     const historySnapshot = await getDocs(historyRef);
@@ -1049,7 +1127,7 @@ export const getBarnabasYearlyRecords = async (
         const detailRef = collection(
           historyRef,
           doc.id,
-          BARNABAS_COLLCTION.BARNABASDETAILS
+          BARNABAS_COLLCTION.BARNABASDETAILS,
         );
 
         const q = query(
@@ -1059,7 +1137,7 @@ export const getBarnabasYearlyRecords = async (
             TMatchingStatus.FAILED,
           ]),
           where("completedDate", ">=", `${year}-01-01`),
-          where("completedDate", "<=", `${year}-12-31`)
+          where("completedDate", "<=", `${year}-12-31`),
         );
 
         const querySnapshot = await getDocs(q);
@@ -1082,7 +1160,7 @@ export const getBarnabasYearlyRecords = async (
           fail: fail || 0,
           isActive: data.isActive || false,
         };
-      })
+      }),
     );
 
     return barnabasYearlyHistory;
@@ -1093,7 +1171,7 @@ export const getBarnabasYearlyRecords = async (
 };
 
 export const getMenteeAttendanceByDate = async (
-  date: string
+  date: string,
 ): Promise<TMenteeAttendance[]> => {
   try {
     const attendanceRef = collection(
@@ -1102,7 +1180,7 @@ export const getMenteeAttendanceByDate = async (
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.ATTENDANCES,
       BARNABAS_COLLCTION.DATE,
-      date
+      date,
     );
 
     const querySnapshot = await getDocs(attendanceRef);
@@ -1112,7 +1190,7 @@ export const getMenteeAttendanceByDate = async (
     }
 
     const menteeAttendances: TMenteeAttendance[] = querySnapshot.docs.map(
-      (doc) => doc.data() as TMenteeAttendance
+      (doc) => doc.data() as TMenteeAttendance,
     );
 
     return menteeAttendances;
@@ -1124,7 +1202,7 @@ export const getMenteeAttendanceByDate = async (
 
 export const updateBarnabaActiveStatus = async (
   barnabaId: string,
-  isActive: boolean
+  isActive: boolean,
 ): Promise<{success: boolean}> => {
   try {
     const barnabaRef = doc(
@@ -1132,7 +1210,7 @@ export const updateBarnabaActiveStatus = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.BARNABAPROFILE,
-      barnabaId
+      barnabaId,
     );
 
     const historyRef = doc(
@@ -1140,7 +1218,7 @@ export const updateBarnabaActiveStatus = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
-      barnabaId
+      barnabaId,
     );
 
     await updateDoc(barnabaRef, {isActive});
@@ -1155,7 +1233,7 @@ export const updateBarnabaActiveStatus = async (
 };
 
 export const getBarnabasProfileById = async (
-  barnabaId: string
+  barnabaId: string,
 ): Promise<TBarnabaProfile | null> => {
   try {
     // Firestore 컬렉션 참조
@@ -1164,7 +1242,7 @@ export const getBarnabasProfileById = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.BARNABAPROFILE,
-      barnabaId
+      barnabaId,
     );
 
     const docSnapshot = await getDoc(barnabasRef);
@@ -1190,7 +1268,7 @@ export const getBarnabasRecords = async (profileId: string) => {
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
-      profileId
+      profileId,
     );
 
     const thisYearHistoryRef = collection(
@@ -1199,13 +1277,16 @@ export const getBarnabasRecords = async (profileId: string) => {
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
       profileId,
-      BARNABAS_COLLCTION.BARNABASDETAILS
+      BARNABAS_COLLCTION.BARNABASDETAILS,
     );
 
     // 🎯 Firestore에서 status 필터링 먼저
     const q = query(
       thisYearHistoryRef,
-      where("status", "in", [TMatchingStatus.COMPLETED, TMatchingStatus.FAILED])
+      where("status", "in", [
+        TMatchingStatus.COMPLETED,
+        TMatchingStatus.FAILED,
+      ]),
     );
 
     const [docSnap, querySnapshot] = await Promise.all([
@@ -1251,7 +1332,7 @@ export const getBarnabasRecords = async (profileId: string) => {
 
 export const getBarnabasYearlyRecordsById = async (
   profileId: string,
-  year: number
+  year: number,
 ): Promise<TBarnabasDetail[]> => {
   try {
     const historyRef = collection(
@@ -1260,7 +1341,7 @@ export const getBarnabasYearlyRecordsById = async (
       BARNABAS_COLLCTION.STATS,
       BARNABAS_COLLCTION.HISTORY,
       profileId,
-      BARNABAS_COLLCTION.BARNABASDETAILS
+      BARNABAS_COLLCTION.BARNABASDETAILS,
     );
 
     const q = query(
@@ -1270,7 +1351,7 @@ export const getBarnabasYearlyRecordsById = async (
         TMatchingStatus.FAILED,
       ]),
       where("completedDate", ">=", `${year}-01-01`),
-      where("completedDate", "<=", `${year}-12-31`)
+      where("completedDate", "<=", `${year}-12-31`),
     );
 
     const querySnapshot = await getDocs(q);
@@ -1300,7 +1381,7 @@ export const getBarnabasYearlyRecordsById = async (
 };
 
 export const openAmazingCourse = async (
-  courseData: Omit<TAmazingCourse, "members">
+  courseData: Omit<TAmazingCourse, "members">,
 ) => {
   try {
     const coursesRef = doc(
@@ -1308,7 +1389,7 @@ export const openAmazingCourse = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZING,
-      courseData.cohort
+      courseData.cohort,
     );
 
     const existingCourse = await getDoc(coursesRef);
@@ -1343,12 +1424,12 @@ export const getAmazingCourse = async (): Promise<TAmazingCourse[]> => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.AMAZING
+      BARNABAS_COLLCTION.AMAZING,
     );
 
     const q = query(
       coursesRef,
-      where("status", "==", TAmazingCourseStatus.OPEN)
+      where("status", "==", TAmazingCourseStatus.OPEN),
     );
 
     const querySnapshot = await getDocs(q);
@@ -1370,7 +1451,7 @@ export const getAmazingCourse = async (): Promise<TAmazingCourse[]> => {
 
 export const updateAmazingCourseDate = async (
   cohort: string,
-  date: string
+  date: string,
 ): Promise<{success: boolean; message: string}> => {
   try {
     const courseRef = doc(
@@ -1378,7 +1459,7 @@ export const updateAmazingCourseDate = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZING,
-      cohort
+      cohort,
     );
 
     // 🔹 해당 기수가 존재하는지 확인
@@ -1405,7 +1486,7 @@ export const updateAmazingCourseDate = async (
 };
 
 export const closeAmazingCourse = async (
-  cohort: string
+  cohort: string,
 ): Promise<{success: boolean; message: string}> => {
   try {
     const courseRef = doc(
@@ -1413,7 +1494,7 @@ export const closeAmazingCourse = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZING,
-      cohort
+      cohort,
     );
 
     // 🔹 해당 기수가 존재하는지 확인
@@ -1444,7 +1525,7 @@ export const closeAmazingCourse = async (
           BARNABAS_COLLCTION.BARNABAS,
           BARNABAS_COLLCTION.DATA,
           BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
-          member.menteeId
+          member.menteeId,
         );
         transaction.update(mentorshipRef, {
           status: TAmazingMentorshipStatus.COMPLETED,
@@ -1464,7 +1545,7 @@ export const closeAmazingCourse = async (
 
 export const registerAmazingCourse = async (
   cohort: string,
-  registerData: TAmazingMember
+  registerData: TAmazingMember,
 ): Promise<{success: boolean; message: string}> => {
   try {
     const coursesRef = doc(
@@ -1472,7 +1553,7 @@ export const registerAmazingCourse = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZING,
-      cohort
+      cohort,
     );
 
     const mentorshipRef = doc(
@@ -1480,13 +1561,13 @@ export const registerAmazingCourse = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
-      registerData.menteeId
+      registerData.menteeId,
     );
 
     const courseDoc = await getDoc(coursesRef);
     if (!courseDoc.exists()) {
       console.log(
-        `해당 기수(${registerData.amazingCohort})가 존재하지 않습니다.`
+        `해당 기수(${registerData.amazingCohort})가 존재하지 않습니다.`,
       );
       return {
         success: false,
@@ -1527,12 +1608,12 @@ export const getAmazingWaitingList = async (): Promise<TAmazingMember[]> => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
     );
 
     const q = query(
       mentorshipRef,
-      where("status", "==", TAmazingMentorshipStatus.WAITING)
+      where("status", "==", TAmazingMentorshipStatus.WAITING),
     );
 
     const querySnapshot = await getDocs(q);
@@ -1558,12 +1639,12 @@ export const getAmazingHoldingList = async (): Promise<TAmazingMember[]> => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS
+      BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
     );
 
     const q = query(
       mentorshipRef,
-      where("status", "==", TAmazingMentorshipStatus.PENDING)
+      where("status", "==", TAmazingMentorshipStatus.PENDING),
     );
 
     const querySnapshot = await getDocs(q);
@@ -1584,7 +1665,7 @@ export const getAmazingHoldingList = async (): Promise<TAmazingMember[]> => {
 };
 
 export const getAmazingMentorshipByMenteeId = async (
-  menteeId: string
+  menteeId: string,
 ): Promise<TAmazingMember | null> => {
   try {
     const mentorshipRef = doc(
@@ -1592,7 +1673,7 @@ export const getAmazingMentorshipByMenteeId = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
-      menteeId
+      menteeId,
     );
 
     const docSnap = await getDoc(mentorshipRef);
@@ -1611,7 +1692,7 @@ export const getAmazingMentorshipByMenteeId = async (
 export const updateAmazingMenteeStatus = async (
   cohort: string,
   menteeId: string,
-  status: TAmazingMentorshipStatus
+  status: TAmazingMentorshipStatus,
 ): Promise<{success: boolean; message: string}> => {
   try {
     const courseRef = doc(
@@ -1619,7 +1700,7 @@ export const updateAmazingMenteeStatus = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZING,
-      cohort
+      cohort,
     );
 
     const mentorshipRef = doc(
@@ -1627,7 +1708,7 @@ export const updateAmazingMenteeStatus = async (
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
       BARNABAS_COLLCTION.AMAZINGMENTORSHIPS,
-      menteeId
+      menteeId,
     );
 
     // 🔹 해당 기수가 존재하는지 확인
@@ -1652,7 +1733,7 @@ export const updateAmazingMenteeStatus = async (
 
       // 🔹 members 배열에서 해당 멘티 제거
       const updatedMembers = courseData.members.filter(
-        (member: {menteeId: string}) => member.menteeId !== menteeId
+        (member: {menteeId: string}) => member.menteeId !== menteeId,
       );
 
       // 🔹 courseRef의 members 업데이트
@@ -1680,7 +1761,7 @@ export const getAllMeetingReivews = async (): Promise<TAppointment[]> => {
       db,
       BARNABAS_COLLCTION.BARNABAS,
       BARNABAS_COLLCTION.DATA,
-      BARNABAS_COLLCTION.MEETINGSCHEDULES
+      BARNABAS_COLLCTION.MEETINGSCHEDULES,
     );
 
     const meetingQuery = query(
@@ -1689,7 +1770,7 @@ export const getAllMeetingReivews = async (): Promise<TAppointment[]> => {
       where("status", "==", "completed"),
       where("matchingStatus", "==", "progress"),
       orderBy("review"),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
     );
 
     const querySnapshot = await getDocs(meetingQuery);
@@ -1699,7 +1780,7 @@ export const getAllMeetingReivews = async (): Promise<TAppointment[]> => {
     }
 
     const meetings: TAppointment[] = querySnapshot.docs.map(
-      (doc) => doc.data() as TAppointment
+      (doc) => doc.data() as TAppointment,
     );
 
     return meetings;
