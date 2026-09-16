@@ -3,7 +3,10 @@ import {Button} from "@tremor/react";
 import {useState} from "react";
 import toast from "react-hot-toast";
 import {useMutation, useQueryClient} from "react-query";
-import {updateBarnabaMentorship} from "../../../../../../../../../../../../firebase/Barnabas/barnabas";
+import {
+  updateBarnabaMentorship,
+  updateScheduledMeetingCount,
+} from "../../../../../../../../../../../../firebase/Barnabas/barnabas";
 import {TMatchingStatus} from "../../../../../../../../../../../../interface/barnabas";
 import {convertMatchingMessage} from "../../../../../../../../../../../../utils/utils";
 import {
@@ -25,6 +28,7 @@ type Props = {
   menteeId: string;
   status: TMatchingStatus;
   completedMeetingCount: string;
+  scheduledMeetingCount: string;
 };
 
 const BarnabasProcessSetting = ({
@@ -35,11 +39,14 @@ const BarnabasProcessSetting = ({
   menteeId,
   status,
   completedMeetingCount,
+  scheduledMeetingCount,
 }: Props) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [description, setDescription] = useState<string>("");
   const [changedStatus, setChangedStatus] = useState<TMatchingStatus>(status);
+  const [changedScheduledMeetingCount, setChangedScheduledMeetingCount] =
+    useState<string>(scheduledMeetingCount);
 
   const mutation = useMutation(
     ({
@@ -88,7 +95,42 @@ const BarnabasProcessSetting = ({
         console.error("바나바과정 업데이트 실패", error);
         toast.error("바나바과정 업데이트 실패");
       },
-    }
+    },
+  );
+  const scheduledMeetingMutation = useMutation(
+    ({
+      matchingId,
+      barnabaId,
+      scheduledMeetingCount,
+    }: {
+      matchingId: string;
+      barnabaId: string;
+      scheduledMeetingCount: string;
+    }) =>
+      updateScheduledMeetingCount({
+        matchingId,
+        barnabaId,
+        scheduledMeetingCount,
+      }),
+    {
+      onSuccess: () => {
+        toast.success("예정된 주차를 변경했습니다.");
+
+        queryClient.invalidateQueries([
+          "getBarnabasCourseByStatus",
+          TMatchingStatus.PROGRESS,
+        ]);
+
+        queryClient.invalidateQueries(["fetchBarnabaMentorship", menteeId]);
+        queryClient.invalidateQueries(["fetchLatestMentorship"]);
+        queryClient.invalidateQueries(["getAllMeetingReivews"]);
+      },
+
+      onError: (error) => {
+        console.error("예정된 주차 변경 실패", error);
+        toast.error("예정된 주차 변경에 실패했습니다.");
+      },
+    },
   );
 
   const onSubmitHandler = () => {
@@ -102,6 +144,29 @@ const BarnabasProcessSetting = ({
         menteeName,
       });
     }
+  };
+
+  const handleScheduledMeetingCountUpdate = () => {
+    const nextCount = Number(changedScheduledMeetingCount);
+    const completedCount = Number(completedMeetingCount);
+
+    if (!nextCount || nextCount < 1) {
+      toast.error("과정 주차를 입력해주세요.");
+      return;
+    }
+
+    if (nextCount < completedCount) {
+      toast.error(
+        `이미 ${completedMeetingCount}주차까지 완료되어 ${completedMeetingCount}주 미만으로 변경할 수 없습니다.`,
+      );
+      return;
+    }
+
+    scheduledMeetingMutation.mutate({
+      matchingId,
+      barnabaId,
+      scheduledMeetingCount: String(nextCount),
+    });
   };
 
   return (
@@ -121,8 +186,8 @@ const BarnabasProcessSetting = ({
                 status === TMatchingStatus.PROGRESS
                   ? "text-teal-500"
                   : status === TMatchingStatus.PENDING
-                  ? "text-amber-500"
-                  : ""
+                    ? "text-amber-500"
+                    : ""
               }`}
             >
               {completedMeetingCount}주차 {convertMatchingMessage(status)}
@@ -130,6 +195,63 @@ const BarnabasProcessSetting = ({
             입니다.
           </DialogDescription>
         </DialogHeader>
+        <div className="mt-6">
+          <div className="mb-6">
+            <h5 className="text-sm font-semibold mb-2">예정된 과정 주차</h5>
+
+            <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">전체 과정</p>
+
+                  <div className="mt-1 flex items-center gap-2 text-xs">
+                    <span className="text-gray-500">현재 예정 주차</span>
+
+                    <span className="font-semibold text-blue-600">
+                      {scheduledMeetingCount}주
+                    </span>
+
+                    <span className="text-gray-300">|</span>
+
+                    <span className="text-gray-500">만남 완료 주차</span>
+
+                    <span className="font-semibold text-gray-700">
+                      {completedMeetingCount}주
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">변경</span>
+
+                  <input
+                    type="number"
+                    min={Number(completedMeetingCount)}
+                    value={changedScheduledMeetingCount}
+                    onChange={(e) =>
+                      setChangedScheduledMeetingCount(e.target.value)
+                    }
+                    className="w-16 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-center text-sm font-medium outline-none focus:border-blue-500"
+                  />
+
+                  <span className="text-sm text-gray-600">주</span>
+
+                  <button
+                    type="button"
+                    disabled={
+                      changedScheduledMeetingCount === scheduledMeetingCount ||
+                      scheduledMeetingMutation.isLoading
+                    }
+                    onClick={handleScheduledMeetingCountUpdate}
+                    className="rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  >
+                    {scheduledMeetingMutation.isLoading ? "변경중" : "변경"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="mt-6">
           <h5 className="text-sm font-semibold mb-1">상태변경</h5>
           <div className="w-full flex rounded-xl overflow-hidden">
