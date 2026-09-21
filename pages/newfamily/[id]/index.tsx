@@ -69,7 +69,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
       enabled: userId !== "",
       staleTime: 3 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
-    }
+    },
   );
 
   const {data} = useFindCellListsQuery<
@@ -83,7 +83,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
-    }
+    },
   );
 
   const {data: attendanceStatus} = useFindAttendanceCheckQuery<
@@ -97,7 +97,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     {
       staleTime: 15 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   const {mutate} = useCreateUserCellTransferMutation<
@@ -118,7 +118,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
     onError(error) {
       if (error instanceof Error) {
         toast.error(
-          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`
+          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`,
         );
       }
     },
@@ -158,7 +158,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
           (cell) =>
             !cell.id.includes(SpecialCellIdType.NewFamily) &&
             !cell.id.includes(SpecialCellIdType.Blessing) &&
-            !cell.id.includes(SpecialCellIdType.Renew)
+            !cell.id.includes(SpecialCellIdType.Renew),
         )
         .map((cell) => {
           return {
@@ -212,6 +212,7 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-1">
                       <UserInfomation
+                        userId={user.user.id}
                         name={user.user.name}
                         gender={user.user.gender}
                         grade={user.user.grade}
@@ -221,7 +222,6 @@ const NewFamilyMember = ({}: NewFamilyMemberProps) => {
                         phone={user.user.phone}
                         address={user.user.address}
                         description={user.user.description}
-                        hasHeader={false}
                       />
                     </div>
                     {attendanceStatus &&

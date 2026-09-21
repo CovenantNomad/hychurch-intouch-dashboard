@@ -1,9 +1,15 @@
 import dayjs from "dayjs";
 import {GraphQLError} from "graphql";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import toast, {Toaster} from "react-hot-toast";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import graphlqlRequestClient from "../../../client/graphqlRequestClient";
+import {
+  deleteMemberProfileImage,
+  getMemberProfileImage,
+  uploadMemberProfileImage,
+} from "../../../firebase/NewFamily/newFamily";
 import {
   UserGrade,
   useResetUserPasswordMutation,
@@ -13,6 +19,7 @@ import {SpecialCellIdType} from "../../../interface/cell";
 import {EditForm} from "../../../interface/register";
 import {UpdateUserInfomationProps} from "../../../interface/user";
 import {makeErrorMessage} from "../../../utils/utils";
+import NewFamilyImageInput from "../../Templates/NewFamily/NewFamilyRegister/_components/NewFamilyImageInput";
 
 const EditUserInfomation = ({
   id,
@@ -32,56 +39,26 @@ const EditUserInfomation = ({
 }: UpdateUserInfomationProps) => {
   const today = dayjs();
   const queryClient = useQueryClient();
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [deleteProfileImage, setDeleteProfileImage] = useState(false);
+
   const {
     handleSubmit,
     register,
     formState: {errors},
   } = useForm<EditForm>();
-  const {mutate, isLoading, isError, isSuccess} = useUpdateUserMutation(
-    graphlqlRequestClient,
-    {
-      onSuccess: (data) => {
-        toast.success("정보가 수정되었습니다\n검색결과를 다시 선택해주세요");
-        queryClient.invalidateQueries({
-          queryKey: ["searchUsers"],
-        });
-        if (cell?.id === SpecialCellIdType.NewFamily) {
-          queryClient.invalidateQueries({
-            queryKey: ["findNewFamilyCell"],
-          });
-        } else if (cell?.id === SpecialCellIdType.Blessing) {
-          queryClient.invalidateQueries({
-            queryKey: ["findBlessingCell"],
-          });
-        } else if (cell?.id === SpecialCellIdType.Renew) {
-          queryClient.invalidateQueries({
-            queryKey: ["findRenewCell"],
-          });
-        } else {
-          queryClient.invalidateQueries({
-            queryKey: ["findCell", {id: Number(cell?.id)}],
-          });
-        }
-        queryClient.invalidateQueries({
-          queryKey: ["findUser", {id: data.updateUser.user.id}],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["searchUsers"],
-        });
 
-        if (editModeHandler) {
-          editModeHandler(false);
-        }
-      },
-      onError: (errors: GraphQLError) => {
-        toast.error(
-          `해당 청년 정보를 수정 중 오류가 발생하였습니다\n${makeErrorMessage(
-            errors.message,
-          )}`,
-        );
-      },
+  const {data: profileImageUrl} = useQuery(
+    ["memberProfileImage", id],
+    () => getMemberProfileImage(id),
+    {
+      enabled: !!id,
+      staleTime: 30 * 60 * 1000,
+      retry: false,
     },
   );
+
+  const {mutateAsync, isLoading} = useUpdateUserMutation(graphlqlRequestClient);
 
   const {mutate: resetMutate} = useResetUserPasswordMutation(
     graphlqlRequestClient,
@@ -99,7 +76,7 @@ const EditUserInfomation = ({
     },
   );
 
-  const onSubmitHandler = ({
+  const onSubmitHandler = async ({
     name,
     gender,
     year,
@@ -114,24 +91,71 @@ const EditUserInfomation = ({
     newRegistrationMonth,
     newRegistrationDay,
   }: EditForm) => {
-    const birthday = `${year}-${month}-${day}`;
-    const registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
-    const isActiveStatus = isActive === "포함" ? true : false;
+    try {
+      const birthday = `${year}-${month}-${day}`;
+      const registrationDate = `${newRegistrationYear}-${newRegistrationMonth}-${newRegistrationDay}`;
+      const isActiveStatus = isActive === "포함" ? true : false;
 
-    mutate({
-      input: {
-        id,
-        name,
-        gender,
-        grade,
-        isActive: isActiveStatus,
-        phone,
-        birthday,
-        address,
-        description,
-        registrationDate,
-      },
-    });
+      await mutateAsync({
+        input: {
+          id,
+          name,
+          gender,
+          grade,
+          isActive: isActiveStatus,
+          phone,
+          birthday,
+          address,
+          description,
+          registrationDate,
+        },
+      });
+
+      if (deleteProfileImage) {
+        await deleteMemberProfileImage(id);
+      } else if (profileImage) {
+        await uploadMemberProfileImage(id, profileImage);
+      }
+
+      if (deleteProfileImage || profileImage) {
+        queryClient.invalidateQueries({
+          queryKey: ["memberProfileImage", id],
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["searchUsers"],
+      });
+
+      if (cell?.id === SpecialCellIdType.NewFamily) {
+        queryClient.invalidateQueries({
+          queryKey: ["findNewFamilyCell"],
+        });
+      } else if (cell?.id === SpecialCellIdType.Blessing) {
+        queryClient.invalidateQueries({
+          queryKey: ["findBlessingCell"],
+        });
+      } else if (cell?.id === SpecialCellIdType.Renew) {
+        queryClient.invalidateQueries({
+          queryKey: ["findRenewCell"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["findCell", {id: Number(cell?.id)}],
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["findUser", {id}],
+      });
+
+      toast.success("정보가 수정되었습니다");
+
+      editModeHandler?.(false);
+    } catch (error) {
+      console.error("@EditUserInfomation:", error);
+      toast.error("정보를 수정하는 중 오류가 발생했습니다.");
+    }
   };
 
   const resetHandler = () => {
@@ -149,6 +173,23 @@ const EditUserInfomation = ({
       <form onSubmit={handleSubmit(onSubmitHandler)}>
         <div className="py-5 bg-white sm:py-6">
           <div className="grid grid-cols-6 gap-6">
+            <div className="col-span-6">
+              <NewFamilyImageInput
+                value={profileImage}
+                existingImageUrl={deleteProfileImage ? null : profileImageUrl}
+                onChange={(file) => {
+                  setProfileImage(file);
+
+                  if (file) {
+                    setDeleteProfileImage(false);
+                  }
+                }}
+                onDeleteExisting={() => {
+                  setProfileImage(null);
+                  setDeleteProfileImage(true);
+                }}
+              />
+            </div>
             <div className="col-span-6 sm:col-span-3">
               <label
                 htmlFor="name"

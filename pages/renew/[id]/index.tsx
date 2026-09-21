@@ -71,7 +71,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       enabled: userId !== "",
       staleTime: 10 * 60 * 1000,
       cacheTime: 15 * 60 * 1000,
-    }
+    },
   );
 
   const {data} = useFindCellListsQuery<
@@ -85,7 +85,7 @@ const RenewMember = ({}: RenewMemberProps) => {
     {
       staleTime: 60 * 60 * 1000,
       cacheTime: 60 * 60 * 1000 * 24,
-    }
+    },
   );
 
   const {isLoading: isAttendanceLoading, data: attendanceStatus} =
@@ -100,7 +100,7 @@ const RenewMember = ({}: RenewMemberProps) => {
       {
         staleTime: 15 * 60 * 1000,
         cacheTime: 30 * 60 * 1000,
-      }
+      },
     );
 
   const {mutate} = useCreateUserCellTransferMutation<
@@ -126,7 +126,7 @@ const RenewMember = ({}: RenewMemberProps) => {
     onError(error) {
       if (error instanceof Error) {
         toast.error(
-          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`
+          `셀원이동 신청에 실패했습니다.\n${makeErrorMessage(error.message)}`,
         );
       }
     },
@@ -166,7 +166,7 @@ const RenewMember = ({}: RenewMemberProps) => {
           (cell) =>
             !cell.id.includes(SpecialCellIdType.NewFamily) &&
             !cell.id.includes(SpecialCellIdType.Blessing) &&
-            !cell.id.includes(SpecialCellIdType.Renew)
+            !cell.id.includes(SpecialCellIdType.Renew),
         )
         .map((cell) => {
           return {
@@ -220,6 +220,7 @@ const RenewMember = ({}: RenewMemberProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-1">
                       <UserInfomation
+                        userId={user.user.id}
                         name={user.user.name}
                         gender={user.user.gender}
                         grade={user.user.grade}
@@ -229,7 +230,6 @@ const RenewMember = ({}: RenewMemberProps) => {
                         phone={user.user.phone}
                         address={user.user.address}
                         description={user.user.description}
-                        hasHeader={false}
                       />
                     </div>
                     <div className="col-span-1">

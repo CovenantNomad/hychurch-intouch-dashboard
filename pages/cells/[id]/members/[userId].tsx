@@ -44,7 +44,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
       enabled: userId !== "",
       staleTime: 10 * 60 * 1000,
       cacheTime: 15 * 60 * 1000,
-    }
+    },
   );
 
   useEffect(() => {
@@ -82,9 +82,10 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                   />
                   <BlockContainer>
                     {!editMode ? (
-                      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-3 rounded-md bg-white lg:px-4 lg:py-5">
+                      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 rounded-md bg-white">
                         <div className="md:col-span-1">
                           <UserInfomation
+                            userId={data.user.id}
                             name={data.user.name}
                             gender={data.user.gender}
                             grade={data.user.grade}
@@ -95,7 +96,6 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                             registrationDate={data.user.registrationDate}
                             description={data.user.description}
                             editModeHandler={() => setEditMode(true)}
-                            hasHeader={false}
                           />
                         </div>
                         <div className="space-y-4 md:col-span-1">
@@ -104,7 +104,7 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                         </div>
                       </section>
                     ) : (
-                      <section className="rounded-md bg-white lg:px-4 lg:py-5">
+                      <section className="rounded-md bg-white">
                         <EditUserInfomation
                           id={data.user.id}
                           name={data.user.name}
@@ -131,7 +131,9 @@ const MemberDetailPage: NextPage<MemberDetailPage> = () => {
                     )}
                   </BlockContainer>
                   <BlockContainer>
-                    <UserCellmeetingHistory userId={userId} />
+                    <section className="rounded-md bg-white">
+                      <UserCellmeetingHistory userId={userId} />
+                    </section>
                   </BlockContainer>
                 </div>
               ) : (
