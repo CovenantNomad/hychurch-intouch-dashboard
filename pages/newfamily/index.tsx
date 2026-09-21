@@ -36,7 +36,7 @@ const categories = [
 const Register: NextPage = () => {
   const [setting, setSetting] = useRecoilState(stateSetting);
   const [categoryId, setCategoryId] = useState<number>(
-    setting.newFamilySelectedCategoryId
+    setting.newFamilySelectedCategoryId,
   );
   const setSettingHandler = useCallback(
     (id: number) => {
@@ -45,7 +45,7 @@ const Register: NextPage = () => {
         newFamilySelectedCategoryId: id,
       });
     },
-    [setting, setSetting]
+    [setting, setSetting],
   );
 
   return (

@@ -222,6 +222,7 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="md:col-span-1">
                         <UserInfomation
+                          userId={user.user.id}
                           name={user.user.name}
                           gender={user.user.gender}
                           grade={user.user.grade}
@@ -231,7 +232,6 @@ const BlessingMember = ({}: NewFamilyMemberProps) => {
                           phone={user.user.phone}
                           address={user.user.address}
                           description={user.user.description}
-                          hasHeader={false}
                         />
                       </div>
                       <div className="space-y-4 md:col-span-1">

@@ -51,51 +51,57 @@ const WeeklyHeatMap = ({data}: Props) => {
   });
 
   // 월별로 데이터 그룹화
-  const groupedByMonth = weeks.reduce((acc, week) => {
-    const monthKey = `${week.date.year()}-${String(
-      week.date.month() + 1
-    ).padStart(2, "0")}`; // 연도-월 형식으로 키 생성
-    if (!acc[monthKey]) {
-      acc[monthKey] = [];
-    }
-    acc[monthKey].push(week);
-    return acc;
-  }, {} as Record<string, typeof weeks>);
+  const groupedByMonth = weeks.reduce(
+    (acc, week) => {
+      const monthKey = `${week.date.year()}-${String(
+        week.date.month() + 1,
+      ).padStart(2, "0")}`; // 연도-월 형식으로 키 생성
+      if (!acc[monthKey]) {
+        acc[monthKey] = [];
+      }
+      acc[monthKey].push(week);
+      return acc;
+    },
+    {} as Record<string, typeof weeks>,
+  );
 
   return (
     <div className="p-4 bg-gray-900 text-white rounded-lg">
-      <div className="flex space-x-4">
-        {/* 각 월을 열로 표시 */}
-        {Object.keys(groupedByMonth).map((monthKey) => {
-          const monthWeeks = groupedByMonth[monthKey];
+      <div className="overflow-x-auto overscroll-x-contain">
+        <div className="flex w-max min-w-full space-x-4">
+          {/* 각 월을 열로 표시 */}
+          {Object.keys(groupedByMonth).map((monthKey) => {
+            const monthWeeks = groupedByMonth[monthKey];
 
-          return (
-            <div key={monthKey} className="flex flex-col items-center">
-              {/* 월 이름 */}
-              <div className="mb-2">
-                <span className="text-xs text-gray-400">{monthKey}</span>
+            return (
+              <div key={monthKey} className="flex flex-col items-center">
+                {/* 월 이름 */}
+                <div className="mb-2">
+                  <span className="text-xs text-gray-400">{monthKey}</span>
+                </div>
+                {/* 해당 월의 주 */}
+                <div className="flex flex-col space-y-1">
+                  {monthWeeks.map((week, index) => (
+                    <div
+                      key={index}
+                      className={`group relative w-4 h-4 rounded ${
+                        week.present
+                          ? "bg-green-400 hover:bg-green-500"
+                          : "bg-gray-700 hover:bg-gray-600"
+                      }`}
+                    >
+                      {/* Tooltip span */}
+                      <span className="absolute left-1/2 -translate-x-1/2 -top-8 text-xs text-black bg-gray-200 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap shadow pointer-events-none">
+                        {week.baseDateString}:{" "}
+                        {week.present ? "참석" : "미참석"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              {/* 해당 월의 주 */}
-              <div className="flex flex-col space-y-1">
-                {monthWeeks.map((week, index) => (
-                  <div
-                    key={index}
-                    className={`group relative w-4 h-4 rounded ${
-                      week.present
-                        ? "bg-green-400 hover:bg-green-500"
-                        : "bg-gray-700 hover:bg-gray-600"
-                    }`}
-                  >
-                    {/* Tooltip span */}
-                    <span className="absolute left-1/2 -translate-x-1/2 -top-8 text-xs text-black bg-gray-200 px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap shadow pointer-events-none">
-                      {week.baseDateString}: {week.present ? "참석" : "미참석"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Legend */}

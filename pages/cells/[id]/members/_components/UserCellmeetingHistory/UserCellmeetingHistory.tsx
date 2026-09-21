@@ -14,11 +14,11 @@ const UserCellmeetingHistory = ({userId}: Props) => {
     {
       staleTime: 10 * 60 * 1000,
       cacheTime: 30 * 60 * 1000,
-    }
+    },
   );
 
   return (
-    <div className="border p-6 rounded-xl shadow-sm bg-white">
+    <div className="border p-4 lg:px-6 lg:py-5 rounded-xl shadow-sm bg-white">
       <div className="mb-2">
         <h6 className="font-medium">최근 52주 셀모임 참석 데이터</h6>
       </div>

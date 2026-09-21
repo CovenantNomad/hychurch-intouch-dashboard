@@ -1,46 +1,47 @@
 import dayjs from "dayjs";
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
-import { useQueryClient } from "react-query";
-import graphlqlRequestClient from "../../../client/graphqlRequestClient";
-import { useRegisterNewUserMutation } from "../../../graphql/generated";
-import { SpecialCellIdType } from "../../../interface/cell";
-import { RegisterForm } from "../../../interface/register";
-import BlockContainer from "../../Atoms/Container/BlockContainer";
-import { makeErrorMessage } from "../../../utils/utils";
-import { GraphQLError } from "graphql-request/dist/types";
+import {GraphQLError} from "graphql-request/dist/types";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import toast, {Toaster} from "react-hot-toast";
+import {useQueryClient} from "react-query";
+import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
+import {uploadMemberProfileImage} from "../../../../firebase/NewFamily/newFamily";
+import {useRegisterNewUserMutation} from "../../../../graphql/generated";
+import {SpecialCellIdType} from "../../../../interface/cell";
+import {RegisterForm} from "../../../../interface/register";
+import {makeErrorMessage} from "../../../../utils/utils";
+import BlockContainer from "../../../Atoms/Container/BlockContainer";
+import NewFamilyImageInput from "./_components/NewFamilyImageInput";
 
 interface NewFamilyRegisterProps {}
 
 const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
   const today = dayjs();
   const queryClient = useQueryClient();
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: {errors},
     reset,
     setValue,
   } = useForm<RegisterForm>();
-  const { mutateAsync, isLoading, isError, isSuccess } =
+  const {mutateAsync, isLoading, isError, isSuccess} =
     useRegisterNewUserMutation(graphlqlRequestClient, {
       onSuccess: (data) => {
-        toast.success("새가족 등록하였습니다");
         queryClient.invalidateQueries({
           queryKey: [
             "findNewFamilyCell",
-            { id: Number(SpecialCellIdType.NewFamily) },
+            {id: Number(SpecialCellIdType.NewFamily)},
           ],
         });
-        reset();
       },
       onError(error: GraphQLError, variables, context) {
-        toast.error(makeErrorMessage(error.message), { duration: 2000 })
+        toast.error(makeErrorMessage(error.message), {duration: 2000});
       },
     });
 
-  const onSubmitHandler = ({
+  const onSubmitHandler = async ({
     name,
     gender,
     birthdayYear,
@@ -55,7 +56,7 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
   }: RegisterForm) => {
     const birthday = `${birthdayYear}-${birthdayMonth}-${birthdayDay}`;
     const registrationDate = `${registrationYear}-${registrationMonth}-${registrationDay}`;
-    mutateAsync({
+    const result = await mutateAsync({
       input: {
         name,
         gender,
@@ -66,13 +67,29 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
         registrationDate,
       },
     });
+    const userId = result.registerNewUser.user.id;
+
+    if (!userId) {
+      throw new Error("생성된 사용자 ID를 찾을 수 없습니다.");
+    }
+
+    // 2. 사진이 있으면 userId 기준으로 Storage 저장
+    if (profileImage) {
+      await uploadMemberProfileImage(userId, profileImage);
+    }
+
+    // 3. 모두 완료
+    toast.success("새가족 등록하였습니다.");
+
+    reset();
+    setProfileImage(null);
   };
 
   useEffect(() => {
     setValue("registrationYear", today.get("year").toString());
     setValue(
       "registrationMonth",
-      (today.get("month") + 1).toString().padStart(2, "0")
+      (today.get("month") + 1).toString().padStart(2, "0"),
     );
     setValue("registrationDay", today.get("date").toString().padStart(2, "0"));
   }, []);
@@ -89,6 +106,12 @@ const NewFamilyRegister = ({}: NewFamilyRegisterProps) => {
               <p className="mt-1 text-sm text-gray-600">
                 새가족 등록카드에 작성된 내용을 입력해 주세요.
               </p>
+              <div className="mt-14">
+                <NewFamilyImageInput
+                  value={profileImage}
+                  onChange={setProfileImage}
+                />
+              </div>
             </div>
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
