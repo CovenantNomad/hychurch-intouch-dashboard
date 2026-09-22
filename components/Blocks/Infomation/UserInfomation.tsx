@@ -46,11 +46,11 @@ const UserInfomation = ({
       <div
         className={`grid gap-8 ${
           profileImageUrl
-            ? "grid-cols-1 sm:grid-cols-[1fr_200px]"
+            ? "grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)]"
             : "grid-cols-1"
         } p-6 border rounded-xl shadow-sm bg-white`}
       >
-        <dl className="order-2 grid grid-cols-2 gap-x-4 gap-y-8">
+        <dl className="order-2 grid w-full grid-cols-2 gap-x-4 gap-y-8 min-w-0">
           <div className="col-span-1">
             <dt className="text-sm font-medium">성별</dt>
             <dd className="mt-1.5 text-base">
@@ -89,7 +89,7 @@ const UserInfomation = ({
           </div>
         </dl>
         {profileImageUrl && (
-          <div className="order-1 flex justify-center sm:order-2 sm:justify-end">
+          <div className="order-1">
             <img
               src={profileImageUrl}
               alt={`${name} 프로필`}
