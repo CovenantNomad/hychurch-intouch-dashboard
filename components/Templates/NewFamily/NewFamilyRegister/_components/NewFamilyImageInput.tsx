@@ -83,10 +83,10 @@ const NewFamilyImageInput = ({
       handleFile(file);
     };
 
-    window.addEventListener("paste", handlePaste);
+    document.addEventListener("paste", handlePaste);
 
     return () => {
-      window.removeEventListener("paste", handlePaste);
+      document.removeEventListener("paste", handlePaste);
     };
   }, []);
 
