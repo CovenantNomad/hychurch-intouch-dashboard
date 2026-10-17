@@ -30,7 +30,7 @@ const MemberSearchResult = ({isLoading, searchResults}: SearchResultProps) => {
               <Slogan />
             </div>
           ) : (
-            <div className="grid grid-cols-1 mt-8 gap-2 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 mt-8 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {searchResults && searchResults.findUsers.nodes.length !== 0 ? (
                 <>
                   {searchResults.findUsers.nodes.map((user) => (

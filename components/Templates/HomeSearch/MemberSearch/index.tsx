@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {useState} from "react";
 import graphlqlRequestClient from "../../../../client/graphqlRequestClient";
 import {
   SearchUsersQuery,
@@ -12,7 +12,7 @@ interface MemberSearchProps {}
 
 const MemberSearch = ({}: MemberSearchProps) => {
   const [keyword, setKeyword] = useState<string | null>(null);
-  const { isLoading, data, isRefetching, isFetching } = useSearchUsersQuery<
+  const {isLoading, data} = useSearchUsersQuery<
     SearchUsersQuery,
     SearchUsersQueryVariables
   >(
@@ -21,8 +21,10 @@ const MemberSearch = ({}: MemberSearchProps) => {
       keyword,
     },
     {
-      enabled: !!keyword,
-    }
+      enabled: !!keyword?.trim(),
+      staleTime: 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+    },
   );
 
   return (
@@ -32,7 +34,10 @@ const MemberSearch = ({}: MemberSearchProps) => {
       } min-h-screen transition-all pb-6 xl:pt-12`}
     >
       <MemberSearchBar setKeyword={setKeyword} />
-      <MemberSearchResult isLoading={isFetching} searchResults={data} />
+      <MemberSearchResult
+        isLoading={isLoading}
+        searchResults={keyword ? data : undefined}
+      />
     </div>
   );
 };
