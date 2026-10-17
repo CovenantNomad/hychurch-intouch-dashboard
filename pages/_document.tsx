@@ -1,10 +1,16 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import {Head, Html, Main, NextScript} from "next/document";
 
 export default function Document() {
   return (
-    <Html>
+    <Html lang="ko">
       <Head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="INTOUCH" />
+
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta
           httpEquiv="Content-Security-Policy"
           content="upgrade-insecure-requests"

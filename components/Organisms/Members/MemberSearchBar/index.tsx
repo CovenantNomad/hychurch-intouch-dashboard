@@ -1,11 +1,10 @@
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { debounce } from "lodash";
-import { Dispatch, SetStateAction, useCallback } from "react";
-import SearchIcon from "../../../Atoms/Icons/SearchIcon";
+import {debounce} from "lodash";
+import {Dispatch, SetStateAction, useCallback} from "react";
+import {useForm} from "react-hook-form";
+import {useSetRecoilState} from "recoil";
+import {selectedUser} from "../../../../stores/selectedUser";
 import CloseIcon from "../../../Atoms/Icons/CloseIcon";
-import { useSetRecoilState } from "recoil";
-import { selectedUser } from "../../../../stores/selectedUser";
+import SearchIcon from "../../../Atoms/Icons/SearchIcon";
 
 interface SearchBarForm {
   keyword: string;
@@ -15,27 +14,27 @@ interface SearchBarProps {
   setKeyword: Dispatch<SetStateAction<string | null>>;
 }
 
-const MemberSearchBar = ({ setKeyword }: SearchBarProps) => {
+const MemberSearchBar = ({setKeyword}: SearchBarProps) => {
   const setSelectedUserInfo = useSetRecoilState(selectedUser);
-  const queryClient = useQueryClient();
+
   const {
     handleSubmit,
     register,
     reset,
-    setValue,
-    formState: { isSubmitted, isDirty },
+    formState: {isSubmitted, isDirty},
   } = useForm<SearchBarForm>();
 
-  const onSubmitHandler = debounce(({ keyword }: SearchBarForm) => {
-    queryClient.invalidateQueries("searchUsers");
-    setKeyword(keyword);
+  const onSubmitHandler = debounce(({keyword}: SearchBarForm) => {
+    const trimmedKeyword = keyword.trim();
+
+    if (!trimmedKeyword) return;
+
+    setKeyword(trimmedKeyword);
   }, 300);
 
   const onCloseHandle = useCallback(() => {
-    queryClient.invalidateQueries("searchUsers");
     setKeyword(null);
     reset();
-    setValue("keyword", "");
     setSelectedUserInfo(null);
   }, []);
 
@@ -46,12 +45,15 @@ const MemberSearchBar = ({ setKeyword }: SearchBarProps) => {
         className="flex items-center"
       >
         <SearchIcon />
+
         <input
           {...register("keyword")}
           placeholder="이름 또는 전화번호로 검색해주세요"
           className="border-none outline-none w-full h-6"
         />
+
         <input type="submit" className="hidden" />
+
         {isSubmitted && isDirty && <CloseIcon onClick={onCloseHandle} />}
       </form>
     </div>

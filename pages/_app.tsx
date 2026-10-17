@@ -1,5 +1,5 @@
 import type {AppProps} from "next/app";
-import {Suspense} from "react";
+import {Suspense, useEffect} from "react";
 import {Toaster} from "react-hot-toast";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {RecoilRoot} from "recoil";
@@ -17,6 +17,14 @@ const queryClient = new QueryClient({
 });
 
 function MyApp({Component, pageProps}: AppProps) {
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch((error) => {
+        console.error("Service Worker 등록 실패:", error);
+      });
+    }
+  }, []);
+
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
