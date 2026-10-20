@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {MemberWithTransferOut} from "../../../../../../../../interface/user";
 import {
+  formatPhoneNumber,
   getGenderColor,
   getWeekNumber,
 } from "../../../../../../../../utils/utils";
@@ -77,13 +78,13 @@ const NewFamilyCalendarViewListItem = ({
                       <CalculateAgeWithStyle birthday={member.birthday} />
                       <td
                         className={`border border-gray-300 px-4 py-3 ${getGenderColor(
-                          member.gender!
+                          member.gender!,
                         )}`}
                       >
                         {member.gender === "MAN" ? "형제" : "자매"}
                       </td>
                       <td className="border border-gray-300 px-4 py-3">
-                        {member.phone}
+                        {formatPhoneNumber(member.phone)}
                       </td>
                       <td className="border border-gray-300 px-4 py-3">
                         {member.address}

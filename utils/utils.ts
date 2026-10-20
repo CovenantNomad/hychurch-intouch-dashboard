@@ -497,15 +497,6 @@ export const processMembersByYear = (members: Member[]): YearlyData[] => {
   return yearlyData;
 };
 
-export function formatPhoneNumber(phoneNumber: string): string {
-  if (phoneNumber.length === 11) {
-    return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
-  } else if (phoneNumber.length === 10) {
-    return phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-  }
-  return phoneNumber; // 길이가 맞지 않으면 그대로 반환
-}
-
 //바나바 다음약속 지연기간 알려주기
 export const getDelayedWeeks = ({
   matchingDate,
@@ -618,3 +609,17 @@ export const normalize = (str: string) => str.replace(/\s/g, "").toLowerCase();
 
 export const escapeRegExp = (str: string) =>
   str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export const formatPhoneNumber = (phone?: string | null): string => {
+  if (!phone) return "";
+
+  const numbers = phone.replace(/\D/g, "");
+
+  // 서울 지역번호 (02)
+  if (numbers.startsWith("02")) {
+    return numbers.replace(/^(02)(\d{3,4})(\d{4})$/, "$1-$2-$3");
+  }
+
+  // 휴대폰 및 일반 지역번호
+  return numbers.replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3");
+};
