@@ -1,14 +1,15 @@
-import {
-  CalendarDaysIcon,
-  PhoneIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
+import {UserIcon} from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import Link from "next/link";
 import {useQuery} from "react-query";
+import {fetchIndividualBarnabaMentorship} from "../../../../firebase/Barnabas/barnabas";
 import {getMemberProfileImage} from "../../../../firebase/NewFamily/newFamily";
 import {Member} from "../../../../interface/user";
-import {getCellUrl, getGender} from "../../../../utils/utils";
+import {
+  formatPhoneNumber,
+  getCellUrl,
+  getGender,
+} from "../../../../utils/utils";
 
 interface MemberListItemProps {
   member: Member;
@@ -23,6 +24,15 @@ const MemberListItem = ({member}: MemberListItemProps) => {
       staleTime: 60 * 60 * 1000,
       cacheTime: 2 * 60 * 60 * 1000,
       retry: false,
+    },
+  );
+
+  const {data, isLoading, error} = useQuery(
+    ["fetchBarnabaMentorship", member.id],
+    () => fetchIndividualBarnabaMentorship(member.id),
+    {
+      enabled: !!member.id, // menteeId가 존재할 때만 실행
+      staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
     },
   );
 
@@ -74,32 +84,43 @@ const MemberListItem = ({member}: MemberListItemProps) => {
           {/* 회원 정보 */}
           <div className="flex min-w-0 flex-1 flex-col">
             {/* 이름 / 소속 */}
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
+            <div className="flex flex-wrap items-center">
+              <h3 className="text-base font-semibold text-gray-900 sm:text-lg pr-1">
                 {member.name} {getGender(member.gender!)}
               </h3>
+              {/* <span className="text-xs px-1">∙</span> */}
 
-              <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600">
-                {member.cell?.name || "재적"}
+              <span className="rounded-md text-base font-medium text-blue-600">
+                ({member.cell?.name || "재적"})
               </span>
             </div>
 
             {/* 나이 / 생년월일 */}
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="mt-2 text-sm">
               {age !== null
                 ? `${age}세 (${member.birthday})`
                 : "나이 정보 없음"}
             </div>
 
-            {/* 연락처 / 등록일 */}
-            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-600 md:mt-8">
-              <div className="flex items-center gap-1.5">
-                <PhoneIcon className="h-4 w-4 shrink-0 text-gray-500" />
-                <span>{member.phone || "미입력"}</span>
+            {/* 바나바 정보 */}
+            {data?.barnabaProfile?.name && data?.mentorship && (
+              <div className="mt-2 text-sm">
+                바나바: {data.barnabaProfile.name} (
+                {data.mentorship.scheduledMeetingCount}주 과정)
               </div>
+            )}
+
+            {/* 연락처 / 등록일 */}
+            <div
+              className={`flex flex-wrap items-center text-sm ${data?.barnabaProfile?.name ? "mt-2" : "mt-6 md:mt-8"}`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span>{formatPhoneNumber(member.phone) || "미입력"}</span>
+              </div>
+              <span className="px-1 text-gray-700">∙</span>
 
               <div className="flex items-center gap-1.5">
-                <CalendarDaysIcon className="h-4 w-4 shrink-0 text-gray-500" />
+                <span>등록일: </span>
                 <span>{registrationDate}</span>
               </div>
             </div>
